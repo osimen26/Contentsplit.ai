@@ -62,6 +62,13 @@ ContentSplit follows a modular, component-based architecture with a centralized 
 - `skills/card.md` - Card component specifications
 - `skills/icons.md` - Icon system specifications
 - `skills/component-specification.md` - General component patterns
+- `skills/table.md` - Table component specifications
+- `skills/toast.md` - Toast component specifications
+- `skills/modal.md` - Modal component specifications
+- `skills/select.md` - Select component specifications
+- `skills/navigation.md` - Navigation component specifications
+- `skills/chips.md` - Chip component specifications
+- `skills/tooltips.md` - Tooltip component specifications
 
 ### 3. Pattern Layer (Common UI Patterns)
 ```
@@ -76,6 +83,7 @@ ContentSplit follows a modular, component-based architecture with a centralized 
 
 **Key Files:**
 - `skills/form-field.md` - Form field patterns
+- `skills/navigation.md` - Navigation patterns
 - `skills/ux-usage.md` - UX usage patterns
 - `skills/onboarding-login-flow.md` - Authentication flows
 - `skills/api-integration.md` - API integration patterns
@@ -179,7 +187,10 @@ contentsplit.ai/
     │   ├── table.md                   # Table components
     │   ├── toast.md                   # Toast components
     │   ├── modal.md                   # Modal components
-    │   └── select.md                  # Select components
+    │   ├── select.md                  # Select components
+    │   ├── navigation.md              # Navigation components
+    │   ├── chips.md                   # Chip components
+    │   └── tooltips.md                # Tooltip components
     │
     ├── State & Feedback/
     │   ├── notification.md            # Notification system

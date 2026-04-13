@@ -44,6 +44,9 @@ See [skills/skill.md](skills/skill.md)
 - **Selects**: See [skills/select.md](skills/select.md)
 - **Tables**: See [skills/table.md](skills/table.md)
 - **Progress Indicators**: See [skills/progress.md](skills/progress.md)
+- **Navigation**: See [skills/navigation.md](skills/navigation.md)
+- **Chips**: See [skills/chips.md](skills/chips.md)
+- **Tooltips**: See [skills/tooltips.md](skills/tooltips.md)
 
 ### State & Feedback System
 - **Notifications**: See [skills/notification.md](skills/notification.md)
