@@ -1,6 +1,4 @@
 # ContentSplit — Database Schema Reference
-### Source of Truth: ContentSplit PRD v2.1 Section 10.6
-### Team 6 — 10th Cohort Capstone | April 2026
 
 ---
 
@@ -13,7 +11,7 @@ output content, and usage logs — is stored in Supabase.
 All tables use Supabase's built-in row-level security (RLS) policies
 to ensure users can only access their own data.
 
-Source: PRD v2.1 Section 10.6
+
 
 ---
 
@@ -59,9 +57,10 @@ Users can only read and write their own conversions.
 Skill 1 — Content Conversion, Step 8.
 Written automatically after every successful conversion.
 No manual save action required from the user.
-Source: PRD Section 6.8
 
-### History Limits by Tier (PRD Section 8)
+
+### History Limits by Tier 
+
 The History Service enforces how many rows are returned per user:
 - Free: last 3 conversions
 - Pro: last 50 conversions
@@ -102,7 +101,7 @@ after every successful regeneration.
 `regeneration_count` must be updated in Supabase after every successful
 regeneration — not just tracked in memory. If only tracked in memory,
 the count resets when the user refreshes the page.
-Source: PRD Section 10.6
+
 
 ---
 
@@ -130,8 +129,8 @@ Skill 4 — Step 6 on successful regeneration.
 
 ### Used For
 - Counting monthly conversions per user to enforce tier limits
-- Auditing retry rates to monitor AI quality (PRD Section 12.4)
-- Tracking regeneration rates per output (PRD Section 12.2)
+- Auditing retry rates to monitor AI quality 
+- Tracking regeneration rates per output 
 
 ---
 
@@ -146,7 +145,7 @@ users
 
 ---
 
-## History Retrieval (PRD Section 9.3)
+## History Retrieval 
 
 When a user opens the History panel, the History Service retrieves
 conversions in reverse chronological order (newest first).
@@ -157,11 +156,11 @@ Each history entry displays:
 - All four saved outputs (`outputs.content` for all four platforms)
 
 The user can restore any past conversion to the active workspace
-with a single click. Source: PRD Section 9.3 Step 3
+with a single click. 
 
 ---
 
-## Security Notes (PRD Section 10.7)
+## Security Notes 
 
 - All data in transit is encrypted over HTTPS with SSL/TLS
 - Supabase Auth handles password hashing using bcrypt
@@ -173,5 +172,3 @@ with a single click. Source: PRD Section 9.3 Step 3
 
 ---
 
-*database-schema.md — Team 6, 10th Cohort Capstone | April 2026*
-*Source of truth: ContentSplit PRD v2.1 Section 10.6*
