@@ -1,6 +1,4 @@
 # ContentSplit — Tier Limits Reference
-### Source of Truth: ContentSplit PRD v2.1 Section 8
-### Team 6 — 10th Cohort Capstone | April 2026
 
 ---
 
@@ -17,7 +15,7 @@ If pricing or limits change, update this file only.
 ## Tier Overview
 
 ContentSplit uses a freemium model with three tiers.
-Source: PRD Section 8
+
 
 | Tier | Name | Price | Target User |
 |---|---|---|---|
@@ -27,7 +25,7 @@ Source: PRD Section 8
 
 ---
 
-## Full Limits Table (PRD Section 8)
+## Full Limits Table 
 
 | Feature | Free — Starter | Pro — $12/month | Agency — $35/month |
 |---|---|---|---|
@@ -45,12 +43,12 @@ Source: PRD Section 8
 ## Enforcement Rules
 
 All limits must be enforced at the backend level — not just in the UI.
-Source: PRD Section 10.3
+
 
 ### Monthly Conversion Limit Enforcement
 
 Checked in: Skill 1 — Content Conversion, Step 1
-Enforced by: User Service (PRD Section 10.3)
+Enforced by: User Service 
 Table used: `usage_logs` — count rows where `action_type = 'conversion'`
 and `user_id` matches and `timestamp` is within the current month
 
@@ -62,7 +60,7 @@ If limit reached:
 ### Tone Mode Enforcement
 
 Checked in: Skill 1 — Content Conversion, Step 4
-Enforced by: Conversion Service (PRD Section 10.3)
+Enforced by: Conversion Service 
 
 If a Free tier user submits `casual` or `punchy`:
 - Silently override to `professional`
@@ -71,7 +69,7 @@ If a Free tier user submits `casual` or `punchy`:
 ### Regeneration Limit Enforcement
 
 Checked in: Skill 4 — Regeneration, Step 1
-Enforced by: User Service (PRD Section 10.3)
+Enforced by: User Service 
 Table used: `outputs` — read `regeneration_count` for this output
 
 If limit reached:
@@ -81,7 +79,7 @@ If limit reached:
 
 ### History Limit Enforcement
 
-Enforced by: History Service (PRD Section 10.3)
+Enforced by: History Service 
 Applied on: History retrieval query
 
 Query must use `LIMIT` and `ORDER BY created_at DESC` to return
@@ -106,7 +104,7 @@ Source: references/error-codes.md
 
 ---
 
-## Free Tier Design Note (PRD Section 8)
+## Free Tier Design Note 
 
 The free tier is designed to:
 - Provide genuine value and build the habit of use
@@ -119,7 +117,7 @@ real value — not so restrictive it frustrates before habit forms.
 
 ---
 
-## Pro Tier Design Note (PRD Section 8)
+## Pro Tier Design Note
 
 Priced at $12/month to be affordable for solo professionals in African
 markets where SaaS purchasing power differs from Western benchmarks.
@@ -127,17 +125,15 @@ This is a deliberate strategic decision, not an oversight.
 
 ---
 
-## Agency Tier Design Note (PRD Section 8)
+## Agency Tier Design Note 
 
 Priced at $35/month to fit agency operational budgets without requiring
 enterprise procurement cycles. Multi-user workspaces (up to 10 members)
 and per-client brand voice profiles are the key differentiators.
 
-Note: Brand voice profiles and team workspaces are v1.0 Agency features
-per PRD Section 8 but the detailed implementation is a Phase 4 roadmap
-item per PRD Section 7. Confirm with team lead before building.
+
+
 
 ---
 
-*tier-limits.md — Team 6, 10th Cohort Capstone | April 2026*
-*Source of truth: ContentSplit PRD v2.1 Section 8*
+

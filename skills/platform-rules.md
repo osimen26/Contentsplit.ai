@@ -1,6 +1,5 @@
 # ContentSplit — Platform Rules Reference
-### Source of Truth: ContentSplit PRD v2.1 Section 6.2 and Section 11
-### Team 6 — 10th Cohort Capstone | April 2026
+
 
 ---
 
@@ -25,7 +24,7 @@ Source: PRD v2.1 Section 11
 TWITTER_CHAR_LIMIT = 280
 ```
 
-### Rules (PRD Section 6.2)
+### Rules 
 
 | Rule | Value | Notes |
 |---|---|---|
@@ -53,9 +52,9 @@ Generate a numbered Twitter/X thread. Rules:
 ### Frontend Display (PRD Section 6.2)
 - Thread preview shows tweets in reading sequence
 - Tab badge shows total tweet count before user opens the tab
-  Source: PRD Section 6.10
 
-### Risk Note (PRD Section 11)
+
+### Risk Note 
 If Twitter changes its character limit, update `TWITTER_CHAR_LIMIT`
 in backend config only. No code changes required.
 
@@ -68,7 +67,7 @@ in backend config only. No code changes required.
 LINKEDIN_CHAR_LIMIT = 1300
 ```
 
-### Rules (PRD Section 6.2)
+### Rules 
 
 | Rule | Value | Notes |
 |---|---|---|
@@ -96,7 +95,7 @@ Generate a LinkedIn post. Rules:
 - Must contain an identifiable closing CTA
 - Do not truncate text manually to hit the limit — request a revision
 
-### Risk Note (PRD Section 11)
+### Risk Note 
 If LinkedIn changes its recommended post length, update
 `LINKEDIN_CHAR_LIMIT` in backend config only.
 
@@ -110,7 +109,7 @@ INSTAGRAM_HASHTAG_MIN = 10
 INSTAGRAM_HASHTAG_MAX = 15
 ```
 
-### Rules (PRD Section 6.2)
+### Rules 
 
 | Rule | Value | Notes |
 |---|---|---|
@@ -142,7 +141,7 @@ Generate an Instagram caption. Rules:
 - Every hashtag must begin with `#`
 - Hashtags must not be embedded inside the caption string
 
-### Frontend Display (PRD Section 6.9)
+### Frontend Display 
 - Caption and hashtags have separate Copy buttons
 - The separate hashtag copy button is a NICE TO HAVE feature in v1.0
 - This separation is why hashtags must always be a separate array field
@@ -151,7 +150,7 @@ Generate an Instagram caption. Rules:
 
 ## Platform 4 — Email Newsletter Intro
 
-### Rules (PRD Section 6.2)
+### Rules 
 
 | Rule | Value | Notes |
 |---|---|---|
@@ -181,7 +180,7 @@ Generate an email newsletter intro paragraph. Rules:
 
 ---
 
-## Tone Definitions (PRD Section 6.3)
+## Tone Definitions 
 
 Tone applies across all four platform outputs simultaneously.
 One tone selection affects all four outputs.
@@ -193,7 +192,7 @@ One tone selection affects all four outputs.
 | `punchy` | Short sentences, bold statements, high energy | Pro and Agency only |
 
 Free tier users are locked to `professional` only.
-Source: PRD Section 8
+
 
 ---
 
@@ -211,5 +210,3 @@ Source: PRD Section 4.2
 
 ---
 
-*platform-rules.md — Team 6, 10th Cohort Capstone | April 2026*
-*Source of truth: ContentSplit PRD v2.1 Sections 6.2, 6.3, 6.9, 6.10, 8, 11*
