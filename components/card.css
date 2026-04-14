@@ -8,31 +8,40 @@
 .card-elevated,
 .card-filled,
 .card-outlined {
-  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
-  border-radius: var(--sys-radius-card);
+  background-color: var(--sys-color-neutral-100);
+  border-radius: var(--sys-radius-xl);
   overflow: hidden;
-  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
 }
 
 /* 1. Elevated Card */
 .card-elevated {
-  box-shadow: var(--sys-elevation-1);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.04),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--sys-color-neutral-95);
 }
 
 .card-elevated:hover {
-  box-shadow: var(--sys-elevation-2);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+  border-color: var(--sys-color-neutral-90);
   cursor: pointer;
+  transform: translateY(-2px);
 }
 
 /* 2. Filled Card */
 .card-filled {
-  border: 1px solid var(--sys-color-neutral-90);
+  border: 1px solid var(--sys-color-neutral-95);
+  background-color: var(--sys-color-neutral-98);
 }
 
 .card-filled:hover {
-  background-color: var(--sys-color-neutral-98);
-  border-color: var(--sys-color-neutral-80);
+  background-color: var(--sys-color-neutral-100);
+  border-color: var(--sys-color-neutral-90);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
 /* 3. Outlined Card */
@@ -41,7 +50,8 @@
 }
 
 .card-outlined:hover {
-  border-color: var(--sys-color-neutral-80);
+  border-color: var(--sys-color-neutral-70);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
 /* Card layouts */

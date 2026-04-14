@@ -22,26 +22,25 @@
   justify-content: center;
   box-sizing: border-box;
   vertical-align: middle;
-  
+
   /* Typography */
-  font-family: var(--sys-typography-label-small-font-family);
-  font-weight: var(--sys-typography-label-small-font-weight);
-  font-size: var(--sys-typography-label-small-font-size);
-  letter-spacing: var(--sys-typography-label-small-letter-spacing);
-  line-height: var(--sys-typography-label-small-line-height);
-  text-transform: uppercase;
+  font-family: var(--sys-typography-body-medium-font-family);
+  font-weight: 500;
+  font-size: var(--sys-typography-body-medium-font-size);
+  letter-spacing: 0.01em;
+  line-height: 1.4;
   text-decoration: none;
   white-space: nowrap;
-  
+
   /* Visual */
-  border-radius: var(--sys-radius-button);
+  border-radius: var(--sys-radius-xl);
   border: none;
   cursor: pointer;
   user-select: none;
-  
+
   /* Interaction */
   transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
-  
+
   /* Accessibility */
   position: relative;
   overflow: hidden;
@@ -70,87 +69,124 @@
 
 /* 1. Filled Button (Primary action) */
 .button-filled {
-  background-color: var(--sys-color-roles-primary-color-role-primary-role);
-  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+  background: linear-gradient(135deg, var(--sys-color-primary-40), var(--sys-color-primary-60));
+  color: var(--sys-color-neutral-100);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 16px rgba(107, 97, 231, 0.2);
+  border: none;
 }
 
 .button-filled:hover {
-  background-color: var(--sys-color-primary-30); /* Darker shade */
-  box-shadow: var(--sys-elevation-1);
+  background: linear-gradient(135deg, var(--sys-color-primary-30), var(--sys-color-primary-50));
+  box-shadow: 0 6px 24px rgba(107, 97, 231, 0.3);
+  transform: translateY(-1px);
 }
 
 .button-filled:focus {
   outline: 2px solid var(--sys-color-primary-60);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  box-shadow:
+    0 4px 16px rgba(107, 97, 231, 0.2),
+    0 0 0 3px rgba(107, 97, 231, 0.1);
 }
 
 .button-filled:active {
-  background-color: var(--sys-color-primary-20);
-  box-shadow: var(--sys-elevation-0);
-  transform: translateY(1px);
+  background: linear-gradient(135deg, var(--sys-color-primary-50), var(--sys-color-primary-70));
+  box-shadow: 0 2px 8px rgba(107, 97, 231, 0.2);
+  transform: translateY(0);
 }
 
 /* 2. Outlined Button (Secondary action) */
 .button-outlined {
   background-color: transparent;
-  color: var(--sys-color-roles-primary-color-role-primary-role);
-  border: 1px solid var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-primary-40);
+  border: 2px solid var(--sys-color-primary-40);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .button-outlined:hover {
-  background-color: var(--sys-color-primary-95);
+  background-color: rgba(107, 97, 231, 0.04);
   border-color: var(--sys-color-primary-30);
+  box-shadow: 0 4px 16px rgba(107, 97, 231, 0.1);
+  transform: translateY(-1px);
 }
 
 .button-outlined:focus {
   outline: 2px solid var(--sys-color-primary-60);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px rgba(107, 97, 231, 0.1);
 }
 
 .button-outlined:active {
-  background-color: var(--sys-color-primary-90);
+  background-color: rgba(107, 97, 231, 0.08);
+  border-color: var(--sys-color-primary-50);
+  transform: translateY(0);
 }
 
 /* 3. Text Button (Low emphasis) */
 .button-text {
   background-color: transparent;
-  color: var(--sys-color-roles-primary-color-role-primary-role);
-  padding: 10px 12px; /* Specific to text buttons */
+  color: var(--sys-color-primary-40);
+  padding: 10px 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .button-text:hover {
-  background-color: var(--sys-color-primary-95); /* Equivalent to rgba(primary, 0.04) */
+  background-color: rgba(107, 97, 231, 0.04);
+  color: var(--sys-color-primary-30);
+  transform: translateY(-1px);
 }
 
 .button-text:focus {
   outline: 2px solid var(--sys-color-primary-60);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  background-color: rgba(107, 97, 231, 0.08);
 }
 
 .button-text:active {
-  background-color: var(--sys-color-primary-90); /* Equivalent to rgba(primary, 0.12) */
+  background-color: rgba(107, 97, 231, 0.12);
+  transform: translateY(0);
 }
 
 /* 4. Elevated Button (Floating appearance) */
 .button-elevated {
-  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
-  color: var(--sys-color-roles-primary-color-role-primary-role);
-  box-shadow: var(--sys-elevation-1);
+  background-color: var(--sys-color-neutral-100);
+  color: var(--sys-color-primary-40);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--sys-color-neutral-95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .button-elevated:hover {
-  box-shadow: var(--sys-elevation-2);
-  background-color: var(--sys-color-neutral-95);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+  background-color: var(--sys-color-neutral-100);
+  transform: translateY(-2px);
+  border-color: var(--sys-color-neutral-90);
 }
 
 .button-elevated:focus {
   outline: 2px solid var(--sys-color-primary-60);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 0 0 3px rgba(107, 97, 231, 0.1);
 }
 
 .button-elevated:active {
-  box-shadow: var(--sys-elevation-0);
-  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transform: translateY(0);
 }
 
 /* 5. Tonal Button (Secondary container) */
@@ -281,7 +317,7 @@
   .button {
     min-height: 44px; /* Minimum touch target size */
   }
-  
+
   .button-small {
     min-height: 44px;
   }

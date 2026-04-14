@@ -12,7 +12,7 @@
   --sys-select-border-width: 1px;
   --sys-select-padding: var(--sys-spacing-sm) var(--sys-spacing-md);
   --sys-select-gap: var(--sys-spacing-xs);
-  
+
   /* Label styles */
   --sys-select-label-font-family: var(--sys-typography-label-small-font-family);
   --sys-select-label-font-size: var(--sys-typography-label-small-font-size);
@@ -20,7 +20,7 @@
   --sys-select-label-line-height: var(--sys-typography-label-small-line-height);
   --sys-select-label-color: var(--sys-color-neutral-30);
   --sys-select-label-gap: var(--sys-spacing-xs);
-  
+
   /* Trigger styles */
   --sys-select-trigger-height: 56px;
   --sys-select-trigger-padding: var(--sys-spacing-sm) var(--sys-spacing-md);
@@ -28,7 +28,7 @@
   --sys-select-trigger-hover-background: var(--sys-color-neutral-98);
   --sys-select-trigger-focus-border-color: var(--sys-color-roles-primary-color-role-primary-role);
   --sys-select-trigger-focus-border-width: 2px;
-  
+
   /* Selected value styles */
   --sys-select-value-font-family: var(--sys-typography-body-text-font-family);
   --sys-select-value-font-size: var(--sys-typography-body-text-font-size);
@@ -36,14 +36,14 @@
   --sys-select-value-line-height: var(--sys-typography-body-text-line-height);
   --sys-select-value-color: var(--sys-color-neutral-10);
   --sys-select-value-placeholder-color: var(--sys-color-neutral-60);
-  
+
   /* Dropdown arrow styles */
   --sys-select-arrow-size: 24px;
   --sys-select-arrow-color: var(--sys-color-neutral-50);
   --sys-select-arrow-rotation: 0deg;
   --sys-select-arrow-open-rotation: 180deg;
   --sys-select-arrow-transition: transform 0.2s ease;
-  
+
   /* Menu styles */
   --sys-select-menu-background: var(--sys-color-neutral-100);
   --sys-select-menu-border-radius: var(--sys-radius-md);
@@ -52,7 +52,7 @@
   --sys-select-menu-max-height: 300px;
   --sys-select-menu-min-width: 200px;
   --sys-select-menu-z-index: 1000;
-  
+
   /* Option styles */
   --sys-select-option-height: 48px;
   --sys-select-option-padding: var(--sys-spacing-sm) var(--sys-spacing-md);
@@ -64,7 +64,7 @@
   --sys-select-option-hover-background: var(--sys-color-neutral-98);
   --sys-select-option-selected-background: var(--sys-color-primary-95);
   --sys-select-option-selected-color: var(--sys-color-roles-primary-color-role-primary-role);
-  
+
   /* Helper text styles */
   --sys-select-helper-font-family: var(--sys-typography-label-small-font-family);
   --sys-select-helper-font-size: var(--sys-typography-label-small-font-size);
@@ -109,12 +109,15 @@
 
 .select-filled-trigger:hover {
   background-color: var(--sys-select-trigger-hover-background);
+  border-color: var(--sys-color-neutral-60);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .select-filled-trigger:focus-within {
   border-color: var(--sys-select-trigger-focus-border-color);
   border-width: var(--sys-select-trigger-focus-border-width);
   outline: none;
+  box-shadow: 0 0 0 2px rgba(107, 97, 231, 0.2);
 }
 
 .select-filled-value {
@@ -182,12 +185,14 @@
 
 .select-outlined-trigger:hover {
   border-color: var(--sys-color-neutral-60);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .select-outlined-trigger:focus-within {
   border-color: var(--sys-select-trigger-focus-border-color);
   border-width: var(--sys-select-trigger-focus-border-width);
   outline: none;
+  box-shadow: 0 0 0 2px rgba(107, 97, 231, 0.2);
 }
 
 /* Multi-Select */
@@ -416,8 +421,12 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .select-loading-option {
@@ -451,7 +460,7 @@
 }
 
 .select-error-message::before {
-  content: "⚠";
+  content: '⚠';
   font-size: 1.2em;
 }
 
@@ -575,7 +584,7 @@
     height: 48px;
     padding: var(--sys-spacing-xs) var(--sys-spacing-md);
   }
-  
+
   .select-menu {
     position: fixed;
     top: auto;
@@ -586,12 +595,12 @@
     border-radius: var(--sys-radius-lg) var(--sys-radius-lg) 0 0;
     animation: bottom-sheet-slide-up 0.3s ease-out;
   }
-  
+
   .select-option {
     height: 56px;
     padding: var(--sys-spacing-md) var(--sys-spacing-lg);
   }
-  
+
   .select-multi-chip {
     font-size: var(--sys-typography-label-small-font-size);
     padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
@@ -603,7 +612,7 @@
   .select-menu {
     max-width: 400px;
   }
-  
+
   .select-autocomplete-dropdown {
     max-width: 400px;
   }
@@ -614,7 +623,7 @@
   .select-menu {
     max-width: 300px;
   }
-  
+
   .select-autocomplete-dropdown {
     max-width: 300px;
   }

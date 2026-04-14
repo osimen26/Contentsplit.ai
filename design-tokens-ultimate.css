@@ -726,7 +726,21 @@
   --sys-radius-md: 8px;
   --sys-radius-lg: 12px;
   --sys-radius-xl: 16px;
+  --sys-radius-2xl: 24px;
+  --sys-radius-button: 12px;
+  --sys-radius-card: 16px;
+  --sys-radius-input: var(--sys-radius-sm);
+  --sys-radius-modal: var(--sys-radius-lg);
+  --sys-radius-avatar: var(--sys-radius-full);
+  --sys-radius-badge: var(--sys-radius-xs);
   --sys-radius-full: 9999px;
+  /* Elevation tokens */
+  --sys-elevation-0: none;
+  --sys-elevation-1: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+  --sys-elevation-2: 0 3px 6px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12);
+  --sys-elevation-3: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+  --sys-elevation-4: 0 20px 40px rgba(0, 0, 0, 0.12), 0 10px 10px rgba(0, 0, 0, 0.08);
+  --sys-elevation-5: 0 40px 80px rgba(0, 0, 0, 0.15), 0 20px 20px rgba(0, 0, 0, 0.1);
   --sys-color-roles-primary-color-role-primary-role: var(--sys-color-primary);
   --sys-color-roles-primary-color-role-on-primary-role: var(--sys-color-primary-90);
   --sys-color-roles-primary-color-role-primary-container-role: var(--sys-color-primary-100);
@@ -752,9 +766,15 @@
   --sys-color-roles-error-color-role-error-container-role: var(--sys-color-error-90);
   --sys-color-roles-error-color-role-on-error-container-role: var(--sys-color-error-30);
   --sys-color-roles-neutral-variant-color-role-neutral-variant: var(--sys-color-neutral-variant);
-  --sys-color-roles-neutral-variant-color-role-on-neutral-variant: var(--sys-color-neutral-variant-100);
-  --sys-color-roles-neutral-variant-color-role-neutral-v-container-role: var(--sys-color-neutral-variant-90);
-  --sys-color-roles-neutral-variant-color-role-on-neutral-v-container: var(--sys-color-neutral-variant-30);
+  --sys-color-roles-neutral-variant-color-role-on-neutral-variant: var(
+    --sys-color-neutral-variant-100
+  );
+  --sys-color-roles-neutral-variant-color-role-neutral-v-container-role: var(
+    --sys-color-neutral-variant-90
+  );
+  --sys-color-roles-neutral-variant-color-role-on-neutral-v-container: var(
+    --sys-color-neutral-variant-30
+  );
   --sys-color-roles-success-color-role-success-color-role: var(--sys-color-success);
   --sys-color-roles-success-color-role-on-success-color-role: var(--sys-color-success-100);
   --sys-color-roles-success-color-role-success-container-role: var(--sys-color-success-90);
@@ -765,23 +785,39 @@
   --sys-typography-display-large-font-weight: var(--sys-font-display-large-regular-font-weight);
   --sys-typography-display-large-font-style: var(--sys-font-display-large-regular-font-style);
   --sys-typography-display-large-font-stretch: var(--sys-font-display-large-regular-font-stretch);
-  --sys-typography-display-large-letter-spacing: var(--sys-font-display-large-regular-letter-spacing);
+  --sys-typography-display-large-letter-spacing: var(
+    --sys-font-display-large-regular-letter-spacing
+  );
   --sys-typography-display-large-line-height: var(--sys-font-display-large-regular-line-height);
-  --sys-typography-display-large-paragraph-indent: var(--sys-font-display-large-regular-paragraph-indent);
-  --sys-typography-display-large-paragraph-spacing: var(--sys-font-display-large-regular-paragraph-spacing);
+  --sys-typography-display-large-paragraph-indent: var(
+    --sys-font-display-large-regular-paragraph-indent
+  );
+  --sys-typography-display-large-paragraph-spacing: var(
+    --sys-font-display-large-regular-paragraph-spacing
+  );
   --sys-typography-display-large-text-case: var(--sys-font-display-large-regular-text-case);
-  --sys-typography-display-large-text-decoration: var(--sys-font-display-large-regular-text-decoration);
+  --sys-typography-display-large-text-decoration: var(
+    --sys-font-display-large-regular-text-decoration
+  );
   --sys-typography-display-small-font-size: var(--sys-font-display-small-regular-font-size);
   --sys-typography-display-small-font-family: var(--sys-font-display-small-regular-font-family);
   --sys-typography-display-small-font-weight: var(--sys-font-display-small-regular-font-weight);
   --sys-typography-display-small-font-style: var(--sys-font-display-small-regular-font-style);
   --sys-typography-display-small-font-stretch: var(--sys-font-display-small-regular-font-stretch);
-  --sys-typography-display-small-letter-spacing: var(--sys-font-display-small-regular-letter-spacing);
+  --sys-typography-display-small-letter-spacing: var(
+    --sys-font-display-small-regular-letter-spacing
+  );
   --sys-typography-display-small-line-height: var(--sys-font-display-small-regular-line-height);
-  --sys-typography-display-small-paragraph-indent: var(--sys-font-display-small-regular-paragraph-indent);
-  --sys-typography-display-small-paragraph-spacing: var(--sys-font-display-small-regular-paragraph-spacing);
+  --sys-typography-display-small-paragraph-indent: var(
+    --sys-font-display-small-regular-paragraph-indent
+  );
+  --sys-typography-display-small-paragraph-spacing: var(
+    --sys-font-display-small-regular-paragraph-spacing
+  );
   --sys-typography-display-small-text-case: var(--sys-font-display-small-regular-text-case);
-  --sys-typography-display-small-text-decoration: var(--sys-font-display-small-regular-text-decoration);
+  --sys-typography-display-small-text-decoration: var(
+    --sys-font-display-small-regular-text-decoration
+  );
   --sys-typography-heading-1-font-size: var(--sys-font-heading-1-regular-font-size);
   --sys-typography-heading-1-font-family: var(--sys-font-heading-1-regular-font-family);
   --sys-typography-heading-1-font-weight: var(--sys-font-heading-1-regular-font-weight);
@@ -822,8 +858,12 @@
   --sys-typography-title-large-font-stretch: var(--sys-font-title-large-regular-font-stretch);
   --sys-typography-title-large-letter-spacing: var(--sys-font-title-large-regular-letter-spacing);
   --sys-typography-title-large-line-height: var(--sys-font-title-large-regular-line-height);
-  --sys-typography-title-large-paragraph-indent: var(--sys-font-title-large-regular-paragraph-indent);
-  --sys-typography-title-large-paragraph-spacing: var(--sys-font-title-large-regular-paragraph-spacing);
+  --sys-typography-title-large-paragraph-indent: var(
+    --sys-font-title-large-regular-paragraph-indent
+  );
+  --sys-typography-title-large-paragraph-spacing: var(
+    --sys-font-title-large-regular-paragraph-spacing
+  );
   --sys-typography-title-large-text-case: var(--sys-font-title-large-regular-text-case);
   --sys-typography-title-large-text-decoration: var(--sys-font-title-large-regular-text-decoration);
   --sys-typography-title-medium-font-size: var(--sys-font-title-medium-regular-font-size);
@@ -833,10 +873,16 @@
   --sys-typography-title-medium-font-stretch: var(--sys-font-title-medium-regular-font-stretch);
   --sys-typography-title-medium-letter-spacing: var(--sys-font-title-medium-regular-letter-spacing);
   --sys-typography-title-medium-line-height: var(--sys-font-title-medium-regular-line-height);
-  --sys-typography-title-medium-paragraph-indent: var(--sys-font-title-medium-regular-paragraph-indent);
-  --sys-typography-title-medium-paragraph-spacing: var(--sys-font-title-medium-regular-paragraph-spacing);
+  --sys-typography-title-medium-paragraph-indent: var(
+    --sys-font-title-medium-regular-paragraph-indent
+  );
+  --sys-typography-title-medium-paragraph-spacing: var(
+    --sys-font-title-medium-regular-paragraph-spacing
+  );
   --sys-typography-title-medium-text-case: var(--sys-font-title-medium-regular-text-case);
-  --sys-typography-title-medium-text-decoration: var(--sys-font-title-medium-regular-text-decoration);
+  --sys-typography-title-medium-text-decoration: var(
+    --sys-font-title-medium-regular-text-decoration
+  );
   --sys-typography-title-small-font-size: var(--sys-font-title-small-regular-font-size);
   --sys-typography-title-small-font-family: var(--sys-font-title-small-regular-font-family);
   --sys-typography-title-small-font-weight: var(--sys-font-title-small-regular-font-weight);
@@ -844,8 +890,12 @@
   --sys-typography-title-small-font-stretch: var(--sys-font-title-small-regular-font-stretch);
   --sys-typography-title-small-letter-spacing: var(--sys-font-title-small-regular-letter-spacing);
   --sys-typography-title-small-line-height: var(--sys-font-title-small-regular-line-height);
-  --sys-typography-title-small-paragraph-indent: var(--sys-font-title-small-regular-paragraph-indent);
-  --sys-typography-title-small-paragraph-spacing: var(--sys-font-title-small-regular-paragraph-spacing);
+  --sys-typography-title-small-paragraph-indent: var(
+    --sys-font-title-small-regular-paragraph-indent
+  );
+  --sys-typography-title-small-paragraph-spacing: var(
+    --sys-font-title-small-regular-paragraph-spacing
+  );
   --sys-typography-title-small-text-case: var(--sys-font-title-small-regular-text-case);
   --sys-typography-title-small-text-decoration: var(--sys-font-title-small-regular-text-decoration);
   --sys-typography-paragraph-text-font-size: var(--sys-font-paragraph-text-regular-font-size);
@@ -853,12 +903,20 @@
   --sys-typography-paragraph-text-font-weight: var(--sys-font-paragraph-text-regular-font-weight);
   --sys-typography-paragraph-text-font-style: var(--sys-font-paragraph-text-regular-font-style);
   --sys-typography-paragraph-text-font-stretch: var(--sys-font-paragraph-text-regular-font-stretch);
-  --sys-typography-paragraph-text-letter-spacing: var(--sys-font-paragraph-text-regular-letter-spacing);
+  --sys-typography-paragraph-text-letter-spacing: var(
+    --sys-font-paragraph-text-regular-letter-spacing
+  );
   --sys-typography-paragraph-text-line-height: var(--sys-font-paragraph-text-regular-line-height);
-  --sys-typography-paragraph-text-paragraph-indent: var(--sys-font-paragraph-text-regular-paragraph-indent);
-  --sys-typography-paragraph-text-paragraph-spacing: var(--sys-font-paragraph-text-regular-paragraph-spacing);
+  --sys-typography-paragraph-text-paragraph-indent: var(
+    --sys-font-paragraph-text-regular-paragraph-indent
+  );
+  --sys-typography-paragraph-text-paragraph-spacing: var(
+    --sys-font-paragraph-text-regular-paragraph-spacing
+  );
   --sys-typography-paragraph-text-text-case: var(--sys-font-paragraph-text-regular-text-case);
-  --sys-typography-paragraph-text-text-decoration: var(--sys-font-paragraph-text-regular-text-decoration);
+  --sys-typography-paragraph-text-text-decoration: var(
+    --sys-font-paragraph-text-regular-text-decoration
+  );
   --sys-typography-body-text-font-size: var(--sys-font-body-text-regular-font-size);
   --sys-typography-body-text-font-family: var(--sys-font-body-text-regular-font-family);
   --sys-typography-body-text-font-weight: var(--sys-font-body-text-regular-font-weight);
@@ -874,13 +932,23 @@
   --sys-typography-body-small-text-font-family: var(--sys-font-body-small-text-regular-font-family);
   --sys-typography-body-small-text-font-weight: var(--sys-font-body-small-text-regular-font-weight);
   --sys-typography-body-small-text-font-style: var(--sys-font-body-small-text-regular-font-style);
-  --sys-typography-body-small-text-font-stretch: var(--sys-font-body-small-text-regular-font-stretch);
-  --sys-typography-body-small-text-letter-spacing: var(--sys-font-body-small-text-regular-letter-spacing);
+  --sys-typography-body-small-text-font-stretch: var(
+    --sys-font-body-small-text-regular-font-stretch
+  );
+  --sys-typography-body-small-text-letter-spacing: var(
+    --sys-font-body-small-text-regular-letter-spacing
+  );
   --sys-typography-body-small-text-line-height: var(--sys-font-body-small-text-regular-line-height);
-  --sys-typography-body-small-text-paragraph-indent: var(--sys-font-body-small-text-regular-paragraph-indent);
-  --sys-typography-body-small-text-paragraph-spacing: var(--sys-font-body-small-text-regular-paragraph-spacing);
+  --sys-typography-body-small-text-paragraph-indent: var(
+    --sys-font-body-small-text-regular-paragraph-indent
+  );
+  --sys-typography-body-small-text-paragraph-spacing: var(
+    --sys-font-body-small-text-regular-paragraph-spacing
+  );
   --sys-typography-body-small-text-text-case: var(--sys-font-body-small-text-regular-text-case);
-  --sys-typography-body-small-text-text-decoration: var(--sys-font-body-small-text-regular-text-decoration);
+  --sys-typography-body-small-text-text-decoration: var(
+    --sys-font-body-small-text-regular-text-decoration
+  );
   --sys-typography-small-text-font-size: var(--sys-font-small-text-regular-font-size);
   --sys-typography-small-text-font-family: var(--sys-font-small-text-regular-font-family);
   --sys-typography-small-text-font-weight: var(--sys-font-small-text-regular-font-weight);
@@ -889,7 +957,9 @@
   --sys-typography-small-text-letter-spacing: var(--sys-font-small-text-regular-letter-spacing);
   --sys-typography-small-text-line-height: var(--sys-font-small-text-regular-line-height);
   --sys-typography-small-text-paragraph-indent: var(--sys-font-small-text-regular-paragraph-indent);
-  --sys-typography-small-text-paragraph-spacing: var(--sys-font-small-text-regular-paragraph-spacing);
+  --sys-typography-small-text-paragraph-spacing: var(
+    --sys-font-small-text-regular-paragraph-spacing
+  );
   --sys-typography-small-text-text-case: var(--sys-font-small-text-regular-text-case);
   --sys-typography-small-text-text-decoration: var(--sys-font-small-text-regular-text-decoration);
   --sys-typography-label-small-font-size: var(--sys-font-label-small-regular-font-size);
@@ -899,8 +969,12 @@
   --sys-typography-label-small-font-stretch: var(--sys-font-label-small-regular-font-stretch);
   --sys-typography-label-small-letter-spacing: var(--sys-font-label-small-regular-letter-spacing);
   --sys-typography-label-small-line-height: var(--sys-font-label-small-regular-line-height);
-  --sys-typography-label-small-paragraph-indent: var(--sys-font-label-small-regular-paragraph-indent);
-  --sys-typography-label-small-paragraph-spacing: var(--sys-font-label-small-regular-paragraph-spacing);
+  --sys-typography-label-small-paragraph-indent: var(
+    --sys-font-label-small-regular-paragraph-indent
+  );
+  --sys-typography-label-small-paragraph-spacing: var(
+    --sys-font-label-small-regular-paragraph-spacing
+  );
   --sys-typography-label-small-text-case: var(--sys-font-label-small-regular-text-case);
   --sys-typography-label-small-text-decoration: var(--sys-font-label-small-regular-text-decoration);
 }
