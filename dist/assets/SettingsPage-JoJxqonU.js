@@ -1,0 +1,2 @@
+import{i as e,r as t}from"./LoadingState-C4xhpJSA.js";import{r as n}from"./application-Df7cwKQC.js";e();var r=t(),i=()=>(0,r.jsx)(n,{});export{i as default};
+//# sourceMappingURL=SettingsPage-JoJxqonU.js.map

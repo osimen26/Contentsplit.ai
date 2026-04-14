@@ -6,11 +6,14 @@ import './styles/global.css'
 // Layouts
 import MainLayout from '@/layouts/MainLayout'
 
-// Pages
-import DashboardPage from '@pages/DashboardPage'
-import ContentCreationPage from '@pages/ContentCreationPage'
-import HistoryPage from '@pages/HistoryPage'
-import SettingsPage from '@pages/SettingsPage'
+// Pages (lazy loaded)
+import { lazy, Suspense } from 'react'
+import { LoadingOverlay } from '@components/ui/LoadingState'
+
+const DashboardPage = lazy(() => import('@pages/DashboardPage'))
+const ContentCreationPage = lazy(() => import('@pages/ContentCreationPage'))
+const HistoryPage = lazy(() => import('@pages/HistoryPage'))
+const SettingsPage = lazy(() => import('@pages/SettingsPage'))
 
 // Contexts
 import { ThemeProvider } from '@contexts/ThemeContext'
@@ -31,14 +34,16 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <Router>
-            <Routes>
-              <Route path="/" element={<MainLayout />}>
-                <Route index element={<DashboardPage />} />
-                <Route path="create" element={<ContentCreationPage />} />
-                <Route path="history" element={<HistoryPage />} />
-                <Route path="settings" element={<SettingsPage />} />
-              </Route>
-            </Routes>
+            <Suspense fallback={<LoadingOverlay variant="ai-processing" />}>
+              <Routes>
+                <Route path="/" element={<MainLayout />}>
+                  <Route index element={<DashboardPage />} />
+                  <Route path="create" element={<ContentCreationPage />} />
+                  <Route path="history" element={<HistoryPage />} />
+                  <Route path="settings" element={<SettingsPage />} />
+                </Route>
+              </Routes>
+            </Suspense>
           </Router>
         </ThemeProvider>
       </AuthProvider>

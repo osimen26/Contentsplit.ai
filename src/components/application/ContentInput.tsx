@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { PlatformSelector, type Platform } from './PlatformSelector'
 import { ToneSelector, type Tone } from './ToneSelector'
 import { Button } from '@components/ui'
@@ -52,6 +52,36 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [content, setContent] = useState(initialContent)
   const [localSelectedPlatforms, setLocalSelectedPlatforms] = useState<string[]>(selectedPlatforms)
   const [localSelectedTone, setLocalSelectedTone] = useState(selectedTone)
+
+  const prevSelectedPlatformsRef = useRef(selectedPlatforms)
+  useEffect(() => {
+    if (
+      selectedPlatforms.length !== prevSelectedPlatformsRef.current.length ||
+      selectedPlatforms.some((p, i) => p !== prevSelectedPlatformsRef.current[i])
+    ) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocalSelectedPlatforms(selectedPlatforms)
+      prevSelectedPlatformsRef.current = selectedPlatforms
+    }
+  }, [selectedPlatforms])
+
+  const prevSelectedToneRef = useRef(selectedTone)
+  useEffect(() => {
+    if (selectedTone !== prevSelectedToneRef.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocalSelectedTone(selectedTone)
+      prevSelectedToneRef.current = selectedTone
+    }
+  }, [selectedTone])
+
+  const prevInitialContentRef = useRef(initialContent)
+  useEffect(() => {
+    if (initialContent !== prevInitialContentRef.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setContent(initialContent)
+      prevInitialContentRef.current = initialContent
+    }
+  }, [initialContent])
 
   // Helper functions for platform icons and limits
   const getDefaultPlatformIcon = (platformId: string): React.ReactNode => {
@@ -155,7 +185,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         : ''
 
   return (
-    <div className={`content-input-container ${className}`}>
+    <div className={`content-input-container ${className}`} data-testid="content-input-container">
       <div className="content-input-header">
         <div>
           <h3 className="content-input-title">{title}</h3>

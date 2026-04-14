@@ -63,7 +63,7 @@ export const PlatformSelector: React.FC<PlatformSelectorProps> = ({
   const gridClass = `platform-grid ${layout === 'compact' ? 'platform-grid-compact' : layout === 'expanded' ? 'platform-grid-expanded' : ''}`
 
   return (
-    <div className={containerClass}>
+    <div className={containerClass} data-testid="platform-selector-container">
       <div className="platform-selector-header">
         <div>
           <h3 className="platform-selector-title">{title}</h3>

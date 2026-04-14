@@ -62,7 +62,7 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({
   const selectedTone = tones.find((t) => t.id === selected[0])
 
   return (
-    <div className={containerClass}>
+    <div className={containerClass} data-testid="tone-selector-container">
       <div className="tone-selector-header">
         <div>
           <h3 className="tone-selector-title">{title}</h3>

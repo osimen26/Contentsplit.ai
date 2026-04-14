@@ -152,6 +152,7 @@ export const ConversionHistory: React.FC<ConversionHistoryProps> = ({
             className="input-filled"
             value={localFilters.platform || ''}
             onChange={(e) => handleFilterChange('platform', e.target.value || undefined)}
+            data-testid="platform-filter-select"
           >
             <option value="">All Platforms</option>
             <option value="twitter">Twitter</option>

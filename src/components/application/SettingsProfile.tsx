@@ -104,6 +104,7 @@ export const SettingsProfile: React.FC<SettingsProfileProps> = ({
                       className="field-input"
                       placeholder=" "
                       defaultValue="John Doe"
+                      data-testid="full-name-input"
                     />
                     <label className="field-label floating">Full Name</label>
                   </div>
@@ -115,13 +116,14 @@ export const SettingsProfile: React.FC<SettingsProfileProps> = ({
                       className="field-input"
                       placeholder=" "
                       defaultValue="john@example.com"
+                      data-testid="email-input"
                     />
                     <label className="field-label floating">Email Address</label>
                   </div>
                 </div>
                 <div className="form-field">
                   <div className="field-container">
-                    <select className="field-input field-select">
+                    <select className="field-input field-select" data-testid="timezone-select">
                       <option>UTC-5 (Eastern Time)</option>
                       <option>UTC-8 (Pacific Time)</option>
                       <option>UTC+0 (GMT)</option>
