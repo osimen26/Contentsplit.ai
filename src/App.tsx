@@ -4,11 +4,17 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import './styles/global.css'
 
 // Layouts
-import MainLayout from '@/layouts/MainLayout'
+import ClaudeLayout from '@/layouts/ClaudeLayout'
 
 // Pages (lazy loaded)
 import { lazy, Suspense } from 'react'
 import { LoadingOverlay } from '@components/ui/LoadingState'
+
+// Error Boundary
+import { ErrorBoundary } from '@components/ui/ErrorBoundary'
+
+// Analytics
+import { PageViewTracker } from '@components/analytics/PageViewTracker'
 
 const DashboardPage = lazy(() => import('@pages/DashboardPage'))
 const ContentCreationPage = lazy(() => import('@pages/ContentCreationPage'))
@@ -34,16 +40,19 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <Router>
-            <Suspense fallback={<LoadingOverlay variant="ai-processing" />}>
-              <Routes>
-                <Route path="/" element={<MainLayout />}>
-                  <Route index element={<DashboardPage />} />
-                  <Route path="create" element={<ContentCreationPage />} />
-                  <Route path="history" element={<HistoryPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-                </Route>
-              </Routes>
-            </Suspense>
+            <PageViewTracker />
+            <ErrorBoundary>
+              <Suspense fallback={<LoadingOverlay variant="ai-processing" />}>
+                <Routes>
+                  <Route path="/" element={<ClaudeLayout />}>
+                    <Route index element={<DashboardPage />} />
+                    <Route path="create" element={<ContentCreationPage />} />
+                    <Route path="history" element={<HistoryPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
+                  </Route>
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
           </Router>
         </ThemeProvider>
       </AuthProvider>

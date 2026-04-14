@@ -17,7 +17,7 @@
 .icon-outlined {
   fill: none;
   stroke: currentColor;
-  stroke-width: var(--sys-icon-stroke-width);
+  stroke-width: 2px;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -25,7 +25,7 @@
 .icon-rounded {
   fill: currentColor;
   stroke: none;
-  border-radius: var(--sys-icon-rounded-radius);
+  border-radius: 4px;
 }
 
 .icon-sharp {
@@ -35,28 +35,28 @@
 
 /* Icon Size Classes */
 .icon-xs {
-  width: var(--sys-icon-size-xs);
-  height: var(--sys-icon-size-xs);
+  width: 12px;
+  height: 12px;
 }
 
 .icon-sm {
-  width: var(--sys-icon-size-sm);
-  height: var(--sys-icon-size-sm);
+  width: 16px;
+  height: 16px;
 }
 
 .icon-md {
-  width: var(--sys-icon-size-md);
-  height: var(--sys-icon-size-md);
+  width: 24px;
+  height: 24px;
 }
 
 .icon-lg {
-  width: var(--sys-icon-size-lg);
-  height: var(--sys-icon-size-lg);
+  width: 32px;
+  height: 32px;
 }
 
 .icon-xl {
-  width: var(--sys-icon-size-xl);
-  height: var(--sys-icon-size-xl);
+  width: 40px;
+  height: 40px;
 }
 
 /* Icon Color Classes (Semantic) */
@@ -107,8 +107,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--sys-icon-button-size);
-  height: var(--sys-icon-button-size);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: none;
   border: none;
@@ -141,8 +141,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--sys-icon-button-size);
-  height: var(--sys-icon-button-size);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: none;
   border: none;
@@ -163,7 +163,7 @@
 .icon-with-text {
   display: inline-flex;
   align-items: center;
-  gap: var(--sys-icon-text-gap);
+  gap: 8px;
 }
 
 .icon-with-text .icon {

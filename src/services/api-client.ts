@@ -56,10 +56,10 @@ export interface PaginatedResponse<T> {
 class ApiClient {
   private client: AxiosInstance
 
-  constructor(baseURL = '/api') {
+  constructor(baseURL = import.meta.env.VITE_API_BASE_URL || '/api') {
     this.client = axios.create({
       baseURL,
-      timeout: 30000,
+      timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000', 10),
       headers: {
         'Content-Type': 'application/json',
       },
