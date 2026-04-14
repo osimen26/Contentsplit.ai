@@ -1,0 +1,133 @@
+/* ContentSplit Dark Theme Overrides
+ * Applies when .theme-dark class is present on root element
+ */
+
+.theme-dark {
+  /* Base color overrides for dark theme */
+  --sys-color-primary: #7c73ff;
+  --sys-color-secondary: #0db8ff;
+  --sys-color-neutral: #a0a4ac;
+  --sys-color-neutral-variant: #8b95ad;
+  --sys-color-accent: #ffb74d;
+  --sys-color-tertiary: #ab65ff;
+  --sys-color-warning: #ffeb3b;
+  --sys-color-success: #4caf50;
+  --sys-color-error: #f44336;
+
+  /* Neutral color scale inversion for dark theme */
+  --sys-color-neutral-0: #ffffff;
+  --sys-color-neutral-10: #f5f5f5;
+  --sys-color-neutral-20: #eeeeee;
+  --sys-color-neutral-30: #e0e0e0;
+  --sys-color-neutral-40: #bdbdbd;
+  --sys-color-neutral-50: #9e9e9e;
+  --sys-color-neutral-60: #757575;
+  --sys-color-neutral-70: #616161;
+  --sys-color-neutral-80: #424242;
+  --sys-color-neutral-90: #303030;
+  --sys-color-neutral-95: #212121;
+  --sys-color-neutral-98: #121212;
+  --sys-color-neutral-99: #0a0a0a;
+  --sys-color-neutral-100: #000000;
+
+  /* Primary color scale adjustment for dark theme */
+  --sys-color-primary-0: #ffffff;
+  --sys-color-primary-10: #e8e6ff;
+  --sys-color-primary-20: #c9c5ff;
+  --sys-color-primary-30: #a9a3ff;
+  --sys-color-primary-40: #8a82ff;
+  --sys-color-primary-50: #6b61ff;
+  --sys-color-primary-60: #574ce5;
+  --sys-color-primary-70: #443ac2;
+  --sys-color-primary-80: #3229a0;
+  --sys-color-primary-90: #21197d;
+  --sys-color-primary-95: #140e5b;
+  --sys-color-primary-98: #0a063a;
+  --sys-color-primary-99: #040219;
+  --sys-color-primary-100: #000000;
+
+  /* Background and surface colors */
+  --sys-color-background: var(--sys-color-neutral-98);
+  --sys-color-on-background: var(--sys-color-neutral-10);
+  --sys-color-surface: var(--sys-color-neutral-95);
+  --sys-color-on-surface: var(--sys-color-neutral-20);
+  --sys-color-surface-variant: var(--sys-color-neutral-90);
+  --sys-color-on-surface-variant: var(--sys-color-neutral-40);
+
+  /* Override color roles for dark theme */
+  --sys-color-roles-primary-color-role-primary-role: var(--sys-color-primary-80);
+  --sys-color-roles-primary-color-role-on-primary-role: var(--sys-color-primary-20);
+  --sys-color-roles-primary-color-role-primary-container-role: var(--sys-color-primary-30);
+  --sys-color-roles-primary-color-role-on-primary-container-role: var(--sys-color-primary-90);
+
+  --sys-color-roles-neutral-color-role-neutral-color-role: var(--sys-color-neutral-60);
+  --sys-color-roles-neutral-color-role-on-neutral-color-role: var(--sys-color-neutral-10);
+  --sys-color-roles-neutral-color-role-neutral-container-role: var(--sys-color-neutral-90);
+  --sys-color-roles-neutral-color-role-on-neutral-container-role: var(--sys-color-neutral-20);
+
+  --sys-color-roles-secondary-color-role-secondary-role: var(--sys-color-secondary-80);
+  --sys-color-roles-secondary-color-role-on-secondary-role: var(--sys-color-secondary-20);
+  --sys-color-roles-secondary-color-role-secondary-container: var(--sys-color-secondary-30);
+  --sys-color-roles-secondary-color-role-on-secondary-container: var(--sys-color-secondary-90);
+
+  --sys-color-roles-accent-color-role-accent-role: var(--sys-color-accent-80);
+  --sys-color-roles-accent-color-role-on-accent-color-role: var(--sys-color-accent-20);
+  --sys-color-roles-accent-color-role-accent-container-role: var(--sys-color-accent-30);
+  --sys-color-roles-accent-color-role-on-accent-container-role: var(--sys-color-accent-90);
+
+  --sys-color-roles-error-color-role-error-role: var(--sys-color-error);
+  --sys-color-roles-error-color-role-on-error-color-role: var(--sys-color-neutral-10);
+  --sys-color-roles-error-color-role-error-container-role: var(--sys-color-error-90);
+  --sys-color-roles-error-color-role-on-error-container-role: var(--sys-color-error-20);
+
+  --sys-color-roles-success-color-role-success-color-role: var(--sys-color-success);
+  --sys-color-roles-success-color-role-on-success-color-role: var(--sys-color-neutral-10);
+  --sys-color-roles-success-color-role-success-container-role: var(--sys-color-success-90);
+  --sys-color-roles-success-color-role-on-success-container: var(--sys-color-success-20);
+
+  --sys-color-roles-disable-state: var(--sys-color-neutral-80);
+
+  /* Elevation adjustments for dark theme */
+  --sys-elevation-0: none;
+  --sys-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --sys-elevation-2: 0 2px 4px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0, 0, 0, 0.2);
+  --sys-elevation-3: 0 4px 8px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2);
+  --sys-elevation-4: 0 8px 16px rgba(0, 0, 0, 0.3), 0 12px 24px rgba(0, 0, 0, 0.2);
+  --sys-elevation-5: 0 16px 32px rgba(0, 0, 0, 0.3), 0 24px 48px rgba(0, 0, 0, 0.2);
+}
+
+/* Ensure dark theme applies to all elements */
+.theme-dark body {
+  background-color: var(--sys-color-background);
+  color: var(--sys-color-on-background);
+}
+
+/* Override specific component styles for dark theme */
+.theme-dark .card-elevated,
+.theme-dark .card-filled,
+.theme-dark .card-outlined {
+  background-color: var(--sys-color-surface);
+  color: var(--sys-color-on-surface);
+}
+
+.theme-dark .input-filled,
+.theme-dark .input-outlined,
+.theme-dark .input-standard {
+  background-color: var(--sys-color-surface-variant);
+  color: var(--sys-color-on-surface-variant);
+  border-color: var(--sys-color-neutral-70);
+}
+
+.theme-dark .button-filled {
+  background-color: var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+}
+
+.theme-dark .button-outlined {
+  border-color: var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+.theme-dark .button-text {
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+}
