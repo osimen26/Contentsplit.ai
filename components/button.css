@@ -51,19 +51,19 @@
 .button-small {
   height: var(--sys-button-height-small);
   padding: var(--sys-button-padding-small);
-  font-size: var(--sys-typography-small-text-fontsize); /* 12px - matches spec */
+  font-size: var(--sys-typography-small-text-font-size); /* 12px - matches spec */
 }
 
 .button-medium {
   height: var(--sys-button-height-medium);
   padding: var(--sys-button-padding-medium);
-  font-size: var(--sys-typography-label-medium-fontsize);
+  font-size: var(--sys-typography-label-large-font-size);
 }
 
 .button-large {
   height: var(--sys-button-height-large);
   padding: var(--sys-button-padding-large);
-  font-size: var(--sys-typography-body-text-fontsize); /* 16px - matches spec */
+  font-size: var(--sys-typography-body-text-font-size); /* 16px - matches spec */
 }
 
 /* Button variants */

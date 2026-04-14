@@ -289,9 +289,9 @@ Object.keys(fontVarMap).forEach(category => {
   const baseFontVar = fontVarMap[category];
   // Create references for each property
   const properties = [
-    'fontsize', 'fontfamily', 'fontweight', 'fontstyle', 'fontstretch',
-    'letterspacing', 'lineheight', 'paragraphindent', 'paragraphspacing',
-    'textcase', 'textdecoration'
+    'font-size', 'font-family', 'font-weight', 'font-style', 'font-stretch',
+    'letter-spacing', 'line-height', 'paragraph-indent', 'paragraph-spacing',
+    'text-case', 'text-decoration'
   ];
   properties.forEach(prop => {
     const fontVar = `${baseFontVar}-${prop}`;

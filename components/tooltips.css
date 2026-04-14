@@ -1,0 +1,229 @@
+/* ContentSplit Tooltip Component
+ * 
+ * Implementation of Material Design 3 tooltip system using design tokens.
+ * Follows specifications in skills/tooltips.md
+ */
+
+:root {
+  /* Container Tokens */
+  --sys-tooltip-background: var(--sys-color-neutral-10);
+  --sys-tooltip-color: var(--sys-color-neutral-100);
+  --sys-tooltip-border-radius: var(--sys-radius-md);
+  --sys-tooltip-padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+  --sys-tooltip-max-width: 200px;
+  --sys-tooltip-min-width: 40px;
+  --sys-tooltip-elevation: var(--sys-elevation-3);
+  --sys-tooltip-z-index: 9999;
+  --sys-tooltip-font-family: var(--sys-typography-body-text-font-family);
+  --sys-tooltip-font-size: var(--sys-typography-body-text-font-size);
+  --sys-tooltip-line-height: var(--sys-typography-body-text-line-height);
+
+  /* Arrow/Pointer Tokens */
+  --sys-tooltip-arrow-size: 8px;
+  --sys-tooltip-arrow-color: var(--sys-color-neutral-10);
+  --sys-tooltip-arrow-offset: 4px;
+  --sys-tooltip-arrow-border: none;
+
+  /* Arrow positions */
+  --sys-tooltip-arrow-top-transform: translateX(-50%);
+  --sys-tooltip-arrow-bottom-transform: translateX(-50%) rotate(180deg);
+  --sys-tooltip-arrow-left-transform: translateY(-50%) rotate(-90deg);
+  --sys-tooltip-arrow-right-transform: translateY(-50%) rotate(90deg);
+
+  /* Rich Tooltip Tokens */
+  --sys-tooltip-rich-background: var(--sys-color-neutral-100);
+  --sys-tooltip-rich-color: var(--sys-color-neutral-10);
+  --sys-tooltip-rich-border: 1px solid var(--sys-color-neutral-95);
+  --sys-tooltip-rich-max-width: 320px;
+  --sys-tooltip-rich-padding: var(--sys-spacing-md);
+  --sys-tooltip-rich-gap: var(--sys-spacing-sm);
+
+  /* Title styles */
+  --sys-tooltip-title-font-family: var(--sys-typography-title-small-font-family);
+  --sys-tooltip-title-font-size: var(--sys-typography-title-small-font-size);
+  --sys-tooltip-title-font-weight: var(--sys-typography-title-small-font-weight);
+  --sys-tooltip-title-color: var(--sys-color-neutral-10);
+  --sys-tooltip-title-margin: 0 0 var(--sys-spacing-xs) 0;
+
+  /* Description styles */
+  --sys-tooltip-description-font-family: var(--sys-typography-body-text-font-family);
+  --sys-tooltip-description-font-size: var(--sys-typography-body-text-font-size);
+  --sys-tooltip-description-color: var(--sys-color-neutral-30);
+  --sys-tooltip-description-margin: 0 0 var(--sys-spacing-sm) 0;
+
+  /* Action area styles */
+  --sys-tooltip-actions-gap: var(--sys-spacing-sm);
+  --sys-tooltip-actions-margin: var(--sys-spacing-sm) 0 0 0;
+  --sys-tooltip-actions-justify: flex-end;
+
+  /* Interactive Tooltip Tokens */
+  --sys-tooltip-interactive-background: var(--sys-color-neutral-100);
+  --sys-tooltip-interactive-border: 1px solid var(--sys-color-neutral-95);
+  --sys-tooltip-interactive-max-width: 400px;
+  --sys-tooltip-interactive-padding: var(--sys-spacing-md);
+  --sys-tooltip-interactive-gap: var(--sys-spacing-md);
+
+  /* Form control styles */
+  --sys-tooltip-control-gap: var(--sys-spacing-sm);
+  --sys-tooltip-control-margin: var(--sys-spacing-sm) 0;
+  --sys-tooltip-control-label-font-family: var(--sys-typography-label-small-font-family);
+  --sys-tooltip-control-label-font-size: var(--sys-typography-label-small-font-size);
+  --sys-tooltip-control-label-color: var(--sys-color-neutral-30);
+
+  /* Button styles */
+  --sys-tooltip-button-gap: var(--sys-spacing-sm);
+  --sys-tooltip-button-justify: flex-end;
+
+  /* Teaching Tooltip Tokens */
+  --sys-tooltip-teaching-background: var(--sys-color-primary-95);
+  --sys-tooltip-teaching-color: var(--sys-color-neutral-10);
+  --sys-tooltip-teaching-border: 2px solid var(--sys-color-primary-40);
+  --sys-tooltip-teaching-max-width: 360px;
+  --sys-tooltip-teaching-padding: var(--sys-spacing-lg);
+  --sys-tooltip-teaching-gap: var(--sys-spacing-md);
+
+  /* Step indicator styles */
+  --sys-tooltip-step-size: 24px;
+  --sys-tooltip-step-background: var(--sys-color-neutral-90);
+  --sys-tooltip-step-active-background: var(--sys-color-primary-40);
+  --sys-tooltip-step-color: var(--sys-color-neutral-60);
+  --sys-tooltip-step-active-color: var(--sys-color-neutral-100);
+  --sys-tooltip-step-gap: var(--sys-spacing-xs);
+  --sys-tooltip-step-margin: 0 0 var(--sys-spacing-md) 0;
+
+  /* Navigation styles */
+  --sys-tooltip-nav-gap: var(--sys-spacing-md);
+  --sys-tooltip-nav-justify: space-between;
+  --sys-tooltip-dismiss-color: var(--sys-color-neutral-60);
+  --sys-tooltip-dismiss-hover-color: var(--sys-color-neutral-30);
+
+  /* Error Tooltip Tokens */
+  --sys-tooltip-error-background: var(--sys-color-roles-error-color-role-error-role-container);
+  --sys-tooltip-error-color: var(--sys-color-roles-error-color-role-error-role);
+  --sys-tooltip-error-border: 1px solid var(--sys-color-roles-error-color-role-error-role);
+  --sys-tooltip-error-max-width: 240px;
+  --sys-tooltip-error-padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+
+  /* Error icon styles */
+  --sys-tooltip-error-icon-size: 16px;
+  --sys-tooltip-error-icon-color: var(--sys-color-roles-error-color-role-error-role);
+  --sys-tooltip-error-icon-gap: var(--sys-spacing-xs);
+
+  /* Animation and timing */
+  --sys-tooltip-show-delay: 300ms;
+  --sys-tooltip-hide-delay: 0ms;
+  --sys-tooltip-show-duration: 150ms;
+  --sys-tooltip-hide-duration: 75ms;
+  --sys-tooltip-show-easing: ease-out;
+  --sys-tooltip-hide-easing: ease-in;
+  --sys-tooltip-interactive-show-delay: 0ms;
+  --sys-tooltip-interactive-hide-delay: 300ms;
+
+  /* Entrance animations */
+  --sys-tooltip-scale-from: 0.95;
+  --sys-tooltip-scale-to: 1;
+  --sys-tooltip-opacity-from: 0;
+  --sys-tooltip-opacity-to: 1;
+  --sys-tooltip-translate-distance: 8px;
+
+  /* State Tokens */
+  --sys-tooltip-hover-background: var(--sys-color-neutral-98);
+  --sys-tooltip-hover-color: var(--sys-color-neutral-10);
+  --sys-tooltip-focus-outline: 2px solid var(--sys-color-primary-40);
+  --sys-tooltip-focus-outline-offset: 2px;
+  --sys-tooltip-disabled-opacity: 0.6;
+  --sys-tooltip-disabled-cursor: not-allowed;
+}
+
+/* Base Tooltip Implementation */
+.tooltip {
+  position: absolute;
+  background-color: var(--sys-tooltip-background);
+  color: var(--sys-tooltip-color);
+  border-radius: var(--sys-tooltip-border-radius);
+  padding: var(--sys-tooltip-padding);
+  max-width: var(--sys-tooltip-max-width);
+  min-width: var(--sys-tooltip-min-width);
+  box-shadow: var(--sys-tooltip-elevation);
+  z-index: var(--sys-tooltip-z-index);
+  font-family: var(--sys-tooltip-font-family);
+  font-size: var(--sys-tooltip-font-size);
+  line-height: var(--sys-tooltip-line-height);
+  pointer-events: none;
+  user-select: none;
+  white-space: normal;
+  word-wrap: break-word;
+  opacity: 0;
+  transform: scale(var(--sys-tooltip-scale-from));
+  transition: 
+    opacity var(--sys-tooltip-show-duration) var(--sys-tooltip-show-easing),
+    transform var(--sys-tooltip-show-duration) var(--sys-tooltip-show-easing);
+}
+
+.tooltip.show {
+  opacity: var(--sys-tooltip-opacity-to);
+  transform: scale(var(--sys-tooltip-scale-to));
+  pointer-events: auto;
+}
+
+.tooltip.hide {
+  opacity: var(--sys-tooltip-opacity-from);
+  transform: scale(var(--sys-tooltip-scale-from));
+  transition: 
+    opacity var(--sys-tooltip-hide-duration) var(--sys-tooltip-hide-easing),
+    transform var(--sys-tooltip-hide-duration) var(--sys-tooltip-hide-easing);
+}
+
+/* Arrow/pointer */
+.tooltip::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: var(--sys-tooltip-arrow-size) solid transparent;
+}
+
+/* Position classes */
+.tooltip.top {
+  transform: translateY(calc(-100% - var(--sys-tooltip-arrow-offset)));
+}
+
+.tooltip.top::before {
+  bottom: calc(var(--sys-tooltip-arrow-size) * -2);
+  left: 50%;
+  transform: var(--sys-tooltip-arrow-top-transform);
+  border-top-color: var(--sys-tooltip-arrow-color);
+}
+
+.tooltip.bottom {
+  transform: translateY(var(--sys-tooltip-arrow-offset));
+}
+
+.tooltip.bottom::before {
+  top: calc(var(--sys-tooltip-arrow-size) * -2);
+  left: 50%;
+  transform: var(--sys-tooltip-arrow-bottom-transform);
+  border-bottom-color: var(--sys-tooltip-arrow-color);
+}
+
+.tooltip.left {
+  transform: translateX(calc(-100% - var(--sys-tooltip-arrow-offset)));
+}
+
+.tooltip.left::before {
+  right: calc(var(--sys-tooltip-arrow-size) * -2);
+  top: 50%;
+  transform: var(--sys-tooltip-arrow-left-transform);
+  border-left-color: var(--sys-tooltip-arrow-color);
+}
+
+.tooltip.right {
+  transform: translateX(var(--sys-tooltip-arrow-offset));
+}
+
+.tooltip.right::before {
+  left: calc(var(--sys-tooltip-arrow-size) * -2);
+  top: 50%;
+  transform: var(--sys-tooltip-arrow-right-transform);
+  border-right-color: var(--sys-tooltip-arrow-color);
+}

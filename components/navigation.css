@@ -1,0 +1,604 @@
+/* ContentSplit Navigation Component
+ * 
+ * Implementation of Material Design 3 navigation system using design tokens.
+ * Follows specifications in skills/navigation.md
+ */
+
+:root {
+  /* Top App Bar Tokens */
+  /* Container styles */
+  --sys-top-app-bar-height: 64px;
+  --sys-top-app-bar-background: var(--sys-color-neutral-100);
+  --sys-top-app-bar-elevation: var(--sys-elevation-2);
+  --sys-top-app-bar-padding: 0 var(--sys-spacing-lg);
+
+  /* Title styles */
+  --sys-top-app-bar-title-font-family: var(--sys-typography-title-large-font-family);
+  --sys-top-app-bar-title-font-size: var(--sys-typography-title-large-font-size);
+  --sys-top-app-bar-title-font-weight: var(--sys-typography-title-large-font-weight);
+  --sys-top-app-bar-title-color: var(--sys-color-neutral-10);
+
+  /* Icon styles */
+  --sys-top-app-bar-icon-size: 24px;
+  --sys-top-app-bar-icon-color: var(--sys-color-neutral-50);
+  --sys-top-app-bar-icon-hover-color: var(--sys-color-neutral-30);
+  --sys-top-app-bar-icon-active-color: var(--sys-color-primary-40);
+  --sys-top-app-bar-icon-gap: var(--sys-spacing-md);
+
+  /* Navigation Drawer Tokens */
+  /* Drawer container */
+  --sys-nav-drawer-width: 280px;
+  --sys-nav-drawer-background: var(--sys-color-neutral-100);
+  --sys-nav-drawer-elevation: var(--sys-elevation-3);
+  --sys-nav-drawer-padding: var(--sys-spacing-md);
+
+  /* Header styles */
+  --sys-nav-drawer-header-height: 128px;
+  --sys-nav-drawer-header-background: var(--sys-color-primary-95);
+  --sys-nav-drawer-header-padding: var(--sys-spacing-lg);
+
+  /* Item styles */
+  --sys-nav-drawer-item-height: 48px;
+  --sys-nav-drawer-item-padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+  --sys-nav-drawer-item-gap: var(--sys-spacing-md);
+  --sys-nav-drawer-item-font-family: var(--sys-typography-body-text-font-family);
+  --sys-nav-drawer-item-font-size: var(--sys-typography-body-text-font-size);
+  --sys-nav-drawer-item-color: var(--sys-color-neutral-30);
+  --sys-nav-drawer-item-active-color: var(--sys-color-primary-40);
+  --sys-nav-drawer-item-active-background: var(--sys-color-primary-98);
+  --sys-nav-drawer-item-hover-background: var(--sys-color-neutral-98);
+
+  /* Icon styles */
+  --sys-nav-drawer-icon-size: 20px;
+  --sys-nav-drawer-icon-color: var(--sys-color-neutral-50);
+  --sys-nav-drawer-icon-active-color: var(--sys-color-primary-40);
+
+  /* Divider styles */
+  --sys-nav-drawer-divider-color: var(--sys-color-neutral-95);
+  --sys-nav-drawer-divider-height: 1px;
+  --sys-nav-drawer-divider-margin: var(--sys-spacing-sm) 0;
+
+  /* Bottom Navigation Tokens */
+  /* Container styles */
+  --sys-bottom-nav-height: 80px;
+  --sys-bottom-nav-background: var(--sys-color-neutral-100);
+  --sys-bottom-nav-elevation: var(--sys-elevation-4);
+  --sys-bottom-nav-padding: var(--sys-spacing-xs) var(--sys-spacing-md);
+
+  /* Item styles */
+  --sys-bottom-nav-item-min-width: 80px;
+  --sys-bottom-nav-item-gap: var(--sys-spacing-xs);
+  --sys-bottom-nav-item-padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+  --sys-bottom-nav-item-active-color: var(--sys-color-primary-40);
+  --sys-bottom-nav-item-inactive-color: var(--sys-color-neutral-60);
+
+  /* Icon styles */
+  --sys-bottom-nav-icon-size: 24px;
+  --sys-bottom-nav-icon-active-color: var(--sys-color-primary-40);
+  --sys-bottom-nav-icon-inactive-color: var(--sys-color-neutral-60);
+
+  /* Label styles */
+  --sys-bottom-nav-label-font-family: var(--sys-typography-label-small-font-family);
+  --sys-bottom-nav-label-font-size: var(--sys-typography-label-small-font-size);
+  --sys-bottom-nav-label-active-color: var(--sys-color-primary-40);
+  --sys-bottom-nav-label-inactive-color: var(--sys-color-neutral-60);
+
+  /* Active indicator */
+  --sys-bottom-nav-active-indicator-height: 2px;
+  --sys-bottom-nav-active-indicator-color: var(--sys-color-primary-40);
+  --sys-bottom-nav-active-indicator-radius: var(--sys-radius-full);
+
+  /* Tabs Tokens */
+  /* Container styles */
+  --sys-tabs-height: 48px;
+  --sys-tabs-background: var(--sys-color-neutral-100);
+  --sys-tabs-padding: 0 var(--sys-spacing-md);
+  --sys-tabs-gap: var(--sys-spacing-lg);
+
+  /* Tab styles */
+  --sys-tab-min-width: 90px;
+  --sys-tab-padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+  --sys-tab-font-family: var(--sys-typography-label-large-font-family);
+  --sys-tab-font-size: var(--sys-typography-label-large-font-size);
+  --sys-tab-font-weight: var(--sys-typography-label-large-font-weight);
+  --sys-tab-color: var(--sys-color-neutral-60);
+  --sys-tab-active-color: var(--sys-color-primary-40);
+  --sys-tab-hover-color: var(--sys-color-neutral-30);
+
+  /* Indicator styles */
+  --sys-tab-indicator-height: 2px;
+  --sys-tab-indicator-color: var(--sys-color-primary-40);
+  --sys-tab-indicator-radius: var(--sys-radius-full);
+  --sys-tab-indicator-transition: transform 0.3s ease;
+
+  /* Scrollable tabs */
+  --sys-tabs-scroll-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --sys-tabs-scroll-button-size: 48px;
+
+  /* Breadcrumbs Tokens */
+  /* Container styles */
+  --sys-breadcrumbs-gap: var(--sys-spacing-xs);
+  --sys-breadcrumbs-padding: var(--sys-spacing-sm) 0;
+
+  /* Item styles */
+  --sys-breadcrumb-item-font-family: var(--sys-typography-body-text-font-family);
+  --sys-breadcrumb-item-font-size: var(--sys-typography-body-text-font-size);
+  --sys-breadcrumb-item-color: var(--sys-color-neutral-60);
+  --sys-breadcrumb-item-hover-color: var(--sys-color-neutral-30);
+  --sys-breadcrumb-item-active-color: var(--sys-color-neutral-10);
+
+  /* Separator styles */
+  --sys-breadcrumb-separator-size: 16px;
+  --sys-breadcrumb-separator-color: var(--sys-color-neutral-80);
+  --sys-breadcrumb-separator-margin: 0 var(--sys-spacing-xs);
+
+  /* Current page styles */
+  --sys-breadcrumb-current-font-weight: var(--sys-typography-body-text-bold-font-weight);
+  --sys-breadcrumb-current-color: var(--sys-color-neutral-10);
+
+  /* Stepper Tokens */
+  /* Container styles */
+  --sys-stepper-gap: var(--sys-spacing-lg);
+  --sys-stepper-padding: var(--sys-spacing-lg) 0;
+
+  /* Step styles */
+  --sys-step-size: 24px;
+  --sys-step-background: var(--sys-color-neutral-95);
+  --sys-step-active-background: var(--sys-color-primary-40);
+  --sys-step-completed-background: var(--sys-color-primary-40);
+  --sys-step-error-background: var(--sys-color-roles-error-color-role-error-role);
+  --sys-step-border-radius: var(--sys-radius-full);
+  --sys-step-border: 2px solid var(--sys-color-neutral-100);
+
+  /* Step label styles */
+  --sys-step-label-font-family: var(--sys-typography-body-text-font-family);
+  --sys-step-label-font-size: var(--sys-typography-body-text-font-size);
+  --sys-step-label-color: var(--sys-color-neutral-60);
+  --sys-step-label-active-color: var(--sys-color-neutral-10);
+  --sys-step-label-completed-color: var(--sys-color-neutral-30);
+
+  /* Connector styles */
+  --sys-step-connector-height: 2px;
+  --sys-step-connector-background: var(--sys-color-neutral-90);
+  --sys-step-connector-active-background: var(--sys-color-primary-40);
+  --sys-step-connector-completed-background: var(--sys-color-primary-40);
+
+  /* Icon styles */
+  --sys-step-icon-size: 16px;
+  --sys-step-icon-color: var(--sys-color-neutral-100);
+  --sys-step-icon-error-color: var(--sys-color-neutral-100);
+}
+
+/* Top App Bar Implementation */
+.top-app-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--sys-top-app-bar-height);
+  background-color: var(--sys-top-app-bar-background);
+  box-shadow: var(--sys-top-app-bar-elevation);
+  padding: var(--sys-top-app-bar-padding);
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+}
+
+.top-app-bar-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: var(--sys-top-app-bar-icon-gap);
+}
+
+.top-app-bar-title {
+  flex: 1;
+  font-family: var(--sys-top-app-bar-title-font-family);
+  font-size: var(--sys-top-app-bar-title-font-size);
+  font-weight: var(--sys-top-app-bar-title-font-weight);
+  color: var(--sys-top-app-bar-title-color);
+  margin: 0;
+}
+
+.top-app-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-top-app-bar-icon-gap);
+}
+
+.top-app-bar-icon {
+  width: var(--sys-top-app-bar-icon-size);
+  height: var(--sys-top-app-bar-icon-size);
+  color: var(--sys-top-app-bar-icon-color);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-app-bar-icon:hover {
+  color: var(--sys-top-app-bar-icon-hover-color);
+}
+
+.top-app-bar-icon.active {
+  color: var(--sys-top-app-bar-icon-active-color);
+}
+
+/* Navigation Drawer Implementation */
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sys-nav-drawer-width);
+  background-color: var(--sys-nav-drawer-background);
+  box-shadow: var(--sys-nav-drawer-elevation);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-drawer.open {
+  transform: translateX(0);
+}
+
+.nav-drawer-header {
+  height: var(--sys-nav-drawer-header-height);
+  background-color: var(--sys-nav-drawer-header-background);
+  padding: var(--sys-nav-drawer-header-padding);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.nav-drawer-content {
+  flex: 1;
+  padding: var(--sys-nav-drawer-padding);
+  overflow-y: auto;
+}
+
+.nav-drawer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-drawer-item {
+  height: var(--sys-nav-drawer-item-height);
+  padding: var(--sys-nav-drawer-item-padding);
+  display: flex;
+  align-items: center;
+  gap: var(--sys-nav-drawer-item-gap);
+  font-family: var(--sys-nav-drawer-item-font-family);
+  font-size: var(--sys-nav-drawer-item-font-size);
+  color: var(--sys-nav-drawer-item-color);
+  cursor: pointer;
+  border-radius: var(--sys-radius-md);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.nav-drawer-item:hover {
+  background-color: var(--sys-nav-drawer-item-hover-background);
+}
+
+.nav-drawer-item.active {
+  color: var(--sys-nav-drawer-item-active-color);
+  background-color: var(--sys-nav-drawer-item-active-background);
+}
+
+.nav-drawer-icon {
+  width: var(--sys-nav-drawer-icon-size);
+  height: var(--sys-nav-drawer-icon-size);
+  color: var(--sys-nav-drawer-icon-color);
+}
+
+.nav-drawer-item.active .nav-drawer-icon {
+  color: var(--sys-nav-drawer-icon-active-color);
+}
+
+.nav-drawer-divider {
+  height: var(--sys-nav-drawer-divider-height);
+  background-color: var(--sys-nav-drawer-divider-color);
+  margin: var(--sys-nav-drawer-divider-margin);
+  border: none;
+}
+
+/* Bottom Navigation Implementation */
+.bottom-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--sys-bottom-nav-height);
+  background-color: var(--sys-bottom-nav-background);
+  box-shadow: var(--sys-bottom-nav-elevation);
+  padding: var(--sys-bottom-nav-padding);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+
+.bottom-nav-item {
+  min-width: var(--sys-bottom-nav-item-min-width);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sys-bottom-nav-item-gap);
+  padding: var(--sys-bottom-nav-item-padding);
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--sys-bottom-nav-item-inactive-color);
+  transition: color 0.2s ease;
+}
+
+.bottom-nav-item.active {
+  color: var(--sys-bottom-nav-item-active-color);
+}
+
+.bottom-nav-icon {
+  width: var(--sys-bottom-nav-icon-size);
+  height: var(--sys-bottom-nav-icon-size);
+  color: inherit;
+}
+
+.bottom-nav-item.active .bottom-nav-icon {
+  color: var(--sys-bottom-nav-icon-active-color);
+}
+
+.bottom-nav-label {
+  font-family: var(--sys-bottom-nav-label-font-family);
+  font-size: var(--sys-bottom-nav-label-font-size);
+  color: inherit;
+}
+
+.bottom-nav-item.active .bottom-nav-label {
+  color: var(--sys-bottom-nav-label-active-color);
+}
+
+.bottom-nav-active-indicator {
+  position: absolute;
+  bottom: 0;
+  height: var(--sys-bottom-nav-active-indicator-height);
+  background-color: var(--sys-bottom-nav-active-indicator-color);
+  border-radius: var(--sys-bottom-nav-active-indicator-radius);
+  transition: transform 0.3s ease;
+}
+
+/* Tabs Implementation */
+.tabs {
+  display: flex;
+  height: var(--sys-tabs-height);
+  background-color: var(--sys-tabs-background);
+  padding: var(--sys-tabs-padding);
+  gap: var(--sys-tabs-gap);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: relative;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  min-width: var(--sys-tab-min-width);
+  padding: var(--sys-tab-padding);
+  font-family: var(--sys-tab-font-family);
+  font-size: var(--sys-tab-font-size);
+  font-weight: var(--sys-tab-font-weight);
+  color: var(--sys-tab-color);
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  border: none;
+  background: none;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.tab:hover {
+  color: var(--sys-tab-hover-color);
+}
+
+.tab.active {
+  color: var(--sys-tab-active-color);
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: 0;
+  height: var(--sys-tab-indicator-height);
+  background-color: var(--sys-tab-indicator-color);
+  border-radius: var(--sys-tab-indicator-radius);
+  transition: var(--sys-tab-indicator-transition);
+}
+
+.tabs-scrollable {
+  position: relative;
+}
+
+.tabs-scrollable::before,
+.tabs-scrollable::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tabs-scrollable::before {
+  left: 0;
+  background: linear-gradient(to right, var(--sys-color-neutral-100), transparent);
+}
+
+.tabs-scrollable::after {
+  right: 0;
+  background: linear-gradient(to left, var(--sys-color-neutral-100), transparent);
+}
+
+/* Breadcrumbs Implementation */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-breadcrumbs-gap);
+  padding: var(--sys-breadcrumbs-padding);
+  flex-wrap: wrap;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-breadcrumbs-gap);
+}
+
+.breadcrumb-link {
+  font-family: var(--sys-breadcrumb-item-font-family);
+  font-size: var(--sys-breadcrumb-item-font-size);
+  color: var(--sys-breadcrumb-item-color);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  color: var(--sys-breadcrumb-item-hover-color);
+  text-decoration: underline;
+}
+
+.breadcrumb-current {
+  font-family: var(--sys-breadcrumb-item-font-family);
+  font-size: var(--sys-breadcrumb-item-font-size);
+  color: var(--sys-breadcrumb-current-color);
+  font-weight: var(--sys-breadcrumb-current-font-weight);
+  cursor: default;
+}
+
+.breadcrumb-separator {
+  width: var(--sys-breadcrumb-separator-size);
+  height: var(--sys-breadcrumb-separator-size);
+  color: var(--sys-breadcrumb-separator-color);
+  margin: var(--sys-breadcrumb-separator-margin);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.breadcrumbs-collapsed {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumbs-collapsed-toggle {
+  font-family: var(--sys-breadcrumb-item-font-family);
+  font-size: var(--sys-breadcrumb-item-font-size);
+  color: var(--sys-breadcrumb-item-color);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--sys-spacing-xs);
+}
+
+/* Stepper Implementation */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-stepper-gap);
+  padding: var(--sys-stepper-padding);
+}
+
+.stepper-horizontal {
+  flex-direction: row;
+}
+
+.stepper-vertical {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-md);
+  position: relative;
+}
+
+.step-circle {
+  width: var(--sys-step-size);
+  height: var(--sys-step-size);
+  border-radius: var(--sys-step-border-radius);
+  background-color: var(--sys-step-background);
+  border: var(--sys-step-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
+  color: var(--sys-color-neutral-60);
+  z-index: 1;
+}
+
+.step.active .step-circle {
+  background-color: var(--sys-step-active-background);
+  color: var(--sys-color-neutral-100);
+}
+
+.step.completed .step-circle {
+  background-color: var(--sys-step-completed-background);
+  color: var(--sys-color-neutral-100);
+}
+
+.step.error .step-circle {
+  background-color: var(--sys-step-error-background);
+  color: var(--sys-color-neutral-100);
+}
+
+.step-icon {
+  width: var(--sys-step-icon-size);
+  height: var(--sys-step-icon-size);
+  color: inherit;
+}
+
+.step-label {
+  font-family: var(--sys-step-label-font-family);
+  font-size: var(--sys-step-label-font-size);
+  color: var(--sys-step-label-color);
+}
+
+.step.active .step-label {
+  color: var(--sys-step-label-active-color);
+}
+
+.step.completed .step-label {
+  color: var(--sys-step-label-completed-color);
+}
+
+.step-connector {
+  flex: 1;
+  height: var(--sys-step-connector-height);
+  background-color: var(--sys-step-connector-background);
+}
+
+.step.active .step-connector {
+  background-color: var(--sys-step-connector-active-background);
+}
+
+.step.completed .step-connector {
+  background-color: var(--sys-step-connector-completed-background);
+}
+
+.stepper-horizontal .step-connector {
+  width: 40px;
+}
+
+.stepper-vertical .step-connector {
+  width: var(--sys-step-connector-height);
+  height: 20px;
+  margin-left: calc(var(--sys-step-size) / 2 - var(--sys-step-connector-height) / 2);
+}

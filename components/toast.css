@@ -1,0 +1,352 @@
+/* ContentSplit Toast Component
+ * 
+ * Implementation of Material Design 3 toast/snackbar system using design tokens.
+ * Follows specifications in skills/toast.md
+ */
+
+:root {
+  /* Toast-specific design tokens (extending the system) */
+  --sys-toast-background-color: var(--sys-color-neutral-10);
+  --sys-toast-text-color: var(--sys-color-neutral-100);
+  --sys-toast-border-radius: var(--sys-radius-md);
+  --sys-toast-elevation: var(--sys-elevation-3);
+  --sys-toast-padding: var(--sys-spacing-md);
+  --sys-toast-gap: var(--sys-spacing-sm);
+  
+  /* Icon colors by type */
+  --sys-toast-icon-color-info: var(--sys-color-roles-primary-color-role-primary-role);
+  --sys-toast-icon-color-success: var(--sys-color-roles-success-color-role-success-role);
+  --sys-toast-icon-color-warning: var(--sys-color-roles-warning-color-role-warning-role);
+  --sys-toast-icon-color-error: var(--sys-color-roles-error-color-role-error-role);
+  
+  /* Action button styles */
+  --sys-toast-action-background: transparent;
+  --sys-toast-action-text-color: var(--sys-color-roles-primary-color-role-primary-role);
+  --sys-toast-action-hover-background: var(--sys-color-primary-95);
+  --sys-toast-action-padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+  
+  /* Positioning */
+  --sys-z-index-toast: 1000;
+}
+
+/* Toast Container (positioning wrapper) */
+.toast-container {
+  position: fixed;
+  bottom: var(--sys-spacing-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--sys-z-index-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-sm);
+  align-items: center;
+  pointer-events: none;
+}
+
+.toast-container > * {
+  pointer-events: auto;
+}
+
+/* Base Toast Styles */
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-toast-gap);
+  padding: var(--sys-toast-padding);
+  background-color: var(--sys-toast-background-color);
+  color: var(--sys-toast-text-color);
+  border-radius: var(--sys-toast-border-radius);
+  box-shadow: var(--sys-toast-elevation);
+  max-width: 600px;
+  min-width: 300px;
+  animation: toast-slide-up 0.3s ease-out;
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  line-height: var(--sys-typography-body-text-line-height);
+}
+
+.toast-message {
+  flex: 1;
+  margin: 0;
+}
+
+/* Toast with Action Button */
+.toast-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.toast-action-button {
+  background: var(--sys-toast-action-background);
+  color: var(--sys-toast-action-text-color);
+  border: none;
+  padding: var(--sys-toast-action-padding);
+  border-radius: var(--sys-radius-sm);
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
+  font-weight: var(--sys-typography-label-small-font-weight);
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-left: var(--sys-spacing-md);
+  white-space: nowrap;
+}
+
+.toast-action-button:hover {
+  background-color: var(--sys-toast-action-hover-background);
+}
+
+/* Stacked Toast (multiple lines) */
+.toast-stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sys-spacing-xs);
+}
+
+.toast-stacked .toast-message {
+  margin-bottom: var(--sys-spacing-xs);
+}
+
+.toast-stacked .toast-actions {
+  align-self: flex-end;
+  display: flex;
+  gap: var(--sys-spacing-sm);
+}
+
+/* Toast Types with Icons */
+.toast-info {
+  border-left: 4px solid var(--sys-toast-icon-color-info);
+}
+
+.toast-info .toast-icon {
+  color: var(--sys-toast-icon-color-info);
+}
+
+.toast-success {
+  border-left: 4px solid var(--sys-toast-icon-color-success);
+}
+
+.toast-success .toast-icon {
+  color: var(--sys-toast-icon-color-success);
+}
+
+.toast-warning {
+  border-left: 4px solid var(--sys-toast-icon-color-warning);
+}
+
+.toast-warning .toast-icon {
+  color: var(--sys-toast-icon-color-warning);
+}
+
+.toast-error {
+  border-left: 4px solid var(--sys-toast-icon-color-error);
+}
+
+.toast-error .toast-icon {
+  color: var(--sys-toast-icon-color-error);
+}
+
+/* AI-specific Toast Variants */
+.toast-ai-processing {
+  background-color: var(--sys-color-primary-95);
+  border-left: 4px solid var(--sys-color-primary-40);
+}
+
+.toast-ai-processing .toast-icon {
+  animation: spin 1s linear infinite;
+}
+
+.toast-ai-success {
+  background-color: var(--sys-color-success-95);
+  border-left: 4px solid var(--sys-color-roles-success-color-role-success-role);
+}
+
+.toast-ai-error {
+  background-color: var(--sys-color-error-95);
+  border-left: 4px solid var(--sys-color-roles-error-color-role-error-role);
+}
+
+.toast-content-generation {
+  background-color: var(--sys-color-neutral-98);
+  border: 1px solid var(--sys-color-neutral-90);
+}
+
+.toast-content-generation .toast-progress-bar {
+  background: linear-gradient(90deg, 
+    var(--sys-color-primary-40), 
+    var(--sys-color-secondary-40)
+  );
+}
+
+/* Positioning Variants */
+.toast-container-start {
+  left: var(--sys-spacing-lg);
+  transform: none;
+  align-items: flex-start;
+}
+
+.toast-container-end {
+  left: auto;
+  right: var(--sys-spacing-lg);
+  transform: none;
+  align-items: flex-end;
+}
+
+.toast-container-top {
+  top: var(--sys-spacing-lg);
+  bottom: auto;
+}
+
+.toast-container-top-start {
+  top: var(--sys-spacing-lg);
+  left: var(--sys-spacing-lg);
+  bottom: auto;
+  transform: none;
+}
+
+.toast-container-top-end {
+  top: var(--sys-spacing-lg);
+  right: var(--sys-spacing-lg);
+  bottom: auto;
+  transform: none;
+}
+
+/* Animations */
+@keyframes toast-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-slide-down {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes toast-progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.toast-exiting {
+  animation: toast-slide-down 0.3s ease-in forwards;
+}
+
+/* Progress Bar for Auto-dismiss */
+.toast-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background-color: var(--sys-color-primary-40);
+  border-radius: 0 0 var(--sys-toast-border-radius) var(--sys-toast-border-radius);
+  animation: toast-progress 4s linear forwards;
+}
+
+.toast-action .toast-progress-bar {
+  animation-duration: 10s;
+}
+
+.toast-persistent .toast-progress-bar {
+  display: none;
+}
+
+/* States */
+.toast:hover {
+  box-shadow: var(--sys-elevation-4);
+}
+
+.toast:focus-within {
+  outline: 3px solid var(--sys-color-primary-40);
+  outline-offset: var(--sys-spacing-xs);
+}
+
+.toast-action-button:focus {
+  outline: 2px solid var(--sys-color-primary-40);
+  outline-offset: 2px;
+}
+
+/* Toast Stacking */
+.toast-stack {
+  display: flex;
+  flex-direction: column-reverse; /* Newest at the top */
+  gap: var(--sys-spacing-xs);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Maximum 3 visible toasts */
+.toast-container > .toast:nth-child(n+4) {
+  display: none;
+}
+
+/* Accessibility */
+.toast[role="status"],
+.toast[role="alert"] {
+  /* Base styles for ARIA roles */
+}
+
+.toast[aria-live] {
+  /* Live region announcements */
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .toast {
+    border: 2px solid var(--sys-color-neutral-0);
+  }
+  
+  .toast-action-button {
+    border: 1px solid var(--sys-color-neutral-0);
+  }
+}
+
+/* Responsive Behavior */
+/* Mobile (< 768px) */
+@media (max-width: 768px) {
+  .toast {
+    min-width: calc(100vw - var(--sys-spacing-lg) * 2);
+    max-width: calc(100vw - var(--sys-spacing-lg) * 2);
+    margin: 0 var(--sys-spacing-lg);
+  }
+  
+  .toast-container {
+    bottom: var(--sys-spacing-md);
+  }
+  
+  .toast-stacked .toast-actions {
+    align-self: stretch;
+    flex-direction: column;
+  }
+}
+
+/* Tablet (768px–1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .toast {
+    max-width: 500px;
+  }
+}
+
+/* Desktop (> 1024px) */
+@media (min-width: 1024px) {
+  .toast {
+    max-width: 600px;
+  }
+}

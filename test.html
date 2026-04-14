@@ -11,6 +11,12 @@
     <link rel="stylesheet" href="components/card.css">
     <link rel="stylesheet" href="components/chips.css">
     <link rel="stylesheet" href="components/icons.css">
+    <link rel="stylesheet" href="components/table.css">
+    <link rel="stylesheet" href="components/toast.css">
+    <link rel="stylesheet" href="components/modal.css">
+    <link rel="stylesheet" href="components/select.css">
+    <link rel="stylesheet" href="components/navigation.css">
+    <link rel="stylesheet" href="components/tooltips.css">
     <style>
         * {
             box-sizing: border-box;
@@ -489,6 +495,223 @@
                             <div class="icon icon-outlined icon-md icon-secondary"></div>
                             <span>Outlined icon</span>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Table Component</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Standard Table</h3>
+                    <div class="table-container">
+                        <table class="table-standard">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Project Alpha</td>
+                                    <td>Active</td>
+                                    <td>2025-04-14</td>
+                                </tr>
+                                <tr>
+                                    <td>Project Beta</td>
+                                    <td>Pending</td>
+                                    <td>2025-04-13</td>
+                                </tr>
+                                <tr>
+                                    <td>Project Gamma</td>
+                                    <td>Failed</td>
+                                    <td>2025-04-12</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Table with Actions</h3>
+                    <div class="table-container">
+                        <table class="table-actions">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Role</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>John Doe</td>
+                                    <td>Admin</td>
+                                    <td>
+                                        <button class="button button-text button-small">Edit</button>
+                                        <button class="button button-text button-small">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Jane Smith</td>
+                                    <td>Editor</td>
+                                    <td>
+                                        <button class="button button-text button-small">Edit</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Toast Component</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Toast Variants</h3>
+                    <div class="demo-row">
+                        <div class="toast toast-success">
+                            <div class="toast-icon">✓</div>
+                            <div class="toast-message">Operation completed successfully.</div>
+                            <button class="toast-close">×</button>
+                        </div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="toast toast-error">
+                            <div class="toast-icon">!</div>
+                            <div class="toast-message">Something went wrong.</div>
+                            <button class="toast-close">×</button>
+                        </div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="toast toast-info">
+                            <div class="toast-icon">i</div>
+                            <div class="toast-message">This is an info message.</div>
+                            <button class="toast-close">×</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Modal Component</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Alert Dialog</h3>
+                    <div class="modal-container modal-alert" style="position: relative; display: flex; max-width: 500px; margin: 0 auto;">
+                        <div class="modal-alert-title">Modal Title</div>
+                        <div class="modal-alert-content">
+                            <p>This is modal content. You can put any content here.</p>
+                            <div class="input-container">
+                                <label for="modal-input">Input Field</label>
+                                <input type="text" id="modal-input" class="input-filled" placeholder="Enter text">
+                            </div>
+                        </div>
+                        <div class="modal-alert-actions">
+                            <button class="button button-text button-medium">Cancel</button>
+                            <button class="button button-filled button-medium">Confirm</button>
+                        </div>
+                    </div>
+                    <p class="note">Modal is shown inline for demo. In real use, it would be positioned absolutely.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Select Component</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Select Dropdown</h3>
+                    <div class="input-container">
+                        <label for="select-demo" class="select-filled-label">Choose option</label>
+                        <div class="select-filled">
+                            <div class="select-filled-trigger">
+                                <span class="select-filled-value">Option 1</span>
+                                <div class="select-filled-arrow">▼</div>
+                            </div>
+                        </div>
+                        <span class="input-supporting-text">This is a custom styled select.</span>
+                    </div>
+                    <div class="input-container">
+                        <label for="select-outlined-demo" class="select-outlined-label">Outlined Select</label>
+                        <div class="select-outlined">
+                            <div class="select-outlined-trigger">
+                                <span class="select-filled-value">Option A</span>
+                                <div class="select-filled-arrow">▼</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Navigation Component</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Top App Bar</h3>
+                    <div class="top-app-bar" style="position: relative;">
+                        <div class="top-app-bar-content">
+                            <div class="top-app-bar-title">Contentsplit.ai</div>
+                            <div class="top-app-bar-actions">
+                                <button class="top-app-bar-icon">🔔</button>
+                                <button class="top-app-bar-icon">👤</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="note">Top app bar with title and action buttons.</p>
+                </div>
+                <div class="component-demo">
+                    <h3>Navigation Drawer</h3>
+                    <div class="nav-drawer" style="position: relative; width: 250px; height: 300px;">
+                        <div class="nav-drawer-header">
+                            <div class="nav-drawer-brand">Contentsplit</div>
+                        </div>
+                        <div class="nav-drawer-content">
+                            <nav class="nav-drawer-list">
+                                <a href="#" class="nav-drawer-item active">
+                                    <div class="nav-drawer-icon">📊</div>
+                                    <span class="nav-drawer-label">Dashboard</span>
+                                </a>
+                                <a href="#" class="nav-drawer-item">
+                                    <div class="nav-drawer-icon">📝</div>
+                                    <span class="nav-drawer-label">Content</span>
+                                </a>
+                                <a href="#" class="nav-drawer-item">
+                                    <div class="nav-drawer-icon">⚙️</div>
+                                    <span class="nav-drawer-label">Settings</span>
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Tooltip Component</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Tooltip Positions</h3>
+                    <div class="demo-row">
+                        <button class="button button-filled button-medium tooltip top" data-tooltip="Tooltip on top">Top</button>
+                        <button class="button button-filled button-medium tooltip right" data-tooltip="Tooltip on right">Right</button>
+                        <button class="button button-filled button-medium tooltip bottom" data-tooltip="Tooltip on bottom">Bottom</button>
+                        <button class="button button-filled button-medium tooltip left" data-tooltip="Tooltip on left">Left</button>
+                    </div>
+                    <p class="note">Hover over buttons to see tooltips (CSS-only).</p>
+                </div>
+                <div class="component-demo">
+                    <h3>Tooltip Types</h3>
+                    <div class="demo-row">
+                        <span class="tooltip-plain" data-tooltip="Plain tooltip">Plain</span>
+                        <span class="tooltip-rich" data-tooltip="Rich tooltip with more content">Rich</span>
+                        <span class="tooltip-error" data-tooltip="Error tooltip">Error</span>
                     </div>
                 </div>
             </div>
