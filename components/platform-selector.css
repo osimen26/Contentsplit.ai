@@ -1,0 +1,266 @@
+/* ContentSplit Platform Selector Component
+ * 
+ * Implementation of Material Design 3 platform selection for AI content generation.
+ * Supports Twitter/X, LinkedIn, Instagram, TikTok, and other platforms.
+ */
+
+/* ============================================
+   PLATFORM SELECTOR CONTAINER
+   ============================================ */
+
+.platform-selector {
+    margin-bottom: var(--sys-spacing-2xl);
+}
+
+.platform-selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--sys-spacing-lg);
+}
+
+.platform-selector-title {
+    font-family: var(--sys-typography-title-medium-font-family);
+    font-size: var(--sys-typography-title-medium-font-size);
+    font-weight: var(--sys-typography-title-medium-font-weight);
+    color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+    margin: 0;
+}
+
+.platform-selector-subtitle {
+    font-family: var(--sys-typography-body-text-font-family);
+    font-size: var(--sys-typography-body-text-font-size);
+    color: var(--sys-color-neutral-60);
+    margin-top: var(--sys-spacing-xs);
+}
+
+.platform-selector-required {
+    font-family: var(--sys-typography-label-small-font-family);
+    font-size: var(--sys-typography-label-small-font-size);
+    color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+/* ============================================
+   PLATFORM GRID LAYOUT
+   ============================================ */
+
+.platform-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--sys-spacing-md);
+}
+
+.platform-grid-compact {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+.platform-grid-expanded {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+/* ============================================
+   PLATFORM CARD
+   ============================================ */
+
+.platform-card {
+    background-color: var(--sys-color-neutral-100);
+    border: 1px solid var(--sys-color-neutral-90);
+    border-radius: var(--sys-radius-md);
+    padding: var(--sys-spacing-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.platform-card:hover {
+    border-color: var(--sys-color-primary-80);
+    background-color: var(--sys-color-primary-98);
+    transform: translateY(-2px);
+    box-shadow: var(--sys-elevation-1);
+}
+
+.platform-card.selected {
+    border-color: var(--sys-color-roles-primary-color-role-primary-role);
+    background-color: var(--sys-color-primary-95);
+    box-shadow: var(--sys-elevation-2);
+}
+
+.platform-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--sys-color-neutral-95);
+}
+
+.platform-card.disabled:hover {
+    border-color: var(--sys-color-neutral-90);
+    background-color: var(--sys-color-neutral-95);
+    transform: none;
+    box-shadow: none;
+}
+
+/* Selection indicator */
+.platform-card-selected-indicator {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--sys-color-roles-primary-color-role-primary-role);
+    color: var(--sys-color-primary-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.platform-card.selected .platform-card-selected-indicator {
+    opacity: 1;
+}
+
+/* ============================================
+   PLATFORM ICON
+   ============================================ */
+
+.platform-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: var(--sys-spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--sys-color-neutral-60);
+}
+
+.platform-card.selected .platform-icon {
+    color: var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+.platform-icon-twitter {
+    color: #1DA1F2;
+}
+
+.platform-icon-linkedin {
+    color: #0077B5;
+}
+
+.platform-icon-instagram {
+    color: #E4405F;
+}
+
+.platform-icon-tiktok {
+    color: #000000;
+}
+
+/* ============================================
+   PLATFORM INFO
+   ============================================ */
+
+.platform-name {
+    font-family: var(--sys-typography-body-text-font-family);
+    font-size: var(--sys-typography-body-text-font-size);
+    color: var(--sys-color-neutral-30);
+    margin-bottom: var(--sys-spacing-xs);
+    font-weight: var(--sys-typography-body-text-bold-font-weight);
+}
+
+.platform-card.selected .platform-name {
+    color: var(--sys-color-primary-20);
+}
+
+.platform-description {
+    font-family: var(--sys-typography-body-small-text-font-family);
+    font-size: var(--sys-typography-body-small-text-font-size);
+    color: var(--sys-color-neutral-60);
+    margin-bottom: var(--sys-spacing-xs);
+}
+
+.platform-limits {
+    font-family: var(--sys-typography-label-small-font-family);
+    font-size: var(--sys-typography-label-small-font-size);
+    color: var(--sys-color-neutral-70);
+    background-color: var(--sys-color-neutral-95);
+    padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+    border-radius: var(--sys-radius-sm);
+    margin-top: var(--sys-spacing-xs);
+}
+
+/* ============================================
+   PLATFORM CHIP VARIANT
+   ============================================ */
+
+/* Apply class: chip */
+.platform-chip {
+    padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+}
+
+.platform-chip.selected {
+    background-color: var(--sys-color-primary-95);
+    border-color: var(--sys-color-roles-primary-color-role-primary-role);
+    color: var(--sys-color-primary-20);
+}
+
+.platform-chip-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: var(--sys-spacing-xs);
+}
+
+.platform-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sys-spacing-sm);
+}
+
+/* ============================================
+   PLATFORM SELECTOR STATES
+   ============================================ */
+
+.platform-selector-error {
+    border-color: var(--sys-color-roles-error-color-role-error-role);
+    background-color: var(--sys-color-roles-error-color-role-error-container-role);
+}
+
+.platform-selector-error-message {
+    font-family: var(--sys-typography-body-small-text-font-family);
+    font-size: var(--sys-typography-body-small-text-font-size);
+    color: var(--sys-color-roles-error-color-role-error-role);
+    margin-top: var(--sys-spacing-sm);
+}
+
+.platform-selector-loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 900px) {
+    .platform-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+    
+    .platform-grid-expanded {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .platform-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .platform-chip-group {
+        justify-content: center;
+    }
+}

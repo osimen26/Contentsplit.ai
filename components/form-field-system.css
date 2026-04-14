@@ -1,0 +1,479 @@
+/* ContentSplit Form Field System Component
+ * 
+ * Extends MD3 form field system with advanced layouts, validation, and helper elements.
+ * Follows specifications in skills/form-field.md
+ */
+
+:root {
+  /* Form field spacing tokens */
+  --sys-form-field-container-padding: 16px 12px 4px 12px;
+  --sys-form-field-label-top: 16px;
+  --sys-form-field-label-floating-top: 4px;
+  --sys-form-field-label-floating-scale: 0.75;
+  --sys-form-field-helper-text-margin: 4px;
+  --sys-form-field-border-radius: 4px 4px 0 0;
+  --sys-form-field-border-width: 1px;
+  --sys-form-field-border-width-focused: 2px;
+}
+
+/* ==========================================================================
+   Form Field Container
+   ========================================================================== */
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.field-container {
+  position: relative;
+  background-color: var(--sys-color-primary-100);
+  border-radius: var(--sys-form-field-border-radius);
+  border-bottom: var(--sys-form-field-border-width) solid var(--sys-color-neutral-60);
+  transition: border-color var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+}
+
+.field-container.focused {
+  border-bottom-width: var(--sys-form-field-border-width-focused);
+  border-bottom-color: var(--sys-color-roles-primary-color-role-primary-role);
+  padding-bottom: 0; /* Adjust for thicker border */
+}
+
+.field-container.error {
+  border-bottom-color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+.field-container.disabled {
+  border-bottom-color: var(--sys-color-neutral-80);
+  background-color: var(--sys-color-roles-disable-state);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.field-container.readonly {
+  border-bottom-style: dotted;
+}
+
+/* ==========================================================================
+   Field Input & Label
+   ========================================================================== */
+
+.field-input {
+  width: 100%;
+  padding: var(--sys-form-field-container-padding);
+  background: transparent;
+  border: none;
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  outline: none;
+}
+
+.field-input::placeholder {
+  color: var(--sys-color-neutral-70);
+  opacity: 1;
+}
+
+.field-container.disabled .field-input {
+  color: var(--sys-color-neutral-60);
+  cursor: not-allowed;
+}
+
+.field-container.readonly .field-input {
+  color: var(--sys-color-neutral-60);
+}
+
+.field-container.error .field-input {
+  color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+/* Field Label */
+.field-label {
+  position: absolute;
+  left: 12px;
+  top: var(--sys-form-field-label-top);
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+  pointer-events: none;
+  transform-origin: left top;
+}
+
+.field-label.floating {
+  top: var(--sys-form-field-label-floating-top);
+  font-size: calc(var(--sys-typography-body-text-font-size) * var(--sys-form-field-label-floating-scale));
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  transform: translateY(-50%) scale(var(--sys-form-field-label-floating-scale));
+}
+
+.field-container.focused .field-label {
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+.field-container.error .field-label {
+  color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+.field-container.disabled .field-label {
+  color: var(--sys-color-neutral-60);
+}
+
+/* ==========================================================================
+   Helper & Error Text
+   ========================================================================== */
+
+.field-helper-text {
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-top: var(--sys-form-field-helper-text-margin);
+  padding: 0 12px;
+}
+
+.field-error-text {
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-roles-error-color-role-error-role);
+  margin-top: var(--sys-form-field-helper-text-margin);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ==========================================================================
+   Field Types
+   ========================================================================== */
+
+/* Textarea */
+.field-textarea {
+  min-height: 80px;
+  resize: vertical;
+  line-height: var(--sys-typography-body-text-line-height);
+  padding-top: 20px; /* Adjust for label */
+}
+
+.field-textarea ~ .field-label {
+  top: 20px;
+}
+
+/* Select/Dropdown */
+.field-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858993' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.field-select:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23251ab2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+/* File Upload */
+.file-upload {
+  display: none;
+}
+
+.file-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  border: 2px dashed var(--sys-color-neutral-80);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+}
+
+.file-upload-label:hover {
+  border-color: var(--sys-color-roles-primary-color-role-primary-role);
+  background-color: var(--sys-color-primary-95);
+}
+
+.file-upload-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--sys-color-neutral-60);
+  margin-bottom: 16px;
+}
+
+.file-upload-label:hover .file-upload-icon {
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background-color: var(--sys-color-neutral-95);
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.file-remove {
+  margin-left: auto;
+  color: var(--sys-color-roles-error-color-role-error-role);
+  cursor: pointer;
+}
+
+/* Range Slider */
+.range-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--sys-color-neutral-90);
+  border-radius: 2px;
+  outline: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--sys-color-roles-primary-color-role-primary-role);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--sys-color-primary-100);
+  box-shadow: var(--sys-elevation-1);
+}
+
+.range-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--sys-color-roles-primary-color-role-primary-role);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--sys-color-primary-100);
+  box-shadow: var(--sys-elevation-1);
+}
+
+.range-value {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   Field States
+   ========================================================================== */
+
+/* Hover State */
+.field-container:hover:not(.focused):not(.error):not(.disabled) {
+  border-bottom-color: var(--sys-color-neutral-40);
+}
+
+.field-container:hover .field-label:not(.floating) {
+  color: var(--sys-color-neutral-40);
+}
+
+/* Focus State (handled by .focused class) */
+
+/* Error State (handled by .error class) */
+
+/* ==========================================================================
+   Helper Elements
+   ========================================================================== */
+
+/* Character Counter */
+.character-counter {
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  text-align: right;
+  margin-top: var(--sys-form-field-helper-text-margin);
+  padding: 0 12px;
+}
+
+.character-counter.warning {
+  color: var(--sys-color-roles-warning-color-role-warning-role);
+}
+
+.character-counter.error {
+  color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+/* Password Strength Meter */
+.password-strength {
+  height: 4px;
+  background-color: var(--sys-color-neutral-90);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.password-strength-fill {
+  height: 100%;
+  transition: width var(--sys-motion-duration-medium) var(--sys-motion-easing-standard), 
+              background-color var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+}
+
+.password-strength-weak {
+  background-color: var(--sys-color-roles-error-color-role-error-role);
+  width: 25%;
+}
+
+.password-strength-fair {
+  background-color: var(--sys-color-roles-warning-color-role-warning-role);
+  width: 50%;
+}
+
+.password-strength-good {
+  background-color: var(--sys-color-success-60);
+  width: 75%;
+}
+
+.password-strength-strong {
+  background-color: var(--sys-color-roles-success-color-role-success-color-role);
+  width: 100%;
+}
+
+/* Tooltip Help */
+.field-help {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--sys-color-neutral-60);
+  cursor: help;
+}
+
+.field-help-tooltip {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background-color: var(--sys-color-primary-10);
+  color: var(--sys-color-primary-100);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: var(--sys-elevation-2);
+}
+
+.field-help-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 12px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent var(--sys-color-primary-10) transparent;
+}
+
+/* ==========================================================================
+   Layout Patterns
+   ========================================================================== */
+
+/* Single Column Form */
+.single-column-form {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.single-column-form .form-field {
+  margin-bottom: 24px;
+}
+
+/* Multi-column Form */
+.multi-column-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.multi-column-form .form-field-full {
+  grid-column: 1 / -1;
+}
+
+/* Inline Form */
+.inline-form {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.inline-form .form-field {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.inline-form .field-label.floating {
+  top: var(--sys-form-field-label-floating-top);
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+/* Keyboard focus outline */
+.field-input:focus,
+.field-select:focus,
+.file-upload-label:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+.field-input:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.field-input:focus-visible {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+/* RTL Support */
+[dir="rtl"] .field-label {
+  left: auto;
+  right: 12px;
+  transform-origin: right top;
+}
+
+[dir="rtl"] .field-input {
+  text-align: right;
+}
+
+[dir="rtl"] .field-select {
+  background-position: left 12px center;
+  padding-left: 40px;
+  padding-right: 12px;
+}
+
+[dir="rtl"] .field-help {
+  right: auto;
+  left: 12px;
+}
+
+/* ==========================================================================
+   Integration with Existing Components
+   ========================================================================== */
+
+/* Ensure compatibility with existing input.css styles */
+.input-filled,
+.input-outlined {
+  /* Override any conflicting styles */
+}
+
+.input-filled .field-container,
+.input-outlined .field-container {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+/* Use form-field system within existing input containers */
+.input-container .form-field {
+  margin-bottom: 0;
+}

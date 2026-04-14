@@ -1,0 +1,407 @@
+/* ContentSplit Conversion History Component
+ * 
+ * Implementation of Material Design 3 history table for AI content conversions.
+ * Shows previous conversions with status, platform, date, and actions.
+ */
+
+/* ============================================
+   CONVERSION HISTORY CONTAINER
+   ============================================ */
+
+.conversion-history {
+    background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+    border-radius: var(--sys-radius-lg);
+    padding: var(--sys-spacing-xl);
+    box-shadow: var(--sys-elevation-1);
+    margin-bottom: var(--sys-spacing-2xl);
+}
+
+.conversion-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--sys-spacing-xl);
+    padding-bottom: var(--sys-spacing-lg);
+    border-bottom: 1px solid var(--sys-color-neutral-90);
+}
+
+.conversion-history-title {
+    font-family: var(--sys-typography-title-medium-font-family);
+    font-size: var(--sys-typography-title-medium-font-size);
+    font-weight: var(--sys-typography-title-medium-font-weight);
+    color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+    margin: 0;
+}
+
+.conversion-history-subtitle {
+    font-family: var(--sys-typography-body-text-font-family);
+    font-size: var(--sys-typography-body-text-font-size);
+    color: var(--sys-color-neutral-60);
+    margin-top: var(--sys-spacing-xs);
+}
+
+.conversion-history-actions {
+    display: flex;
+    gap: var(--sys-spacing-sm);
+}
+
+/* ============================================
+   HISTORY STATS
+   ============================================ */
+
+.conversion-history-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--sys-spacing-md);
+    margin-bottom: var(--sys-spacing-xl);
+}
+
+.conversion-history-stat {
+    background-color: var(--sys-color-neutral-100);
+    border: 1px solid var(--sys-color-neutral-90);
+    border-radius: var(--sys-radius-md);
+    padding: var(--sys-spacing-lg);
+    text-align: center;
+}
+
+.conversion-history-stat-value {
+    font-family: var(--sys-typography-heading-1-font-family);
+    font-size: var(--sys-typography-heading-1-font-size);
+    color: var(--sys-color-roles-primary-color-role-primary-role);
+    margin-bottom: var(--sys-spacing-xs);
+}
+
+.conversion-history-stat-label {
+    font-family: var(--sys-typography-label-small-font-family);
+    font-size: var(--sys-typography-label-small-font-size);
+    color: var(--sys-color-neutral-60);
+}
+
+.conversion-history-stat-change {
+    font-family: var(--sys-typography-label-small-font-family);
+    font-size: var(--sys-typography-label-small-font-size);
+    margin-top: var(--sys-spacing-xs);
+}
+
+.conversion-history-stat-change.positive {
+    color: var(--sys-color-roles-success-color-role-success-role);
+}
+
+.conversion-history-stat-change.negative {
+    color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+/* ============================================
+   HISTORY FILTERS
+   ============================================ */
+
+.conversion-history-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sys-spacing-md);
+    margin-bottom: var(--sys-spacing-xl);
+    padding: var(--sys-spacing-lg);
+    background-color: var(--sys-color-neutral-100);
+    border: 1px solid var(--sys-color-neutral-90);
+    border-radius: var(--sys-radius-md);
+}
+
+.conversion-history-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sys-spacing-xs);
+    flex: 1;
+    min-width: 150px;
+}
+
+.conversion-history-filter-label {
+    font-family: var(--sys-typography-label-medium-font-family);
+    font-size: var(--sys-typography-label-medium-font-size);
+    color: var(--sys-color-neutral-30);
+}
+
+/* ============================================
+   HISTORY TABLE
+   ============================================ */
+
+.conversion-history-table-container {
+    overflow-x: auto;
+    margin-bottom: var(--sys-spacing-xl);
+}
+
+.conversion-history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.conversion-history-table thead {
+    background-color: var(--sys-color-neutral-100);
+    border-bottom: 2px solid var(--sys-color-neutral-90);
+}
+
+.conversion-history-table th {
+    padding: var(--sys-spacing-md) var(--sys-spacing-lg);
+    text-align: left;
+    font-family: var(--sys-typography-label-medium-font-family);
+    font-size: var(--sys-typography-label-medium-font-size);
+    font-weight: var(--sys-typography-label-medium-font-weight);
+    color: var(--sys-color-neutral-30);
+    white-space: nowrap;
+}
+
+.conversion-history-table tbody tr {
+    border-bottom: 1px solid var(--sys-color-neutral-90);
+    transition: background-color 0.2s ease;
+}
+
+.conversion-history-table tbody tr:hover {
+    background-color: var(--sys-color-primary-98);
+}
+
+.conversion-history-table td {
+    padding: var(--sys-spacing-lg) var(--sys-spacing-lg);
+    font-family: var(--sys-typography-body-text-font-family);
+    font-size: var(--sys-typography-body-text-font-size);
+    color: var(--sys-color-neutral-30);
+    vertical-align: middle;
+}
+
+/* Status column */
+.conversion-history-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sys-spacing-xs);
+    padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+    border-radius: var(--sys-radius-full);
+    font-family: var(--sys-typography-label-small-font-family);
+    font-size: var(--sys-typography-label-small-font-size);
+    font-weight: var(--sys-typography-label-small-bold-font-weight);
+}
+
+.conversion-history-status.success {
+    background-color: var(--sys-color-roles-success-color-role-success-container-role);
+    color: var(--sys-color-roles-success-color-role-on-success-container-role);
+}
+
+.conversion-history-status.pending {
+    background-color: var(--sys-color-roles-warning-color-role-warning-container-role);
+    color: var(--sys-color-roles-warning-color-role-on-warning-container-role);
+}
+
+.conversion-history-status.failed {
+    background-color: var(--sys-color-roles-error-color-role-error-container-role);
+    color: var(--sys-color-roles-error-color-role-on-error-container-role);
+}
+
+/* Platform column */
+.conversion-history-platform {
+    display: flex;
+    align-items: center;
+    gap: var(--sys-spacing-sm);
+}
+
+.conversion-history-platform-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--sys-color-neutral-60);
+}
+
+/* Actions column */
+.conversion-history-actions-cell {
+    display: flex;
+    gap: var(--sys-spacing-xs);
+    white-space: nowrap;
+}
+
+/* Apply classes: button button-text button-small */
+.conversion-history-action-button {
+    padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+}
+
+/* ============================================
+   HISTORY EMPTY STATE
+   ============================================ */
+
+.conversion-history-empty {
+    text-align: center;
+    padding: var(--sys-spacing-3xl);
+    color: var(--sys-color-neutral-60);
+}
+
+.conversion-history-empty-icon {
+    font-size: 48px;
+    margin-bottom: var(--sys-spacing-lg);
+    color: var(--sys-color-neutral-80);
+}
+
+.conversion-history-empty-title {
+    font-family: var(--sys-typography-title-medium-font-family);
+    font-size: var(--sys-typography-title-medium-font-size);
+    color: var(--sys-color-neutral-30);
+    margin-bottom: var(--sys-spacing-sm);
+}
+
+.conversion-history-empty-description {
+    font-family: var(--sys-typography-body-text-font-family);
+    font-size: var(--sys-typography-body-text-font-size);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   HISTORY LOADING STATE
+   ============================================ */
+
+.conversion-history-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--sys-spacing-3xl);
+    text-align: center;
+}
+
+.conversion-history-loading-indicator {
+    width: 40px;
+    height: 40px;
+    color: var(--sys-color-roles-primary-color-role-primary-role);
+    margin-bottom: var(--sys-spacing-md);
+    animation: spin 1s linear infinite;
+}
+
+.conversion-history-loading-text {
+    font-family: var(--sys-typography-body-small-text-font-family);
+    font-size: var(--sys-typography-body-small-text-font-size);
+    color: var(--sys-color-neutral-60);
+}
+
+/* ============================================
+   HISTORY PAGINATION
+   ============================================ */
+
+.conversion-history-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--sys-spacing-lg);
+    border-top: 1px solid var(--sys-color-neutral-90);
+}
+
+.conversion-history-pagination-info {
+    font-family: var(--sys-typography-body-small-text-font-family);
+    font-size: var(--sys-typography-body-small-text-font-size);
+    color: var(--sys-color-neutral-60);
+}
+
+.conversion-history-pagination-controls {
+    display: flex;
+    gap: var(--sys-spacing-xs);
+}
+
+/* Apply classes: button button-text button-medium */
+.conversion-history-pagination-button {
+    min-width: 40px;
+    padding: var(--sys-spacing-sm);
+}
+
+.conversion-history-pagination-button.active {
+    background-color: var(--sys-color-primary-95);
+    color: var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+/* ============================================
+   HISTORY DETAIL VIEW
+   ============================================ */
+
+.conversion-history-detail {
+    background-color: var(--sys-color-neutral-100);
+    border: 1px solid var(--sys-color-neutral-90);
+    border-radius: var(--sys-radius-lg);
+    padding: var(--sys-spacing-xl);
+    margin-top: var(--sys-spacing-xl);
+}
+
+.conversion-history-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--sys-spacing-lg);
+    padding-bottom: var(--sys-spacing-md);
+    border-bottom: 1px solid var(--sys-color-neutral-90);
+}
+
+.conversion-history-detail-title {
+    font-family: var(--sys-typography-title-medium-font-family);
+    font-size: var(--sys-typography-title-medium-font-size);
+    color: var(--sys-color-neutral-30);
+    margin: 0;
+}
+
+.conversion-history-detail-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--sys-spacing-xl);
+}
+
+.conversion-history-detail-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sys-spacing-sm);
+}
+
+.conversion-history-detail-label {
+    font-family: var(--sys-typography-label-medium-font-family);
+    font-size: var(--sys-typography-label-medium-font-size);
+    color: var(--sys-color-neutral-60);
+}
+
+.conversion-history-detail-value {
+    font-family: var(--sys-typography-body-text-font-family);
+    font-size: var(--sys-typography-body-text-font-size);
+    color: var(--sys-color-neutral-30);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 900px) {
+    .conversion-history-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--sys-spacing-md);
+    }
+    
+    .conversion-history-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .conversion-history-filters {
+        flex-direction: column;
+    }
+    
+    .conversion-history-filter-group {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .conversion-history {
+        padding: var(--sys-spacing-lg);
+    }
+    
+    .conversion-history-table th,
+    .conversion-history-table td {
+        padding: var(--sys-spacing-md) var(--sys-spacing-sm);
+    }
+    
+    .conversion-history-actions-cell {
+        flex-direction: column;
+        gap: var(--sys-spacing-xs);
+    }
+    
+    .conversion-history-pagination {
+        flex-direction: column;
+        gap: var(--sys-spacing-md);
+    }
+}

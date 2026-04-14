@@ -1,0 +1,278 @@
+/* ContentSplit Tone Selector Component
+ * 
+ * Implementation of Material Design 3 tone/voice selection for AI content generation.
+ * Uses chip components for formal, casual, professional, creative, etc.
+ */
+
+/* ============================================
+   TONE SELECTOR CONTAINER
+   ============================================ */
+
+.tone-selector {
+    margin-bottom: var(--sys-spacing-xl);
+}
+
+.tone-selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--sys-spacing-md);
+}
+
+.tone-selector-title {
+    font-family: var(--sys-typography-title-small-font-family);
+    font-size: var(--sys-typography-title-small-font-size);
+    font-weight: var(--sys-typography-title-small-font-weight);
+    color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+    margin: 0;
+}
+
+.tone-selector-subtitle {
+    font-family: var(--sys-typography-body-text-font-family);
+    font-size: var(--sys-typography-body-text-font-size);
+    color: var(--sys-color-neutral-60);
+    margin-top: var(--sys-spacing-xs);
+}
+
+.tone-selector-required {
+    font-family: var(--sys-typography-label-small-font-family);
+    font-size: var(--sys-typography-label-small-font-size);
+    color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+/* ============================================
+   TONE CHIP GROUP
+   ============================================ */
+
+.tone-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sys-spacing-sm);
+}
+
+.tone-chip-group-single-select .tone-chip.selected ~ .tone-chip.selected {
+    /* Deselect other chips when single selection */
+    background-color: var(--sys-chip-background);
+    border: var(--sys-chip-border);
+}
+
+.tone-chip-group-single-select .tone-chip.selected ~ .tone-chip.selected .tone-chip-label {
+    color: var(--sys-chip-label-color);
+}
+
+/* ============================================
+   TONE CHIP STYLES
+   ============================================ */
+
+/* Base tone chip - apply classes: chip chip-tone chip-tone-* */
+.tone-chip {
+    min-width: 80px;
+    text-align: center;
+    border-width: 2px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tone-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sys-elevation-1);
+}
+
+.tone-chip.selected {
+    transform: scale(1.05);
+    box-shadow: var(--sys-elevation-2);
+}
+
+/* Tone-specific colors (extend chip-tone-* classes) */
+.tone-chip-formal {
+    border-color: var(--sys-color-primary-60);
+    background-color: var(--sys-color-primary-98);
+}
+
+.tone-chip-formal.selected {
+    background-color: var(--sys-color-primary-95);
+    border-color: var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+.tone-chip-casual {
+    border-color: var(--sys-color-roles-success-color-role-success-role);
+    background-color: var(--sys-color-roles-success-color-role-success-role-container);
+}
+
+.tone-chip-casual.selected {
+    background-color: var(--sys-color-roles-success-color-role-success-role-container);
+    border-color: var(--sys-color-roles-success-color-role-success-role);
+}
+
+.tone-chip-professional {
+    border-color: var(--sys-color-roles-info-color-role-info-role);
+    background-color: var(--sys-color-roles-info-color-role-info-role-container);
+}
+
+.tone-chip-professional.selected {
+    background-color: var(--sys-color-roles-info-color-role-info-role-container);
+    border-color: var(--sys-color-roles-info-color-role-info-role);
+}
+
+.tone-chip-creative {
+    border-color: var(--sys-color-roles-warning-color-role-warning-role);
+    background-color: var(--sys-color-roles-warning-color-role-warning-role-container);
+}
+
+.tone-chip-creative.selected {
+    background-color: var(--sys-color-roles-warning-color-role-warning-role-container);
+    border-color: var(--sys-color-roles-warning-color-role-warning-role);
+}
+
+.tone-chip-persuasive {
+    border-color: var(--sys-color-roles-error-color-role-error-role);
+    background-color: var(--sys-color-roles-error-color-role-error-container-role);
+}
+
+.tone-chip-persuasive.selected {
+    background-color: var(--sys-color-roles-error-color-role-error-container-role);
+    border-color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+.tone-chip-friendly {
+    border-color: var(--sys-color-secondary-60);
+    background-color: var(--sys-color-secondary-98);
+}
+
+.tone-chip-friendly.selected {
+    background-color: var(--sys-color-secondary-95);
+    border-color: var(--sys-color-roles-secondary-color-role-secondary-role);
+}
+
+/* ============================================
+   TONE CHIP WITH ICON
+   ============================================ */
+
+.tone-chip-with-icon {
+    display: flex;
+    align-items: center;
+    gap: var(--sys-spacing-xs);
+    padding-left: var(--sys-spacing-sm);
+    padding-right: var(--sys-spacing-md);
+}
+
+.tone-chip-icon {
+    width: 16px;
+    height: 16px;
+    color: inherit;
+}
+
+.tone-chip-label {
+    font-family: var(--sys-typography-label-medium-font-family);
+    font-size: var(--sys-typography-label-medium-font-size);
+    font-weight: var(--sys-typography-label-medium-font-weight);
+}
+
+/* ============================================
+   TONE SELECTOR VARIANTS
+   ============================================ */
+
+/* Compact variant */
+.tone-selector-compact .tone-chip {
+    min-width: 60px;
+    padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+    font-size: var(--sys-typography-label-small-font-size);
+}
+
+/* Expanded variant */
+.tone-selector-expanded .tone-chip {
+    min-width: 100px;
+    padding: var(--sys-spacing-md) var(--sys-spacing-lg);
+    font-size: var(--sys-typography-body-text-font-size);
+}
+
+/* Horizontal scrollable variant */
+.tone-selector-scrollable .tone-chip-group {
+    display: flex;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: var(--sys-spacing-sm) 0;
+    gap: var(--sys-spacing-sm);
+    scrollbar-width: thin;
+}
+
+.tone-selector-scrollable .tone-chip-group::-webkit-scrollbar {
+    height: 4px;
+}
+
+.tone-selector-scrollable .tone-chip-group::-webkit-scrollbar-track {
+    background: var(--sys-color-neutral-95);
+    border-radius: var(--sys-radius-full);
+}
+
+.tone-selector-scrollable .tone-chip-group::-webkit-scrollbar-thumb {
+    background: var(--sys-color-neutral-80);
+    border-radius: var(--sys-radius-full);
+}
+
+.tone-selector-scrollable .tone-chip {
+    flex-shrink: 0;
+}
+
+/* ============================================
+   TONE SELECTOR STATES
+   ============================================ */
+
+.tone-selector-error .tone-chip-group {
+    border: 1px solid var(--sys-color-roles-error-color-role-error-role);
+    border-radius: var(--sys-radius-md);
+    padding: var(--sys-spacing-sm);
+    background-color: var(--sys-color-roles-error-color-role-error-container-role);
+}
+
+.tone-selector-error-message {
+    font-family: var(--sys-typography-body-small-text-font-family);
+    font-size: var(--sys-typography-body-small-text-font-size);
+    color: var(--sys-color-roles-error-color-role-error-role);
+    margin-top: var(--sys-spacing-sm);
+}
+
+.tone-selector-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* ============================================
+   TONE PREVIEW
+   ============================================ */
+
+.tone-preview {
+    margin-top: var(--sys-spacing-lg);
+    padding: var(--sys-spacing-md);
+    background-color: var(--sys-color-neutral-100);
+    border: 1px solid var(--sys-color-neutral-90);
+    border-radius: var(--sys-radius-md);
+    font-family: var(--sys-typography-body-text-font-family);
+    font-size: var(--sys-typography-body-text-font-size);
+    color: var(--sys-color-neutral-30);
+    line-height: var(--sys-typography-body-text-line-height);
+}
+
+.tone-preview-title {
+    font-family: var(--sys-typography-label-medium-font-family);
+    font-size: var(--sys-typography-label-medium-font-size);
+    color: var(--sys-color-neutral-60);
+    margin-bottom: var(--sys-spacing-xs);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 600px) {
+    .tone-chip-group {
+        justify-content: center;
+    }
+    
+    .tone-selector-scrollable .tone-chip-group {
+        justify-content: flex-start;
+    }
+    
+    .tone-chip {
+        min-width: 70px;
+    }
+}

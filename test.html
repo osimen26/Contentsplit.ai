@@ -17,6 +17,21 @@
     <link rel="stylesheet" href="components/select.css">
     <link rel="stylesheet" href="components/navigation.css">
     <link rel="stylesheet" href="components/tooltips.css">
+    <link rel="stylesheet" href="components/layout.css">
+    <link rel="stylesheet" href="components/content-input.css">
+    <link rel="stylesheet" href="components/platform-selector.css">
+    <link rel="stylesheet" href="components/tone-selector.css">
+    <link rel="stylesheet" href="components/generated-content.css">
+    <link rel="stylesheet" href="components/regeneration-controls.css">
+    <link rel="stylesheet" href="components/conversion-history.css">
+    <link rel="stylesheet" href="components/tier-usage-panel.css">
+    <link rel="stylesheet" href="components/settings-profile.css">
+    <link rel="stylesheet" href="components/loading-state.css">
+    <link rel="stylesheet" href="components/empty-states.css">
+    <link rel="stylesheet" href="components/form-field-system.css">
+    <link rel="stylesheet" href="components/notification-system.css">
+    <link rel="stylesheet" href="components/responsive-utilities.css">
+    <link rel="stylesheet" href="components/ai-integration.css">
     <style>
         * {
             box-sizing: border-box;
@@ -713,6 +728,1192 @@
                         <span class="tooltip-rich" data-tooltip="Rich tooltip with more content">Rich</span>
                         <span class="tooltip-error" data-tooltip="Error tooltip">Error</span>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Layout System -->
+        <section class="section">
+            <h2 class="section-title">Layout System</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Layout Types</h3>
+                    <div class="demo-column">
+                        <div class="layout-fixed" style="border: 2px dashed var(--sys-color-neutral-80); padding: 20px; margin-bottom: 20px;">
+                            <p><strong>Fixed Width Layout</strong> - Centered with max-width 1200px, responsive padding.</p>
+                        </div>
+                        <div class="layout-fluid" style="border: 2px dashed var(--sys-color-neutral-80); padding: 20px; margin-bottom: 20px;">
+                            <p><strong>Fluid Layout</strong> - Expands to fill available space with responsive padding.</p>
+                        </div>
+                        <div class="layout-split" style="border: 2px dashed var(--sys-color-neutral-80); padding: 20px; margin-bottom: 20px;">
+                            <div style="background: var(--sys-color-primary-95); padding: 20px; border-radius: var(--sys-radius-sm);">Column 1</div>
+                            <div style="background: var(--sys-color-primary-95); padding: 20px; border-radius: var(--sys-radius-sm);">Column 2</div>
+                        </div>
+                        <div class="layout-card-grid" style="margin-top: 20px;">
+                            <div style="background: var(--sys-color-secondary-95); padding: 20px; border-radius: var(--sys-radius-sm);">Card 1</div>
+                            <div style="background: var(--sys-color-secondary-95); padding: 20px; border-radius: var(--sys-radius-sm);">Card 2</div>
+                            <div style="background: var(--sys-color-secondary-95); padding: 20px; border-radius: var(--sys-radius-sm);">Card 3</div>
+                        </div>
+                    </div>
+                    <p class="note">Fixed, fluid, split (50/50), and card grid layouts. Split and card grids are responsive.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Grid System</h3>
+                    <div class="demo-column">
+                        <div class="grid-12" style="margin-bottom: 20px;">
+                            <div class="grid-col-6" style="background: var(--sys-color-primary-95); padding: 10px; border-radius: var(--sys-radius-sm);">6 columns</div>
+                            <div class="grid-col-6" style="background: var(--sys-color-primary-95); padding: 10px; border-radius: var(--sys-radius-sm);">6 columns</div>
+                        </div>
+                        <div class="grid-flex" style="margin-bottom: 20px;">
+                            <div style="background: var(--sys-color-secondary-95); padding: 20px; border-radius: var(--sys-radius-sm);">Flex Item</div>
+                            <div style="background: var(--sys-color-secondary-95); padding: 20px; border-radius: var(--sys-radius-sm);">Flex Item</div>
+                            <div style="background: var(--sys-color-secondary-95); padding: 20px; border-radius: var(--sys-radius-sm);">Flex Item</div>
+                        </div>
+                        <div class="grid-masonry" style="margin-bottom: 20px;">
+                            <div class="grid-masonry-item" style="background: var(--sys-color-neutral-90); padding: 20px; border-radius: var(--sys-radius-sm); height: 120px;">Masonry Item 1</div>
+                            <div class="grid-masonry-item" style="background: var(--sys-color-neutral-90); padding: 20px; border-radius: var(--sys-radius-sm); height: 80px;">Masonry Item 2</div>
+                            <div class="grid-masonry-item" style="background: var(--sys-color-neutral-90); padding: 20px; border-radius: var(--sys-radius-sm); height: 150px;">Masonry Item 3</div>
+                        </div>
+                    </div>
+                    <p class="note">12‑column grid, flexible auto‑fit grid, and masonry layout with varying heights.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Spacing Utilities</h3>
+                    <div class="demo-column">
+                        <div class="demo-row">
+                            <div class="p-md m-md" style="background: var(--sys-color-primary-95);">Margin & Padding MD</div>
+                            <div class="p-lg m-lg" style="background: var(--sys-color-secondary-95);">Margin & Padding LG</div>
+                        </div>
+                        <div class="demo-row" style="margin-top: 20px;">
+                            <div class="gap-lg" style="display: flex; background: var(--sys-color-neutral-98); padding: 20px; border-radius: var(--sys-radius-sm);">
+                                <div style="background: var(--sys-color-neutral-90); padding: 10px; border-radius: var(--sys-radius-sm);">Item 1</div>
+                                <div style="background: var(--sys-color-neutral-90); padding: 10px; border-radius: var(--sys-radius-sm);">Item 2</div>
+                            </div>
+                        </div>
+                        <div class="demo-row" style="margin-top: 20px;">
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                <span class="badge badge-md badge-info">m-xs</span>
+                                <span class="badge badge-md badge-success">p-lg</span>
+                                <span class="badge badge-md badge-warning">gap-xl</span>
+                                <span class="badge badge-md badge-error">mt-2xl</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="note">Margin, padding, and gap utility classes using design token spacing.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Layout Patterns</h3>
+                    <div class="demo-column">
+                        <div class="layout-app" style="min-height: 300px; border: 2px dashed var(--sys-color-neutral-80);">
+                            <div class="layout-header" style="background: var(--sys-color-primary-95);">Header</div>
+                            <div class="layout-main" style="background: var(--sys-color-neutral-98);">Main Content Area</div>
+                            <div class="layout-footer" style="background: var(--sys-color-primary-95);">Footer</div>
+                        </div>
+                        <div class="layout-sidebar" style="min-height: 200px; margin-top: 20px; border: 2px dashed var(--sys-color-neutral-80);">
+                            <div class="layout-sidebar-nav" style="background: var(--sys-color-secondary-95);">Sidebar Navigation</div>
+                            <div class="layout-sidebar-content" style="background: var(--sys-color-neutral-98);">Main Content</div>
+                        </div>
+                        <div class="layout-centered" style="min-height: 150px; margin-top: 20px; border: 2px dashed var(--sys-color-neutral-80);">
+                            <div class="layout-centered-content" style="background: var(--sys-color-neutral-98); padding: 20px; border-radius: var(--sys-radius-sm);">
+                                <p>Centered content with max‑width 600px.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="note">Common layout patterns: app (header/main/footer), sidebar, and centered content.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Dashboard Layouts</h3>
+                    <div class="demo-column">
+                        <div class="dashboard-grid-3-col" style="margin-bottom: 20px;">
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header">
+                                    <h4 class="dashboard-card-title">Card Title</h4>
+                                    <span class="badge badge-md badge-success">Active</span>
+                                </div>
+                                <div class="dashboard-card-content">Dashboard card with hover elevation.</div>
+                            </div>
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header">
+                                    <h4 class="dashboard-card-title">Card Title</h4>
+                                    <span class="badge badge-md badge-info">Info</span>
+                                </div>
+                                <div class="dashboard-card-content">Another dashboard card example.</div>
+                            </div>
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header">
+                                    <h4 class="dashboard-card-title">Card Title</h4>
+                                    <span class="badge badge-md badge-warning">Warning</span>
+                                </div>
+                                <div class="dashboard-card-content">Third card in the dashboard grid.</div>
+                            </div>
+                        </div>
+                        <div class="dashboard-stats">
+                            <div class="dashboard-stat">
+                                <h3 class="dashboard-stat-value">1,234</h3>
+                                <p class="dashboard-stat-label">Total Users</p>
+                            </div>
+                            <div class="dashboard-stat">
+                                <h3 class="dashboard-stat-value">567</h3>
+                                <p class="dashboard-stat-label">Active Sessions</p>
+                            </div>
+                            <div class="dashboard-stat">
+                                <h3 class="dashboard-stat-value">89%</h3>
+                                <p class="dashboard-stat-label">Satisfaction</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="note">Dashboard‑specific layouts: card grids, stat blocks, and empty states.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Divider & Spacer Components</h3>
+                    <div class="demo-column">
+                        <div style="padding: 20px; background: var(--sys-color-neutral-98); border-radius: var(--sys-radius-sm);">
+                            <p>Above divider</p>
+                            <hr class="layout-divider">
+                            <p>Below divider</p>
+                            <hr class="layout-divider layout-divider-inset">
+                            <p>Inset divider</p>
+                            <hr class="layout-divider layout-divider-bold">
+                            <p>Bold divider</p>
+                            <hr class="layout-divider layout-divider-dashed">
+                            <p>Dashed divider</p>
+                            <div class="layout-divider-with-label">Labeled Divider</div>
+                        </div>
+                        <div style="margin-top: 20px; padding: 20px; background: var(--sys-color-neutral-98); border-radius: var(--sys-radius-sm);">
+                            <div style="display: flex; align-items: center;">
+                                <button class="button button-filled">Button 1</button>
+                                <div class="layout-spacer-horizontal-md"></div>
+                                <button class="button button-outlined">Button 2</button>
+                                <div class="layout-spacer"></div>
+                                <button class="button button-text">Button 3</button>
+                            </div>
+                            <div style="display: flex; flex-direction: column; margin-top: 20px;">
+                                <div style="background: var(--sys-color-primary-95); padding: 10px; border-radius: var(--sys-radius-sm);">Item A</div>
+                                <div class="layout-spacer-vertical-md"></div>
+                                <div style="background: var(--sys-color-primary-95); padding: 10px; border-radius: var(--sys-radius-sm);">Item B</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="note">Dividers with variants (inset, bold, dashed, labeled). Spacers for flexible space in flex layouts.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Application Components -->
+        <section class="section">
+            <h2 class="section-title">Application Components</h2>
+            <div class="grid">
+                <!-- Content Input -->
+                <div class="component-demo">
+                    <h3>Content Input</h3>
+                    <div class="content-input-container">
+                        <div class="content-input-header">
+                            <h4 class="content-input-title">Create New Content</h4>
+                        </div>
+                        <div class="content-input-area">
+                            <textarea class="content-input-textarea" placeholder="Enter content..." rows="3"></textarea>
+                            <div class="content-input-character-count">0/5000</div>
+                        </div>
+                        <div class="content-input-controls">
+                            <button class="button button-filled button-medium">Generate</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Platform Selector -->
+                <div class="component-demo">
+                    <h3>Platform Selector</h3>
+                    <div class="platform-selector">
+                        <div class="platform-grid">
+                            <div class="platform-card selected">
+                                <div class="platform-icon">🐦</div>
+                                <div class="platform-name">Twitter/X</div>
+                                <div class="platform-description">280 chars per tweet</div>
+                            </div>
+                            <div class="platform-card">
+                                <div class="platform-icon">💼</div>
+                                <div class="platform-name">LinkedIn</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tone Selector -->
+                <div class="component-demo">
+                    <h3>Tone Selector</h3>
+                    <div class="tone-selector">
+                        <div class="tone-chip-group">
+                            <div class="chip chip-tone chip-tone-formal">Formal</div>
+                            <div class="chip chip-tone chip-tone-casual selected">Casual</div>
+                            <div class="chip chip-tone chip-tone-professional">Professional</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Generated Content Display -->
+                <div class="component-demo">
+                    <h3>Generated Content</h3>
+                    <div class="generated-content">
+                        <div class="generated-content-header">
+                            <h4 class="generated-content-title">Generated Content</h4>
+                        </div>
+                        <div class="generated-content-tabs">
+                            <button class="generated-content-tab selected">Twitter</button>
+                            <button class="generated-content-tab">LinkedIn</button>
+                        </div>
+                        <div class="generated-content-panel selected">
+                            <div class="generated-content-display">
+                                <p class="generated-content-text">This is generated content for the selected platform.</p>
+                                <div class="generated-content-character-count">245/280</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Regeneration Controls -->
+                <div class="component-demo">
+                    <h3>Regeneration Controls</h3>
+                    <div class="regeneration-controls">
+                        <div class="regeneration-primary">
+                            <button class="button button-filled regenerate-button">Regenerate</button>
+                            <div class="regeneration-count">3 uses left</div>
+                        </div>
+                        <div class="regeneration-options">
+                            <div class="regeneration-option">
+                                <div class="regeneration-option-icon">🎯</div>
+                                <div class="regeneration-option-label">Improve Clarity</div>
+                            </div>
+                            <div class="regeneration-option selected">
+                                <div class="regeneration-option-icon">📏</div>
+                                <div class="regeneration-option-label">Make Shorter</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Conversion History -->
+                <div class="component-demo">
+                    <h3>Conversion History</h3>
+                    <div class="conversion-history">
+                        <div class="conversion-history-table-container">
+                            <table class="conversion-history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Platform</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2025-04-14</td>
+                                        <td>Twitter</td>
+                                        <td><span class="conversion-history-status success">Success</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-04-13</td>
+                                        <td>LinkedIn</td>
+                                        <td><span class="conversion-history-status pending">Pending</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tier/Usage Panel -->
+                <div class="component-demo">
+                    <h3>Tier & Usage Panel</h3>
+                    <div class="tier-usage-panel">
+                        <div class="tier-usage-current-plan">
+                            <h4 class="tier-usage-current-plan-title">Pro Plan</h4>
+                            <div class="tier-usage-stat">
+                                <div class="tier-usage-stat-value">1,234</div>
+                                <div class="tier-usage-stat-label">Credits Used</div>
+                                <div class="tier-usage-stat-progress">
+                                    <div class="tier-usage-stat-progress-bar" style="width: 65%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Settings/Profile -->
+                <div class="component-demo">
+                    <h3>Settings & Profile</h3>
+                    <div class="settings-container">
+                        <div class="settings-sidebar">
+                            <nav class="settings-sidebar-nav">
+                                <button class="settings-sidebar-item selected">Profile</button>
+                                <button class="settings-sidebar-item">Preferences</button>
+                            </nav>
+                        </div>
+                        <div class="settings-content">
+                            <div class="settings-section">
+                                <h4 class="settings-section-title">Profile Settings</h4>
+                                <div class="input-container">
+                                    <label for="demo-name">Name</label>
+                                    <input type="text" id="demo-name" class="input-filled" value="John Doe">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Loading States</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Circular Progress</h3>
+                    <div class="demo-row">
+                        <div class="progress-circular">
+                            <svg class="progress-circular-svg" viewBox="0 0 100 100">
+                                <circle class="progress-circular-track" cx="50" cy="50" r="45"></circle>
+                                <circle class="progress-circular-indicator" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                        </div>
+                        <div class="progress-circular progress-circular-sm">
+                            <svg class="progress-circular-svg" viewBox="0 0 100 100">
+                                <circle class="progress-circular-track" cx="50" cy="50" r="45"></circle>
+                                <circle class="progress-circular-indicator" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                        </div>
+                        <div class="progress-circular progress-circular-lg">
+                            <svg class="progress-circular-svg" viewBox="0 0 100 100">
+                                <circle class="progress-circular-track" cx="50" cy="50" r="45"></circle>
+                                <circle class="progress-circular-indicator" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="progress-circular progress-circular-success">
+                            <svg class="progress-circular-svg" viewBox="0 0 100 100">
+                                <circle class="progress-circular-track" cx="50" cy="50" r="45"></circle>
+                                <circle class="progress-circular-indicator" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                        </div>
+                        <div class="progress-circular progress-circular-warning">
+                            <svg class="progress-circular-svg" viewBox="0 0 100 100">
+                                <circle class="progress-circular-track" cx="50" cy="50" r="45"></circle>
+                                <circle class="progress-circular-indicator" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                        </div>
+                        <div class="progress-circular progress-circular-error">
+                            <svg class="progress-circular-svg" viewBox="0 0 100 100">
+                                <circle class="progress-circular-track" cx="50" cy="50" r="45"></circle>
+                                <circle class="progress-circular-indicator" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="note">Indeterminate circular progress indicators in different sizes and colors.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Linear Progress</h3>
+                    <div class="demo-column">
+                        <div class="progress-linear">
+                            <div class="progress-linear-indicator"></div>
+                        </div>
+                        <div class="progress-linear progress-linear-thick">
+                            <div class="progress-linear-indicator"></div>
+                        </div>
+                        <div class="progress-linear progress-linear-determinate" style="margin-top: 20px;">
+                            <div class="progress-linear-indicator" style="transform: scaleX(0.65);"></div>
+                        </div>
+                        <div class="progress-linear progress-linear-buffer" style="margin-top: 20px;"></div>
+                    </div>
+                    <p class="note">Linear progress bars: indeterminate (standard and thick), determinate (65%), and buffer variant.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Skeleton Screens</h3>
+                    <div class="demo-column">
+                        <div class="skeleton-card">
+                            <div class="skeleton skeleton-circle"></div>
+                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-text skeleton-text-sm"></div>
+                            <div class="skeleton skeleton-text skeleton-text-lg"></div>
+                            <div class="skeleton skeleton-image"></div>
+                        </div>
+                        <div class="skeleton skeleton-pulse" style="height: 100px; margin-top: 20px;"></div>
+                    </div>
+                    <p class="note">Skeleton placeholders for content loading with wave and pulse animations.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Loading Overlay & Inline</h3>
+                    <div class="demo-column">
+                        <div class="loading-overlay" style="position: relative; height: 150px; margin-bottom: 20px;">
+                            <div class="loading-overlay-content">
+                                <div class="progress-circular">
+                                    <svg class="progress-circular-svg" viewBox="0 0 100 100">
+                                        <circle class="progress-circular-track" cx="50" cy="50" r="45"></circle>
+                                        <circle class="progress-circular-indicator" cx="50" cy="50" r="45"></circle>
+                                    </svg>
+                                </div>
+                                <p class="loading-overlay-message">Loading your content...</p>
+                            </div>
+                        </div>
+                        <div class="loading-inline">
+                            <div class="progress-circular progress-circular-sm">
+                                <svg class="progress-circular-svg" viewBox="0 0 100 100">
+                                    <circle class="progress-circular-track" cx="50" cy="50" r="45"></circle>
+                                    <circle class="progress-circular-indicator" cx="50" cy="50" r="45"></circle>
+                                </svg>
+                            </div>
+                            <span class="loading-inline-message">Processing...</span>
+                        </div>
+                        <button class="button button-filled button-loading">Loading Button</button>
+                    </div>
+                    <p class="note">Full-page loading overlay, inline loading indicator, and button loading state.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>AI-Specific Loading</h3>
+                    <div class="demo-column">
+                        <div class="loading-ai-processing">
+                            <div class="loading-ai-processing-indicator">
+                                <div class="loading-ai-processing-dots">
+                                    <div class="loading-ai-processing-dot"></div>
+                                    <div class="loading-ai-processing-dot"></div>
+                                    <div class="loading-ai-processing-dot"></div>
+                                </div>
+                                <span>AI is processing your request...</span>
+                            </div>
+                        </div>
+                        <div class="skeleton-content-generation" style="margin-top: 20px;">
+                            <div class="skeleton-content-generation-header">
+                                <div class="skeleton skeleton-circle-sm"></div>
+                                <div class="skeleton skeleton-text" style="width: 120px;"></div>
+                            </div>
+                            <div class="skeleton-content-generation-body">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-text" style="width: 80%;"></div>
+                                <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                            </div>
+                        </div>
+                        <div class="loading-ai-model" style="margin-top: 20px;">
+                            <div class="loading-ai-model-progress"></div>
+                            <span>Loading AI model...</span>
+                        </div>
+                    </div>
+                    <p class="note">Specialized loading states for AI operations and content generation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Empty States</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>First Use Empty State</h3>
+                    <div class="empty-first-use">
+                        <div class="empty-first-use-illustration">✨</div>
+                        <h4 class="empty-first-use-title">Welcome to ContentSplit!</h4>
+                        <p class="empty-first-use-description">Get started by creating your first content piece. We'll help you generate engaging content for any platform.</p>
+                        <button class="empty-action-primary">Create Content</button>
+                    </div>
+                </div>
+
+                <div class="component-demo">
+                    <h3>No Results Empty State</h3>
+                    <div class="empty-no-results">
+                        <div class="empty-no-results-icon">🔍</div>
+                        <h4 class="empty-no-results-title">No results found</h4>
+                        <p class="empty-no-results-description">Try adjusting your search terms or filters to find what you're looking for.</p>
+                        <button class="empty-action-secondary">Clear Filters</button>
+                    </div>
+                </div>
+
+                <div class="component-demo">
+                    <h3>No Data Empty State</h3>
+                    <div class="empty-no-data">
+                        <div class="empty-no-data-icon">📁</div>
+                        <h4 class="empty-no-data-title">No content yet</h4>
+                        <p class="empty-no-data-description">Start by creating your first piece of content. It's quick and easy!</p>
+                        <button class="empty-action-primary">Create First Content</button>
+                    </div>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Error Empty State</h3>
+                    <div class="empty-error">
+                        <div class="empty-error-icon">⚠️</div>
+                        <h4 class="empty-error-title">Unable to load content</h4>
+                        <p class="empty-error-description">Something went wrong while loading your content. Please try again.</p>
+                        <button class="empty-action-primary">Retry</button>
+                    </div>
+                </div>
+
+                <div class="component-demo">
+                    <h3>No Permissions Empty State</h3>
+                    <div class="empty-no-permissions">
+                        <div class="empty-no-permissions-icon">🔒</div>
+                        <h4 class="empty-no-permissions-title">Access restricted</h4>
+                        <p class="empty-no-permissions-description">You don't have permission to view this content. Contact your administrator for access.</p>
+                        <button class="empty-action-link">Contact Admin</button>
+                    </div>
+                </div>
+
+                <div class="component-demo">
+                    <h3>AI-Specific Empty States</h3>
+                    <div class="demo-column">
+                        <div class="empty-ai-no-content">
+                            <div class="empty-ai-no-content-icon">🤖</div>
+                            <h4 class="empty-ai-no-content-title">No AI content generated</h4>
+                            <p class="empty-description-medium">Start generating AI-powered content for your platforms.</p>
+                            <button class="empty-action-primary">Generate Content</button>
+                        </div>
+                        <div class="empty-ai-processing" style="margin-top: 20px;">
+                            <div class="empty-ai-processing-spinner">⏳</div>
+                            <h4 class="empty-ai-processing-title">AI is processing</h4>
+                            <p class="empty-ai-processing-description">Your content is being generated. This usually takes a few seconds.</p>
+                        </div>
+                        <div class="empty-ai-error" style="margin-top: 20px;">
+                            <div class="empty-ai-error-icon">❌</div>
+                            <h4 class="empty-ai-error-title">AI generation failed</h4>
+                            <p class="empty-ai-error-description">The AI encountered an error while generating your content.</p>
+                            <button class="empty-ai-error-retry">Retry</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Layout Variants</h3>
+                    <div class="demo-column">
+                        <div class="empty-centered">
+                            <div class="empty-icon-large">📊</div>
+                            <h4 class="empty-title-medium">Centered Layout</h4>
+                            <p class="empty-description-medium">This empty state is centered both horizontally and vertically.</p>
+                            <button class="empty-action-primary">Centered Action</button>
+                        </div>
+                        <div class="empty-side-by-side" style="margin-top: 20px;">
+                            <div class="empty-side-by-side-illustration">
+                                <div class="empty-illustration">📈</div>
+                            </div>
+                            <div class="empty-side-by-side-content">
+                                <h4 class="empty-title-medium">Side‑by‑Side Layout</h4>
+                                <p class="empty-description-medium">Illustration on the left, content on the right for wider screens.</p>
+                                <button class="empty-action-secondary">Learn More</button>
+                            </div>
+                        </div>
+                        <div class="empty-compact" style="margin-top: 20px;">
+                            <div class="empty-compact-icon">📱</div>
+                            <h4 class="empty-compact-title">Compact Layout</h4>
+                            <p class="empty-description-small">A smaller empty state for tight spaces.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Form Field System</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Floating Label Field</h3>
+                    <div class="form-field">
+                        <div class="field-container focused">
+                            <input type="text" class="field-input" placeholder=" " value="John Doe">
+                            <label class="field-label floating">Name</label>
+                        </div>
+                        <div class="field-helper-text">Enter your full name as it appears on official documents.</div>
+                    </div>
+                    <div class="form-field" style="margin-top: 20px;">
+                        <div class="field-container error">
+                            <input type="email" class="field-input" placeholder=" " value="invalid-email">
+                            <label class="field-label floating">Email Address</label>
+                        </div>
+                        <div class="field-error-text">⚠️ Please enter a valid email address.</div>
+                    </div>
+                    <div class="form-field" style="margin-top: 20px;">
+                        <div class="field-container">
+                            <input type="text" class="field-input" placeholder=" ">
+                            <label class="field-label">Phone Number</label>
+                        </div>
+                        <div class="field-helper-text">Include country code (e.g., +1)</div>
+                    </div>
+                    <p class="note">Form fields with floating labels, helper text, and error states.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Textarea & Select</h3>
+                    <div class="form-field">
+                        <div class="field-container">
+                            <textarea class="field-input field-textarea" placeholder=" " rows="3">This is a longer text entry field with multiple lines.</textarea>
+                            <label class="field-label floating">Description</label>
+                        </div>
+                        <div class="character-counter">85/500</div>
+                    </div>
+                    <div class="form-field" style="margin-top: 20px;">
+                        <div class="field-container">
+                            <select class="field-input field-select">
+                                <option>Option 1</option>
+                                <option selected>Option 2</option>
+                                <option>Option 3</option>
+                            </select>
+                            <label class="field-label floating">Select Option</label>
+                        </div>
+                        <div class="field-helper-text">Choose the most appropriate option.</div>
+                    </div>
+                    <div class="form-field" style="margin-top: 20px;">
+                        <div class="field-container disabled">
+                            <input type="text" class="field-input" placeholder=" " value="Disabled field" disabled>
+                            <label class="field-label floating">Disabled Field</label>
+                        </div>
+                    </div>
+                    <p class="note">Textarea with character counter, styled select dropdown, and disabled state.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>File Upload & Range Slider</h3>
+                    <div class="form-field">
+                        <input type="file" id="demo-file" class="file-upload">
+                        <label for="demo-file" class="file-upload-label">
+                            <div class="file-upload-icon">📎</div>
+                            <span>Click to upload or drag and drop</span>
+                            <span class="field-helper-text">Max file size: 10MB</span>
+                        </label>
+                        <div class="file-preview" style="display: none;">
+                            <div class="file-icon">📄</div>
+                            <div class="file-info">
+                                <div class="file-name">document.pdf</div>
+                                <div class="file-size">2.4 MB</div>
+                            </div>
+                            <button class="file-remove">×</button>
+                        </div>
+                    </div>
+                    <div class="form-field" style="margin-top: 30px;">
+                        <label class="field-label">Volume Level</label>
+                        <input type="range" min="0" max="100" value="75" class="range-slider">
+                        <div class="range-value">75%</div>
+                        <div class="field-helper-text">Adjust the volume to your preference.</div>
+                    </div>
+                    <p class="note">File upload area with preview and custom range slider.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Validation Helpers</h3>
+                    <div class="form-field">
+                        <div class="field-container">
+                            <input type="password" class="field-input" placeholder=" " value="password123">
+                            <label class="field-label floating">Password</label>
+                            <div class="field-help">?</div>
+                            <div class="field-help-tooltip">Password must be at least 8 characters with uppercase and number.</div>
+                        </div>
+                        <div class="password-strength">
+                            <div class="password-strength-fill password-strength-good"></div>
+                        </div>
+                        <div class="field-helper-text">Strength: Good</div>
+                    </div>
+                    <div class="form-field" style="margin-top: 20px;">
+                        <div class="field-container">
+                            <input type="text" class="field-input" placeholder=" " maxlength="50" value="This is a long text that exceeds limit">
+                            <label class="field-label floating">Bio</label>
+                        </div>
+                        <div class="character-counter error">48/50</div>
+                        <div class="field-error-text">⚠️ Approaching character limit.</div>
+                    </div>
+                    <p class="note">Password strength meter, tooltip help, and character counter with warning.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Layout Patterns</h3>
+                    <div class="single-column-form">
+                        <div class="form-field">
+                            <div class="field-container">
+                                <input type="text" class="field-input" placeholder=" ">
+                                <label class="field-label">Single Column Field</label>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <div class="field-container">
+                                <input type="text" class="field-input" placeholder=" ">
+                                <label class="field-label">Another Field</label>
+                            </div>
+                        </div>
+                        <p class="note" style="margin-top: 10px;">Single column form with max-width 480px.</p>
+                    </div>
+                    <div class="multi-column-form" style="margin-top: 30px;">
+                        <div class="form-field">
+                            <div class="field-container">
+                                <input type="text" class="field-input" placeholder=" ">
+                                <label class="field-label">First Name</label>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <div class="field-container">
+                                <input type="text" class="field-input" placeholder=" ">
+                                <label class="field-label">Last Name</label>
+                            </div>
+                        </div>
+                        <div class="form-field form-field-full">
+                            <div class="field-container">
+                                <input type="email" class="field-input" placeholder=" ">
+                                <label class="field-label">Email</label>
+                            </div>
+                        </div>
+                        <p class="note" style="grid-column: 1 / -1; margin-top: 10px;">Multi-column form with responsive grid.</p>
+                    </div>
+                    <div class="inline-form" style="margin-top: 30px;">
+                        <div class="form-field">
+                            <div class="field-container">
+                                <input type="text" class="field-input" placeholder=" ">
+                                <label class="field-label floating">Search</label>
+                            </div>
+                        </div>
+                        <button class="button button-filled">Search</button>
+                        <p class="note" style="width: 100%; margin-top: 10px;">Inline form with button aligned.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Notification System</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Banner Types</h3>
+                    <div class="demo-row">
+                        <div class="banner banner-info banner-inline">
+                            <div class="banner-icon">ℹ️</div>
+                            <div class="banner-content">
+                                <h4 class="banner-title">Information Banner</h4>
+                                <p class="banner-description">This is an informational message with details about the current process.</p>
+                                <div class="banner-actions">
+                                    <button class="button button-text">Learn More</button>
+                                    <button class="button button-text">Dismiss</button>
+                                </div>
+                            </div>
+                            <button class="banner-close" aria-label="Close">×</button>
+                        </div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="banner banner-success banner-inline">
+                            <div class="banner-icon">✅</div>
+                            <div class="banner-content">
+                                <h4 class="banner-title">Success Banner</h4>
+                                <p class="banner-description">Your content has been successfully generated and is ready for use.</p>
+                                <div class="banner-actions">
+                                    <button class="button button-text">View Content</button>
+                                </div>
+                            </div>
+                            <button class="banner-close" aria-label="Close">×</button>
+                        </div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="banner banner-warning banner-inline">
+                            <div class="banner-icon">⚠️</div>
+                            <div class="banner-content">
+                                <h4 class="banner-title">Warning Banner</h4>
+                                <p class="banner-description">Your storage is running low. Consider upgrading your plan.</p>
+                                <div class="banner-actions">
+                                    <button class="button button-text">Upgrade</button>
+                                </div>
+                            </div>
+                            <button class="banner-close" aria-label="Close">×</button>
+                        </div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="banner banner-error banner-inline">
+                            <div class="banner-icon">❌</div>
+                            <div class="banner-content">
+                                <h4 class="banner-title">Error Banner</h4>
+                                <p class="banner-description">Failed to generate content. Please check your connection and try again.</p>
+                                <div class="banner-actions">
+                                    <button class="button button-text">Retry</button>
+                                </div>
+                            </div>
+                            <button class="banner-close" aria-label="Close">×</button>
+                        </div>
+                    </div>
+                    <p class="note">Banners with info, success, warning, and error types. Each includes icon, title, description, and actions.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Banner Positions</h3>
+                    <div class="demo-row">
+                        <div class="banner banner-info banner-top" style="position: relative; top: 0; left: 0; right: 0; margin-bottom: 20px;">
+                            <div class="banner-icon">📌</div>
+                            <div class="banner-content">
+                                <h4 class="banner-title">Top Fixed Banner</h4>
+                                <p class="banner-description">This banner would be fixed at the top of the viewport.</p>
+                            </div>
+                            <button class="banner-close" aria-label="Close">×</button>
+                        </div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="banner banner-success banner-sticky" style="position: relative; top: 0;">
+                            <div class="banner-icon">📌</div>
+                            <div class="banner-content">
+                                <h4 class="banner-title">Sticky Banner</h4>
+                                <p class="banner-description">This banner sticks to the top when scrolling.</p>
+                            </div>
+                            <button class="banner-close" aria-label="Close">×</button>
+                        </div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="banner banner-warning banner-inline">
+                            <div class="banner-icon">📌</div>
+                            <div class="banner-content">
+                                <h4 class="banner-title">Inline Banner</h4>
+                                <p class="banner-description">Standard inline banner within content flow.</p>
+                            </div>
+                            <button class="banner-close" aria-label="Close">×</button>
+                        </div>
+                    </div>
+                    <p class="note">Banners can be positioned as fixed top, sticky, or inline within content.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Badge Types & Sizes</h3>
+                    <div class="demo-row">
+                        <span class="badge badge-md badge-numeric badge-info">5</span>
+                        <span class="badge badge-md badge-status badge-success">Active</span>
+                        <span class="badge badge-md badge-label badge-warning">New</span>
+                        <span class="badge badge-dot badge-error"></span>
+                    </div>
+                    <div class="demo-row">
+                        <span class="badge badge-sm badge-numeric badge-info">3</span>
+                        <span class="badge badge-md badge-numeric badge-success">12</span>
+                        <span class="badge badge-lg badge-numeric badge-warning">99+</span>
+                    </div>
+                    <div class="badge-container" style="display: inline-block; margin-right: 30px;">
+                        <button class="button button-filled">Inbox</button>
+                        <span class="badge badge-md badge-numeric badge-error badge-top-right">3</span>
+                    </div>
+                    <div class="badge-container" style="display: inline-block;">
+                        <div style="width: 40px; height: 40px; background: var(--sys-color-neutral-90); border-radius: 50%;"></div>
+                        <span class="badge badge-dot badge-success badge-bottom-right"></span>
+                    </div>
+                    <p class="note">Numeric, status, label, and dot badges in small, medium, large sizes. Badges can be positioned on corners.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Badge Colors & AI Variants</h3>
+                    <div class="demo-row">
+                        <span class="badge badge-md badge-info">Info</span>
+                        <span class="badge badge-md badge-success">Success</span>
+                        <span class="badge badge-md badge-warning">Warning</span>
+                        <span class="badge badge-md badge-error">Error</span>
+                        <span class="badge badge-md badge-neutral">Neutral</span>
+                    </div>
+                    <div class="demo-row">
+                        <span class="badge badge-md badge-content-status">Generating</span>
+                        <span class="badge badge-md badge-ai-model">GPT‑4</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="banner banner-ai-processing banner-inline">
+                            <div class="banner-icon">🤖</div>
+                            <div class="banner-content">
+                                <h4 class="banner-title">AI Processing</h4>
+                                <p class="banner-description">Your content is being generated by our AI models. This may take a moment.</p>
+                                <div class="banner-actions">
+                                    <button class="button button-text">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="note">Badges with semantic colors and AI‑specific variants (content status, model badge). AI processing banner with spinning icon.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Responsive Utilities</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Responsive Container & Grid</h3>
+                    <div class="responsive-container" style="border: 2px dashed var(--sys-color-neutral-80); padding: 20px; margin-bottom: 20px;">
+                        <p>This container scales with viewport width. On large screens it's centered with max-width 1200px.</p>
+                    </div>
+                    <div class="responsive-grid-3">
+                        <div style="background: var(--sys-color-primary-95); padding: var(--sys-spacing-md); border-radius: var(--sys-radius-sm);">Grid Item 1</div>
+                        <div style="background: var(--sys-color-primary-95); padding: var(--sys-spacing-md); border-radius: var(--sys-radius-sm);">Grid Item 2</div>
+                        <div style="background: var(--sys-color-primary-95); padding: var(--sys-spacing-md); border-radius: var(--sys-radius-sm);">Grid Item 3</div>
+                    </div>
+                    <p class="note">Responsive container with breakpoint-based padding. 3-column grid that becomes 2-column on tablet, 1-column on mobile.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Responsive Flex & Sidebar</h3>
+                    <div class="responsive-flex-row">
+                        <div style="background: var(--sys-color-secondary-95); padding: var(--sys-spacing-md); border-radius: var(--sys-radius-sm); flex: 1;">Flex Item 1</div>
+                        <div style="background: var(--sys-color-secondary-95); padding: var(--sys-spacing-md); border-radius: var(--sys-radius-sm); flex: 1;">Flex Item 2</div>
+                        <div style="background: var(--sys-color-secondary-95); padding: var(--sys-spacing-md); border-radius: var(--sys-radius-sm); flex: 1;">Flex Item 3</div>
+                    </div>
+                    <div style="margin-top: 20px; padding: 20px; background: var(--sys-color-neutral-98); border-radius: var(--sys-radius-md);">
+                        <h4>Sidebar Layout (Simulated)</h4>
+                        <div class="responsive-sidebar" style="min-height: 200px;">
+                            <div style="background: var(--sys-color-neutral-90); padding: 20px; border-radius: var(--sys-radius-sm);">Sidebar Nav</div>
+                            <div style="background: var(--sys-color-neutral-95); padding: 20px; border-radius: var(--sys-radius-sm);">Main Content</div>
+                        </div>
+                        <p class="note" style="margin-top: 10px;">Flex row wraps on mobile. Sidebar collapses to off‑canvas on tablet.</p>
+                    </div>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Display & Order Utilities</h3>
+                    <div class="demo-row">
+                        <span class="badge badge-md badge-info hide-xs">Hidden on XS</span>
+                        <span class="badge badge-md badge-success hide-sm">Hidden on SM</span>
+                        <span class="badge badge-md badge-warning hide-md">Hidden on MD</span>
+                        <span class="badge badge-md badge-error hide-lg">Hidden on LG</span>
+                    </div>
+                    <div class="demo-row" style="margin-top: 20px;">
+                        <div class="responsive-flex-row">
+                            <div style="background: var(--sys-color-neutral-90); padding: 10px; border-radius: var(--sys-radius-sm); order-first-xs">Order First (XS)</div>
+                            <div style="background: var(--sys-color-neutral-90); padding: 10px; border-radius: var(--sys-radius-sm);">Default</div>
+                            <div style="background: var(--sys-color-neutral-90); padding: 10px; border-radius: var(--sys-radius-sm); order-last-xs">Order Last (XS)</div>
+                        </div>
+                    </div>
+                    <div class="demo-row" style="margin-top: 20px;">
+                        <p class="text-center-xs" style="background: var(--sys-color-neutral-95); padding: 10px;">Centered on mobile</p>
+                        <p class="text-left-sm" style="background: var(--sys-color-neutral-95); padding: 10px;">Left on tablet</p>
+                    </div>
+                    <p class="note">Display utilities hide/show elements at breakpoints. Order utilities reorder flex items. Text alignment per breakpoint.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Responsive Typography & Spacing</h3>
+                    <h4 class="responsive-headline" style="margin: 0;">Fluid Headline</h4>
+                    <p class="responsive-body" style="margin-top: 10px;">This text scales smoothly between 1rem and 1.125rem based on viewport width.</p>
+                    <div class="responsive-padding" style="background: var(--sys-color-primary-95); margin-top: 20px; border-radius: var(--sys-radius-sm);">
+                        <p>This box has fluid padding that scales with viewport width.</p>
+                    </div>
+                    <div class="spacing-responsive" style="background: var(--sys-color-secondary-95); margin-top: 20px; border-radius: var(--sys-radius-sm);">
+                        <p>This box has breakpoint‑based padding (md on mobile, lg on tablet, xl on desktop).</p>
+                    </div>
+                    <p class="note">Fluid typography with clamp(). Fluid spacing with clamp(). Breakpoint‑based spacing with media queries.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Responsive Table & Images</h3>
+                    <div class="responsive-table">
+                        <table style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Column 1</th>
+                                    <th>Column 2</th>
+                                    <th>Column 3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td data-label="Column 1">Data 1A</td>
+                                    <td data-label="Column 2">Data 1B</td>
+                                    <td data-label="Column 3">Data 1C</td>
+                                </tr>
+                                <tr>
+                                    <td data-label="Column 1">Data 2A</td>
+                                    <td data-label="Column 2">Data 2B</td>
+                                    <td data-label="Column 3">Data 2C</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <div style="width: 100%; height: 100px; background: var(--sys-color-neutral-90); border-radius: var(--sys-radius-sm); overflow: hidden;">
+                            <div class="responsive-image-contain" style="width: 100%; height: 100%; background: var(--sys-color-primary-95); display: flex; align-items: center; justify-content: center;">Simulated Image</div>
+                        </div>
+                        <p class="note" style="margin-top: 10px;">Table becomes card‑like on mobile. Images scale with object‑fit.</p>
+                    </div>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Responsive Navigation & Cards</h3>
+                    <div class="responsive-nav" style="border: 1px solid var(--sys-color-neutral-90); padding: 20px; border-radius: var(--sys-radius-md);">
+                        <div>Logo</div>
+                        <div class="responsive-nav-links">
+                            <a href="#" style="margin-right: 15px;">Link 1</a>
+                            <a href="#" style="margin-right: 15px;">Link 2</a>
+                            <a href="#" style="margin-right: 15px;">Link 3</a>
+                        </div>
+                        <button class="responsive-nav-toggle button button-text">☰</button>
+                    </div>
+                    <div class="responsive-card responsive-card-horizontal" style="margin-top: 20px; border: 1px solid var(--sys-color-neutral-90);">
+                        <div class="responsive-card-horizontal-image" style="background: var(--sys-color-neutral-80); border-radius: var(--sys-radius-sm);"></div>
+                        <div style="padding: 20px;">
+                            <h4>Horizontal Card</h4>
+                            <p>This card stacks vertically on mobile, becomes horizontal on tablet.</p>
+                        </div>
+                    </div>
+                    <p class="note">Navigation links hide on mobile, show hamburger. Cards change layout direction.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">AI Integration (Deepseek)</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>AI Suggestion Interface</h3>
+                    <div class="ai-suggestion-container ai-suggestion-deepseek">
+                        <div class="ai-suggestion-header">
+                            <span class="ai-suggestion-badge">🤖 AI Suggestion</span>
+                            <span class="sr-only">Artificial Intelligence suggestion</span>
+                        </div>
+                        <div class="ai-suggestion-content">
+                            "Consider adding more specific examples to make this content more engaging for your audience. You could include statistics or case studies to strengthen your argument."
+                        </div>
+                        <div class="ai-suggestion-actions">
+                            <button class="ai-suggestion-accept">Accept</button>
+                            <button class="ai-suggestion-modify">Modify</button>
+                            <button class="ai-suggestion-reject">Reject</button>
+                        </div>
+                    </div>
+                    <p class="note">AI suggestion container with accept, modify, and reject actions. Deepseek‑specific styling with gradient badge.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>AI Loading States</h3>
+                    <div class="ai-loading ai-loading-deepseek">
+                        <div class="ai-loading-indicator">🤖</div>
+                        <h4>AI Processing</h4>
+                        <p>Your content is being enhanced by Deepseek AI...</p>
+                        <div class="ai-loading-progress">
+                            <div class="ai-loading-progress-fill"></div>
+                        </div>
+                        <div class="ai-loading-status">Analyzing content structure...</div>
+                    </div>
+                    <p class="note">Pulsing AI indicator with progress bar and status updates. Deepseek gradient animation.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>AI Content Generation</h3>
+                    <div class="ai-content-generator">
+                        <textarea class="ai-prompt-input" placeholder="Describe what you want to generate...">Create a social media post about our new AI features</textarea>
+                        <div class="ai-generation-options">
+                            <div class="ai-option-chip selected">
+                                <span>📝</span>
+                                <span>Blog Post</span>
+                            </div>
+                            <div class="ai-option-chip">
+                                <span>📱</span>
+                                <span>Social Media</span>
+                            </div>
+                            <div class="ai-option-chip">
+                                <span>📧</span>
+                                <span>Email</span>
+                            </div>
+                            <div class="ai-option-chip">
+                                <span>📊</span>
+                                <span>Report</span>
+                            </div>
+                        </div>
+                        <button class="ai-generate-button ai-generate-button-deepseek">Generate with Deepseek AI</button>
+                    </div>
+                    <p class="note">Content generator with prompt input, format selection chips, and deepseek‑styled generate button.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Content Enhancement AI</h3>
+                    <div class="ai-enhancement-toolbar">
+                        <button class="ai-enhancement-button">
+                            <span>✨</span>
+                            <span>Improve Clarity</span>
+                        </button>
+                        <button class="ai-enhancement-button">
+                            <span>📈</span>
+                            <span>Expand Ideas</span>
+                        </button>
+                        <button class="ai-enhancement-button">
+                            <span>🎯</span>
+                            <span>Add Examples</span>
+                        </button>
+                        <button class="ai-enhancement-button">
+                            <span>🔍</span>
+                            <span>Check Grammar</span>
+                        </button>
+                    </div>
+                    <div style="margin-top: 20px; padding: 20px; background: var(--sys-color-neutral-95); border-radius: var(--sys-radius-md);">
+                        <p>Select text and use AI enhancement tools to improve your content. Each tool provides specific improvements tailored to your writing style.</p>
+                    </div>
+                    <p class="note">Toolbar with AI enhancement buttons for improving clarity, expanding ideas, adding examples, and grammar checking.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Smart Recommendations</h3>
+                    <div class="ai-recommendations">
+                        <div class="ai-recommendations-header">
+                            <h4 class="ai-recommendations-title">AI Recommendations</h4>
+                            <button class="ai-recommendations-refresh" aria-label="Refresh recommendations">↻</button>
+                        </div>
+                        <div class="ai-recommendation-item">
+                            <div class="ai-recommendation-icon">💡</div>
+                            <div class="ai-recommendation-content">
+                                <div class="ai-recommendation-title">Add Visual Elements</div>
+                                <div class="ai-recommendation-description">Consider adding charts or images to illustrate your points.</div>
+                            </div>
+                        </div>
+                        <div class="ai-recommendation-item">
+                            <div class="ai-recommendation-icon">📊</div>
+                            <div class="ai-recommendation-content">
+                                <div class="ai-recommendation-title">Include Statistics</div>
+                                <div class="ai-recommendation-description">Recent data shows 42% higher engagement with statistical references.</div>
+                            </div>
+                        </div>
+                        <div class="ai-recommendation-item">
+                            <div class="ai-recommendation-icon">🎯</div>
+                            <div class="ai-recommendation-content">
+                                <div class="ai-recommendation-title">Target Audience</div>
+                                <div class="ai-recommendation-description">Tailor language for technical vs. non‑technical readers.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="note">AI‑generated recommendations with refresh capability. Hover effects and clear typography hierarchy.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>AI‑Powered Search</h3>
+                    <div class="ai-search-container">
+                        <input type="text" class="ai-search-input" placeholder="Ask AI about your content...">
+                        <button class="ai-search-button" aria-label="Search">🔍</button>
+                        <div class="ai-search-suggestions">
+                            <div class="ai-search-suggestion selected">How can I improve engagement?</div>
+                            <div class="ai-search-suggestion">What tone works best for this audience?</div>
+                            <div class="ai-search-suggestion">Suggest keywords for SEO optimization</div>
+                            <div class="ai-search-suggestion">Check for repetitive phrases</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; padding: 20px; background: var(--sys-color-neutral-95); border-radius: var(--sys-radius-md);">
+                        <p>AI‑powered search with smart suggestions. Select a suggestion to get instant AI analysis.</p>
+                    </div>
+                    <p class="note">Search input with AI suggestions dropdown. Selected suggestion highlighted with left border.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Error Handling & Fallbacks</h3>
+                    <div class="ai-error-state">
+                        <div class="ai-error-icon">⚠️</div>
+                        <h4 class="ai-error-title">AI Service Unavailable</h4>
+                        <p class="ai-error-description">Our AI service is currently experiencing high demand. Please try again in a few moments or use the manual editor below.</p>
+                        <button class="ai-error-retry">Retry Now</button>
+                    </div>
+                    <div class="ai-fallback" style="margin-top: 20px;">
+                        <div class="ai-fallback-content">
+                            <p>While our AI is unavailable, you can manually edit your content using the tools below.</p>
+                        </div>
+                        <button class="ai-fallback-manual">Open Manual Editor</button>
+                    </div>
+                    <p class="note">Error state for AI service issues with retry button. Fallback UI for manual editing when AI is unavailable.</p>
+                </div>
+
+                <div class="component-demo">
+                    <h3>Deepseek AI Integration</h3>
+                    <div style="padding: 20px; background: linear-gradient(135deg, var(--sys-color-primary-95), var(--sys-color-secondary-95)); border-radius: var(--sys-radius-md);">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #00B4D8, #0077B6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">DS</div>
+                            <div>
+                                <h4 style="margin: 0;">Deepseek AI Model</h4>
+                                <p style="margin: 4px 0 0 0; font-size: 0.9em; color: var(--sys-color-neutral-40);">Version 2.0 • Optimized for content generation</p>
+                            </div>
+                        </div>
+                        <div class="ai-model-badge-deepseek" style="display: inline-block; padding: 6px 12px; border-radius: 20px; margin-right: 10px;">Deepseek‑V2</div>
+                        <div class="ai-model-badge-deepseek" style="display: inline-block; padding: 6px 12px; border-radius: 20px;">128K Context</div>
+                        <p style="margin-top: 16px;">Specialized components for Deepseek AI integration with gradient styling and model‑specific badges.</p>
+                    </div>
+                    <p class="note">Deepseek‑specific UI components with gradient styling, model badges, and optimized for AI‑powered content workflows.</p>
                 </div>
             </div>
         </section>

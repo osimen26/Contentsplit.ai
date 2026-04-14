@@ -1,0 +1,615 @@
+/* ContentSplit AI Integration Component
+ * 
+ * Implementation of MD3 AI-specific UI patterns for deepseek integration.
+ * Follows specifications in skills/ai-integration.md
+ */
+
+:root {
+  /* AI-specific tokens */
+  --sys-ai-suggestion-background: var(--sys-color-primary-98);
+  --sys-ai-suggestion-border: var(--sys-color-primary-90);
+  --sys-ai-suggestion-badge-background: var(--sys-color-primary-95);
+  --sys-ai-suggestion-badge-color: var(--sys-color-primary-40);
+  --sys-ai-loading-color: var(--sys-color-roles-primary-color-role-primary-role);
+  --sys-ai-error-background: var(--sys-color-roles-error-color-role-error-container-role);
+  --sys-ai-error-color: var(--sys-color-roles-error-color-role-on-error-container-role);
+  --sys-ai-fallback-background: var(--sys-color-roles-warning-color-role-warning-container-role);
+  --sys-ai-fallback-color: var(--sys-color-roles-warning-color-role-on-warning-container-role);
+}
+
+/* ==========================================================================
+   AI Suggestion Interface
+   ========================================================================== */
+
+.ai-suggestion-container {
+  background-color: var(--sys-ai-suggestion-background);
+  border: 1px solid var(--sys-ai-suggestion-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+  box-shadow: var(--sys-elevation-1);
+}
+
+.ai-suggestion-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ai-suggestion-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background-color: var(--sys-ai-suggestion-badge-background);
+  color: var(--sys-ai-suggestion-badge-color);
+  border-radius: 12px;
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  font-weight: var(--sys-typography-body-small-text-font-weight);
+}
+
+.ai-suggestion-content {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  line-height: var(--sys-typography-body-text-line-height);
+  margin-bottom: 16px;
+}
+
+.ai-suggestion-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ai-suggestion-accept {
+  background-color: var(--sys-color-roles-success-color-role-success-color-role);
+  color: var(--sys-color-roles-success-color-role-on-success-color-role);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ai-suggestion-accept:hover {
+  background-color: var(--sys-color-roles-success-color-role-success-role);
+}
+
+.ai-suggestion-modify {
+  background-color: var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ai-suggestion-modify:hover {
+  background-color: var(--sys-color-primary-60);
+}
+
+.ai-suggestion-reject {
+  background-color: transparent;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  border: 1px solid var(--sys-color-primary-80);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-suggestion-reject:hover {
+  background-color: var(--sys-color-primary-95);
+}
+
+/* ==========================================================================
+   AI Loading States
+   ========================================================================== */
+
+.ai-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.ai-loading-indicator {
+  width: 48px;
+  height: 48px;
+  color: var(--sys-ai-loading-color);
+  margin-bottom: 16px;
+  animation: aiPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes aiPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.ai-loading-progress {
+  width: 100%;
+  height: 4px;
+  background-color: var(--sys-color-neutral-90);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.ai-loading-progress-fill {
+  height: 100%;
+  background-color: var(--sys-ai-loading-color);
+  animation: aiProgress 2s ease-in-out infinite;
+}
+
+@keyframes aiProgress {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+
+.ai-loading-status {
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   AI Content Generation
+   ========================================================================== */
+
+.ai-content-generator {
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--sys-elevation-1);
+}
+
+.ai-prompt-input {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  background-color: var(--sys-color-primary-100);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: 8px;
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  resize: vertical;
+  margin-bottom: 16px;
+}
+
+.ai-prompt-input:focus {
+  border-color: var(--sys-color-roles-primary-color-role-primary-role);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--sys-color-primary-90);
+}
+
+.ai-generation-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ai-option-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: var(--sys-color-neutral-95);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-option-chip:hover {
+  background-color: var(--sys-color-neutral-90);
+}
+
+.ai-option-chip.selected {
+  background-color: var(--sys-color-primary-95);
+  border-color: var(--sys-color-primary-90);
+  color: var(--sys-color-primary-40);
+}
+
+.ai-generate-button {
+  background-color: var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+  border: none;
+  border-radius: 20px;
+  padding: 12px 24px;
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-label-small-letter-spacing);
+  width: 100%;
+  transition: background-color 0.2s ease;
+}
+
+.ai-generate-button:hover {
+  background-color: var(--sys-color-primary-60);
+}
+
+/* ==========================================================================
+   Content Enhancement AI
+   ========================================================================== */
+
+.ai-enhancement-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.ai-enhancement-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--sys-color-primary-100);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: 8px;
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-enhancement-button:hover {
+  background-color: var(--sys-color-primary-95);
+  border-color: var(--sys-color-primary-90);
+}
+
+.ai-enhancement-button:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   Smart Recommendations
+   ========================================================================== */
+
+.ai-recommendations {
+  background-color: var(--sys-color-primary-98);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 24px 0;
+}
+
+.ai-recommendations-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.ai-recommendations-title {
+  font-family: var(--sys-typography-title-small-font-family);
+  font-size: var(--sys-typography-title-small-font-size);
+  color: var(--sys-color-primary-10);
+}
+
+.ai-recommendations-refresh {
+  background: none;
+  border: none;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.ai-recommendations-refresh:hover {
+  background-color: var(--sys-color-primary-95);
+}
+
+.ai-recommendation-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ai-recommendation-item:hover {
+  background-color: var(--sys-color-primary-95);
+}
+
+.ai-recommendation-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  flex-shrink: 0;
+}
+
+.ai-recommendation-content {
+  flex: 1;
+}
+
+.ai-recommendation-title {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-primary-10);
+  margin-bottom: 4px;
+}
+
+.ai-recommendation-description {
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+}
+
+/* ==========================================================================
+   AI-Powered Search
+   ========================================================================== */
+
+.ai-search-container {
+  position: relative;
+}
+
+.ai-search-input {
+  width: 100%;
+  padding: 16px 48px 16px 16px;
+  background-color: var(--sys-color-primary-100);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: 20px;
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  outline: none;
+}
+
+.ai-search-input:focus {
+  border-color: var(--sys-color-roles-primary-color-role-primary-role);
+  box-shadow: 0 0 0 2px var(--sys-color-primary-90);
+}
+
+.ai-search-button {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.ai-search-button:hover {
+  background-color: var(--sys-color-primary-95);
+}
+
+.ai-search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--sys-color-primary-100);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: 12px;
+  margin-top: 8px;
+  box-shadow: var(--sys-elevation-2);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.ai-search-suggestion {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ai-search-suggestion:hover {
+  background-color: var(--sys-color-primary-95);
+}
+
+.ai-search-suggestion.selected {
+  background-color: var(--sys-color-primary-95);
+  border-left: 4px solid var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+/* ==========================================================================
+   Error Handling & Fallbacks
+   ========================================================================== */
+
+.ai-error-state {
+  background-color: var(--sys-ai-error-background);
+  color: var(--sys-ai-error-color);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin: 16px 0;
+}
+
+.ai-error-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--sys-color-roles-error-color-role-error-role);
+  margin-bottom: 16px;
+}
+
+.ai-error-title {
+  font-family: var(--sys-typography-title-small-font-family);
+  font-size: var(--sys-typography-title-small-font-size);
+  margin-bottom: 8px;
+}
+
+.ai-error-description {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  margin-bottom: 16px;
+  line-height: var(--sys-typography-body-text-line-height);
+}
+
+.ai-error-retry {
+  background-color: var(--sys-color-roles-error-color-role-error-role);
+  color: var(--sys-color-roles-error-color-role-on-error-color-role);
+  border: none;
+  border-radius: 20px;
+  padding: 12px 24px;
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-label-small-letter-spacing);
+  transition: background-color 0.2s ease;
+}
+
+.ai-error-retry:hover {
+  background-color: var(--sys-color-error-60);
+}
+
+.ai-fallback {
+  background-color: var(--sys-ai-fallback-background);
+  color: var(--sys-ai-fallback-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 16px 0;
+}
+
+.ai-fallback-content {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  line-height: var(--sys-typography-body-text-line-height);
+  margin-bottom: 16px;
+}
+
+.ai-fallback-manual {
+  background-color: transparent;
+  color: var(--sys-ai-fallback-color);
+  border: 1px solid currentColor;
+  border-radius: 20px;
+  padding: 12px 24px;
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-label-small-letter-spacing);
+  transition: all 0.2s ease;
+}
+
+.ai-fallback-manual:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus states for keyboard navigation */
+.ai-suggestion-accept:focus,
+.ai-suggestion-modify:focus,
+.ai-suggestion-reject:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+.ai-search-suggestion:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: -2px;
+}
+
+/* ==========================================================================
+   Responsive Behavior
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .ai-suggestion-actions {
+    flex-direction: column;
+  }
+  
+  .ai-generation-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .ai-enhancement-toolbar {
+    flex-wrap: wrap;
+  }
+  
+  .ai-recommendations-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .ai-search-suggestions {
+    position: static;
+    margin-top: 8px;
+    max-height: 200px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .ai-generation-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ==========================================================================
+   Deepseek AI Integration Specific
+   ========================================================================== */
+
+/* Deepseek model badge */
+.ai-model-badge-deepseek {
+  background: linear-gradient(135deg, #00B4D8, #0077B6);
+  color: white;
+  border: none;
+}
+
+/* Deepseek processing state */
+.ai-loading-deepseek .ai-loading-indicator {
+  background: linear-gradient(135deg, #00B4D8, #0077B6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Deepseek suggestion container */
+.ai-suggestion-deepseek {
+  border-left: 4px solid #00B4D8;
+}
+
+/* Deepseek content generation */
+.ai-generate-button-deepseek {
+  background: linear-gradient(135deg, #00B4D8, #0077B6);
+}
+
+.ai-generate-button-deepseek:hover {
+  background: linear-gradient(135deg, #0093C4, #005A8C);
+}

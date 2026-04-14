@@ -1,0 +1,492 @@
+/* ContentSplit Notification System Component
+ * 
+ * Implementation of MD3 banners (persistent notifications) and badges (status indicators).
+ * Follows specifications in skills/notification.md
+ */
+
+:root {
+  /* Banner tokens */
+  --sys-banner-background-color: var(--sys-color-neutral-100);
+  --sys-banner-border-color: var(--sys-color-neutral-90);
+  --sys-banner-border-radius: var(--sys-radius-md);
+  --sys-banner-border-width: 1px;
+  --sys-banner-padding: var(--sys-spacing-md);
+  --sys-banner-gap: var(--sys-spacing-sm);
+  --sys-banner-elevation: var(--sys-elevation-1);
+
+  /* Banner type colors */
+  --sys-banner-info-background: var(--sys-color-roles-primary-color-role-primary-container-role);
+  --sys-banner-info-border: var(--sys-color-roles-primary-color-role-primary-role);
+  --sys-banner-success-background: var(--sys-color-roles-success-color-role-success-container-role);
+  --sys-banner-success-border: var(--sys-color-roles-success-color-role-success-role);
+  --sys-banner-warning-background: var(--sys-color-roles-warning-color-role-warning-container-role);
+  --sys-banner-warning-border: var(--sys-color-roles-warning-color-role-warning-role);
+  --sys-banner-error-background: var(--sys-color-roles-error-color-role-error-container-role);
+  --sys-banner-error-border: var(--sys-color-roles-error-color-role-error-role);
+
+  /* Banner text colors */
+  --sys-banner-title-color: var(--sys-color-neutral-10);
+  --sys-banner-description-color: var(--sys-color-neutral-30);
+  --sys-banner-icon-color: currentColor;
+
+  /* Badge tokens */
+  --sys-badge-background-color: var(--sys-color-roles-primary-color-role-primary-role);
+  --sys-badge-text-color: var(--sys-color-roles-primary-color-role-on-primary-role);
+  --sys-badge-border-radius: var(--sys-radius-full);
+  --sys-badge-font-family: var(--sys-typography-label-small-font-family);
+  --sys-badge-font-size: var(--sys-typography-label-small-font-size);
+  --sys-badge-font-weight: var(--sys-typography-label-small-font-weight);
+  --sys-badge-line-height: var(--sys-typography-label-small-line-height);
+
+  /* Badge sizes */
+  --sys-badge-size-sm: 8px;
+  --sys-badge-size-md: 16px;
+  --sys-badge-size-lg: 24px;
+  --sys-badge-padding-sm: 2px;
+  --sys-badge-padding-md: var(--sys-spacing-xs) var(--sys-spacing-sm);
+  --sys-badge-padding-lg: var(--sys-spacing-xs) var(--sys-spacing-md);
+
+  /* Badge type colors */
+  --sys-badge-info-background: var(--sys-color-roles-primary-color-role-primary-role);
+  --sys-badge-success-background: var(--sys-color-roles-success-color-role-success-role);
+  --sys-badge-warning-background: var(--sys-color-roles-warning-color-role-warning-role);
+  --sys-badge-error-background: var(--sys-color-roles-error-color-role-error-role);
+  --sys-badge-neutral-background: var(--sys-color-neutral-60);
+}
+
+/* ==========================================================================
+   Banners
+   ========================================================================== */
+
+/* Base Banner Structure */
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sys-banner-gap);
+  padding: var(--sys-banner-padding);
+  background-color: var(--sys-banner-background-color);
+  border: var(--sys-banner-border-width) solid var(--sys-banner-border-color);
+  border-radius: var(--sys-banner-border-radius);
+  box-shadow: var(--sys-banner-elevation);
+  width: 100%;
+  animation: banner-slide-in 0.3s ease-out;
+}
+
+.banner-icon {
+  color: var(--sys-banner-icon-color);
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.banner-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xs);
+}
+
+.banner-title {
+  font-family: var(--sys-typography-title-small-font-family);
+  font-size: var(--sys-typography-title-small-font-size);
+  font-weight: var(--sys-typography-title-small-font-weight);
+  line-height: var(--sys-typography-title-small-line-height);
+  color: var(--sys-banner-title-color);
+  margin: 0;
+}
+
+.banner-description {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  font-weight: var(--sys-typography-body-text-font-weight);
+  line-height: var(--sys-typography-body-text-line-height);
+  color: var(--sys-banner-description-color);
+  margin: 0;
+}
+
+.banner-actions {
+  display: flex;
+  gap: var(--sys-spacing-sm);
+  margin-top: var(--sys-spacing-sm);
+  flex-wrap: wrap;
+}
+
+.banner-close {
+  background: none;
+  border: none;
+  color: var(--sys-color-neutral-50);
+  cursor: pointer;
+  padding: var(--sys-spacing-xs);
+  margin: -4px -4px -4px auto;
+  border-radius: var(--sys-radius-xs);
+}
+
+.banner-close:hover {
+  background-color: var(--sys-color-neutral-95);
+}
+
+/* Banner Types */
+.banner-info {
+  background-color: var(--sys-banner-info-background);
+  border-color: var(--sys-banner-info-border);
+  border-left-width: 4px;
+}
+
+.banner-success {
+  background-color: var(--sys-banner-success-background);
+  border-color: var(--sys-banner-success-border);
+  border-left-width: 4px;
+}
+
+.banner-warning {
+  background-color: var(--sys-banner-warning-background);
+  border-color: var(--sys-banner-warning-border);
+  border-left-width: 4px;
+}
+
+.banner-error {
+  background-color: var(--sys-banner-error-background);
+  border-color: var(--sys-banner-error-border);
+  border-left-width: 4px;
+}
+
+/* Banner Positions */
+.banner-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  z-index: 1100;
+  animation: banner-slide-down 0.3s ease-out;
+}
+
+.banner-inline {
+  margin: var(--sys-spacing-md) 0;
+}
+
+.banner-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+}
+
+/* ==========================================================================
+   Badges
+   ========================================================================== */
+
+/* Base Badge Structure */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--sys-badge-background-color);
+  color: var(--sys-badge-text-color);
+  border-radius: var(--sys-badge-border-radius);
+  font-family: var(--sys-badge-font-family);
+  font-size: var(--sys-badge-font-size);
+  font-weight: var(--sys-badge-font-weight);
+  line-height: var(--sys-badge-line-height);
+  white-space: nowrap;
+}
+
+/* Badge sizes */
+.badge-sm {
+  width: var(--sys-badge-size-sm);
+  height: var(--sys-badge-size-sm);
+  min-width: var(--sys-badge-size-sm);
+}
+
+.badge-md {
+  padding: var(--sys-badge-padding-md);
+  min-height: var(--sys-badge-size-md);
+  min-width: var(--sys-badge-size-md);
+}
+
+.badge-lg {
+  padding: var(--sys-badge-padding-lg);
+  min-height: var(--sys-badge-size-lg);
+  min-width: var(--sys-badge-size-lg);
+}
+
+/* Badge types */
+.badge-numeric {
+  /* Numeric badge specific styles */
+}
+
+.badge-status {
+  /* Status badge specific styles */
+}
+
+.badge-label {
+  /* Label badge specific styles */
+}
+
+.badge-dot {
+  width: var(--sys-badge-size-sm);
+  height: var(--sys-badge-size-sm);
+  border-radius: 50%;
+  padding: 0;
+}
+
+/* Badge colors */
+.badge-info {
+  background-color: var(--sys-badge-info-background);
+}
+
+.badge-success {
+  background-color: var(--sys-badge-success-background);
+}
+
+.badge-warning {
+  background-color: var(--sys-badge-warning-background);
+}
+
+.badge-error {
+  background-color: var(--sys-badge-error-background);
+}
+
+.badge-neutral {
+  background-color: var(--sys-badge-neutral-background);
+}
+
+/* Badge Positioning */
+.badge-container {
+  position: relative;
+  display: inline-block;
+}
+
+.badge-top-right {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  transform: scale(1);
+  transform-origin: top right;
+}
+
+.badge-top-left {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  transform: scale(1);
+  transform-origin: top left;
+}
+
+.badge-bottom-right {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  transform: scale(1);
+  transform-origin: bottom right;
+}
+
+.badge-bottom-left {
+  position: absolute;
+  bottom: -4px;
+  left: -4px;
+  transform: scale(1);
+  transform-origin: bottom left;
+}
+
+/* ==========================================================================
+   States & Animations
+   ========================================================================== */
+
+/* Banner animations */
+@keyframes banner-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes banner-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.banner-exiting {
+  animation: banner-slide-out 0.3s ease-in forwards;
+}
+
+@keyframes banner-slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.banner:hover {
+  box-shadow: var(--sys-elevation-2);
+}
+
+.banner:focus-within {
+  outline: 3px solid var(--sys-color-primary-40);
+  outline-offset: var(--sys-spacing-xs);
+}
+
+/* Badge animations */
+@keyframes badge-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.badge-pulse {
+  animation: badge-pulse 2s infinite;
+}
+
+@keyframes badge-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.3);
+  }
+  60% {
+    transform: scale(0.9);
+  }
+}
+
+.badge-new {
+  animation: badge-bounce 0.6s ease;
+}
+
+/* ==========================================================================
+   AI-specific Notifications
+   ========================================================================== */
+
+/* AI Processing Banner */
+.banner-ai-processing {
+  border-left-color: var(--sys-color-primary-40);
+  background: linear-gradient(90deg, 
+    var(--sys-color-primary-95) 0%, 
+    var(--sys-color-primary-90) 100%
+  );
+}
+
+.banner-ai-processing .banner-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Content Generation Status Badge */
+.badge-content-status {
+  background: linear-gradient(135deg, 
+    var(--sys-color-primary-40), 
+    var(--sys-color-secondary-40)
+  );
+  color: var(--sys-color-neutral-100);
+  font-weight: var(--sys-typography-label-small-font-weight-bold);
+}
+
+/* AI Model Availability Badge */
+.badge-ai-model {
+  border: 1px solid var(--sys-color-neutral-90);
+  background-color: var(--sys-color-neutral-98);
+  color: var(--sys-color-neutral-30);
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+/* Hide decorative badges from screen readers */
+.badge[aria-hidden="true"] {
+  /* Already hidden from screen readers */
+}
+
+/* Ensure banners are announced appropriately */
+.banner[role="alert"] {
+  /* Assertive announcements for critical banners */
+}
+
+.banner[role="status"] {
+  /* Polite announcements for informational banners */
+}
+
+/* Keyboard navigation */
+.banner-close:focus {
+  outline: 2px solid var(--sys-color-primary-40);
+  outline-offset: 2px;
+}
+
+.banner-actions button:focus {
+  outline: 2px solid var(--sys-color-primary-40);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Responsive Behavior
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .banner {
+    padding: var(--sys-spacing-sm);
+    margin: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .banner-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+  
+  .banner-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .banner-actions button {
+    width: 100%;
+  }
+  
+  .badge-md, .badge-lg {
+    font-size: calc(var(--sys-badge-font-size) * 0.9);
+    padding: var(--sys-badge-padding-sm);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .banner {
+    max-width: 80%;
+    margin: var(--sys-spacing-md) auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .banner {
+    max-width: 800px;
+    margin: var(--sys-spacing-md) auto;
+  }
+}

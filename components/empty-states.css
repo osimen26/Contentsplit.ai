@@ -1,0 +1,542 @@
+/* ContentSplit Empty States Component
+ * 
+ * Implementation of Material Design 3 empty states (zero states).
+ * Follows specifications in skills/empty-states.md
+ */
+
+:root {
+  /* Empty state spacing tokens (extending system) */
+  --sys-empty-spacing-illustration-large: 200px;
+  --sys-empty-spacing-illustration-medium: 120px;
+  --sys-empty-spacing-illustration-small: 80px;
+  --sys-empty-spacing-container-padding-large: var(--sys-spacing-3xl);
+  --sys-empty-spacing-container-padding-medium: var(--sys-spacing-2xl);
+  --sys-empty-spacing-container-padding-small: var(--sys-spacing-lg);
+}
+
+/* ==========================================================================
+   Empty State Types
+   ========================================================================== */
+
+/* 1. First Use Empty State */
+.empty-first-use {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--sys-empty-spacing-container-padding-large);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.empty-first-use-illustration {
+  width: var(--sys-empty-spacing-illustration-large);
+  height: var(--sys-empty-spacing-illustration-large);
+  margin-bottom: var(--sys-spacing-xl);
+  color: var(--sys-color-neutral-80);
+}
+
+.empty-first-use-title {
+  font-family: var(--sys-typography-heading-3-font-family);
+  font-size: var(--sys-typography-heading-3-font-size);
+  font-weight: var(--sys-typography-heading-3-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin-bottom: var(--sys-spacing-md);
+  line-height: var(--sys-typography-heading-3-line-height);
+}
+
+.empty-first-use-description {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-xl);
+  line-height: var(--sys-typography-body-text-line-height);
+  max-width: 400px;
+}
+
+/* 2. No Results Empty State */
+.empty-no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--sys-empty-spacing-container-padding-medium);
+}
+
+.empty-no-results-icon {
+  width: var(--sys-empty-spacing-illustration-medium);
+  height: var(--sys-empty-spacing-illustration-medium);
+  margin-bottom: var(--sys-spacing-lg);
+  color: var(--sys-color-neutral-70);
+  opacity: 0.8;
+}
+
+.empty-no-results-title {
+  font-family: var(--sys-typography-title-large-font-family);
+  font-size: var(--sys-typography-title-large-font-size);
+  font-weight: var(--sys-typography-title-large-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin-bottom: var(--sys-spacing-sm);
+  line-height: var(--sys-typography-title-large-line-height);
+}
+
+.empty-no-results-description {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-lg);
+  line-height: var(--sys-typography-body-text-line-height);
+}
+
+/* 3. No Data Empty State */
+.empty-no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--sys-empty-spacing-container-padding-medium);
+  border: 2px dashed var(--sys-color-neutral-90);
+  border-radius: var(--sys-radius-lg);
+  background-color: var(--sys-color-neutral-98);
+}
+
+.empty-no-data-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: var(--sys-spacing-lg);
+  color: var(--sys-color-neutral-70);
+}
+
+.empty-no-data-title {
+  font-family: var(--sys-typography-title-medium-font-family);
+  font-size: var(--sys-typography-title-medium-font-size);
+  font-weight: var(--sys-typography-title-medium-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin-bottom: var(--sys-spacing-xs);
+  line-height: var(--sys-typography-title-medium-line-height);
+}
+
+.empty-no-data-description {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-lg);
+  line-height: var(--sys-typography-body-text-line-height);
+}
+
+/* 4. Error Empty State */
+.empty-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--sys-empty-spacing-container-padding-medium);
+  background-color: var(--sys-color-roles-error-color-role-error-container-role);
+  border-radius: var(--sys-radius-lg);
+}
+
+.empty-error-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: var(--sys-spacing-lg);
+  color: var(--sys-color-roles-error-color-role-on-error-container-role);
+}
+
+.empty-error-title {
+  font-family: var(--sys-typography-title-medium-font-family);
+  font-size: var(--sys-typography-title-medium-font-size);
+  font-weight: var(--sys-typography-title-medium-font-weight);
+  color: var(--sys-color-roles-error-color-role-on-error-container-role);
+  margin-bottom: var(--sys-spacing-xs);
+  line-height: var(--sys-typography-title-medium-line-height);
+}
+
+.empty-error-description {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-error-color-role-on-error-container-role);
+  margin-bottom: var(--sys-spacing-lg);
+  line-height: var(--sys-typography-body-text-line-height);
+}
+
+/* 5. No Permissions Empty State */
+.empty-no-permissions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--sys-empty-spacing-container-padding-medium);
+  background-color: var(--sys-color-neutral-98);
+  border-radius: var(--sys-radius-lg);
+  border: 1px solid var(--sys-color-neutral-90);
+}
+
+.empty-no-permissions-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: var(--sys-spacing-lg);
+  color: var(--sys-color-neutral-70);
+}
+
+.empty-no-permissions-title {
+  font-family: var(--sys-typography-title-medium-font-family);
+  font-size: var(--sys-typography-title-medium-font-size);
+  font-weight: var(--sys-typography-title-medium-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin-bottom: var(--sys-spacing-xs);
+  line-height: var(--sys-typography-title-medium-line-height);
+}
+
+.empty-no-permissions-description {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-lg);
+  line-height: var(--sys-typography-body-text-line-height);
+}
+
+/* ==========================================================================
+   Empty State Layouts
+   ========================================================================== */
+
+/* Centered Layout */
+.empty-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 400px;
+  padding: var(--sys-empty-spacing-container-padding-large);
+}
+
+/* Side-by-Side Layout */
+.empty-side-by-side {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sys-spacing-2xl);
+  align-items: center;
+  padding: var(--sys-empty-spacing-container-padding-medium);
+}
+
+.empty-side-by-side-illustration {
+  justify-self: center;
+}
+
+.empty-side-by-side-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* Compact Layout */
+.empty-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--sys-empty-spacing-container-padding-small);
+}
+
+.empty-compact-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: var(--sys-spacing-md);
+}
+
+.empty-compact-title {
+  font-family: var(--sys-typography-title-small-font-family);
+  font-size: var(--sys-typography-title-small-font-size);
+  margin-bottom: var(--sys-spacing-xs);
+}
+
+/* ==========================================================================
+   Empty State Content Components
+   ========================================================================== */
+
+/* Illustrations & Icons */
+.empty-illustration {
+  width: var(--sys-empty-spacing-illustration-large);
+  height: var(--sys-empty-spacing-illustration-large);
+  margin-bottom: var(--sys-spacing-xl);
+  color: var(--sys-color-neutral-80);
+}
+
+.empty-icon-large {
+  width: var(--sys-empty-spacing-illustration-medium);
+  height: var(--sys-empty-spacing-illustration-medium);
+  margin-bottom: var(--sys-spacing-lg);
+  color: var(--sys-color-neutral-70);
+}
+
+.empty-icon-medium {
+  width: var(--sys-empty-spacing-illustration-small);
+  height: var(--sys-empty-spacing-illustration-small);
+  margin-bottom: var(--sys-spacing-md);
+  color: var(--sys-color-neutral-70);
+}
+
+/* Titles */
+.empty-title-large {
+  font-family: var(--sys-typography-heading-3-font-family);
+  font-size: var(--sys-typography-heading-3-font-size);
+  font-weight: var(--sys-typography-heading-3-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin-bottom: var(--sys-spacing-md);
+  line-height: var(--sys-typography-heading-3-line-height);
+}
+
+.empty-title-medium {
+  font-family: var(--sys-typography-title-large-font-family);
+  font-size: var(--sys-typography-title-large-font-size);
+  font-weight: var(--sys-typography-title-large-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin-bottom: var(--sys-spacing-sm);
+  line-height: var(--sys-typography-title-large-line-height);
+}
+
+.empty-title-small {
+  font-family: var(--sys-typography-title-medium-font-family);
+  font-size: var(--sys-typography-title-medium-font-size);
+  font-weight: var(--sys-typography-title-medium-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin-bottom: var(--sys-spacing-xs);
+  line-height: var(--sys-typography-title-medium-line-height);
+}
+
+/* Descriptions */
+.empty-description-large {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-xl);
+  line-height: var(--sys-typography-body-text-line-height);
+  max-width: 500px;
+}
+
+.empty-description-medium {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-lg);
+  line-height: var(--sys-typography-body-text-line-height);
+  max-width: 400px;
+}
+
+.empty-description-small {
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-md);
+  line-height: var(--sys-typography-body-small-text-line-height);
+  max-width: 300px;
+}
+
+/* ==========================================================================
+   Action Buttons
+   ========================================================================== */
+
+/* Primary Action */
+.empty-action-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sys-spacing-sm);
+  padding: var(--sys-spacing-md) var(--sys-spacing-xl);
+  background-color: var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+  border: none;
+  border-radius: var(--sys-radius-md);
+  font-family: var(--sys-typography-label-large-font-family);
+  font-size: var(--sys-typography-label-large-font-size);
+  font-weight: var(--sys-typography-label-large-font-weight);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-label-large-letter-spacing);
+}
+
+.empty-action-primary:hover {
+  background-color: var(--sys-color-primary-60);
+}
+
+/* Secondary Action */
+.empty-action-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sys-spacing-sm);
+  padding: var(--sys-spacing-md) var(--sys-spacing-xl);
+  background-color: transparent;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  border: 1px solid var(--sys-color-roles-primary-color-role-primary-role);
+  border-radius: var(--sys-radius-md);
+  font-family: var(--sys-typography-label-large-font-family);
+  font-size: var(--sys-typography-label-large-font-size);
+  font-weight: var(--sys-typography-label-large-font-weight);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-label-large-letter-spacing);
+}
+
+.empty-action-secondary:hover {
+  background-color: var(--sys-color-primary-95);
+}
+
+/* Link Action */
+.empty-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sys-spacing-xs);
+  background: none;
+  border: none;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--sys-color-primary-60);
+  text-underline-offset: 4px;
+}
+
+.empty-action-link:hover {
+  color: var(--sys-color-primary-60);
+  text-decoration-color: var(--sys-color-primary-40);
+}
+
+/* ==========================================================================
+   AI-Specific Empty States
+   ========================================================================== */
+
+/* No AI Content Generated */
+.empty-ai-no-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--sys-empty-spacing-container-padding-large);
+  background: linear-gradient(135deg, var(--sys-color-primary-95), var(--sys-color-secondary-95));
+  border-radius: var(--sys-radius-xl);
+}
+
+.empty-ai-no-content-icon {
+  width: 150px;
+  height: 150px;
+  margin-bottom: var(--sys-spacing-xl);
+  color: var(--sys-color-primary-60);
+}
+
+.empty-ai-no-content-title {
+  font-family: var(--sys-typography-heading-3-font-family);
+  font-size: var(--sys-typography-heading-3-font-size);
+  font-weight: var(--sys-typography-heading-3-font-weight);
+  color: var(--sys-color-primary-40);
+  margin-bottom: var(--sys-spacing-md);
+}
+
+/* AI Processing Empty State */
+.empty-ai-processing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--sys-empty-spacing-container-padding-large);
+}
+
+.empty-ai-processing-spinner {
+  width: 80px;
+  height: 80px;
+  margin-bottom: var(--sys-spacing-lg);
+  color: var(--sys-color-primary-60);
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty-ai-processing-title {
+  font-family: var(--sys-typography-title-large-font-family);
+  font-size: var(--sys-typography-title-large-font-size);
+  font-weight: var(--sys-typography-title-large-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin-bottom: var(--sys-spacing-sm);
+}
+
+.empty-ai-processing-description {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-lg);
+  max-width: 400px;
+}
+
+/* AI Error Empty State */
+.empty-ai-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--sys-empty-spacing-container-padding-medium);
+  background-color: var(--sys-color-roles-error-color-role-error-container-role);
+  border-radius: var(--sys-radius-lg);
+}
+
+.empty-ai-error-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: var(--sys-spacing-lg);
+  color: var(--sys-color-roles-error-color-role-on-error-container-role);
+}
+
+.empty-ai-error-title {
+  font-family: var(--sys-typography-title-medium-font-family);
+  font-size: var(--sys-typography-title-medium-font-size);
+  font-weight: var(--sys-typography-title-medium-font-weight);
+  color: var(--sys-color-roles-error-color-role-on-error-container-role);
+  margin-bottom: var(--sys-spacing-xs);
+}
+
+.empty-ai-error-description {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-error-color-role-on-error-container-role);
+  margin-bottom: var(--sys-spacing-lg);
+  max-width: 400px;
+}
+
+.empty-ai-error-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sys-spacing-sm);
+  padding: var(--sys-spacing-md) var(--sys-spacing-xl);
+  background-color: var(--sys-color-roles-error-color-role-on-error-container-role);
+  color: var(--sys-color-roles-error-color-role-error-container-role);
+  border: none;
+  border-radius: var(--sys-radius-md);
+  font-family: var(--sys-typography-label-large-font-family);
+  font-size: var(--sys-typography-label-large-font-size);
+  font-weight: var(--sys-typography-label-large-font-weight);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-label-large-letter-spacing);
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+/* Ensure empty states are announced to screen readers */
+.empty-state[aria-live] {
+  /* Live region for dynamic announcements */
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .empty-first-use-illustration,
+  .empty-no-results-icon,
+  .empty-no-data-icon,
+  .empty-error-icon,
+  .empty-no-permissions-icon {
+    color: var(--sys-color-neutral-30);
+  }
+}
