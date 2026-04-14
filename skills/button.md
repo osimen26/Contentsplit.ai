@@ -17,7 +17,7 @@ Primary action buttons with solid background color.
 .button-filled {
   background-color: var(--sys-color-roles-primary-color-role-primary-role);
   color: var(--sys-color-roles-primary-color-role-on-primary-role);
-  border-radius: 20px; /* Material Design 3 full shape */
+  border-radius: var(--sys-radius-button); /* Material Design 3 full shape */
   padding: 10px 24px;
   border: none;
   font-family: var(--sys-typography-label-small-font-family);
@@ -41,7 +41,7 @@ Secondary action buttons with outlined border.
   background-color: transparent;
   color: var(--sys-color-roles-primary-color-role-primary-role);
   border: 1px solid var(--sys-color-roles-primary-color-role-primary-role);
-  border-radius: 20px;
+  border-radius: var(--sys-radius-button);
   padding: 10px 24px;
   font-family: var(--sys-typography-label-small-font-family);
   font-weight: var(--sys-typography-label-small-font-weight);
@@ -64,7 +64,7 @@ Low emphasis buttons with text-only styling.
   background-color: transparent;
   color: var(--sys-color-roles-primary-color-role-primary-role);
   border: none;
-  border-radius: 20px;
+  border-radius: var(--sys-radius-button);
   padding: 10px 12px;
   font-family: var(--sys-typography-label-small-font-family);
   font-weight: var(--sys-typography-label-small-font-weight);
@@ -86,7 +86,7 @@ Buttons with shadow elevation for floating appearance.
 .button-elevated {
   background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
   color: var(--sys-color-roles-primary-color-role-primary-role);
-  border-radius: 20px;
+  border-radius: var(--sys-radius-button);
   padding: 10px 24px;
   border: none;
   box-shadow: var(--sys-elevation-1);
@@ -110,7 +110,7 @@ Buttons with secondary container color.
 .button-tonal {
   background-color: var(--sys-color-roles-secondary-color-role-secondary-container);
   color: var(--sys-color-roles-secondary-color-role-on-secondary-container);
-  border-radius: 20px;
+  border-radius: var(--sys-radius-button);
   padding: 10px 24px;
   border: none;
   font-family: var(--sys-typography-label-small-font-family);

@@ -1,0 +1,262 @@
+/* ContentSplit Input Component
+ * 
+ * Implementation of Material Design 3 input system using design tokens.
+ * Follows specifications in skills/input.md
+ */
+
+/* Input container base styles */
+.input-filled,
+.input-outlined,
+.input-standard {
+  box-sizing: border-box;
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  width: 100%;
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+  outline: none;
+}
+
+/* 1. Filled Text Field */
+.input-filled {
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  border: none;
+  border-bottom: 1px solid var(--sys-color-neutral-60);
+  border-radius: var(--sys-radius-input) var(--sys-radius-input) 0 0; /* Rounded top corners only */
+  padding: 16px 12px 4px 12px;
+}
+
+.input-filled:hover {
+  background-color: var(--sys-color-neutral-98);
+}
+
+.input-filled:focus {
+  border-bottom: 2px solid var(--sys-color-roles-primary-color-role-primary-role);
+  padding-bottom: 3px; /* Adjust for thicker border */
+  background-color: var(--sys-color-neutral-99);
+}
+
+/* 2. Outlined Text Field */
+.input-outlined {
+  background-color: transparent;
+  border: 1px solid var(--sys-color-neutral-60);
+  border-radius: var(--sys-radius-input);
+  padding: 16px 12px 4px 12px;
+}
+
+.input-outlined:hover {
+  border-color: var(--sys-color-neutral-40);
+}
+
+.input-outlined:focus {
+  border: 2px solid var(--sys-color-roles-primary-color-role-primary-role);
+  padding: 15px 11px 3px 11px; /* Adjust for thicker border */
+  box-shadow: 0 0 0 1px var(--sys-color-primary-60) inset;
+}
+
+/* 3. Standard Text Field (Material Design 2) */
+.input-standard {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--sys-color-neutral-60);
+  padding: 8px 0;
+}
+
+.input-standard:focus {
+  border-bottom: 2px solid var(--sys-color-roles-primary-color-role-primary-role);
+  padding-bottom: 7px; /* Adjust for thicker border */
+}
+
+/* Input label */
+.input-label {
+  position: absolute;
+  left: 12px;
+  top: 16px;
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+  pointer-events: none;
+}
+
+.input-label.floating {
+  top: 4px;
+  font-size: 12px;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+/* Supporting text */
+.input-supporting-text {
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-top: 4px;
+  padding: 0 12px;
+}
+
+.input-supporting-text.error {
+  color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+/* Icons */
+.input-icon-leading,
+.input-icon-trailing {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--sys-color-neutral-60);
+  width: 20px;
+  height: 20px;
+}
+
+.input-icon-leading {
+  left: 12px;
+}
+
+.input-icon-trailing {
+  right: 12px;
+  cursor: pointer;
+}
+
+/* Error states */
+.input-filled.error {
+  border-bottom-color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+.input-outlined.error {
+  border-color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+.input-label.error {
+  color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+/* Disabled states */
+.input-filled:disabled,
+.input-outlined:disabled,
+.input-standard:disabled {
+  color: var(--sys-color-neutral-60);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.input-filled:disabled {
+  background-color: var(--sys-color-roles-disable-state);
+  border-bottom-color: var(--sys-color-neutral-80);
+}
+
+.input-outlined:disabled {
+  border-color: var(--sys-color-neutral-80);
+}
+
+/* Input variants */
+
+/* Text area */
+.textarea {
+  min-height: 80px;
+  resize: vertical;
+  line-height: var(--sys-typography-body-text-line-height);
+}
+
+/* Select/Dropdown */
+.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858993' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+/* Search field */
+.search {
+  padding-left: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23858993' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+  background-position: left 12px center;
+  background-repeat: no-repeat;
+}
+
+/* Date/Time picker */
+.date-picker {
+  cursor: pointer;
+}
+
+/* Validation patterns */
+
+/* Required field indicator */
+.input-label.required::after {
+  content: " *";
+  color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+/* Character counter */
+.character-counter {
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  text-align: right;
+  margin-top: 4px;
+}
+
+.character-counter.warning {
+  color: var(--sys-color-roles-warning-color-role-warning-role);
+}
+
+.character-counter.error {
+  color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+/* Password strength indicator */
+.password-strength {
+  height: 4px;
+  background-color: var(--sys-color-neutral-90);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.password-strength.weak {
+  background-color: var(--sys-color-roles-error-color-role-error-role);
+  width: 25%;
+}
+
+.password-strength.fair {
+  background-color: var(--sys-color-roles-warning-color-role-warning-role);
+  width: 50%;
+}
+
+.password-strength.good {
+  background-color: var(--sys-color-roles-success-color-role);
+  width: 75%;
+}
+
+.password-strength.strong {
+  background-color: var(--sys-color-roles-success-color-role);
+  width: 100%;
+}
+
+/* Container for input with label and supporting text */
+.input-container {
+  position: relative;
+  margin-bottom: 16px; /* Vertical spacing between form fields */
+}
+
+/* Accessibility: focus visible */
+.input-filled:focus-visible,
+.input-outlined:focus-visible,
+.input-standard:focus-visible {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+/* Touch target enhancement for mobile */
+@media (pointer: coarse) {
+  .input-filled,
+  .input-outlined,
+  .input-standard,
+  .select,
+  .search,
+  .date-picker {
+    min-height: 44px; /* Minimum touch target size */
+  }
+}

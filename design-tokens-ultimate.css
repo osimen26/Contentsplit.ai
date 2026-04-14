@@ -721,6 +721,20 @@
   --sys-spacing-5xl: 128px;
   --sys-spacing-6xl: 160px;
   --sys-color-disable: #e5e7ebff;
+  --sys-radius-xs: 2px;
+  --sys-radius-sm: 4px;
+  --sys-radius-md: 8px;
+  --sys-radius-lg: 12px;
+  --sys-radius-xl: 16px;
+  --sys-radius-full: 9999px;
+  
+  /* Component-specific radius tokens */
+  --sys-radius-button: 20px;
+  --sys-radius-card: var(--sys-radius-md);
+  --sys-radius-input: var(--sys-radius-sm);
+  --sys-radius-modal: var(--sys-radius-lg);
+  --sys-radius-avatar: var(--sys-radius-full);
+  --sys-radius-badge: var(--sys-radius-xs);
   --sys-color-roles-primary-color-role-primary-role: var(--sys-color-primary);
   --sys-color-roles-primary-color-role-on-primary-role: var(--sys-color-primary-90);
   --sys-color-roles-primary-color-role-primary-container-role: var(--sys-color-primary-100);
@@ -897,4 +911,114 @@
   --sys-typography-label-small-paragraphspacing: var(--sys-font-label-small-regular-paragraphspacing);
   --sys-typography-label-small-textcase: var(--sys-font-label-small-regular-textcase);
   --sys-typography-label-small-textdecoration: var(--sys-font-label-small-regular-textdecoration);
+  /* Elevation tokens (Material Design 3) */
+  --sys-elevation-0: none;
+  --sys-elevation-1: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --sys-elevation-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px rgba(0, 0, 0, 0.3);
+  --sys-elevation-3: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px rgba(0, 0, 0, 0.3);
+  --sys-elevation-4: 0px 6px 10px 4px rgba(0, 0, 0, 0.15), 0px 2px 3px rgba(0, 0, 0, 0.3);
+  --sys-elevation-5: 0px 8px 12px 6px rgba(0, 0, 0, 0.15), 0px 4px 4px rgba(0, 0, 0, 0.3);
+
+  /* Typography extension for medium button labels */
+  --sys-typography-label-medium-fontsize: 14px;
+  --sys-typography-label-medium-fontfamily: var(--sys-font-label-small-regular-fontfamily);
+  --sys-typography-label-medium-fontweight: var(--sys-font-label-small-regular-fontweight);
+  --sys-typography-label-medium-fontstyle: var(--sys-font-label-small-regular-fontstyle);
+  --sys-typography-label-medium-fontstretch: var(--sys-font-label-small-regular-fontstretch);
+  --sys-typography-label-medium-letterspacing: var(--sys-font-label-small-regular-letterspacing);
+  --sys-typography-label-medium-lineheight: var(--sys-font-label-small-regular-lineheight);
+  --sys-typography-label-medium-paragraphindent: var(--sys-font-label-small-regular-paragraphindent);
+  --sys-typography-label-medium-paragraphspacing: var(--sys-font-label-small-regular-paragraphspacing);
+  --sys-typography-label-medium-textcase: var(--sys-font-label-small-regular-textcase);
+  --sys-typography-label-medium-textdecoration: var(--sys-font-label-small-regular-textdecoration);
+
+  /* Button-specific spacing tokens */
+  --sys-spacing-button-icon: 16px;
+  --sys-spacing-button-icon-padding: 8px;
+
+  /* Chip design tokens */
+  --sys-chip-height: 32px;
+  --sys-chip-background: var(--sys-color-neutral-95);
+  --sys-chip-selected-background: var(--sys-color-primary-95);
+  --sys-chip-border-radius: var(--sys-radius-full);
+  --sys-chip-padding: 0 var(--sys-spacing-md);
+  --sys-chip-gap: var(--sys-spacing-xs);
+  --sys-chip-border: 1px solid transparent;
+  --sys-chip-border-selected: 1px solid var(--sys-color-primary-40);
+  --sys-chip-elevation: var(--sys-elevation-1);
+  --sys-chip-elevation-hover: var(--sys-elevation-2);
+  /* Label styles */
+  --sys-chip-label-font-family: var(--sys-typography-label-small-font-family);
+  --sys-chip-label-font-size: var(--sys-typography-label-small-font-size);
+  --sys-chip-label-font-weight: var(--sys-typography-label-small-font-weight);
+  --sys-chip-label-line-height: var(--sys-typography-label-small-line-height);
+  --sys-chip-label-color: var(--sys-color-neutral-30);
+  --sys-chip-label-selected-color: var(--sys-color-primary-40);
+  --sys-chip-label-disabled-color: var(--sys-color-neutral-60);
+  /* Icon styles */
+  --sys-chip-icon-size: 18px;
+  --sys-chip-icon-color: var(--sys-color-neutral-50);
+  --sys-chip-icon-selected-color: var(--sys-color-primary-40);
+  --sys-chip-icon-hover-color: var(--sys-color-neutral-30);
+  --sys-chip-icon-disabled-color: var(--sys-color-neutral-70);
+  --sys-chip-icon-gap: var(--sys-spacing-xs);
+  /* Avatar styles (for input chips) */
+  --sys-chip-avatar-size: 20px;
+  --sys-chip-avatar-border-radius: var(--sys-radius-full);
+  --sys-chip-avatar-background: var(--sys-color-neutral-90);
+  --sys-chip-avatar-color: var(--sys-color-neutral-30);
+  --sys-chip-avatar-gap: var(--sys-spacing-xs);
+  /* Remove button styles */
+  --sys-chip-remove-size: 18px;
+  --sys-chip-remove-color: var(--sys-color-neutral-50);
+  --sys-chip-remove-hover-color: var(--sys-color-neutral-30);
+  --sys-chip-remove-background: transparent;
+  --sys-chip-remove-border-radius: var(--sys-radius-full);
+  --sys-chip-remove-padding: 4px;
+  --sys-chip-remove-gap: var(--sys-spacing-xs);
+  /* Selection indicator (filter chips) */
+  --sys-chip-selection-size: 18px;
+  --sys-chip-selection-color: var(--sys-color-primary-40);
+  --sys-chip-selection-background: var(--sys-color-primary-95);
+  --sys-chip-selection-border-radius: var(--sys-radius-full);
+  --sys-chip-selection-gap: var(--sys-spacing-xs);
+  /* Assist chip specific */
+  --sys-chip-assist-background: var(--sys-color-secondary-95);
+  --sys-chip-assist-color: var(--sys-color-secondary-40);
+  --sys-chip-assist-border: 1px solid var(--sys-color-secondary-80);
+  --sys-chip-assist-badge-background: var(--sys-color-primary-40);
+  --sys-chip-assist-badge-color: var(--sys-color-neutral-100);
+  --sys-chip-assist-badge-size: 6px;
+  --sys-chip-assist-badge-position: top right;
+  /* Hover state */
+  --sys-chip-hover-background: var(--sys-color-neutral-90);
+  --sys-chip-hover-elevation: var(--sys-chip-elevation-hover);
+  /* Focus state */
+  --sys-chip-focus-outline: 2px solid var(--sys-color-primary-40);
+  --sys-chip-focus-outline-offset: 2px;
+  /* Disabled state */
+  --sys-chip-disabled-background: var(--sys-color-neutral-98);
+  --sys-chip-disabled-opacity: 0.5;
+  --sys-chip-disabled-cursor: not-allowed;
+  /* Pressed state */
+  --sys-chip-pressed-transform: translateY(1px);
+  --sys-chip-pressed-elevation: var(--sys-elevation-0);
+
+  /* Icon design tokens */
+  --sys-icon-size-xs: 12px;
+  --sys-icon-size-sm: 18px;
+  --sys-icon-size-md: 24px;
+  --sys-icon-size-lg: 36px;
+  --sys-icon-size-xl: 48px;
+  --sys-icon-button-size: 40px;
+  --sys-icon-stroke-width: 1.5px;
+  --sys-icon-rounded-radius: 2px;
+  --sys-icon-text-gap: var(--sys-spacing-s);
+
+  /* Table design tokens */
+  --sys-table-col-fixed-width: 120px;
+  --sys-table-col-flex-min-width: 200px;
+  --sys-table-min-width: 600px;
+  --sys-table-cell-truncate-max-width: 200px;
+  --sys-table-select-checkbox-width: 40px;
 }

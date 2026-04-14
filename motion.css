@@ -1,0 +1,31 @@
+/* Motion Design Tokens for ContentSplit
+ * 
+ * These tokens extend the MD3 design token system with motion properties.
+ * Defined as CSS custom properties for consistency and theming.
+ * 
+ * See: skills/design-implementation.md for usage guidelines.
+ */
+
+:root {
+  /* Duration Tokens */
+  --sys-motion-duration-short: 100ms;
+  --sys-motion-duration-medium: 250ms;
+  --sys-motion-duration-long: 500ms;
+
+  /* Easing Tokens (Material Design 3 curves) */
+  --sys-motion-easing-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --sys-motion-easing-emphasized: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --sys-motion-easing-decelerated: cubic-bezier(0.0, 0.0, 0.0, 1);
+  --sys-motion-easing-accelerated: cubic-bezier(0.3, 0.0, 1, 1);
+}
+
+/* Optional: CSS classes for common transitions */
+.transition-standard {
+  transition-timing-function: var(--sys-motion-easing-standard);
+  transition-duration: var(--sys-motion-duration-medium);
+}
+
+.transition-emphasized {
+  transition-timing-function: var(--sys-motion-easing-emphasized);
+  transition-duration: var(--sys-motion-duration-medium);
+}

@@ -1,0 +1,340 @@
+/* ContentSplit Table System - Material Design 3 Implementation
+ * Comprehensive table components for data display and management
+ */
+
+/* Table Base Styles */
+.table {
+  width: 100%;
+  min-width: var(--sys-table-min-width);
+  border-collapse: collapse;
+}
+
+/* Table Container */
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--sys-radius-md);
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+}
+
+/* Standard Table */
+.table-standard {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+}
+
+.table-standard th,
+.table-standard td {
+  padding: var(--sys-spacing-md);
+  text-align: left;
+  border-bottom: 1px solid var(--sys-color-neutral-90);
+}
+
+.table-standard th {
+  font-family: var(--sys-typography-title-small-font-family);
+  font-size: var(--sys-typography-title-small-font-size);
+  font-weight: var(--sys-typography-title-small-font-weight);
+  color: var(--sys-color-neutral-40);
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-title-small-letter-spacing);
+}
+
+.table-standard td {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+}
+
+/* Striped Table */
+.table-striped tr:nth-child(even) {
+  background-color: var(--sys-color-neutral-98);
+}
+
+.table-striped tr:hover {
+  background-color: var(--sys-color-neutral-95);
+}
+
+/* Borderless Table */
+.table-borderless th,
+.table-borderless td {
+  border: none;
+  padding: var(--sys-spacing-lg);
+}
+
+.table-borderless tr + tr td {
+  padding-top: var(--sys-spacing-xl);
+}
+
+/* Interactive Table */
+.table-interactive tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.table-interactive tr:hover {
+  background-color: var(--sys-color-neutral-95);
+}
+
+.table-interactive tr.selected {
+  background-color: var(--sys-color-primary-95);
+  border-left: 4px solid var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+/* Compact Table */
+.table-compact th,
+.table-compact td {
+  padding: var(--sys-spacing-sm);
+  font-size: var(--sys-typography-body-small-text-font-size);
+}
+
+.table-compact th {
+  font-size: var(--sys-typography-label-large-font-size);
+}
+
+/* Table Header */
+.table-header {
+  position: sticky;
+  top: 0;
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  z-index: 10;
+}
+
+/* Column Alignment */
+.table-col-left {
+  text-align: left;
+}
+
+.table-col-center {
+  text-align: center;
+}
+
+.table-col-right {
+  text-align: right;
+}
+
+.table-col-numeric {
+  text-align: right;
+  font-family: var(--sys-typography-title-small-font-family);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Column Sizing */
+.table-col-auto {
+  width: auto;
+}
+
+.table-col-fixed {
+  width: var(--sys-table-col-fixed-width);
+  min-width: var(--sys-table-col-fixed-width);
+  max-width: var(--sys-table-col-fixed-width);
+}
+
+.table-col-flex {
+  flex: 1;
+  min-width: var(--sys-table-col-flex-min-width);
+}
+
+/* Header Cell */
+.table-header-cell {
+  padding: var(--sys-spacing-md);
+  font-family: var(--sys-typography-title-small-font-family);
+  font-size: var(--sys-typography-title-small-font-size);
+  font-weight: var(--sys-typography-title-small-font-weight);
+  color: var(--sys-color-neutral-40);
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-title-small-letter-spacing);
+  user-select: none;
+}
+
+.table-header-cell.sortable {
+  cursor: pointer;
+}
+
+.table-header-cell.sortable:hover {
+  background-color: var(--sys-color-neutral-95);
+}
+
+/* Sort Indicator */
+.table-sort-indicator {
+  margin-left: var(--sys-spacing-xs);
+  color: var(--sys-color-neutral-60);
+}
+
+/* Data Cell */
+.table-data-cell {
+  padding: var(--sys-spacing-md);
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  line-height: var(--sys-typography-body-text-line-height);
+}
+
+.table-data-cell.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: var(--sys-table-cell-truncate-max-width);
+}
+
+.table-data-cell.multiline {
+  white-space: normal;
+  line-height: 1.4;
+}
+
+/* Status Cell */
+.table-status-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sys-spacing-xs);
+  padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+  border-radius: var(--sys-radius-full);
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
+  font-weight: var(--sys-typography-label-small-font-weight);
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-label-small-letter-spacing);
+}
+
+.table-status-cell.success {
+  background-color: var(--sys-color-roles-success-color-role-success-container-role);
+  color: var(--sys-color-roles-success-color-role-on-success-container-role);
+}
+
+.table-status-cell.warning {
+  background-color: var(--sys-color-roles-warning-color-role-warning-container-role);
+  color: var(--sys-color-roles-warning-color-role-on-warning-container-role);
+}
+
+.table-status-cell.error {
+  background-color: var(--sys-color-roles-error-color-role-error-container-role);
+  color: var(--sys-color-roles-error-color-role-on-error-container-role);
+}
+
+/* Row States */
+.table-row:hover {
+  background-color: var(--sys-color-neutral-95);
+}
+
+.table-row:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: -2px;
+}
+
+.table-row.selected {
+  background-color: var(--sys-color-primary-95);
+}
+
+.table-row.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Cell States */
+.table-cell-hover {
+  position: relative;
+}
+
+.table-cell-hover:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--sys-color-neutral-95);
+  z-index: -1;
+}
+
+.table-cell:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+.table-cell.selected {
+  background-color: var(--sys-color-primary-90);
+  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+}
+
+.table-cell.disabled {
+  color: var(--sys-color-neutral-60);
+}
+
+/* Selection */
+.table-select-checkbox {
+  width: var(--sys-table-select-checkbox-width);
+  text-align: center;
+}
+
+.table-select-all {
+  padding: var(--sys-spacing-md);
+}
+
+/* Sorting */
+.table-sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sys-spacing-xs);
+  background: none;
+  border: none;
+  padding: var(--sys-spacing-sm);
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.table-sort-button:hover {
+  background-color: var(--sys-color-neutral-95);
+  border-radius: var(--sys-radius-sm);
+}
+
+.table-sort-asc,
+.table-sort-desc {
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+/* Filtering */
+.table-filter {
+  margin-bottom: var(--sys-spacing-lg);
+}
+
+.table-filter-input {
+  width: 100%;
+  max-width: 300px;
+}
+
+/* Pagination */
+.table-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sys-spacing-lg);
+  border-top: 1px solid var(--sys-color-neutral-90);
+}
+
+.table-pagination-info {
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+}
+
+.table-pagination-controls {
+  display: flex;
+  gap: var(--sys-spacing-xs);
+}
+
+.table-pagination-button {
+  padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+  border: 1px solid var(--sys-color-neutral-90);
+  background: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  border-radius: var(--sys-radius-sm);
+  cursor: pointer;
+}
+
+.table-pagination-button:hover:not(:disabled) {
+  background-color: var(--sys-color-neutral-95);
+}
+
+.table-pagination-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

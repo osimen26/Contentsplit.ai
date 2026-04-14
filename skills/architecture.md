@@ -44,7 +44,9 @@ ContentSplit follows a modular, component-based architecture with a centralized 
 - `design-tokens.tokens.json` - Source tokens from Figma
 - `convert-tokens-ultimate.js` - Token conversion script
 - `design-tokens-ultimate.css` - Generated CSS custom properties
-- `skills/color.md`, `skills/typography.md`, `skills/elevation.md` - Documentation
+- `motion.css` - Motion design tokens (duration & easing)
+- `skills/color.md`, `skills/typography.md`, `skills/elevation.md`, `skills/spacing.md`, `skills/radius.md` - Foundation documentation
+- `skills/design-implementation.md` - Guidelines for creative execution within the MD3/token system
 
 ### 2. Component Layer (UI Building Blocks)
 ```
@@ -69,6 +71,7 @@ ContentSplit follows a modular, component-based architecture with a centralized 
 - `skills/navigation.md` - Navigation component specifications
 - `skills/chips.md` - Chip component specifications
 - `skills/tooltips.md` - Tooltip component specifications
+- `components/button.css`, `components/input.css`, `components/card.css`, `components/chips.css`, `components/icons.css` - Component implementation styles
 
 ### 3. Pattern Layer (Common UI Patterns)
 ```
@@ -162,6 +165,7 @@ contentsplit.ai/
 ├── design-tokens.tokens.json          # Source design tokens
 ├── convert-tokens-ultimate.js         # Token conversion script
 ├── design-tokens-ultimate.css         # Generated CSS tokens
+├── motion.css                         # Motion design tokens
 ├── agent.md                           # AI agent guide
 └── skills/
     ├── architecture.md                # This file
@@ -175,7 +179,8 @@ contentsplit.ai/
     │   ├── typography.md              # Typography system
     │   ├── elevation.md               # Elevation system
     │   ├── spacing.md                 # Spacing system
-    │   └── radius.md                  # Radius system
+    │   ├── radius.md                  # Radius system
+    │   └── design-implementation.md   # Creative execution guidelines
     │
     ├── Components/
     │   ├── button.md                  # Button components

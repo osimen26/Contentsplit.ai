@@ -4,7 +4,19 @@
 > Extracted directly from `design-tokens.tokens.json`.
 > Antigravity must reference this file for every color applied in the UI.
 
+## Overview
+
+The ContentSplit Color System follows **Google Material Design 3 (MD3)** guidelines to create a consistent, accessible color palette. The system implements MD3's color architecture with semantic color roles, a comprehensive palette scale (0-100), and automatic dark theme support through CSS custom properties.
+
+**MD3 Compliance:** This system implements:
+- **Material Design 3 color roles** (primary, secondary, tertiary, surface, error, etc.)
+- **11-step palette scale** (0-100) for each color family
+- **Semantic color tokens** for consistent UI states
+- **Automatic theme switching** via CSS custom properties
+
 ---
+
+
 
 ## 1. Key Colors (Brand Source)
 

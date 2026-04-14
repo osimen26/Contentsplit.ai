@@ -3409,6 +3409,92 @@
           "exportKey": "variables"
         }
       }
+    },
+    "radius": {
+      "radius-xs": {
+        "type": "dimension",
+        "value": 2,
+        "extensions": {
+          "org.lukasoppermann.figmaDesignTokens": {
+            "collection": "Primitive color Collection",
+            "scopes": [
+              "ALL_SCOPES"
+            ],
+            "variableId": "VariableID:RADIUS:1",
+            "exportKey": "variables"
+          }
+        }
+      },
+      "radius-sm": {
+        "type": "dimension",
+        "value": 4,
+        "extensions": {
+          "org.lukasoppermann.figmaDesignTokens": {
+            "collection": "Primitive color Collection",
+            "scopes": [
+              "ALL_SCOPES"
+            ],
+            "variableId": "VariableID:RADIUS:2",
+            "exportKey": "variables"
+          }
+        }
+      },
+      "radius-md": {
+        "type": "dimension",
+        "value": 8,
+        "extensions": {
+          "org.lukasoppermann.figmaDesignTokens": {
+            "collection": "Primitive color Collection",
+            "scopes": [
+              "ALL_SCOPES"
+            ],
+            "variableId": "VariableID:RADIUS:3",
+            "exportKey": "variables"
+          }
+        }
+      },
+      "radius-lg": {
+        "type": "dimension",
+        "value": 12,
+        "extensions": {
+          "org.lukasoppermann.figmaDesignTokens": {
+            "collection": "Primitive color Collection",
+            "scopes": [
+              "ALL_SCOPES"
+            ],
+            "variableId": "VariableID:RADIUS:4",
+            "exportKey": "variables"
+          }
+        }
+      },
+      "radius-xl": {
+        "type": "dimension",
+        "value": 16,
+        "extensions": {
+          "org.lukasoppermann.figmaDesignTokens": {
+            "collection": "Primitive color Collection",
+            "scopes": [
+              "ALL_SCOPES"
+            ],
+            "variableId": "VariableID:RADIUS:5",
+            "exportKey": "variables"
+          }
+        }
+      },
+      "radius-full": {
+        "type": "dimension",
+        "value": 9999,
+        "extensions": {
+          "org.lukasoppermann.figmaDesignTokens": {
+            "collection": "Primitive color Collection",
+            "scopes": [
+              "ALL_SCOPES"
+            ],
+            "variableId": "VariableID:RADIUS:6",
+            "exportKey": "variables"
+          }
+        }
+      }
     }
   },
   "color roles": {

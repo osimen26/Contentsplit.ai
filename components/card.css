@@ -1,0 +1,280 @@
+/* ContentSplit Card Component
+ * 
+ * Implementation of Material Design 3 card system using design tokens.
+ * Follows specifications in skills/card.md
+ */
+
+/* Card container base styles */
+.card-elevated,
+.card-filled,
+.card-outlined {
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  border-radius: var(--sys-radius-card);
+  overflow: hidden;
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+  box-sizing: border-box;
+}
+
+/* 1. Elevated Card */
+.card-elevated {
+  box-shadow: var(--sys-elevation-1);
+}
+
+.card-elevated:hover {
+  box-shadow: var(--sys-elevation-2);
+  cursor: pointer;
+}
+
+/* 2. Filled Card */
+.card-filled {
+  border: 1px solid var(--sys-color-neutral-90);
+}
+
+.card-filled:hover {
+  background-color: var(--sys-color-neutral-98);
+  border-color: var(--sys-color-neutral-80);
+}
+
+/* 3. Outlined Card */
+.card-outlined {
+  border: 1px solid var(--sys-color-neutral-90);
+}
+
+.card-outlined:hover {
+  border-color: var(--sys-color-neutral-80);
+}
+
+/* Card layouts */
+
+/* Media Card */
+.card-media {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-media-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-media-content {
+  padding: 16px;
+}
+
+/* Text-Only Card */
+.card-text-only {
+  padding: 24px;
+}
+
+/* Action Card */
+.card-actions {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-actions-footer {
+  padding: 16px;
+  border-top: 1px solid var(--sys-color-neutral-90);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Dashboard Card */
+.card-dashboard {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.card-dashboard-icon {
+  grid-row: 1 / 3;
+  grid-column: 1;
+  margin-right: 12px;
+}
+
+.card-dashboard-title {
+  grid-row: 1;
+  grid-column: 2;
+  margin: 0;
+}
+
+.card-dashboard-value {
+  grid-row: 2;
+  grid-column: 2;
+  margin: 0;
+}
+
+/* Card content structure */
+
+/* Headline */
+.card-headline {
+  font-family: var(--sys-typography-title-medium-font-family);
+  font-size: var(--sys-typography-title-medium-font-size);
+  font-weight: var(--sys-typography-title-medium-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin: 0 0 8px 0;
+  line-height: var(--sys-typography-title-medium-line-height);
+}
+
+/* Subhead */
+.card-subhead {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin: 0 0 12px 0;
+  line-height: var(--sys-typography-body-text-line-height);
+}
+
+/* Supporting text */
+.card-supporting-text {
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin: 0 0 16px 0;
+  line-height: var(--sys-typography-body-text-line-height);
+}
+
+/* Metadata */
+.card-metadata {
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin: 12px 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Interactive states */
+
+/* Focus state */
+.card-elevated:focus,
+.card-filled:focus,
+.card-outlined:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+/* Selected/Active state */
+.card-elevated.selected {
+  box-shadow: var(--sys-elevation-2);
+  border: 2px solid var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+.card-filled.selected {
+  background-color: var(--sys-color-primary-95);
+  border: 2px solid var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+.card-outlined.selected {
+  border: 2px solid var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+/* Disabled state */
+.card-elevated.disabled,
+.card-filled.disabled,
+.card-outlined.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.card-filled.disabled {
+  background-color: var(--sys-color-roles-disable-state);
+}
+
+.card-outlined.disabled {
+  border-color: var(--sys-color-neutral-80);
+}
+
+/* Card actions */
+
+/* Primary action */
+.card-action-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+  border: none;
+  border-radius: 8px;
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
+  font-weight: var(--sys-typography-label-small-font-weight);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-label-small-letter-spacing);
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+}
+
+.card-action-primary:hover {
+  background-color: var(--sys-color-primary-30);
+}
+
+/* Secondary action */
+.card-action-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: transparent;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  border: 1px solid var(--sys-color-roles-primary-color-role-primary-role);
+  border-radius: 8px;
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
+  font-weight: var(--sys-typography-label-small-font-weight);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: var(--sys-typography-label-small-letter-spacing);
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+}
+
+.card-action-secondary:hover {
+  background-color: var(--sys-color-primary-95);
+  border-color: var(--sys-color-primary-30);
+}
+
+/* Icon actions */
+.card-action-icon {
+  background: none;
+  border: none;
+  color: var(--sys-color-neutral-60);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+}
+
+.card-action-icon:hover {
+  background-color: var(--sys-color-neutral-95);
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+/* Accessibility: focus visible */
+.card-elevated:focus-visible,
+.card-filled:focus-visible,
+.card-outlined:focus-visible {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+/* Touch target enhancement for mobile */
+@media (pointer: coarse) {
+  .card-action-primary,
+  .card-action-secondary,
+  .card-action-icon {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

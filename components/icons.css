@@ -1,0 +1,195 @@
+/* ContentSplit Icon System - Material Design 3 Implementation
+ * Comprehensive icon components for visual communication and interaction
+ */
+
+/* Icon Base Styles */
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Icon Style Variants */
+.icon-filled {
+  fill: currentColor;
+  stroke: none;
+}
+
+.icon-outlined {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--sys-icon-stroke-width);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-rounded {
+  fill: currentColor;
+  stroke: none;
+  border-radius: var(--sys-icon-rounded-radius);
+}
+
+.icon-sharp {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* Icon Size Classes */
+.icon-xs {
+  width: var(--sys-icon-size-xs);
+  height: var(--sys-icon-size-xs);
+}
+
+.icon-sm {
+  width: var(--sys-icon-size-sm);
+  height: var(--sys-icon-size-sm);
+}
+
+.icon-md {
+  width: var(--sys-icon-size-md);
+  height: var(--sys-icon-size-md);
+}
+
+.icon-lg {
+  width: var(--sys-icon-size-lg);
+  height: var(--sys-icon-size-lg);
+}
+
+.icon-xl {
+  width: var(--sys-icon-size-xl);
+  height: var(--sys-icon-size-xl);
+}
+
+/* Icon Color Classes (Semantic) */
+.icon-primary {
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+.icon-secondary {
+  color: var(--sys-color-roles-secondary-color-role-secondary-role);
+}
+
+.icon-success {
+  color: var(--sys-color-roles-success-color-role-success-color-role);
+}
+
+.icon-error {
+  color: var(--sys-color-roles-error-color-role-error-role);
+}
+
+.icon-warning {
+  color: var(--sys-color-roles-warning-color-role-warning-role);
+}
+
+.icon-disabled {
+  color: var(--sys-color-roles-disable-state);
+  opacity: 0.6;
+}
+
+/* Contextual Colors */
+.icon-on-primary {
+  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+}
+
+.icon-on-secondary {
+  color: var(--sys-color-roles-secondary-color-role-on-secondary-role);
+}
+
+.icon-on-surface {
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-color-role);
+}
+
+.icon-on-neutral {
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+}
+
+/* Icon Button */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sys-icon-button-size);
+  height: var(--sys-icon-button-size);
+  border-radius: 50%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--sys-color-neutral-60);
+  padding: 0;
+  transition: background-color 0.2s ease;
+}
+
+.icon-button:hover {
+  background-color: var(--sys-color-neutral-95);
+}
+
+.icon-button:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+.icon-button:active {
+  transform: scale(0.95);
+}
+
+.icon-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Icon Toggle */
+.icon-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sys-icon-button-size);
+  height: var(--sys-icon-button-size);
+  border-radius: 50%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--sys-color-neutral-60);
+}
+
+.icon-toggle.selected {
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  background-color: var(--sys-color-primary-95);
+}
+
+.icon-toggle:hover {
+  background-color: var(--sys-color-neutral-95);
+}
+
+/* Icon with Text */
+.icon-with-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sys-icon-text-gap);
+}
+
+.icon-with-text .icon {
+  flex-shrink: 0;
+}
+
+/* Interactive States */
+.icon-button:hover .icon {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.icon-button:active .icon {
+  transform: scale(0.95);
+}
+
+/* Accessibility */
+.icon-decorative {
+  aria-hidden: true;
+}
+
+.icon-interactive {
+  cursor: pointer;
+}
+
+.icon-interactive:focus-visible {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}

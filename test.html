@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContentSplit Design System - Component Test</title>
+    <link rel="stylesheet" href="design-tokens-ultimate.css">
+    <link rel="stylesheet" href="motion.css">
+    <link rel="stylesheet" href="components/button.css">
+    <link rel="stylesheet" href="components/input.css">
+    <link rel="stylesheet" href="components/card.css">
+    <link rel="stylesheet" href="components/chips.css">
+    <link rel="stylesheet" href="components/icons.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: var(--sys-typography-body-text-font-family);
+            font-size: var(--sys-typography-body-text-font-size);
+            line-height: var(--sys-typography-body-text-line-height);
+            color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+            background-color: var(--sys-color-neutral-98);
+            margin: 0;
+            padding: 32px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            margin-bottom: 48px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--sys-color-neutral-90);
+        }
+        h1 {
+            font-family: var(--sys-typography-heading-1-font-family);
+            font-size: var(--sys-typography-heading-1-font-size);
+            font-weight: var(--sys-typography-heading-1-font-weight);
+            color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+            margin: 0 0 8px 0;
+        }
+        .subtitle {
+            font-family: var(--sys-typography-body-text-font-family);
+            font-size: var(--sys-typography-body-text-font-size);
+            color: var(--sys-color-neutral-60);
+            margin: 0;
+        }
+        .section {
+            margin-bottom: 48px;
+            background-color: var(--sys-color-neutral-100);
+            border-radius: var(--sys-radius-md);
+            padding: 32px;
+            box-shadow: var(--sys-elevation-1);
+        }
+        .section-title {
+            font-family: var(--sys-typography-title-medium-font-family);
+            font-size: var(--sys-typography-title-medium-font-size);
+            font-weight: var(--sys-typography-title-medium-font-weight);
+            color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+            margin: 0 0 24px 0;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--sys-color-neutral-90);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .component-demo {
+            padding: 24px;
+            border: 1px solid var(--sys-color-neutral-90);
+            border-radius: var(--sys-radius-md);
+            background-color: var(--sys-color-neutral-100);
+        }
+        .demo-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .demo-row:last-child {
+            margin-bottom: 0;
+        }
+        .demo-label {
+            font-family: var(--sys-typography-body-small-text-font-family);
+            font-size: var(--sys-typography-body-small-text-font-size);
+            color: var(--sys-color-neutral-60);
+            margin-bottom: 8px;
+            display: block;
+        }
+        .input-container {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .input-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-family: var(--sys-typography-body-small-text-font-family);
+            font-size: var(--sys-typography-body-small-text-font-size);
+            color: var(--sys-color-neutral-60);
+        }
+        .spacer {
+            height: 24px;
+        }
+        .note {
+            font-family: var(--sys-typography-body-small-text-font-family);
+            font-size: var(--sys-typography-body-small-text-font-size);
+            color: var(--sys-color-neutral-60);
+            font-style: italic;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ContentSplit Design System</h1>
+            <p class="subtitle">Material Design 3 implementation with design tokens</p>
+        </header>
+
+        <section class="section">
+            <h2 class="section-title">Button Components</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Filled Buttons</h3>
+                    <div class="demo-row">
+                        <button class="button button-filled button-small">Small</button>
+                        <button class="button button-filled button-medium">Medium</button>
+                        <button class="button button-filled button-large">Large</button>
+                    </div>
+                    <div class="demo-row">
+                        <button class="button button-filled button-medium" disabled>Disabled</button>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Outlined Buttons</h3>
+                    <div class="demo-row">
+                        <button class="button button-outlined button-small">Small</button>
+                        <button class="button button-outlined button-medium">Medium</button>
+                        <button class="button button-outlined button-large">Large</button>
+                    </div>
+                    <div class="demo-row">
+                        <button class="button button-outlined button-medium" disabled>Disabled</button>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Text & Elevated Buttons</h3>
+                    <div class="demo-row">
+                        <button class="button button-text button-medium">Text Button</button>
+                        <button class="button button-elevated button-medium">Elevated</button>
+                    </div>
+                    <div class="demo-row">
+                        <button class="button button-tonal button-medium">Tonal</button>
+                        <button class="button button-fab button-fab-medium">+</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Input Components</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Filled Text Field</h3>
+                    <div class="input-container">
+                        <label for="filled-input">Label</label>
+                        <input type="text" id="filled-input" class="input-filled" placeholder="Placeholder">
+                        <span class="input-supporting-text">Supporting text</span>
+                    </div>
+                    <div class="input-container">
+                        <label for="filled-error">Error State</label>
+                        <input type="text" id="filled-error" class="input-filled error" value="Invalid input">
+                        <span class="input-supporting-text error">Error message</span>
+                    </div>
+                    <div class="input-container">
+                        <label for="filled-disabled">Disabled</label>
+                        <input type="text" id="filled-disabled" class="input-filled" disabled value="Disabled input">
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Outlined Text Field</h3>
+                    <div class="input-container">
+                        <label for="outlined-input">Label</label>
+                        <input type="text" id="outlined-input" class="input-outlined" placeholder="Placeholder">
+                        <span class="input-supporting-text">Supporting text</span>
+                    </div>
+                    <div class="input-container">
+                        <label for="outlined-error">Error State</label>
+                        <input type="text" id="outlined-error" class="input-outlined error" value="Invalid input">
+                        <span class="input-supporting-text error">Error message</span>
+                    </div>
+                    <div class="input-container">
+                        <label for="outlined-disabled">Disabled</label>
+                        <input type="text" id="outlined-disabled" class="input-outlined" disabled value="Disabled input">
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Variants</h3>
+                    <div class="input-container">
+                        <label for="textarea">Text Area</label>
+                        <textarea id="textarea" class="input-filled textarea" rows="3">Text area content</textarea>
+                    </div>
+                    <div class="input-container">
+                        <label for="select">Select</label>
+                        <select id="select" class="input-filled select">
+                            <option>Option 1</option>
+                            <option>Option 2</option>
+                            <option>Option 3</option>
+                        </select>
+                    </div>
+                    <div class="input-container">
+                        <label for="search">Search</label>
+                        <input type="search" id="search" class="input-filled search" placeholder="Search...">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Card Components</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Elevated Card</h3>
+                    <div class="card-elevated">
+                        <div class="card-media">
+                            <img src="https://via.placeholder.com/300x150/6b61e7/ffffff?text=Placeholder" class="card-media-image" alt="Sample">
+                            <div class="card-media-content">
+                                <h4 class="card-headline">Card Headline</h4>
+                                <p class="card-subhead">Subhead text</p>
+                                <p class="card-supporting-text">Supporting text that explains more about the card content.</p>
+                                <div class="card-actions-footer">
+                                    <button class="card-action-secondary">Action</button>
+                                    <button class="card-action-primary">Primary</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Filled Card</h3>
+                    <div class="card-filled">
+                        <div class="card-text-only">
+                            <h4 class="card-headline">Filled Card</h4>
+                            <p class="card-supporting-text">This card has a filled background with a border.</p>
+                            <div class="card-metadata">
+                                <span>Updated 2 days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="spacer"></div>
+                    <h3>Outlined Card</h3>
+                    <div class="card-outlined">
+                        <div class="card-actions">
+                            <h4 class="card-headline">Outlined Card</h4>
+                            <p class="card-supporting-text">This card has an outlined border.</p>
+                            <button class="card-action-icon">☆</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Dashboard Card</h3>
+                    <div class="card-filled card-dashboard">
+                        <div class="card-dashboard-icon">📊</div>
+                        <h4 class="card-dashboard-title">Total Users</h4>
+                        <p class="card-dashboard-value">1,234</p>
+                    </div>
+                    <p class="note">Dashboard card with icon and value.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Chip Components</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Input Chips</h3>
+                    <div class="demo-row">
+                        <div class="chip chip-input">
+                            <span class="chip-label">Tag 1</span>
+                            <button class="chip-input-remove" aria-label="Remove">×</button>
+                        </div>
+                        <div class="chip chip-input selected">
+                            <span class="chip-label">Selected</span>
+                            <button class="chip-input-remove" aria-label="Remove">×</button>
+                        </div>
+                        <div class="chip chip-input">
+                            <div class="chip-input-avatar">A</div>
+                            <span class="chip-label">Avatar</span>
+                            <button class="chip-input-remove" aria-label="Remove">×</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Choice & Filter Chips</h3>
+                    <div class="demo-row">
+                        <div class="chip chip-choice">Option 1</div>
+                        <div class="chip chip-choice selected">Option 2</div>
+                        <div class="chip chip-choice">Option 3</div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="chip chip-filter">Filter A</div>
+                        <div class="chip chip-filter selected">Filter B</div>
+                        <div class="chip chip-filter">Filter C</div>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Action & Assist Chips</h3>
+                    <div class="demo-row">
+                        <div class="chip chip-action">
+                            <span class="chip-label">Action</span>
+                        </div>
+                        <div class="chip chip-action">
+                            <span class="chip-label">With Icon</span>
+                        </div>
+                        <div class="chip chip-assist">
+                            <span class="chip-label">Assist</span>
+                            <div class="chip-assist-badge"></div>
+                        </div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="chip chip-ai-suggestion">
+                            <span class="chip-label">AI Suggestion</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Content Categories</h3>
+                    <div class="demo-row">
+                        <div class="chip chip-category chip-category-article">
+                            <span class="chip-label">Article</span>
+                            <span class="chip-category-count">12</span>
+                        </div>
+                        <div class="chip chip-category chip-category-social">
+                            <span class="chip-label">Social</span>
+                        </div>
+                        <div class="chip chip-category chip-category-marketing">
+                            <span class="chip-label">Marketing</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Tone/Voice Chips</h3>
+                    <div class="demo-row">
+                        <div class="chip chip-tone chip-tone-formal">Formal</div>
+                        <div class="chip chip-tone chip-tone-casual selected">Casual</div>
+                        <div class="chip chip-tone chip-tone-professional">Professional</div>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>AI Model Chips</h3>
+                    <div class="demo-row">
+                        <div class="chip chip-model">
+                            <div class="chip-model-icon">🤖</div>
+                            <div class="chip-model-info">
+                                <span class="chip-model-name">GPT-4</span>
+                                <span class="chip-model-stats">Fast · 128k</span>
+                            </div>
+                            <div class="chip-model-status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Icon Components</h2>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Icon Sizes</h3>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-xs" style="background-color: var(--sys-color-primary-40); border-radius: 2px;"></div>
+                        <span class="demo-label">XS (12px)</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-sm" style="background-color: var(--sys-color-primary-40); border-radius: 2px;"></div>
+                        <span class="demo-label">SM (18px)</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-md" style="background-color: var(--sys-color-primary-40); border-radius: 2px;"></div>
+                        <span class="demo-label">MD (24px)</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-lg" style="background-color: var(--sys-color-primary-40); border-radius: 2px;"></div>
+                        <span class="demo-label">LG (36px)</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-xl" style="background-color: var(--sys-color-primary-40); border-radius: 2px;"></div>
+                        <span class="demo-label">XL (48px)</span>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Icon Styles</h3>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-md" style="background-color: var(--sys-color-primary-40); border-radius: 2px;"></div>
+                        <span class="demo-label">Filled</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-outlined icon-md" style="border: 1.5px solid var(--sys-color-primary-40); border-radius: 2px;"></div>
+                        <span class="demo-label">Outlined</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-rounded icon-md" style="background-color: var(--sys-color-primary-40);"></div>
+                        <span class="demo-label">Rounded</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-sharp icon-md" style="background-color: var(--sys-color-primary-40);"></div>
+                        <span class="demo-label">Sharp</span>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Icon Colors</h3>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-md icon-primary"></div>
+                        <span class="demo-label">Primary</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-md icon-secondary"></div>
+                        <span class="demo-label">Secondary</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-md icon-success"></div>
+                        <span class="demo-label">Success</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-md icon-error"></div>
+                        <span class="demo-label">Error</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-md icon-warning"></div>
+                        <span class="demo-label">Warning</span>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon icon-filled icon-md icon-disabled"></div>
+                        <span class="demo-label">Disabled</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="component-demo">
+                    <h3>Icon Buttons</h3>
+                    <div class="demo-row">
+                        <button class="icon-button">
+                            <div class="icon icon-filled icon-md" style="background-color: currentColor;"></div>
+                        </button>
+                        <span class="demo-label">Default</span>
+                    </div>
+                    <div class="demo-row">
+                        <button class="icon-button" style="color: var(--sys-color-primary-40);">
+                            <div class="icon icon-filled icon-md" style="background-color: currentColor;"></div>
+                        </button>
+                        <span class="demo-label">Colored</span>
+                    </div>
+                    <div class="demo-row">
+                        <button class="icon-button" disabled>
+                            <div class="icon icon-filled icon-md" style="background-color: currentColor;"></div>
+                        </button>
+                        <span class="demo-label">Disabled</span>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Icon Toggles</h3>
+                    <div class="demo-row">
+                        <button class="icon-toggle">
+                            <div class="icon icon-filled icon-md" style="background-color: currentColor;"></div>
+                        </button>
+                        <span class="demo-label">Default</span>
+                    </div>
+                    <div class="demo-row">
+                        <button class="icon-toggle selected">
+                            <div class="icon icon-filled icon-md" style="background-color: currentColor;"></div>
+                        </button>
+                        <span class="demo-label">Selected</span>
+                    </div>
+                </div>
+                <div class="component-demo">
+                    <h3>Icon with Text</h3>
+                    <div class="demo-row">
+                        <div class="icon-with-text">
+                            <div class="icon icon-filled icon-md icon-primary"></div>
+                            <span>Icon with text</span>
+                        </div>
+                    </div>
+                    <div class="demo-row">
+                        <div class="icon-with-text">
+                            <div class="icon icon-outlined icon-md icon-secondary"></div>
+                            <span>Outlined icon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="section">
+            <h2 class="section-title">Design Tokens</h2>
+            <p>All components use CSS custom properties defined in <code>design-tokens-ultimate.css</code> and <code>motion.css</code>.</p>
+            <p>Tokens follow the <code>--sys-*</code> naming convention and are sourced from Figma via <code>design-tokens.tokens.json</code>.</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -2,7 +2,31 @@
 
 ## Overview
 
-The ContentSplit Typography System provides a comprehensive set of design tokens for consistent typography across the application. The system uses CSS custom properties (CSS variables) with two parallel naming conventions to support different use cases.
+The ContentSplit Typography System follows **Google Material Design 3 (MD3)** guidelines to create consistent, accessible typography across the application. The system implements MD3's typography scale using CSS custom properties (CSS variables) with two parallel naming conventions to support different use cases.
+
+> **Note:** This system implements MD3's typography principles while providing backward compatibility with existing category names. For new components, prefer using the MD3-standard composite tokens (`--sys-typography-*`).
+
+## MD3 Typography Scale Mapping
+
+The ContentSplit typography system maps to Google Material Design 3's typography scale while maintaining compatibility with existing category names:
+
+| MD3 Standard Category | ContentSplit Category | Size | Primary Use |
+|----------------------|----------------------|------|-------------|
+| Display Large | `display-large` | 56px | Hero sections, major page titles |
+| Display Small | `display-small` | 48px | Section headers, prominent titles |
+| Headline Large | `heading-1` | 40px | Page titles, major headings |
+| Headline Medium | `heading-2` | 36px | Section headings |
+| Headline Small | `heading-3` | 32px | Sub-section headings |
+| Title Large | `title-large` | 28px | Card titles, modal headers |
+| Title Medium | `title-medium` | 24px | Sub-headings, panel titles |
+| Title Small | `title-small` | 20px | Small titles, list headers |
+| Body Large | `paragraph-text` | 18px | Long-form content, articles |
+| Body Medium | `body-text` | 16px | Standard UI text, paragraphs |
+| Body Small | `body-small-text` | 14px | Supporting text, captions |
+| Label Large | `small-text` | 12px | Form labels, metadata |
+| Label Medium | `label-small` | 10px | Tiny labels, microcopy |
+
+**Implementation Note:** The actual CSS tokens use the ContentSplit category names (`--sys-font-heading-1-*`, `--sys-typography-heading-1`). Components should reference these tokens, not hard-coded values.
 
 ## Token Naming Conventions
 

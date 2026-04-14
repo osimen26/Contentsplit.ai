@@ -1,0 +1,288 @@
+/* ContentSplit Button Component
+ * 
+ * Implementation of Material Design 3 button system using design tokens.
+ * Follows specifications in skills/button.md
+ */
+
+:root {
+  /* Button-specific design tokens (extending the system) */
+  --sys-button-height-medium: 40px;
+  --sys-button-height-small: 32px;
+  --sys-button-height-large: 48px;
+  --sys-button-padding-medium: 10px 24px;
+  --sys-button-padding-small: 8px 16px;
+  --sys-button-padding-large: 12px 32px;
+}
+
+/* Base button styles (common to all variants) */
+.button {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  vertical-align: middle;
+  
+  /* Typography */
+  font-family: var(--sys-typography-label-small-font-family);
+  font-weight: var(--sys-typography-label-small-font-weight);
+  font-size: var(--sys-typography-label-small-font-size);
+  letter-spacing: var(--sys-typography-label-small-letter-spacing);
+  line-height: var(--sys-typography-label-small-line-height);
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  
+  /* Visual */
+  border-radius: var(--sys-radius-button);
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  
+  /* Interaction */
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
+  
+  /* Accessibility */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Button sizes */
+.button-small {
+  height: var(--sys-button-height-small);
+  padding: var(--sys-button-padding-small);
+  font-size: var(--sys-typography-small-text-fontsize); /* 12px - matches spec */
+}
+
+.button-medium {
+  height: var(--sys-button-height-medium);
+  padding: var(--sys-button-padding-medium);
+  font-size: var(--sys-typography-label-medium-fontsize);
+}
+
+.button-large {
+  height: var(--sys-button-height-large);
+  padding: var(--sys-button-padding-large);
+  font-size: var(--sys-typography-body-text-fontsize); /* 16px - matches spec */
+}
+
+/* Button variants */
+
+/* 1. Filled Button (Primary action) */
+.button-filled {
+  background-color: var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+}
+
+.button-filled:hover {
+  background-color: var(--sys-color-primary-30); /* Darker shade */
+  box-shadow: var(--sys-elevation-1);
+}
+
+.button-filled:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+.button-filled:active {
+  background-color: var(--sys-color-primary-20);
+  box-shadow: var(--sys-elevation-0);
+  transform: translateY(1px);
+}
+
+/* 2. Outlined Button (Secondary action) */
+.button-outlined {
+  background-color: transparent;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  border: 1px solid var(--sys-color-roles-primary-color-role-primary-role);
+}
+
+.button-outlined:hover {
+  background-color: var(--sys-color-primary-95);
+  border-color: var(--sys-color-primary-30);
+}
+
+.button-outlined:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+.button-outlined:active {
+  background-color: var(--sys-color-primary-90);
+}
+
+/* 3. Text Button (Low emphasis) */
+.button-text {
+  background-color: transparent;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  padding: 10px 12px; /* Specific to text buttons */
+}
+
+.button-text:hover {
+  background-color: var(--sys-color-primary-95); /* Equivalent to rgba(primary, 0.04) */
+}
+
+.button-text:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+.button-text:active {
+  background-color: var(--sys-color-primary-90); /* Equivalent to rgba(primary, 0.12) */
+}
+
+/* 4. Elevated Button (Floating appearance) */
+.button-elevated {
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  box-shadow: var(--sys-elevation-1);
+}
+
+.button-elevated:hover {
+  box-shadow: var(--sys-elevation-2);
+  background-color: var(--sys-color-neutral-95);
+}
+
+.button-elevated:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+.button-elevated:active {
+  box-shadow: var(--sys-elevation-0);
+  transform: translateY(1px);
+}
+
+/* 5. Tonal Button (Secondary container) */
+.button-tonal {
+  background-color: var(--sys-color-roles-secondary-color-role-secondary-container);
+  color: var(--sys-color-roles-secondary-color-role-on-secondary-container);
+}
+
+.button-tonal:hover {
+  background-color: var(--sys-color-secondary-80);
+}
+
+.button-tonal:focus {
+  outline: 2px solid var(--sys-color-secondary-60);
+  outline-offset: 2px;
+}
+
+.button-tonal:active {
+  background-color: var(--sys-color-secondary-70);
+  transform: translateY(1px);
+}
+
+/* 6. Floating Action Button (Circular) */
+.button-fab {
+  background-color: var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  box-shadow: var(--sys-elevation-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.button-fab:hover {
+  box-shadow: var(--sys-elevation-4);
+}
+
+.button-fab:focus {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+.button-fab:active {
+  box-shadow: var(--sys-elevation-2);
+  transform: translateY(1px);
+}
+
+/* FAB sizes */
+.button-fab-small {
+  width: 40px;
+  height: 40px;
+}
+
+.button-fab-medium {
+  width: 56px;
+  height: 56px;
+}
+
+.button-fab-large {
+  width: 72px;
+  height: 72px;
+}
+
+/* Disabled state (applies to all variants) */
+.button:disabled,
+.button-disabled {
+  background-color: var(--sys-color-roles-disable-state);
+  color: var(--sys-color-neutral-60);
+  border-color: var(--sys-color-roles-disable-state);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+.button:disabled:hover,
+.button-disabled:hover {
+  background-color: var(--sys-color-roles-disable-state);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Icon support */
+.button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button__icon-leading {
+  margin-right: var(--sys-spacing-button-icon);
+}
+
+.button__icon-trailing {
+  margin-left: var(--sys-spacing-button-icon);
+}
+
+/* Icon-only button */
+.button-icon-only {
+  padding: var(--sys-spacing-button-icon-padding);
+  min-width: var(--sys-button-height-medium);
+}
+
+.button-icon-only .button__icon {
+  margin: 0;
+}
+
+/* Focus ring (accessibility) */
+.button:focus {
+  /* Outline is handled per-variant, but ensure visibility */
+  position: relative;
+}
+
+.button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--sys-color-primary-60);
+  outline-offset: 2px;
+}
+
+/* Touch target enhancement for mobile */
+@media (pointer: coarse) {
+  .button {
+    min-height: 44px; /* Minimum touch target size */
+  }
+  
+  .button-small {
+    min-height: 44px;
+  }
+}

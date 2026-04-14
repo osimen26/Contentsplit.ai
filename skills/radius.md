@@ -29,7 +29,7 @@ Material Design uses a **shape system** to define the roundness of components. T
 ### Component-Specific Radii
 | Component | CSS Variable | Value | Notes |
 |-----------|--------------|-------|-------|
-| Button | `--sys-radius-button` | `var(--sys-radius-sm)` | Standard button radius |
+| Button | `--sys-radius-button` | `20px` | Material Design 3 full shape for buttons |
 | Card | `--sys-radius-card` | `var(--sys-radius-md)` | Card corner radius |
 | Input | `--sys-radius-input` | `var(--sys-radius-sm)` | Form input fields |
 | Modal | `--sys-radius-modal` | `var(--sys-radius-lg)` | Dialog and modal containers |
@@ -39,7 +39,7 @@ Material Design uses a **shape system** to define the roundness of components. T
 ## Token Implementation
 
 ```css
-/* Radius tokens (to be added to design-tokens-ultimate.css) */
+/* Radius tokens (available in design-tokens-ultimate.css) */
 :root {
   /* Base radius scale */
   --sys-radius-xs: 2px;
@@ -50,7 +50,7 @@ Material Design uses a **shape system** to define the roundness of components. T
   --sys-radius-full: 9999px;
   
   /* Component-specific radii */
-  --sys-radius-button: var(--sys-radius-sm);
+  --sys-radius-button: 20px;
   --sys-radius-card: var(--sys-radius-md);
   --sys-radius-input: var(--sys-radius-sm);
   --sys-radius-modal: var(--sys-radius-lg);
