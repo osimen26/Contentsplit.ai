@@ -24,6 +24,9 @@
 
 /* Layout System */
 @import '../../components/layout.css';
+@import '../../components/layout-utilities.css';
+@import '../../components/layout-dashboard.css';
+@import '../../components/layout-claude.css';
 
 /* Application Components */
 @import '../../components/content-input.css';

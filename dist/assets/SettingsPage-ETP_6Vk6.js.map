@@ -1,1 +1,0 @@
-{"version":3,"file":"SettingsPage-ETP_6Vk6.js","names":[],"sources":["../../src/pages/SettingsPage.tsx"],"sourcesContent":["import React from 'react'\nimport { SettingsProfile } from '@components/application'\n\nconst SettingsPage: React.FC = () => {\n  return <SettingsProfile />\n}\n\nexport default SettingsPage\n"],"mappings":"0GAGM,OACG,EAAA,EAAA,KAAC,EAAD,EAAmB,CAAA"}

@@ -16,11 +16,8 @@ import { ErrorBoundary } from '@components/ui/ErrorBoundary'
 // Analytics
 import { PageViewTracker } from '@components/analytics/PageViewTracker'
 
-const DashboardPage = lazy(() => import('@pages/DashboardPage'))
 const ContentCreationPage = lazy(() => import('@pages/ContentCreationPage'))
-const HistoryPage = lazy(() => import('@pages/HistoryPage'))
 const SettingsPage = lazy(() => import('@pages/SettingsPage'))
-
 // Contexts
 import { ThemeProvider } from '@contexts/ThemeContext'
 import { AuthProvider } from '@contexts/AuthContext'
@@ -45,10 +42,9 @@ function App() {
               <Suspense fallback={<LoadingOverlay variant="ai-processing" />}>
                 <Routes>
                   <Route path="/" element={<ClaudeLayout />}>
-                    <Route index element={<DashboardPage />} />
+                    <Route index element={<ContentCreationPage />} />
                     <Route path="create" element={<ContentCreationPage />} />
-                    <Route path="history" element={<HistoryPage />} />
-                    <Route path="settings" element={<SettingsPage />} />
+                    <Route path="settings/*" element={<SettingsPage />} />
                   </Route>
                 </Routes>
               </Suspense>

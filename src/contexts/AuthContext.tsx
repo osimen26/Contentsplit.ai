@@ -4,7 +4,7 @@ interface User {
   id: string
   name: string
   email: string
-  plan: 'free' | 'pro' | 'enterprise'
+  tier: 'free' | 'pro' | 'agency'
   credits: number
 }
 
@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     id: 'user-123',
     name: 'John Doe',
     email: 'john@example.com',
-    plan: 'pro',
+    tier: 'pro',
     credits: 350,
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       id: 'user-123',
       name: 'John Doe',
       email,
-      plan: 'pro',
+      tier: 'pro',
       credits: 350,
     })
     setIsLoading(false)
