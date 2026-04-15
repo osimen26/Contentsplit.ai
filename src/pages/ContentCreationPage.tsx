@@ -1,6 +1,8 @@
 import React from 'react'
 import { ContentInput, RegenerationControls, GeneratedContent } from '@components/application'
 import { useGenerateContent, useOutputs } from '@services/query-hooks'
+import { Target, Ruler, Palette } from 'lucide-react'
+import type { Output } from '@services/api-client'
 
 // Platform options
 const platformOptions = [
@@ -24,25 +26,55 @@ const ContentCreationPage: React.FC = () => {
   const [selectedTone, setSelectedTone] = React.useState('casual')
   const [activeTab, setActiveTab] = React.useState('twitter')
 
+  React.useEffect(() => {
+    if (!selectedPlatforms.includes(activeTab) && selectedPlatforms.length > 0) {
+      setActiveTab(selectedPlatforms[0])
+    }
+  }, [selectedPlatforms, activeTab])
+
   const generateMutation = useGenerateContent()
-  // Mock conversion ID for demonstration
-  const conversionId = 'mock-conversion-id'
+  const [currentConversionId, setCurrentConversionId] = React.useState<string | null>(null)
+  const conversionId = currentConversionId || ''
   const { data: outputs, isLoading: outputsLoading } = useOutputs(conversionId)
 
   const handleGenerate = () => {
     if (!content.trim() || selectedPlatforms.length === 0) return
 
-    generateMutation.mutate({
-      input_text: content,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      tone_mode: selectedTone as any,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      platforms: selectedPlatforms as any,
-    })
+    generateMutation.mutate(
+      {
+        input_text: content,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        tone_mode: selectedTone as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        platforms: selectedPlatforms as any,
+      },
+      {
+        onSuccess: (data) => {
+          setCurrentConversionId(data.conversion.id)
+        },
+      }
+    )
   }
 
+  React.useEffect(() => {
+    console.log('Current conversion ID:', currentConversionId)
+    console.log('Outputs data:', outputs)
+  }, [currentConversionId, outputs])
+
+  const getOutputsArray = (data: unknown): Output[] => {
+    if (Array.isArray(data)) return data as Output[]
+    if (data && typeof data === 'object' && 'data' in data) {
+      const record = data as Record<string, unknown>
+      if (Array.isArray(record.data)) {
+        return record.data as Output[]
+      }
+    }
+    return []
+  }
+
+  const outputsArray = getOutputsArray(outputs)
   const generatedContent =
-    outputs?.find((output) => output.platform === activeTab)?.content ||
+    outputsArray.find((output) => output.platform === activeTab)?.content ||
     'Your generated content will appear here. Enter some content above and select your preferences.'
 
   return (
@@ -64,6 +96,7 @@ const ContentCreationPage: React.FC = () => {
           subtitle="Paste your article, blog post, or any content you want to adapt"
           placeholder="Paste your article, blog post, or any content you want to adapt..."
           characterLimit={5000}
+          className="claude-style"
         />
       </div>
 
@@ -90,6 +123,7 @@ const ContentCreationPage: React.FC = () => {
           content={generatedContent}
           isLoading={outputsLoading}
           title="Preview"
+          className="claude-style"
         />
 
         <RegenerationControls
@@ -98,13 +132,35 @@ const ContentCreationPage: React.FC = () => {
           regenerateDisabled={!content.trim() || selectedPlatforms.length === 0}
           remainingUses={15}
           options={[
-            { id: 'clarity', label: 'Improve Clarity', icon: '🎯' },
-            { id: 'shorter', label: 'Make Shorter', icon: '📏', selected: true },
-            { id: 'emotion', label: 'Add Emotion', icon: '🎨' },
+            {
+              id: 'clarity',
+              label: 'Improve Clarity',
+              icon: <Target className="regeneration-option-icon" width={20} height={20} />,
+              selected: false,
+              disabled: false,
+              description: undefined,
+            },
+            {
+              id: 'shorter',
+              label: 'Make Shorter',
+              icon: <Ruler className="regeneration-option-icon" width={20} height={20} />,
+              selected: true,
+              disabled: false,
+              description: undefined,
+            },
+            {
+              id: 'emotion',
+              label: 'Add Emotion',
+              icon: <Palette className="regeneration-option-icon" width={20} height={20} />,
+              selected: false,
+              disabled: false,
+              description: undefined,
+            },
           ]}
           selectedOptionId="shorter"
           onOptionSelect={(optionId) => console.log('Selected option:', optionId)}
           style={{ marginTop: 'var(--sys-spacing-2xl)' }}
+          className="claude-style"
         />
 
         <div

@@ -9,33 +9,33 @@
    ============================================ */
 
 .regeneration-controls {
-    background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
-    border-radius: var(--sys-radius-lg);
-    padding: var(--sys-spacing-lg);
-    margin-bottom: var(--sys-spacing-xl);
-    box-shadow: var(--sys-elevation-1);
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  border-radius: var(--sys-radius-lg);
+  padding: var(--sys-spacing-lg);
+  margin-bottom: var(--sys-spacing-xl);
+  box-shadow: var(--sys-elevation-1);
 }
 
 .regeneration-controls-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--sys-spacing-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sys-spacing-lg);
 }
 
 .regeneration-controls-title {
-    font-family: var(--sys-typography-title-small-font-family);
-    font-size: var(--sys-typography-title-small-font-size);
-    font-weight: var(--sys-typography-title-small-font-weight);
-    color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
-    margin: 0;
+  font-family: var(--sys-typography-title-small-font-family);
+  font-size: var(--sys-typography-title-small-font-size);
+  font-weight: var(--sys-typography-title-small-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin: 0;
 }
 
 .regeneration-controls-subtitle {
-    font-family: var(--sys-typography-body-text-font-family);
-    font-size: var(--sys-typography-body-text-font-size);
-    color: var(--sys-color-neutral-60);
-    margin-top: var(--sys-spacing-xs);
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-top: var(--sys-spacing-xs);
 }
 
 /* ============================================
@@ -43,32 +43,32 @@
    ============================================ */
 
 .regeneration-primary {
-    display: flex;
-    align-items: center;
-    gap: var(--sys-spacing-md);
-    margin-bottom: var(--sys-spacing-lg);
-    padding-bottom: var(--sys-spacing-lg);
-    border-bottom: 1px solid var(--sys-color-neutral-90);
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-md);
+  margin-bottom: var(--sys-spacing-lg);
+  padding-bottom: var(--sys-spacing-lg);
+  border-bottom: 1px solid var(--sys-color-neutral-90);
 }
 
 /* Apply classes: button button-filled button-large */
 .regenerate-button {
-    flex: 1;
+  flex: 1;
 }
 
 .regenerate-button-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: var(--sys-spacing-sm);
+  width: 20px;
+  height: 20px;
+  margin-right: var(--sys-spacing-sm);
 }
 
 .regeneration-count {
-    font-family: var(--sys-typography-body-small-text-font-family);
-    font-size: var(--sys-typography-body-small-text-font-size);
-    color: var(--sys-color-neutral-60);
-    background-color: var(--sys-color-neutral-95);
-    padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
-    border-radius: var(--sys-radius-sm);
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  background-color: var(--sys-color-neutral-95);
+  padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+  border-radius: var(--sys-radius-sm);
 }
 
 /* ============================================
@@ -76,59 +76,59 @@
    ============================================ */
 
 .regeneration-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--sys-spacing-md);
-    margin-bottom: var(--sys-spacing-lg);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--sys-spacing-md);
+  margin-bottom: var(--sys-spacing-lg);
 }
 
 .regeneration-option {
-    background-color: var(--sys-color-neutral-100);
-    border: 1px solid var(--sys-color-neutral-90);
-    border-radius: var(--sys-radius-md);
-    padding: var(--sys-spacing-md);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  background-color: var(--sys-color-neutral-100);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: var(--sys-radius-md);
+  padding: var(--sys-spacing-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .regeneration-option:hover {
-    border-color: var(--sys-color-primary-80);
-    background-color: var(--sys-color-primary-98);
-    transform: translateY(-2px);
-    box-shadow: var(--sys-elevation-1);
+  border-color: var(--sys-color-primary-80);
+  background-color: var(--sys-color-primary-98);
+  transform: translateY(-2px);
+  box-shadow: var(--sys-elevation-1);
 }
 
 .regeneration-option.selected {
-    border-color: var(--sys-color-roles-primary-color-role-primary-role);
-    background-color: var(--sys-color-primary-95);
+  border-color: var(--sys-color-roles-primary-color-role-primary-role);
+  background-color: var(--sys-color-primary-95);
 }
 
 .regeneration-option-icon {
-    width: 32px;
-    height: 32px;
-    color: var(--sys-color-neutral-60);
-    margin-bottom: var(--sys-spacing-sm);
+  width: 32px;
+  height: 32px;
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-sm);
 }
 
 .regeneration-option.selected .regeneration-option-icon {
-    color: var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-roles-primary-color-role-primary-role);
 }
 
 .regeneration-option-label {
-    font-family: var(--sys-typography-body-text-font-family);
-    font-size: var(--sys-typography-body-text-font-size);
-    color: var(--sys-color-neutral-30);
-    margin-bottom: var(--sys-spacing-xs);
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-30);
+  margin-bottom: var(--sys-spacing-xs);
 }
 
 .regeneration-option-description {
-    font-family: var(--sys-typography-body-small-text-font-family);
-    font-size: var(--sys-typography-body-small-text-font-size);
-    color: var(--sys-color-neutral-60);
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
 }
 
 /* ============================================
@@ -136,26 +136,26 @@
    ============================================ */
 
 .regeneration-quick-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sys-spacing-sm);
-    margin-bottom: var(--sys-spacing-lg);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sys-spacing-sm);
+  margin-bottom: var(--sys-spacing-lg);
 }
 
 /* Apply classes: chip chip-action */
 .regeneration-quick-action {
-    padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+  padding: var(--sys-spacing-sm) var(--sys-spacing-md);
 }
 
 .regeneration-quick-action.selected {
-    background-color: var(--sys-color-primary-95);
-    border-color: var(--sys-color-roles-primary-color-role-primary-role);
+  background-color: var(--sys-color-primary-95);
+  border-color: var(--sys-color-roles-primary-color-role-primary-role);
 }
 
 .regeneration-quick-action-icon {
-    width: 16px;
-    height: 16px;
-    margin-right: var(--sys-spacing-xs);
+  width: 16px;
+  height: 16px;
+  margin-right: var(--sys-spacing-xs);
 }
 
 /* ============================================
@@ -163,50 +163,50 @@
    ============================================ */
 
 .regeneration-parameters {
-    background-color: var(--sys-color-neutral-100);
-    border: 1px solid var(--sys-color-neutral-90);
-    border-radius: var(--sys-radius-md);
-    padding: var(--sys-spacing-lg);
-    margin-bottom: var(--sys-spacing-lg);
+  background-color: var(--sys-color-neutral-100);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: var(--sys-radius-md);
+  padding: var(--sys-spacing-lg);
+  margin-bottom: var(--sys-spacing-lg);
 }
 
 .regeneration-parameters-title {
-    font-family: var(--sys-typography-label-medium-font-family);
-    font-size: var(--sys-typography-label-medium-font-size);
-    color: var(--sys-color-neutral-30);
-    margin-bottom: var(--sys-spacing-md);
+  font-family: var(--sys-typography-label-medium-font-family);
+  font-size: var(--sys-typography-label-medium-font-size);
+  color: var(--sys-color-neutral-30);
+  margin-bottom: var(--sys-spacing-md);
 }
 
 .regeneration-parameters-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--sys-spacing-lg);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--sys-spacing-lg);
 }
 
 .regeneration-parameter {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sys-spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xs);
 }
 
 .regeneration-parameter-label {
-    font-family: var(--sys-typography-body-small-text-font-family);
-    font-size: var(--sys-typography-body-small-text-font-size);
-    color: var(--sys-color-neutral-60);
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
 }
 
 .regeneration-parameter-control {
-    display: flex;
-    align-items: center;
-    gap: var(--sys-spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-sm);
 }
 
 .regeneration-parameter-value {
-    font-family: var(--sys-typography-body-text-font-family);
-    font-size: var(--sys-typography-body-text-font-size);
-    color: var(--sys-color-neutral-30);
-    min-width: 40px;
-    text-align: center;
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-30);
+  min-width: 40px;
+  text-align: center;
 }
 
 /* ============================================
@@ -214,55 +214,55 @@
    ============================================ */
 
 .regeneration-history {
-    margin-top: var(--sys-spacing-xl);
-    padding-top: var(--sys-spacing-lg);
-    border-top: 1px solid var(--sys-color-neutral-90);
+  margin-top: var(--sys-spacing-xl);
+  padding-top: var(--sys-spacing-lg);
+  border-top: 1px solid var(--sys-color-neutral-90);
 }
 
 .regeneration-history-title {
-    font-family: var(--sys-typography-label-medium-font-family);
-    font-size: var(--sys-typography-label-medium-font-size);
-    color: var(--sys-color-neutral-30);
-    margin-bottom: var(--sys-spacing-md);
+  font-family: var(--sys-typography-label-medium-font-family);
+  font-size: var(--sys-typography-label-medium-font-size);
+  color: var(--sys-color-neutral-30);
+  margin-bottom: var(--sys-spacing-md);
 }
 
 .regeneration-history-items {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sys-spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xs);
 }
 
 .regeneration-history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--sys-spacing-sm) var(--sys-spacing-md);
-    background-color: var(--sys-color-neutral-100);
-    border: 1px solid var(--sys-color-neutral-90);
-    border-radius: var(--sys-radius-sm);
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+  background-color: var(--sys-color-neutral-100);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: var(--sys-radius-sm);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .regeneration-history-item:hover {
-    background-color: var(--sys-color-primary-98);
+  background-color: var(--sys-color-primary-98);
 }
 
 .regeneration-history-item.selected {
-    background-color: var(--sys-color-primary-95);
-    border-color: var(--sys-color-primary-80);
+  background-color: var(--sys-color-primary-95);
+  border-color: var(--sys-color-primary-80);
 }
 
 .regeneration-history-item-label {
-    font-family: var(--sys-typography-body-text-font-family);
-    font-size: var(--sys-typography-body-text-font-size);
-    color: var(--sys-color-neutral-30);
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-30);
 }
 
 .regeneration-history-item-time {
-    font-family: var(--sys-typography-label-small-font-family);
-    font-size: var(--sys-typography-label-small-font-size);
-    color: var(--sys-color-neutral-60);
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
+  color: var(--sys-color-neutral-60);
 }
 
 /* ============================================
@@ -270,25 +270,110 @@
    ============================================ */
 
 .regeneration-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: var(--sys-spacing-2xl);
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--sys-spacing-2xl);
+  text-align: center;
 }
 
 .regeneration-loading-indicator {
-    width: 40px;
-    height: 40px;
-    color: var(--sys-color-roles-primary-color-role-primary-role);
-    margin-bottom: var(--sys-spacing-md);
-    animation: spin 1s linear infinite;
+  width: 40px;
+  height: 40px;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  margin-bottom: var(--sys-spacing-md);
+  animation: spin 1s linear infinite;
 }
 
 .regeneration-loading-text {
-    font-family: var(--sys-typography-body-small-text-font-family);
-    font-size: var(--sys-typography-body-small-text-font-size);
-    color: var(--sys-color-neutral-60);
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+}
+
+/* ============================================
+   CLAUDE-STYLE VARIANT
+   ============================================ */
+
+.regeneration-controls.claude-style {
+  background-color: var(--sys-color-neutral-99);
+  border: 1px solid var(--sys-color-neutral-95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.regeneration-controls.claude-style .regeneration-controls-header {
+  border-bottom: 1px solid var(--sys-color-neutral-95);
+  padding-bottom: var(--sys-spacing-lg);
+  margin-bottom: var(--sys-spacing-xl);
+}
+
+.regeneration-controls.claude-style .regeneration-controls-title {
+  font-family: var(--sys-typography-title-large-font-family);
+  font-size: var(--sys-typography-title-large-font-size);
+  font-weight: 600;
+  color: var(--sys-color-neutral-20);
+  letter-spacing: -0.01em;
+}
+
+.regeneration-controls.claude-style .regeneration-controls-subtitle {
+  color: var(--sys-color-neutral-50);
+  font-size: var(--sys-typography-body-medium-font-size);
+}
+
+.regeneration-controls.claude-style .regeneration-primary {
+  border-bottom: 1px solid var(--sys-color-neutral-95);
+  padding-bottom: var(--sys-spacing-xl);
+  margin-bottom: var(--sys-spacing-xl);
+}
+
+.regeneration-controls.claude-style .regeneration-count {
+  background-color: var(--sys-color-neutral-95);
+  color: var(--sys-color-neutral-60);
+  border-radius: var(--sys-radius-md);
+  padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+}
+
+.regeneration-controls.claude-style .regeneration-options {
+  gap: var(--sys-spacing-md);
+}
+
+.regeneration-controls.claude-style .regeneration-option {
+  background-color: var(--sys-color-neutral-98);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: var(--sys-radius-md);
+  padding: var(--sys-spacing-lg);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.regeneration-controls.claude-style .regeneration-option:hover {
+  border-color: var(--sys-color-primary-50);
+  background-color: var(--sys-color-primary-99);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 115, 255, 0.08);
+}
+
+.regeneration-controls.claude-style .regeneration-option.selected {
+  border-color: var(--sys-color-primary-50);
+  background-color: var(--sys-color-primary-98);
+  box-shadow: 0 4px 12px rgba(124, 115, 255, 0.08);
+}
+
+.regeneration-controls.claude-style .regeneration-option-icon {
+  color: var(--sys-color-neutral-50);
+}
+
+.regeneration-controls.claude-style .regeneration-option.selected .regeneration-option-icon {
+  color: var(--sys-color-primary-50);
+}
+
+.regeneration-controls.claude-style .regeneration-option-label {
+  font-weight: 600;
+  color: var(--sys-color-neutral-30);
+}
+
+.regeneration-controls.claude-style .regeneration-option-description {
+  color: var(--sys-color-neutral-60);
+  font-size: var(--sys-typography-body-small-font-size);
 }
 
 /* ============================================
@@ -296,32 +381,32 @@
    ============================================ */
 
 @media (max-width: 900px) {
-    .regeneration-options {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
-    
-    .regeneration-parameters-grid {
-        grid-template-columns: 1fr;
-        gap: var(--sys-spacing-md);
-    }
+  .regeneration-options {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .regeneration-parameters-grid {
+    grid-template-columns: 1fr;
+    gap: var(--sys-spacing-md);
+  }
 }
 
 @media (max-width: 600px) {
-    .regeneration-controls {
-        padding: var(--sys-spacing-md);
-    }
-    
-    .regeneration-primary {
-        flex-direction: column;
-        align-items: stretch;
-        gap: var(--sys-spacing-sm);
-    }
-    
-    .regeneration-quick-actions {
-        justify-content: center;
-    }
-    
-    .regeneration-options {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .regeneration-controls {
+    padding: var(--sys-spacing-md);
+  }
+
+  .regeneration-primary {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sys-spacing-sm);
+  }
+
+  .regeneration-quick-actions {
+    justify-content: center;
+  }
+
+  .regeneration-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

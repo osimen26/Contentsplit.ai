@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { PlatformSelector, type Platform } from './PlatformSelector'
 import { ToneSelector, type Tone } from './ToneSelector'
 import { Button } from '@components/ui'
+import { X, Briefcase, Camera, Mail, Users, Music, Video, FileText, Smartphone } from 'lucide-react'
 
 export interface PlatformOption {
   id: string
@@ -85,25 +86,29 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   // Helper functions for platform icons and limits
   const getDefaultPlatformIcon = (platformId: string): React.ReactNode => {
+    const iconSize = 20
+    const iconColor = 'var(--sys-color-neutral-60)'
+    const iconStyle = { width: iconSize, height: iconSize, color: iconColor }
+
     switch (platformId) {
       case 'twitter':
-        return '🐦'
+        return <X style={iconStyle} />
       case 'linkedin':
-        return '💼'
+        return <Briefcase style={iconStyle} />
       case 'instagram':
-        return '📸'
+        return <Camera style={iconStyle} />
       case 'email':
-        return '📧'
+        return <Mail style={iconStyle} />
       case 'facebook':
-        return '👤'
+        return <Users style={iconStyle} />
       case 'tiktok':
-        return '🎵'
+        return <Music style={iconStyle} />
       case 'youtube':
-        return '📺'
+        return <Video style={iconStyle} />
       case 'blog':
-        return '📝'
+        return <FileText style={iconStyle} />
       default:
-        return '📱'
+        return <Smartphone style={iconStyle} />
     }
   }
 

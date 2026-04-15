@@ -1,5 +1,19 @@
 import React from 'react'
 import { TierUsagePanel } from '@components/application'
+import {
+  TrendingUp,
+  Zap,
+  CheckCircle,
+  FolderKanban,
+  Plus,
+  Upload,
+  FileText,
+  MessageSquare,
+  Briefcase,
+  Mail,
+  Clock,
+  AlertCircle,
+} from 'lucide-react'
 
 const DashboardPage: React.FC = () => {
   return (
@@ -7,79 +21,129 @@ const DashboardPage: React.FC = () => {
       <h2 className="dashboard-section-title">Dashboard Overview</h2>
 
       <div className="dashboard-stats">
-        <div className="dashboard-stat">
-          <h3 className="dashboard-stat-value">1,234</h3>
-          <p className="dashboard-stat-label">Total Conversions</p>
-        </div>
-        <div className="dashboard-stat">
-          <h3 className="dashboard-stat-value">567</h3>
-          <p className="dashboard-stat-label">Credits Used</p>
-        </div>
-        <div className="dashboard-stat">
-          <h3 className="dashboard-stat-value">89%</h3>
-          <p className="dashboard-stat-label">Success Rate</p>
-        </div>
-        <div className="dashboard-stat">
-          <h3 className="dashboard-stat-value">24</h3>
-          <p className="dashboard-stat-label">Active Projects</p>
-        </div>
+        {[
+          {
+            value: '1,234',
+            label: 'Total Conversions',
+            icon: <TrendingUp size={20} />,
+            trend: '+12% this month',
+            trendPositive: true,
+          },
+          {
+            value: '567',
+            label: 'Credits Used',
+            icon: <Zap size={20} />,
+            trend: '-8% this month',
+            trendPositive: false,
+          },
+          {
+            value: '89%',
+            label: 'Success Rate',
+            icon: <CheckCircle size={20} />,
+            trend: '+3% this month',
+            trendPositive: true,
+          },
+          {
+            value: '24',
+            label: 'Active Projects',
+            icon: <FolderKanban size={20} />,
+            trend: '+5 this month',
+            trendPositive: true,
+          },
+        ].map((stat, index) => (
+          <div className="dashboard-stat" key={index}>
+            <div className="dashboard-stat-header">
+              <div className="dashboard-stat-icon">{stat.icon}</div>
+              <h3 className="dashboard-stat-value">{stat.value}</h3>
+            </div>
+            <p className="dashboard-stat-label">{stat.label}</p>
+            <div
+              className={`dashboard-stat-trend ${stat.trendPositive ? 'trend-positive' : 'trend-negative'}`}
+            >
+              {stat.trend}
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="dashboard-actions">
-        <button className="button button-filled button-large">New Content</button>
-        <button className="button button-outlined button-large">Import Content</button>
-        <button className="button button-text button-large">View Templates</button>
+        <button className="button button-filled button-large">
+          <Plus size={20} style={{ marginRight: 'var(--sys-spacing-sm)' }} />
+          New content
+        </button>
+        <button className="button button-outlined button-large">
+          <Upload size={20} style={{ marginRight: 'var(--sys-spacing-sm)' }} />
+          Import
+        </button>
       </div>
 
-      <div className="dashboard-grid-3-col" style={{ marginTop: 'var(--sys-spacing-2xl)' }}>
+      <div
+        className="dashboard-grid-2-col dashboard-grid-2-col-aside"
+        style={{ marginTop: 'var(--sys-spacing-2xl)' }}
+      >
         <div className="dashboard-card">
           <div className="dashboard-card-header">
             <h4 className="dashboard-card-title">Recent Conversions</h4>
             <span className="badge badge-md badge-success">Live</span>
           </div>
           <div className="dashboard-card-content">
-            <p>
-              Your latest content conversions appear here. Click any item to edit or regenerate.
-            </p>
-            <div className="layout-list" style={{ marginTop: 'var(--sys-spacing-md)' }}>
-              <div className="layout-list-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>Blog Post - AI Trends</span>
-                  <span className="badge badge-sm badge-info">Twitter</span>
+            <div className="conversion-list">
+              {[
+                {
+                  title: 'Blog Post - AI Trends',
+                  platform: 'Twitter',
+                  platformIcon: <MessageSquare size={16} />,
+                  timestamp: '2 hours ago',
+                  status: 'Done',
+                  statusColor: 'success',
+                  fileIcon: <FileText size={20} />,
+                },
+                {
+                  title: 'Product Announcement',
+                  platform: 'LinkedIn',
+                  platformIcon: <Briefcase size={16} />,
+                  timestamp: '5 hours ago',
+                  status: 'Processing',
+                  statusColor: 'warning',
+                  fileIcon: <FileText size={20} />,
+                },
+                {
+                  title: 'Email Newsletter',
+                  platform: 'Email',
+                  platformIcon: <Mail size={16} />,
+                  timestamp: '1 day ago',
+                  status: 'Done',
+                  statusColor: 'success',
+                  fileIcon: <FileText size={20} />,
+                },
+              ].map((conversion, index) => (
+                <div className="conversion-item" key={index}>
+                  <div className="conversion-item-icon">{conversion.fileIcon}</div>
+                  <div className="conversion-item-content">
+                    <div className="conversion-item-header">
+                      <strong className="conversion-item-title">{conversion.title}</strong>
+                      <span className={`badge badge-sm badge-${conversion.statusColor}`}>
+                        {conversion.status === 'Processing' ? (
+                          <AlertCircle size={12} style={{ marginRight: 4 }} />
+                        ) : (
+                          <CheckCircle size={12} style={{ marginRight: 4 }} />
+                        )}
+                        {conversion.status}
+                      </span>
+                    </div>
+                    <div className="conversion-item-meta">
+                      <span className="conversion-item-platform">
+                        {conversion.platformIcon}
+                        {conversion.platform}
+                      </span>
+                      <span className="conversion-item-timestamp">
+                        <Clock size={14} style={{ marginRight: 4 }} />
+                        {conversion.timestamp}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="layout-list-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>Product Announcement</span>
-                  <span className="badge badge-sm badge-success">LinkedIn</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="dashboard-card">
-          <div className="dashboard-card-header">
-            <h4 className="dashboard-card-title">AI Usage</h4>
-            <span className="badge badge-md badge-warning">Monitor</span>
-          </div>
-          <div className="dashboard-card-content">
-            <p>Track your AI model usage and optimize your credits.</p>
-            <div className="progress-linear" style={{ marginTop: 'var(--sys-spacing-lg)' }}>
-              <div className="progress-linear-indicator" style={{ width: '65%' }}></div>
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: 'var(--sys-spacing-sm)',
-                fontFamily: 'var(--sys-typography-label-small-font-family)',
-                fontSize: 'var(--sys-typography-label-small-font-size)',
-                color: 'var(--sys-color-neutral-60)',
-              }}
-            >
-              <span>65% used</span>
-              <span>350/500 credits</span>
+              ))}
             </div>
           </div>
         </div>
@@ -102,6 +166,10 @@ const DashboardPage: React.FC = () => {
               <button className="button button-text" style={{ justifyContent: 'flex-start' }}>
                 <span style={{ marginRight: 'var(--sys-spacing-md)' }}>📊</span>
                 View analytics
+              </button>
+              <button className="button button-text" style={{ justifyContent: 'flex-start' }}>
+                <span style={{ marginRight: 'var(--sys-spacing-md)' }}>📋</span>
+                View templates
               </button>
             </div>
           </div>

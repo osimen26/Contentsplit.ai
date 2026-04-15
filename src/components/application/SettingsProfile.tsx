@@ -1,9 +1,10 @@
 import React from 'react'
+import { User, Settings, Lock, Key, Bell, CreditCard } from 'lucide-react'
 
 export interface SettingsSidebarItem {
   id: string
   label: string
-  icon?: string
+  icon?: React.ReactNode
   badge?: string
 }
 
@@ -24,12 +25,12 @@ export interface SettingsProfileProps {
 export const SettingsProfile: React.FC<SettingsProfileProps> = ({
   activeSection = 'profile',
   sidebarItems = [
-    { id: 'profile', label: 'Profile', icon: 'person' },
-    { id: 'preferences', label: 'Preferences', icon: 'tune' },
-    { id: 'security', label: 'Security', icon: 'lock' },
-    { id: 'api', label: 'API Keys', icon: 'key' },
-    { id: 'notifications', label: 'Notifications', icon: 'notifications' },
-    { id: 'billing', label: 'Billing', icon: 'credit_card' },
+    { id: 'profile', label: 'Profile', icon: <User size={20} />, badge: undefined },
+    { id: 'preferences', label: 'Preferences', icon: <Settings size={20} />, badge: undefined },
+    { id: 'security', label: 'Security', icon: <Lock size={20} />, badge: undefined },
+    { id: 'api', label: 'API Keys', icon: <Key size={20} />, badge: undefined },
+    { id: 'notifications', label: 'Notifications', icon: <Bell size={20} />, badge: undefined },
+    { id: 'billing', label: 'Billing', icon: <CreditCard size={20} />, badge: undefined },
   ],
   sections = [],
   onSectionChange,
@@ -97,43 +98,40 @@ export const SettingsProfile: React.FC<SettingsProfileProps> = ({
                 <button className="settings-profile-avatar-change">✎</button>
               </div>
               <div className="settings-profile-form">
-                <div className="form-field">
-                  <div className="field-container">
-                    <input
-                      type="text"
-                      className="field-input"
-                      placeholder=" "
-                      defaultValue="John Doe"
-                      data-testid="full-name-input"
-                    />
-                    <label className="field-label floating">Full Name</label>
-                  </div>
+                <div className="claude-form-field">
+                  <label className="claude-form-label">Full Name</label>
+                  <input
+                    type="text"
+                    className="claude-form-input"
+                    defaultValue="John Doe"
+                    data-testid="full-name-input"
+                    placeholder="Enter your full name"
+                  />
                 </div>
-                <div className="form-field">
-                  <div className="field-container">
-                    <input
-                      type="email"
-                      className="field-input"
-                      placeholder=" "
-                      defaultValue="john@example.com"
-                      data-testid="email-input"
-                    />
-                    <label className="field-label floating">Email Address</label>
-                  </div>
+                <div className="claude-form-field">
+                  <label className="claude-form-label">Email Address</label>
+                  <input
+                    type="email"
+                    className="claude-form-input"
+                    defaultValue="john@example.com"
+                    data-testid="email-input"
+                    placeholder="Enter your email address"
+                  />
                 </div>
-                <div className="form-field">
-                  <div className="field-container">
-                    <select className="field-input field-select" data-testid="timezone-select">
-                      <option>UTC-5 (Eastern Time)</option>
-                      <option>UTC-8 (Pacific Time)</option>
-                      <option>UTC+0 (GMT)</option>
-                    </select>
-                    <label className="field-label floating">Timezone</label>
-                  </div>
+                <div className="claude-form-field">
+                  <label className="claude-form-label">Timezone</label>
+                  <select
+                    className="claude-form-input claude-form-select"
+                    data-testid="timezone-select"
+                  >
+                    <option>UTC-5 (Eastern Time)</option>
+                    <option>UTC-8 (Pacific Time)</option>
+                    <option>UTC+0 (GMT)</option>
+                  </select>
                 </div>
-                <div className="settings-actions">
+                <div className="claude-form-actions">
                   <button className="button button-filled">Save Changes</button>
-                  <button className="button button-text">Cancel</button>
+                  <button className="button button-outlined">Cancel</button>
                 </div>
               </div>
             </div>

@@ -9,33 +9,33 @@
    ============================================ */
 
 .content-input-container {
-    background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
-    border-radius: var(--sys-radius-lg);
-    padding: var(--sys-spacing-xl);
-    box-shadow: var(--sys-elevation-1);
-    margin-bottom: var(--sys-spacing-2xl);
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  border-radius: var(--sys-radius-lg);
+  padding: var(--sys-spacing-xl);
+  box-shadow: var(--sys-elevation-1);
+  margin-bottom: var(--sys-spacing-2xl);
 }
 
 .content-input-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--sys-spacing-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sys-spacing-lg);
 }
 
 .content-input-title {
-    font-family: var(--sys-typography-title-medium-font-family);
-    font-size: var(--sys-typography-title-medium-font-size);
-    font-weight: var(--sys-typography-title-medium-font-weight);
-    color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
-    margin: 0;
+  font-family: var(--sys-typography-title-medium-font-family);
+  font-size: var(--sys-typography-title-medium-font-size);
+  font-weight: var(--sys-typography-title-medium-font-weight);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  margin: 0;
 }
 
 .content-input-subtitle {
-    font-family: var(--sys-typography-body-text-font-family);
-    font-size: var(--sys-typography-body-text-font-size);
-    color: var(--sys-color-neutral-60);
-    margin-top: var(--sys-spacing-xs);
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-top: var(--sys-spacing-xs);
 }
 
 /* ============================================
@@ -43,49 +43,51 @@
    ============================================ */
 
 .content-input-area {
-    position: relative;
-    margin-bottom: var(--sys-spacing-xl);
+  position: relative;
+  margin-bottom: var(--sys-spacing-xl);
 }
 
 .content-input-textarea {
-    width: 100%;
-    min-height: 200px;
-    padding: var(--sys-spacing-lg);
-    background-color: var(--sys-color-neutral-100);
-    border: 1px solid var(--sys-color-neutral-90);
-    border-radius: var(--sys-radius-md);
-    font-family: var(--sys-typography-body-text-font-family);
-    font-size: var(--sys-typography-body-text-font-size);
-    color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
-    line-height: var(--sys-typography-body-text-line-height);
-    resize: vertical;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  min-height: 200px;
+  padding: var(--sys-spacing-lg);
+  background-color: var(--sys-color-neutral-100);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: var(--sys-radius-md);
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  line-height: var(--sys-typography-body-text-line-height);
+  resize: vertical;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .content-input-textarea:focus {
-    border-color: var(--sys-color-roles-primary-color-role-primary-role);
-    outline: none;
-    box-shadow: 0 0 0 2px var(--sys-color-primary-90);
+  border-color: var(--sys-color-roles-primary-color-role-primary-role);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--sys-color-primary-90);
 }
 
 .content-input-textarea::placeholder {
-    color: var(--sys-color-neutral-70);
+  color: var(--sys-color-neutral-70);
 }
 
 .content-input-character-count {
-    font-family: var(--sys-typography-body-small-text-font-family);
-    font-size: var(--sys-typography-body-small-text-font-size);
-    color: var(--sys-color-neutral-60);
-    text-align: right;
-    margin-top: var(--sys-spacing-xs);
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  text-align: right;
+  margin-top: var(--sys-spacing-xs);
 }
 
 .content-input-character-count.warning {
-    color: var(--sys-color-roles-warning-color-role-warning-role);
+  color: var(--sys-color-roles-warning-color-role-warning-role);
 }
 
 .content-input-character-count.error {
-    color: var(--sys-color-roles-error-color-role-error-role);
+  color: var(--sys-color-roles-error-color-role-error-role);
 }
 
 /* ============================================
@@ -93,74 +95,74 @@
    ============================================ */
 
 .content-input-platform-section {
-    margin-bottom: var(--sys-spacing-xl);
+  margin-bottom: var(--sys-spacing-xl);
 }
 
 .content-input-section-label {
-    font-family: var(--sys-typography-label-medium-font-family);
-    font-size: var(--sys-typography-label-medium-font-size);
-    font-weight: var(--sys-typography-label-medium-font-weight);
-    color: var(--sys-color-neutral-30);
-    margin-bottom: var(--sys-spacing-sm);
-    display: block;
+  font-family: var(--sys-typography-label-medium-font-family);
+  font-size: var(--sys-typography-label-medium-font-size);
+  font-weight: var(--sys-typography-label-medium-font-weight);
+  color: var(--sys-color-neutral-30);
+  margin-bottom: var(--sys-spacing-sm);
+  display: block;
 }
 
 .content-input-platform-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: var(--sys-spacing-md);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--sys-spacing-md);
 }
 
 .content-input-platform-card {
-    background-color: var(--sys-color-neutral-100);
-    border: 1px solid var(--sys-color-neutral-90);
-    border-radius: var(--sys-radius-md);
-    padding: var(--sys-spacing-md);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  background-color: var(--sys-color-neutral-100);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: var(--sys-radius-md);
+  padding: var(--sys-spacing-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .content-input-platform-card:hover {
-    border-color: var(--sys-color-primary-80);
-    background-color: var(--sys-color-primary-98);
+  border-color: var(--sys-color-primary-80);
+  background-color: var(--sys-color-primary-98);
 }
 
 .content-input-platform-card.selected {
-    border-color: var(--sys-color-roles-primary-color-role-primary-role);
-    background-color: var(--sys-color-primary-95);
-    box-shadow: var(--sys-elevation-1);
+  border-color: var(--sys-color-roles-primary-color-role-primary-role);
+  background-color: var(--sys-color-primary-95);
+  box-shadow: var(--sys-elevation-1);
 }
 
 .content-input-platform-icon {
-    width: 32px;
-    height: 32px;
-    color: var(--sys-color-neutral-60);
-    margin-bottom: var(--sys-spacing-sm);
+  width: 32px;
+  height: 32px;
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-sm);
 }
 
 .content-input-platform-card.selected .content-input-platform-icon {
-    color: var(--sys-color-roles-primary-color-role-primary-role);
+  color: var(--sys-color-roles-primary-color-role-primary-role);
 }
 
 .content-input-platform-name {
-    font-family: var(--sys-typography-body-text-font-family);
-    font-size: var(--sys-typography-body-text-font-size);
-    color: var(--sys-color-neutral-30);
-    margin-bottom: var(--sys-spacing-xs);
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-30);
+  margin-bottom: var(--sys-spacing-xs);
 }
 
 .content-input-platform-card.selected .content-input-platform-name {
-    color: var(--sys-color-primary-20);
+  color: var(--sys-color-primary-20);
 }
 
 .content-input-platform-desc {
-    font-family: var(--sys-typography-body-small-text-font-family);
-    font-size: var(--sys-typography-body-small-text-font-size);
-    color: var(--sys-color-neutral-60);
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
 }
 
 /* ============================================
@@ -168,18 +170,18 @@
    ============================================ */
 
 .content-input-tone-section {
-    margin-bottom: var(--sys-spacing-xl);
+  margin-bottom: var(--sys-spacing-xl);
 }
 
 .content-input-tone-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sys-spacing-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sys-spacing-sm);
 }
 
 /* Tone chips use existing chip styles - apply classes: chip chip-tone chip-tone-* */
 .content-input-tone-chip {
-    /* Extends chip base styles */
+  /* Extends chip base styles */
 }
 
 /* ============================================
@@ -187,32 +189,32 @@
    ============================================ */
 
 .content-input-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--sys-spacing-lg);
-    margin-bottom: var(--sys-spacing-xl);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--sys-spacing-lg);
+  margin-bottom: var(--sys-spacing-xl);
 }
 
 .content-input-option {
-    background-color: var(--sys-color-neutral-100);
-    border: 1px solid var(--sys-color-neutral-90);
-    border-radius: var(--sys-radius-md);
-    padding: var(--sys-spacing-md);
+  background-color: var(--sys-color-neutral-100);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: var(--sys-radius-md);
+  padding: var(--sys-spacing-md);
 }
 
 .content-input-option-label {
-    font-family: var(--sys-typography-label-medium-font-family);
-    font-size: var(--sys-typography-label-medium-font-size);
-    color: var(--sys-color-neutral-30);
-    margin-bottom: var(--sys-spacing-xs);
-    display: block;
+  font-family: var(--sys-typography-label-medium-font-family);
+  font-size: var(--sys-typography-label-medium-font-size);
+  color: var(--sys-color-neutral-30);
+  margin-bottom: var(--sys-spacing-xs);
+  display: block;
 }
 
 .content-input-option-description {
-    font-family: var(--sys-typography-body-small-text-font-family);
-    font-size: var(--sys-typography-body-small-text-font-size);
-    color: var(--sys-color-neutral-60);
-    margin-bottom: var(--sys-spacing-sm);
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-bottom: var(--sys-spacing-sm);
 }
 
 /* ============================================
@@ -220,40 +222,40 @@
    ============================================ */
 
 .content-input-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--sys-spacing-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sys-spacing-md);
 }
 
 /* Apply classes: button button-filled button-large */
 .content-input-generate-button {
-    flex: 1;
-    max-width: 300px;
+  flex: 1;
+  max-width: 300px;
 }
 
 .content-input-secondary-controls {
-    display: flex;
-    gap: var(--sys-spacing-sm);
+  display: flex;
+  gap: var(--sys-spacing-sm);
 }
 
 .content-input-ai-assist {
-    display: flex;
-    align-items: center;
-    gap: var(--sys-spacing-sm);
-    padding: var(--sys-spacing-md);
-    background-color: var(--sys-color-primary-98);
-    border: 1px solid var(--sys-color-primary-90);
-    border-radius: var(--sys-radius-md);
-    font-family: var(--sys-typography-body-small-text-font-family);
-    font-size: var(--sys-typography-body-small-text-font-size);
-    color: var(--sys-color-primary-40);
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-sm);
+  padding: var(--sys-spacing-md);
+  background-color: var(--sys-color-primary-98);
+  border: 1px solid var(--sys-color-primary-90);
+  border-radius: var(--sys-radius-md);
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-primary-40);
 }
 
 .content-input-ai-assist-icon {
-    width: 16px;
-    height: 16px;
-    color: var(--sys-color-primary-40);
+  width: 16px;
+  height: 16px;
+  color: var(--sys-color-primary-40);
 }
 
 /* ============================================
@@ -261,49 +263,49 @@
    ============================================ */
 
 .content-input-suggestions {
-    margin-top: var(--sys-spacing-xl);
-    padding-top: var(--sys-spacing-xl);
-    border-top: 1px solid var(--sys-color-neutral-90);
+  margin-top: var(--sys-spacing-xl);
+  padding-top: var(--sys-spacing-xl);
+  border-top: 1px solid var(--sys-color-neutral-90);
 }
 
 .content-input-suggestion {
-    background-color: var(--sys-color-primary-98);
-    border: 1px dashed var(--sys-color-primary-80);
-    border-radius: var(--sys-radius-md);
-    padding: var(--sys-spacing-md);
-    margin-bottom: var(--sys-spacing-sm);
-    cursor: pointer;
-    transition: all 0.2s ease;
+  background-color: var(--sys-color-primary-98);
+  border: 1px dashed var(--sys-color-primary-80);
+  border-radius: var(--sys-radius-md);
+  padding: var(--sys-spacing-md);
+  margin-bottom: var(--sys-spacing-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .content-input-suggestion:hover {
-    background-color: var(--sys-color-primary-95);
-    border-style: solid;
+  background-color: var(--sys-color-primary-95);
+  border-style: solid;
 }
 
 .content-input-suggestion-header {
-    display: flex;
-    align-items: center;
-    gap: var(--sys-spacing-sm);
-    margin-bottom: var(--sys-spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-sm);
+  margin-bottom: var(--sys-spacing-xs);
 }
 
 .content-input-suggestion-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sys-spacing-xs);
-    padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
-    background-color: var(--sys-color-primary-95);
-    color: var(--sys-color-primary-40);
-    border-radius: var(--sys-radius-full);
-    font-family: var(--sys-typography-label-small-font-family);
-    font-size: var(--sys-typography-label-small-font-size);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sys-spacing-xs);
+  padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+  background-color: var(--sys-color-primary-95);
+  color: var(--sys-color-primary-40);
+  border-radius: var(--sys-radius-full);
+  font-family: var(--sys-typography-label-small-font-family);
+  font-size: var(--sys-typography-label-small-font-size);
 }
 
 .content-input-suggestion-text {
-    font-family: var(--sys-typography-body-text-font-family);
-    font-size: var(--sys-typography-body-text-font-size);
-    color: var(--sys-color-neutral-30);
+  font-family: var(--sys-typography-body-text-font-family);
+  font-size: var(--sys-typography-body-text-font-size);
+  color: var(--sys-color-neutral-30);
 }
 
 /* ============================================
@@ -311,33 +313,162 @@
    ============================================ */
 
 .content-input-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: var(--sys-spacing-2xl);
-    background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
-    border-radius: var(--sys-radius-lg);
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--sys-spacing-2xl);
+  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role);
+  border-radius: var(--sys-radius-lg);
+  text-align: center;
 }
 
 .content-input-loading-indicator {
-    width: 48px;
-    height: 48px;
-    color: var(--sys-color-roles-primary-color-role-primary-role);
-    margin-bottom: var(--sys-spacing-lg);
-    animation: aiPulse 1.5s ease-in-out infinite;
+  width: 48px;
+  height: 48px;
+  color: var(--sys-color-roles-primary-color-role-primary-role);
+  margin-bottom: var(--sys-spacing-lg);
+  animation: aiPulse 1.5s ease-in-out infinite;
 }
 
 @keyframes aiPulse {
-    0%, 100% { opacity: 0.6; transform: scale(0.95); }
-    50% { opacity: 1; transform: scale(1.05); }
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
 }
 
 .content-input-loading-status {
-    font-family: var(--sys-typography-body-small-text-font-family);
-    font-size: var(--sys-typography-body-small-text-font-size);
-    color: var(--sys-color-neutral-60);
-    margin-top: var(--sys-spacing-sm);
+  font-family: var(--sys-typography-body-small-text-font-family);
+  font-size: var(--sys-typography-body-small-text-font-size);
+  color: var(--sys-color-neutral-60);
+  margin-top: var(--sys-spacing-sm);
+}
+
+/* ============================================
+   CLAUDE-STYLE VARIANT
+   ============================================ */
+
+.content-input-container.claude-style {
+  background-color: var(--sys-color-neutral-99);
+  border: 1px solid var(--sys-color-neutral-95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.content-input-container.claude-style .content-input-header {
+  border-bottom: 1px solid var(--sys-color-neutral-95);
+  padding-bottom: var(--sys-spacing-lg);
+}
+
+.content-input-container.claude-style .content-input-title {
+  font-family: var(--sys-typography-title-large-font-family);
+  font-size: var(--sys-typography-title-large-font-size);
+  font-weight: 600;
+  color: var(--sys-color-neutral-20);
+  letter-spacing: -0.01em;
+}
+
+.content-input-container.claude-style .content-input-subtitle {
+  color: var(--sys-color-neutral-50);
+  font-size: var(--sys-typography-body-medium-font-size);
+}
+
+.content-input-container.claude-style .content-input-textarea {
+  background-color: var(--sys-color-neutral-98);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: var(--sys-radius-lg);
+  padding: var(--sys-spacing-xl);
+  font-size: var(--sys-typography-body-medium-font-size);
+  line-height: 1.6;
+  min-height: 240px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.content-input-container.claude-style .content-input-textarea:focus {
+  border-color: var(--sys-color-primary-50);
+  box-shadow: 0 0 0 3px rgba(124, 115, 255, 0.1);
+  outline: none;
+}
+
+.content-input-container.claude-style .content-input-textarea:hover:not(:focus) {
+  border-color: var(--sys-color-neutral-80);
+}
+
+.content-input-container.claude-style .content-input-platform-section,
+.content-input-container.claude-style .content-input-tone-section {
+  margin-bottom: var(--sys-spacing-2xl);
+}
+
+.content-input-container.claude-style .content-input-section-label {
+  font-family: var(--sys-typography-body-medium-font-family);
+  font-size: var(--sys-typography-body-medium-font-size);
+  font-weight: 600;
+  color: var(--sys-color-neutral-30);
+  margin-bottom: var(--sys-spacing-md);
+}
+
+.content-input-container.claude-style .content-input-platform-grid {
+  gap: var(--sys-spacing-md);
+}
+
+.content-input-container.claude-style .content-input-platform-card {
+  background-color: var(--sys-color-neutral-98);
+  border: 1px solid var(--sys-color-neutral-90);
+  border-radius: var(--sys-radius-md);
+  padding: var(--sys-spacing-lg);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.content-input-container.claude-style .content-input-platform-card:hover {
+  border-color: var(--sys-color-primary-50);
+  background-color: var(--sys-color-primary-99);
+  transform: translateY(-2px);
+}
+
+.content-input-container.claude-style .content-input-platform-card.selected {
+  border-color: var(--sys-color-primary-50);
+  background-color: var(--sys-color-primary-98);
+  box-shadow: 0 4px 12px rgba(124, 115, 255, 0.08);
+}
+
+.content-input-container.claude-style .content-input-platform-icon {
+  color: var(--sys-color-neutral-50);
+}
+
+.content-input-container.claude-style
+  .content-input-platform-card.selected
+  .content-input-platform-icon {
+  color: var(--sys-color-primary-50);
+}
+
+.content-input-container.claude-style .content-input-platform-name {
+  font-weight: 600;
+  color: var(--sys-color-neutral-30);
+}
+
+.content-input-container.claude-style
+  .content-input-platform-card.selected
+  .content-input-platform-name {
+  color: var(--sys-color-primary-40);
+}
+
+.content-input-container.claude-style .content-input-platform-desc {
+  color: var(--sys-color-neutral-60);
+  font-size: var(--sys-typography-body-small-font-size);
+}
+
+.content-input-container.claude-style .content-input-tone-chips {
+  gap: var(--sys-spacing-sm);
+}
+
+.content-input-container.claude-style .content-input-controls {
+  border-top: 1px solid var(--sys-color-neutral-95);
+  padding-top: var(--sys-spacing-xl);
+  margin-top: var(--sys-spacing-xl);
 }
 
 /* ============================================
@@ -345,34 +476,34 @@
    ============================================ */
 
 @media (max-width: 900px) {
-    .content-input-platform-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    }
-    
-    .content-input-options {
-        grid-template-columns: 1fr;
-    }
-    
-    .content-input-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .content-input-generate-button {
-        max-width: 100%;
-    }
+  .content-input-platform-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .content-input-options {
+    grid-template-columns: 1fr;
+  }
+
+  .content-input-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .content-input-generate-button {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 600px) {
-    .content-input-container {
-        padding: var(--sys-spacing-lg);
-    }
-    
-    .content-input-platform-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .content-input-tone-chips {
-        justify-content: center;
-    }
+  .content-input-container {
+    padding: var(--sys-spacing-lg);
+  }
+
+  .content-input-platform-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .content-input-tone-chips {
+    justify-content: center;
+  }
 }

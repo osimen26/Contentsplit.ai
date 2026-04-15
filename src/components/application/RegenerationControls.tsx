@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from '@components/ui'
+import { Target, Ruler, Palette } from 'lucide-react'
 
 export interface RegenerationOption {
   id: string
@@ -28,9 +29,30 @@ export const RegenerationControls: React.FC<RegenerationControlsProps> = ({
   title = 'Regeneration Options',
   subtitle = 'Choose how to improve your content',
   options = [
-    { id: 'clarity', label: 'Improve Clarity', icon: '🎯', selected: false },
-    { id: 'shorter', label: 'Make Shorter', icon: '📏', selected: true },
-    { id: 'emotion', label: 'Add Emotion', icon: '🎨', selected: false },
+    {
+      id: 'clarity',
+      label: 'Improve Clarity',
+      icon: <Target className="regeneration-option-icon" width={20} height={20} />,
+      selected: false,
+      disabled: false,
+      description: undefined,
+    },
+    {
+      id: 'shorter',
+      label: 'Make Shorter',
+      icon: <Ruler className="regeneration-option-icon" width={20} height={20} />,
+      selected: true,
+      disabled: false,
+      description: undefined,
+    },
+    {
+      id: 'emotion',
+      label: 'Add Emotion',
+      icon: <Palette className="regeneration-option-icon" width={20} height={20} />,
+      selected: false,
+      disabled: false,
+      description: undefined,
+    },
   ],
   selectedOptionId,
   onOptionSelect,

@@ -326,8 +326,50 @@
 .theme-dark .dashboard-stat-label {
   color: var(--sys-color-neutral-50);
 }
+
+/* Dashboard stat redesign overrides */
+.theme-dark .dashboard-stat-icon {
+  color: var(--sys-color-primary-30);
+}
+
+.theme-dark .dashboard-stat-trend.trend-positive {
+  color: var(--sys-color-success);
+}
+
+.theme-dark .dashboard-stat-trend.trend-negative {
+  color: var(--sys-color-error);
+}
+
 .theme-dark .dashboard-section-title {
   color: var(--sys-color-neutral-20);
+}
+
+/* Conversion list dark theme overrides */
+.theme-dark .conversion-item {
+  background-color: var(--sys-color-neutral-95);
+  border-color: var(--sys-color-neutral-90);
+}
+
+.theme-dark .conversion-item:hover {
+  border-color: var(--sys-color-primary-80);
+  background-color: var(--sys-color-primary-95);
+}
+
+.theme-dark .conversion-item-icon {
+  color: var(--sys-color-primary-30);
+}
+
+.theme-dark .conversion-item-title {
+  color: var(--sys-color-neutral-30);
+}
+
+.theme-dark .conversion-item-meta {
+  color: var(--sys-color-neutral-70);
+}
+
+/* Sidebar credit usage dark theme overrides */
+.theme-dark .sidebar-credit-usage {
+  background-color: var(--sys-color-neutral-95);
 }
 
 /* Select component dark theme overrides */
@@ -413,4 +455,96 @@
   border-bottom-color: var(--sys-color-neutral-90);
   border-left-color: var(--sys-color-neutral-90);
   border-right-color: var(--sys-color-neutral-90);
+}
+
+/* Claude-style component dark theme overrides */
+.theme-dark .content-input-container.claude-style {
+  background-color: var(--sys-color-neutral-95);
+  border-color: var(--sys-color-neutral-90);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-dark .content-input-container.claude-style .content-input-textarea {
+  background-color: var(--sys-color-neutral-98);
+  border-color: var(--sys-color-neutral-80);
+  color: var(--sys-color-neutral-20);
+}
+
+.theme-dark .content-input-container.claude-style .content-input-textarea:focus {
+  border-color: var(--sys-color-primary-60);
+  box-shadow: 0 0 0 3px rgba(124, 115, 255, 0.2);
+}
+
+.theme-dark .content-input-container.claude-style .content-input-platform-card {
+  background-color: var(--sys-color-neutral-98);
+  border-color: var(--sys-color-neutral-80);
+}
+
+.theme-dark .content-input-container.claude-style .content-input-platform-card:hover {
+  border-color: var(--sys-color-primary-60);
+  background-color: var(--sys-color-primary-95);
+}
+
+.theme-dark .content-input-container.claude-style .content-input-platform-card.selected {
+  border-color: var(--sys-color-primary-60);
+  background-color: var(--sys-color-primary-90);
+  box-shadow: 0 4px 12px rgba(124, 115, 255, 0.2);
+}
+
+.theme-dark .generated-content.claude-style {
+  background-color: var(--sys-color-neutral-95);
+  border-color: var(--sys-color-neutral-90);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-dark .generated-content.claude-style .generated-content-display {
+  background-color: var(--sys-color-neutral-98);
+  border-color: var(--sys-color-neutral-80);
+  color: var(--sys-color-neutral-20);
+}
+
+.theme-dark .generated-content.claude-style .generated-content-text {
+  color: var(--sys-color-neutral-30);
+}
+
+.theme-dark .generated-content.claude-style .generated-content-tab {
+  color: var(--sys-color-neutral-60);
+}
+
+.theme-dark .generated-content.claude-style .generated-content-tab:hover {
+  color: var(--sys-color-primary-60);
+  background-color: var(--sys-color-primary-95);
+}
+
+.theme-dark .generated-content.claude-style .generated-content-tab.selected {
+  color: var(--sys-color-primary-60);
+  border-bottom-color: var(--sys-color-primary-60);
+}
+
+.theme-dark .regeneration-controls.claude-style {
+  background-color: var(--sys-color-neutral-95);
+  border-color: var(--sys-color-neutral-90);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-dark .regeneration-controls.claude-style .regeneration-option {
+  background-color: var(--sys-color-neutral-98);
+  border-color: var(--sys-color-neutral-80);
+}
+
+.theme-dark .regeneration-controls.claude-style .regeneration-option:hover {
+  border-color: var(--sys-color-primary-60);
+  background-color: var(--sys-color-primary-95);
+  box-shadow: 0 4px 12px rgba(124, 115, 255, 0.2);
+}
+
+.theme-dark .regeneration-controls.claude-style .regeneration-option.selected {
+  border-color: var(--sys-color-primary-60);
+  background-color: var(--sys-color-primary-90);
+  box-shadow: 0 4px 12px rgba(124, 115, 255, 0.2);
+}
+
+.theme-dark .regeneration-controls.claude-style .regeneration-count {
+  background-color: var(--sys-color-neutral-90);
+  color: var(--sys-color-neutral-50);
 }
