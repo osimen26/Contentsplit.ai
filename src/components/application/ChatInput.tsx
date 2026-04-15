@@ -21,6 +21,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
   const hasContent = value.trim().length > 0
+  const isMultiLine = value.includes('\n') || (textareaRef.current?.scrollHeight ?? 0) > 48
 
   // Auto-resize textarea
   useEffect(() => {
@@ -44,16 +45,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       className={`chat-input-container ${className}`}
       style={{
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         gap: '10px',
         padding: '10px 12px',
         backgroundColor: 'var(--sys-color-neutral-95)',
-        border: `1.5px solid ${isFocused ? 'var(--sys-color-neutral-70)' : 'transparent'}`,
-        borderRadius: '9999px',
+        border: `1.5px solid ${isFocused ? 'var(--sys-color-primary-60)' : 'transparent'}`,
+        borderRadius: isMultiLine ? '18px' : '9999px',
         boxShadow: isFocused
-          ? '0 0 0 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.08)'
+          ? '0 0 0 3px var(--sys-color-primary-95), 0 4px 16px rgba(0,0,0,0.08)'
           : '0 2px 8px rgba(0,0,0,0.06)',
-        transition: 'border-color 0.2s, box-shadow 0.2s',
+        transition: 'border-color 0.2s, box-shadow 0.2s, border-radius 0.2s',
       }}
     >
       {/* Plus / Attach button */}
@@ -69,8 +70,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: 'transparent',
-          border: '1.5px solid var(--sys-color-neutral-70)',
-          color: 'var(--sys-color-neutral-40)',
+          border: `1.5px solid ${isFocused ? 'var(--sys-color-primary-60)' : 'var(--sys-color-neutral-70)'}`,
+          color: isFocused ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-40)',
           cursor: 'pointer',
           transition: 'background-color 0.15s',
         }}
@@ -96,8 +97,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           border: 'none',
           background: 'transparent',
           resize: 'none',
-          padding: '3px 0',
-          maxHeight: '200px',
+          padding: '4px 0',
+          maxHeight: '180px',
+          overflowY: 'auto',
           outline: 'none',
           fontFamily: 'var(--sys-typography-body-large-font-family)',
           fontSize: '1rem',
@@ -120,7 +122,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: hasContent ? 'var(--sys-color-neutral-10)' : 'var(--sys-color-neutral-70)',
+          backgroundColor: hasContent
+            ? 'var(--sys-color-primary-40)'
+            : isFocused
+              ? 'var(--sys-color-primary-80)'
+              : 'var(--sys-color-neutral-70)',
           border: 'none',
           color: 'white',
           cursor: hasContent ? 'pointer' : 'not-allowed',
@@ -128,10 +134,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           transform: hasContent ? 'scale(1)' : 'scale(0.92)',
         }}
         onMouseEnter={e => {
-          if (hasContent) e.currentTarget.style.backgroundColor = 'var(--sys-color-neutral-30)'
+          if (hasContent) e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-30)'
         }}
         onMouseLeave={e => {
-          if (hasContent) e.currentTarget.style.backgroundColor = 'var(--sys-color-neutral-10)'
+          if (hasContent) e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-40)'
         }}
       >
         <ArrowUp size={17} strokeWidth={2.5} />

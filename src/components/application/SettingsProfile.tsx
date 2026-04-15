@@ -130,8 +130,18 @@ export const SettingsProfile: React.FC<SettingsProfileProps> = ({
                   </select>
                 </div>
                 <div className="claude-form-actions">
-                  <button className="button button-filled">Save Changes</button>
-                  <button className="button button-outlined">Cancel</button>
+                  <button
+                    className="button button-filled"
+                    style={{ padding: '10px 24px', minWidth: 130, fontSize: '0.9rem', fontWeight: 600 }}
+                  >
+                    Save Changes
+                  </button>
+                  <button
+                    className="button button-outlined"
+                    style={{ padding: '10px 24px', minWidth: 90, fontSize: '0.9rem', fontWeight: 500 }}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             </div>
