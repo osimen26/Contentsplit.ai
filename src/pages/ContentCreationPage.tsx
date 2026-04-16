@@ -320,15 +320,36 @@ const ContentCreationPage: React.FC = () => {
                           variant="default" selectionMode="single" showPreview={false}
                           title="2. Voice & Tone" subtitle="How should it sound?" required
                         />
-                        <div style={{ paddingTop: 'var(--sys-spacing-sm)' }}>
+                        <div style={{
+                          paddingTop: 'var(--sys-spacing-lg)',
+                          borderTop: '1px solid var(--sys-color-border-tertiary)',
+                          marginTop: 'var(--sys-spacing-sm)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 'var(--sys-spacing-md)',
+                        }}>
                           <button
                             className="button button-filled"
                             onClick={handleGenerate}
                             disabled={selectedPlatforms.length === 0}
-                            style={{ minWidth: 160 }}
+                            style={{
+                              padding: '12px 32px',
+                              fontWeight: 600,
+                              fontSize: '0.95rem',
+                              minWidth: 180,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 8,
+                            }}
                           >
+                            <Sparkles size={16} />
                             Generate Content
                           </button>
+                          {selectedPlatforms.length === 0 && (
+                            <span style={{ fontSize: '0.8rem', color: 'var(--sys-color-neutral-60)' }}>
+                              Select at least one platform
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

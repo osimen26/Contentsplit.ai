@@ -64,83 +64,109 @@
    TONE CHIP STYLES
    ============================================ */
 
-/* Base tone chip - apply classes: chip chip-tone chip-tone-* */
+/* Base tone chip */
 .tone-chip {
-    min-width: 80px;
-    text-align: center;
-    border-width: 2px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    padding: 8px 18px;
+    border-radius: 9999px;
+    border: 1.5px solid var(--sys-color-border-tertiary);
+    background-color: var(--sys-color-neutral-99);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
 .tone-chip:hover {
+    border-color: var(--sys-color-primary-60);
+    background-color: var(--sys-color-primary-98);
+    color: var(--sys-color-primary-30);
     transform: translateY(-2px);
-    box-shadow: var(--sys-elevation-1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+}
+
+.tone-chip:focus-visible {
+    outline: 2px solid var(--sys-color-primary-60);
+    outline-offset: 2px;
 }
 
 .tone-chip.selected {
-    transform: scale(1.05);
-    box-shadow: var(--sys-elevation-2);
-}
-
-/* Tone-specific colors (extend chip-tone-* classes) */
-.tone-chip-formal {
-    border-color: var(--sys-color-primary-60);
-    background-color: var(--sys-color-primary-98);
-}
-
-.tone-chip-formal.selected {
+    border-color: var(--sys-color-primary-40);
     background-color: var(--sys-color-primary-95);
-    border-color: var(--sys-color-roles-primary-color-role-primary-role);
+    color: var(--sys-color-primary-20);
+    box-shadow: 0 0 0 3px var(--sys-color-primary-92), 0 2px 8px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+    font-weight: 600;
+}
+
+.tone-chip.selected:hover {
+    background-color: var(--sys-color-primary-90);
+    box-shadow: 0 0 0 3px var(--sys-color-primary-90), 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* ── Tone color variants (chip tinted per tone type) ── */
+
+.tone-chip-formal {
+    border-color: var(--sys-color-primary-80);
+    background-color: var(--sys-color-primary-99);
+}
+.tone-chip-formal.selected {
+    border-color: var(--sys-color-primary-40);
+    background-color: var(--sys-color-primary-95);
+    color: var(--sys-color-primary-20);
 }
 
 .tone-chip-casual {
-    border-color: var(--sys-color-roles-success-color-role-success-role);
-    background-color: var(--sys-color-roles-success-color-role-success-role-container);
+    border-color: var(--sys-color-neutral-80);
+    background-color: var(--sys-color-neutral-99);
 }
-
 .tone-chip-casual.selected {
-    background-color: var(--sys-color-roles-success-color-role-success-role-container);
-    border-color: var(--sys-color-roles-success-color-role-success-role);
+    border-color: var(--sys-color-primary-40);
+    background-color: var(--sys-color-primary-95);
+    color: var(--sys-color-primary-20);
 }
 
 .tone-chip-professional {
-    border-color: var(--sys-color-roles-info-color-role-info-role);
-    background-color: var(--sys-color-roles-info-color-role-info-role-container);
+    border-color: var(--sys-color-neutral-70);
+    background-color: var(--sys-color-neutral-98);
 }
-
 .tone-chip-professional.selected {
-    background-color: var(--sys-color-roles-info-color-role-info-role-container);
-    border-color: var(--sys-color-roles-info-color-role-info-role);
+    border-color: var(--sys-color-primary-40);
+    background-color: var(--sys-color-primary-95);
+    color: var(--sys-color-primary-20);
 }
 
 .tone-chip-creative {
-    border-color: var(--sys-color-roles-warning-color-role-warning-role);
-    background-color: var(--sys-color-roles-warning-color-role-warning-role-container);
+    border-color: var(--sys-color-neutral-80);
+    background-color: var(--sys-color-neutral-99);
 }
-
 .tone-chip-creative.selected {
-    background-color: var(--sys-color-roles-warning-color-role-warning-role-container);
-    border-color: var(--sys-color-roles-warning-color-role-warning-role);
+    border-color: var(--sys-color-primary-40);
+    background-color: var(--sys-color-primary-95);
+    color: var(--sys-color-primary-20);
 }
 
 .tone-chip-persuasive {
-    border-color: var(--sys-color-roles-error-color-role-error-role);
-    background-color: var(--sys-color-roles-error-color-role-error-container-role);
+    border-color: var(--sys-color-neutral-80);
+    background-color: var(--sys-color-neutral-99);
 }
-
 .tone-chip-persuasive.selected {
-    background-color: var(--sys-color-roles-error-color-role-error-container-role);
-    border-color: var(--sys-color-roles-error-color-role-error-role);
+    border-color: var(--sys-color-primary-40);
+    background-color: var(--sys-color-primary-95);
+    color: var(--sys-color-primary-20);
 }
 
 .tone-chip-friendly {
-    border-color: var(--sys-color-secondary-60);
-    background-color: var(--sys-color-secondary-98);
+    border-color: var(--sys-color-secondary-80);
+    background-color: var(--sys-color-secondary-99);
 }
-
 .tone-chip-friendly.selected {
-    background-color: var(--sys-color-secondary-95);
-    border-color: var(--sys-color-roles-secondary-color-role-secondary-role);
+    border-color: var(--sys-color-primary-40);
+    background-color: var(--sys-color-primary-95);
+    color: var(--sys-color-primary-20);
 }
 
 /* ============================================
@@ -148,8 +174,6 @@
    ============================================ */
 
 .tone-chip-with-icon {
-    display: flex;
-    align-items: center;
     gap: var(--sys-spacing-xs);
     padding-left: var(--sys-spacing-sm);
     padding-right: var(--sys-spacing-md);
@@ -165,6 +189,7 @@
     font-family: var(--sys-typography-label-medium-font-family);
     font-size: var(--sys-typography-label-medium-font-size);
     font-weight: var(--sys-typography-label-medium-font-weight);
+    letter-spacing: 0.01em;
 }
 
 /* ============================================
