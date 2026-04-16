@@ -98,6 +98,11 @@ app.post('/api/auth/login', (req, res) => {
   res.json({ token: 'dev-token', user: { id: '1', email: email || 'user@example.com', tier: 'free', created_at: new Date().toISOString() } })
 })
 
+app.post('/api/auth/register', (req, res) => {
+  const { email } = req.body
+  res.json({ token: 'dev-token', user: { id: '1', email: email || 'user@example.com', tier: 'free', created_at: new Date().toISOString() } })
+})
+
 app.get('/api/auth/me', (req, res) => {
   res.json({ id: '1', email: 'user@example.com', tier: 'free', created_at: new Date().toISOString() })
 })

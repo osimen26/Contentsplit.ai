@@ -32,13 +32,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>({
-    id: 'user-123',
-    name: 'John Doe',
-    email: 'john@example.com',
-    tier: 'pro',
-    credits: 350,
-  })
+  const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

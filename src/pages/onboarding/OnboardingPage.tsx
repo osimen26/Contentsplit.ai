@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Card, Button } from '@components/ui'
+import { Sparkles, ArrowRight, Check } from 'lucide-react'
 import { useUpdateProfile } from '@services/query-hooks'
 
 const PERSONAS = [
@@ -33,7 +33,7 @@ const OnboardingPage: React.FC = () => {
     if (!tone) return
     updateProfile({ persona, tone } as any, {
       onSuccess: () => {
-        navigate('/dashboard') // Go directly to dashboard
+        navigate('/dashboard')
       }
     })
   }
@@ -44,96 +44,181 @@ const OnboardingPage: React.FC = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: 'var(--sys-color-roles-neutral-color-role-neutral-container-role)',
-      padding: 'var(--sys-spacing-xl)'
+      backgroundColor: 'var(--sys-color-surface-container-lowest)',
+      padding: '24px',
+      fontFamily: 'var(--sys-typography-body-large-font-family)'
     }}>
-      <Card variant="elevated" style={{ width: '100%', maxWidth: '600px', display: 'flex', flexDirection: 'column', padding: 'var(--sys-spacing-2xl)', gap: 'var(--sys-spacing-xl)' }}>
+      <div style={{ 
+        width: '100%', 
+        maxWidth: '440px', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: '40px' 
+      }}>
         
         {/* Header */}
         <div style={{ textAlign: 'center' }}>
-          <h1 style={{ fontFamily: 'var(--sys-typography-headline-medium-font-family)', fontSize: '1.75rem', marginBottom: 'var(--sys-spacing-sm)' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+            <Sparkles size={36} color="var(--sys-color-neutral-10)" strokeWidth={1.5} />
+          </div>
+          <h1 style={{ 
+            fontFamily: 'var(--sys-typography-display-small-font-family)', 
+            fontSize: '2rem', 
+            fontWeight: 600, 
+            letterSpacing: '-0.5px', 
+            marginBottom: '12px', 
+            color: 'var(--sys-color-neutral-10)' 
+          }}>
             Welcome to ContentSplit
           </h1>
-          <p style={{ color: 'var(--sys-color-neutral-50)' }}>
-            Let's configure your unique Brand Voice. We'll automatically apply this to all your future content.
+          <p style={{ fontSize: '1.05rem', color: 'var(--sys-color-neutral-50)', lineHeight: 1.5 }}>
+            Let's configure your unique Brand Voice. We'll automatically apply this to your generated content.
           </p>
         </div>
 
         {/* Step 1: Persona */}
         {step === 1 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sys-spacing-md)' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>1. Who are you generating content for?</h3>
-            <div style={{ display: 'grid', gap: 'var(--sys-spacing-sm)' }}>
-              {PERSONAS.map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => setPersona(p.id)}
-                  style={{
-                    padding: 'var(--sys-spacing-md)',
-                    border: `2px solid ${persona === p.id ? 'var(--sys-color-roles-primary-color-role-primary-role)' : 'var(--sys-color-border-tertiary)'}`,
-                    borderRadius: 'var(--sys-radius-md)',
-                    backgroundColor: persona === p.id ? 'var(--sys-color-primary-99)' : 'transparent',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  <div style={{ fontWeight: 600, color: 'var(--sys-color-neutral-10)' }}>{p.label}</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', marginTop: '4px' }}>{p.description}</div>
-                </button>
-              ))}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeIn 0.4s ease-out' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--sys-color-neutral-30)' }}>
+              1. What is your role?
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {PERSONAS.map(p => {
+                const isSelected = persona === p.id
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => setPersona(p.id)}
+                    style={{
+                      padding: '16px 20px',
+                      border: isSelected ? '1px solid var(--sys-color-roles-primary-color-role-primary-role)' : '1px solid var(--sys-color-border-tertiary)',
+                      borderRadius: '12px',
+                      backgroundColor: isSelected ? 'var(--sys-color-primary-99)' : 'transparent',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 600, color: isSelected ? 'var(--sys-color-roles-primary-color-role-primary-role)' : 'var(--sys-color-neutral-20)', fontSize: '1rem' }}>
+                        {p.label}
+                      </div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', marginTop: '4px' }}>
+                        {p.description}
+                      </div>
+                    </div>
+                    {isSelected && <Check size={20} color="var(--sys-color-roles-primary-color-role-primary-role)" />}
+                  </button>
+                )
+              })}
             </div>
             
-            <Button
-              variant="filled"
+            <button
               onClick={handleNext}
               disabled={!persona}
-              style={{ marginTop: 'var(--sys-spacing-lg)' }}
+              style={{
+                marginTop: '16px',
+                width: '100%',
+                padding: '16px',
+                backgroundColor: !persona ? 'var(--sys-color-neutral-90)' : 'var(--sys-color-neutral-10)',
+                color: !persona ? 'var(--sys-color-neutral-60)' : 'var(--sys-color-surface-container-lowest)',
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: '1rem',
+                border: 'none',
+                cursor: !persona ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.2s'
+              }}
             >
-              Next Step
-            </Button>
+              Continue <ArrowRight size={18} />
+            </button>
           </div>
         )}
 
         {/* Step 2: Tone */}
         {step === 2 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sys-spacing-md)' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>2. Select your default writing tone</h3>
-            <div style={{ display: 'grid', gap: 'var(--sys-spacing-sm)' }}>
-              {TONES.map(t => (
-                <button
-                  key={t.id}
-                  onClick={() => setTone(t.id)}
-                  style={{
-                    padding: 'var(--sys-spacing-md)',
-                    border: `2px solid ${tone === t.id ? 'var(--sys-color-roles-primary-color-role-primary-role)' : 'var(--sys-color-border-tertiary)'}`,
-                    borderRadius: 'var(--sys-radius-md)',
-                    backgroundColor: tone === t.id ? 'var(--sys-color-primary-99)' : 'transparent',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  <div style={{ fontWeight: 600, color: 'var(--sys-color-neutral-10)' }}>{t.label}</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', marginTop: '4px' }}>{t.description}</div>
-                </button>
-              ))}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeIn 0.4s ease-out' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--sys-color-neutral-30)' }}>
+              2. Select your default tone
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {TONES.map(t => {
+                const isSelected = tone === t.id
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setTone(t.id)}
+                    style={{
+                      padding: '16px 20px',
+                      border: isSelected ? '1px solid var(--sys-color-roles-primary-color-role-primary-role)' : '1px solid var(--sys-color-border-tertiary)',
+                      borderRadius: '12px',
+                      backgroundColor: isSelected ? 'var(--sys-color-primary-99)' : 'transparent',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 600, color: isSelected ? 'var(--sys-color-roles-primary-color-role-primary-role)' : 'var(--sys-color-neutral-20)', fontSize: '1rem' }}>
+                        {t.label}
+                      </div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', marginTop: '4px' }}>
+                        {t.description}
+                      </div>
+                    </div>
+                    {isSelected && <Check size={20} color="var(--sys-color-roles-primary-color-role-primary-role)" />}
+                  </button>
+                )
+              })}
             </div>
             
-            <div style={{ display: 'flex', gap: 'var(--sys-spacing-md)', marginTop: 'var(--sys-spacing-lg)' }}>
-              <Button variant="outlined" onClick={() => setStep(1)}>Back</Button>
-              <Button
-                variant="filled"
+            <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+              <button 
+                onClick={() => setStep(1)}
+                style={{
+                  padding: '16px 24px',
+                  backgroundColor: 'transparent',
+                  border: '1px solid var(--sys-color-border-tertiary)',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  color: 'var(--sys-color-neutral-30)'
+                }}
+              >
+                Back
+              </button>
+              <button
                 onClick={handleComplete}
                 disabled={!tone || isPending}
-                style={{ flex: 1 }}
+                style={{
+                  flex: 1,
+                  padding: '16px',
+                  backgroundColor: (!tone || isPending) ? 'var(--sys-color-neutral-90)' : 'var(--sys-color-neutral-10)',
+                  color: (!tone || isPending) ? 'var(--sys-color-neutral-60)' : 'var(--sys-color-surface-container-lowest)',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  border: 'none',
+                  cursor: (!tone || isPending) ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s'
+                }}
               >
                 {isPending ? 'Saving...' : 'Finish Setup'}
-              </Button>
+              </button>
             </div>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   )
 }
