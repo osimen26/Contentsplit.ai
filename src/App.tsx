@@ -18,6 +18,10 @@ import { PageViewTracker } from '@components/analytics/PageViewTracker'
 
 const ContentCreationPage = lazy(() => import('@pages/ContentCreationPage'))
 const SettingsPage = lazy(() => import('@pages/SettingsPage'))
+const LoginPage = lazy(() => import('./pages/auth/LoginPage'))
+const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'))
+const AuthLayout = lazy(() => import('@/layouts/AuthLayout'))
+
 // Contexts
 import { ThemeProvider } from '@contexts/ThemeContext'
 import { AuthProvider } from '@contexts/AuthContext'
@@ -45,6 +49,10 @@ function App() {
                     <Route index element={<ContentCreationPage />} />
                     <Route path="create" element={<ContentCreationPage />} />
                     <Route path="settings/*" element={<SettingsPage />} />
+                  </Route>
+                  <Route element={<AuthLayout />}>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
                   </Route>
                 </Routes>
               </Suspense>

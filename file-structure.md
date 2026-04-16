@@ -60,14 +60,31 @@ Contentsplit.ai/
 
 The following files **currently exceed 600 lines** and should be addressed:
 
-| File Name | File Path | Lines |
-|---|---|---|
-| `test.html` | `Contentsplit.ai/test.html` | 1,928 |
-| `design-tokens-ultimate.css` | `Contentsplit.ai/design-tokens-ultimate.css` | 981 |
+| File Path | Number of Lines |
+|---|---|
+| `design-tokens.tokens.json` | 6,433 |
+| `skills/tooltips.md` | 2,946 |
+| `skills/chips.md` | 2,213 |
+| `test.html` | 1,928 |
+| `skills/navigation.md` | 1,660 |
+| `skills/testing.md` | 1,096 |
+| `skills/select.md` | 1,003 |
+| `design-tokens-ultimate.css` | 981 |
+| `skills/progress-state.md` | 972 |
+| `skills/validation.md` | 933 |
+| `skills/loading-state.md` | 869 |
+| `skills/modal.md` | 861 |
+| `skills/notification.md` | 766 |
+| `skills/responsive.md` | 754 |
+| `skills/error-usage.md` | 745 |
+| `skills/form-field.md` | 683 |
+| `skills/onboarding-login-flow.md` | 673 |
+| `skills/toast.md` | 659 |
+| `skills/layout.md` | 656 |
+| `skills/empty-states.md` | 653 |
+| `skills/mobile.md` | 620 |
 
-> **Note:** `test.html` is a component showcase/demo file and `design-tokens-ultimate.css`
-> is auto-generated — both are exempt from the 600-line rule during their current lifecycle.
-> However, any **hand-authored** source file that breaches 600 lines must be split.
+> **Note:** Auto-generated files (like `design-tokens.tokens.json`, `design-tokens-ultimate.css`) and pure documentation/specification files inside the `skills/` directory are currently exempt from the 600-line split enforcement unless explicitly instructed otherwise. Any **hand-authored source code file** that breaches 600 lines must be split.
 
 ---
 
