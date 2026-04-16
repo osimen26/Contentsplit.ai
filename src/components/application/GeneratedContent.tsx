@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Card } from '@components/ui'
+import { Card, Skeleton, Toast } from '@components/ui'
 import {
   X, Briefcase, Camera, Mail, Users, Music, Video, FileText, Smartphone,
   Copy, Check, RefreshCw, Pencil, CheckSquare
@@ -124,7 +124,7 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
   const isCopied = copiedId === activeTab
 
   return (
-    <Card variant="elevated" className={`generated-content ${className}`}>
+    <Card variant="elevated" className={`generated-content ${className}`} style={{ backgroundColor: 'var(--sys-color-roles-neutral-color-role-neutral-container-role)' }}>
       {/* Header */}
       <div className="generated-content-header">
         <div>
@@ -155,8 +155,11 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
       {/* Content Panel */}
       <div className="generated-content-panel selected">
         {isLoading ? (
-          <div style={{ padding: 'var(--sys-spacing-lg)', color: 'var(--sys-color-neutral-50)' }}>
-            Loading…
+          <div style={{ padding: 'var(--sys-spacing-lg)', display: 'flex', flexDirection: 'column', gap: 'var(--sys-spacing-md)' }}>
+            <Skeleton variant="text" height={24} width="60%" animation="pulse" />
+            <Skeleton variant="text" height={16} width="100%" animation="pulse" />
+            <Skeleton variant="text" height={16} width="90%" animation="pulse" />
+            <Skeleton variant="text" height={16} width="95%" animation="pulse" />
           </div>
         ) : (
           <div className="generated-content-display">
@@ -271,18 +274,18 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
                   title="Copy to clipboard"
                   style={{
                     display: 'flex', alignItems: 'center', gap: '5px',
-                    padding: '5px 10px',
+                    padding: '8px 16px',
                     borderRadius: 'var(--sys-radius-md)',
-                    border: '1px solid var(--sys-color-border-tertiary)',
-                    backgroundColor: isCopied ? 'var(--sys-color-success-95)' : 'transparent',
-                    color: isCopied ? 'var(--sys-color-success-30)' : 'var(--sys-color-neutral-40)',
-                    fontSize: '0.8rem', fontWeight: 500, cursor: 'pointer',
+                    border: 'none',
+                    backgroundColor: isCopied ? 'var(--sys-color-roles-success-color-role-success-role)' : 'var(--sys-color-roles-primary-color-role-primary-role)',
+                    color: isCopied ? 'var(--sys-color-roles-success-color-role-on-success-role)' : 'var(--sys-color-roles-primary-color-role-on-primary-role)',
+                    fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer',
                     transition: 'all 0.2s',
                   }}
-                  onMouseEnter={e => { if (!isCopied) e.currentTarget.style.backgroundColor = 'var(--sys-color-neutral-95)' }}
-                  onMouseLeave={e => { if (!isCopied) e.currentTarget.style.backgroundColor = 'transparent' }}
+                  onMouseEnter={e => { if (!isCopied) e.currentTarget.style.opacity = '0.9' }}
+                  onMouseLeave={e => { if (!isCopied) e.currentTarget.style.opacity = '1' }}
                 >
-                  {isCopied ? <><Check size={13} /> Copied!</> : <><Copy size={13} /> Copy</>}
+                  {isCopied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Instant Copy</>}
                 </button>
 
               </div>
@@ -290,6 +293,13 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
           </div>
         )}
       </div>
+      {isCopied && (
+        <Toast 
+          message={`${activePlatform?.name || 'Content'} copied to clipboard!`} 
+          type="success" 
+          position="bottom-center" 
+        />
+      )}
     </Card>
   )
 }

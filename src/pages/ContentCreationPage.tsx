@@ -203,10 +203,10 @@ const ContentCreationPage: React.FC = () => {
               marginBottom: 'var(--sys-spacing-sm)',
               color: 'var(--sys-color-neutral-10)',
             }}>
-              What would you like to create?
+              Ready to repurpose?
             </h1>
             <p style={{ color: 'var(--sys-color-neutral-50)', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
-              Paste your blog post, article, or any text below. ContentSplit will adapt it for every platform instantly.
+               Paste your long-form content to get started.
             </p>
           </div>
 

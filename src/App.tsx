@@ -21,6 +21,7 @@ const SettingsPage = lazy(() => import('@pages/SettingsPage'))
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'))
 const AuthLayout = lazy(() => import('@/layouts/AuthLayout'))
+const OnboardingPage = lazy(() => import('./pages/onboarding/OnboardingPage'))
 
 // Contexts
 import { ThemeProvider } from '@contexts/ThemeContext'
@@ -54,6 +55,7 @@ function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                   </Route>
+                  <Route path="/onboarding" element={<OnboardingPage />} />
                 </Routes>
               </Suspense>
             </ErrorBoundary>

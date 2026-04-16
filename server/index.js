@@ -108,20 +108,32 @@ app.get('/api/conversions', (req, res) => {
 })
 
 // ── MAIN: Content Generation via OpenAI ────────────────────────────────────
+import { z } from 'zod'
+
+const generateSchema = z.object({
+  input_text: z.string().min(1, 'Content is required').refine((val) => {
+    const wordCount = val.trim().split(/\s+/).length;
+    return wordCount >= 10 && wordCount <= 5000;
+  }, { message: 'Content must be between 10 and 5,000 words.' }),
+  tone_mode: z.string().optional().default('casual'),
+  platforms: z.array(z.string()).min(1, 'Please select at least one platform'),
+  persona: z.string().optional()
+})
+
 app.post('/api/conversions/generate', requireAuth, async (req, res) => {
-  const { input_text, tone_mode, platforms } = req.body
-
-  if (!input_text || !platforms?.length) {
-    return res.status(400).json({ error: 'input_text and platforms are required' })
-  }
-
-  console.log(`⚡ Generating for platforms: ${platforms.join(', ')} | tone: ${tone_mode}`)
-
   try {
+    const parsedData = generateSchema.parse(req.body)
+    const { input_text, tone_mode, platforms, persona } = parsedData
+
+    console.log(`⚡ Generating for platforms: ${platforms.join(', ')} | tone: ${tone_mode} | persona: ${persona || 'none'}`)
+
     // Generate content for all selected platforms IN PARALLEL for speed
     const results = await Promise.all(
       platforms.map(async (platform) => {
-        const prompt = buildPrompt(input_text, platform, tone_mode)
+        let prompt = buildPrompt(input_text, platform, tone_mode)
+        if (persona) {
+          prompt = `You are writing from the perspective of a ${persona}.\n` + prompt;
+        }
 
         const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
           method: 'POST',
@@ -171,6 +183,9 @@ app.post('/api/conversions/generate', requireAuth, async (req, res) => {
 
     console.log(`✅ Generated ${outputs.length} outputs`)
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ error: err.errors[0].message })
+    }
     console.error('Generation error:', err.message)
     res.status(500).json({ error: 'Content generation failed. Check your OpenAI API key.' })
   }
