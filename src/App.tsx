@@ -20,8 +20,10 @@ const ContentCreationPage = lazy(() => import('@pages/ContentCreationPage'))
 const SettingsPage = lazy(() => import('@pages/SettingsPage'))
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'))
+const RecoverPage = lazy(() => import('./pages/auth/RecoverPage'))
 const AuthLayout = lazy(() => import('@/layouts/AuthLayout'))
 const OnboardingPage = lazy(() => import('./pages/onboarding/OnboardingPage'))
+import { ProtectedRoute } from '@components/auth/ProtectedRoute'
 
 // Contexts
 import { ThemeProvider } from '@contexts/ThemeContext'
@@ -46,16 +48,22 @@ function App() {
             <ErrorBoundary>
               <Suspense fallback={<LoadingOverlay variant="ai-processing" />}>
                 <Routes>
-                  <Route path="/" element={<ClaudeLayout />}>
-                    <Route index element={<ContentCreationPage />} />
-                    <Route path="create" element={<ContentCreationPage />} />
-                    <Route path="settings/*" element={<SettingsPage />} />
+                  {/* Protected Routes */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/" element={<ClaudeLayout />}>
+                      <Route index element={<ContentCreationPage />} />
+                      <Route path="create" element={<ContentCreationPage />} />
+                      <Route path="settings/*" element={<SettingsPage />} />
+                    </Route>
+                    <Route path="/onboarding" element={<OnboardingPage />} />
                   </Route>
+
+                  {/* Public Authentication Routes */}
                   <Route element={<AuthLayout />}>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/recover" element={<RecoverPage />} />
                   </Route>
-                  <Route path="/onboarding" element={<OnboardingPage />} />
                 </Routes>
               </Suspense>
             </ErrorBoundary>
