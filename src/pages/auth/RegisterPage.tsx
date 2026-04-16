@@ -35,7 +35,7 @@ const RegisterPage: React.FC = () => {
     try {
       // API currently only records email and password based on useRegister hook
       await registerUser({ email, password })
-      navigate('/')
+      navigate('/onboarding')
     } catch (err) {
       console.error(err)
       setError('Registration failed. Please try again.')

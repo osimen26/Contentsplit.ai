@@ -33,7 +33,7 @@ const OnboardingPage: React.FC = () => {
     if (!tone) return
     updateProfile({ persona, tone } as any, {
       onSuccess: () => {
-        navigate('/') // Go to dashboard
+        navigate('/dashboard') // Go directly to dashboard
       }
     })
   }

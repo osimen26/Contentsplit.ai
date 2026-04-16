@@ -23,6 +23,7 @@ const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'))
 const RecoverPage = lazy(() => import('./pages/auth/RecoverPage'))
 const AuthLayout = lazy(() => import('@/layouts/AuthLayout'))
 const OnboardingPage = lazy(() => import('./pages/onboarding/OnboardingPage'))
+const LandingPage = lazy(() => import('./pages/LandingPage'))
 import { ProtectedRoute } from '@components/auth/ProtectedRoute'
 
 // Contexts
@@ -48,9 +49,12 @@ function App() {
             <ErrorBoundary>
               <Suspense fallback={<LoadingOverlay variant="ai-processing" />}>
                 <Routes>
+                  {/* Public Landing Page */}
+                  <Route path="/" element={<LandingPage />} />
+
                   {/* Protected Routes */}
                   <Route element={<ProtectedRoute />}>
-                    <Route path="/" element={<ClaudeLayout />}>
+                    <Route path="/dashboard" element={<ClaudeLayout />}>
                       <Route index element={<ContentCreationPage />} />
                       <Route path="create" element={<ContentCreationPage />} />
                       <Route path="settings/*" element={<SettingsPage />} />
