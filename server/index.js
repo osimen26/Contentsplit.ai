@@ -92,7 +92,7 @@ app.post('/api/auth/register', (req, res) => {
   res.json({ token: 'dev-token', user: { id: '1', email: email || 'user@example.com', tier: 'free', created_at: new Date().toISOString() } })
 })
 
-app.get('/api/auth/me', (req, res) => {
+app.get('/api/auth/me', requireAuth, (req, res) => {
   res.json({ id: '1', email: 'user@example.com', tier: 'free', created_at: new Date().toISOString() })
 })
 

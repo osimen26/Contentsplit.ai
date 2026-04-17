@@ -1,12 +1,6 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react'
-
-interface User {
-  id: string
-  name: string
-  email: string
-  tier: 'free' | 'pro' | 'agency'
-  credits: number
-}
+import React, { createContext, useContext, ReactNode, useEffect, useState } from 'react'
+import { useCurrentUser, useLogout, useLogin } from '@services/query-hooks'
+import { User } from '@services/api-client'
 
 interface AuthContextType {
   user: User | null
@@ -32,36 +26,45 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [tokenExists, setTokenExists] = useState(!!localStorage.getItem('auth_token'))
+  
+  // Listen for storage changes in case of multi-tab or manual token wipes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setTokenExists(!!localStorage.getItem('auth_token'))
+    }
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const login = async (email: string, _password: string) => {
-    setIsLoading(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setUser({
-      id: 'user-123',
-      name: 'John Doe',
-      email,
-      tier: 'pro',
-      credits: 350,
-    })
-    setIsLoading(false)
+  const { data: user, isLoading: isUserLoading, refetch } = useCurrentUser({
+    // Type override for UseQueryOptions (we are intercepting the options type via generic override)
+    enabled: tokenExists,
+  } as any)
+
+  const loginMutation = useLogin()
+  const logoutMutation = useLogout()
+
+  const login = async (email: string, password: string) => {
+    await loginMutation.mutateAsync({ email, password })
+    setTokenExists(true)
+    await refetch()
   }
 
   const logout = () => {
-    setUser(null)
+    logoutMutation.mutate()
+    setTokenExists(false)
   }
 
   const updateUser = (updates: Partial<User>) => {
-    if (user) {
-      setUser({ ...user, ...updates })
-    }
+    console.warn("Please use useUpdateProfile from @services/query-hooks instead of the context", updates)
   }
 
+  // Set isLoading to true if token exists but user data hasn't loaded yet.
+  const isLoading = tokenExists && isUserLoading
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user: user || null, isLoading, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   )
