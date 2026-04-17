@@ -117,7 +117,7 @@ const LandingPage: React.FC = () => {
             <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, color: 'var(--sys-color-neutral-10)', marginBottom: '16px', lineHeight: 1.2 }}>Reclaim 90% of your publishing time</h2>
             <p style={{ fontSize: '1.1rem', color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>Watch how ContentSplit transforms a chaotic workflow into an organized, automated content machine.</p>
           </div>
-          <Link to="/register" className="cta-primary" style={{ backgroundColor: 'var(--sys-color-neutral-10)', color: '#ffffff' }}>
+          <Link to="/register" className="cta-primary" style={{ backgroundColor: 'var(--sys-color-roles-primary-color-role-primary-role)', color: '#ffffff' }}>
             Get Started for Free
           </Link>
         </div>
