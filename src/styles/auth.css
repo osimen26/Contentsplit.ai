@@ -5,16 +5,17 @@
   justify-content: center;
   min-height: 100vh;
   padding: 24px;
-  background-color: var(--sys-color-primary-100);
+  background-color: #ffffff;
 }
 
 .login-card {
   width: 100%;
-  max-width: 400px;
-  background-color: var(--sys-color-roles-neutral-color-role-neutral-container-role, #fff);
-  border-radius: 28px;
-  padding: 40px 32px;
-  box-shadow: var(--sys-elevation-1, 0 1px 3px rgba(0,0,0,0.12));
+  max-width: 440px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 48px 40px;
+  box-shadow: none;
+  border: 1px solid var(--sys-color-neutral-90);
 }
 
 .login-title {
@@ -47,37 +48,37 @@
 }
 
 .login-input {
-  background-color: var(--sys-color-primary-100);
-  border: 1px solid var(--sys-color-neutral-90);
-  border-radius: 12px;
-  padding: 16px 12px 16px 12px;
+  background-color: #ffffff;
+  border: 1px solid var(--sys-color-neutral-80);
+  border-radius: 8px;
+  padding: 14px 16px;
   font-family: var(--sys-typography-body-text-font-family);
-  font-size: var(--sys-typography-body-text-font-size);
+  font-size: 1rem;
   color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
   width: 100%;
+  transition: all 0.2s ease;
 }
 
 .login-input:focus {
   border-color: var(--sys-color-roles-primary-color-role-primary-role);
   outline: none;
-  box-shadow: 0 0 0 2px var(--sys-color-primary-90);
+  box-shadow: 0 0 0 1px var(--sys-color-roles-primary-color-role-primary-role);
 }
 
 .login-primary-action {
   background-color: var(--sys-color-roles-primary-color-role-primary-role);
-  color: var(--sys-color-roles-primary-color-role-on-primary-role);
+  color: #ffffff;
   border: none;
-  border-radius: 20px;
-  padding: 12px 24px;
-  font-family: var(--sys-typography-label-small-font-family);
-  font-size: var(--sys-typography-label-small-font-size);
-  font-weight: var(--sys-typography-label-small-font-weight, 500);
+  border-radius: 8px;
+  padding: 14px 24px;
+  font-family: var(--sys-typography-label-large-font-family);
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: var(--sys-typography-label-small-letter-spacing);
+  letter-spacing: normal;
   width: 100%;
-  margin-top: 8px;
-  transition: opacity 0.2s;
+  margin-top: 16px;
+  transition: opacity 0.2s ease;
 }
 
 .login-primary-action:hover {
@@ -124,8 +125,8 @@
 }
 
 .social-auth-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 12px;
   margin-top: 16px;
 }
@@ -134,21 +135,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background-color: var(--sys-color-primary-100);
-  border: 1px solid var(--sys-color-neutral-90);
-  border-radius: 12px;
+  gap: 12px;
+  padding: 14px 16px;
+  background-color: #ffffff;
+  border: 1px solid var(--sys-color-neutral-80);
+  border-radius: 8px;
   font-family: var(--sys-typography-body-text-font-family);
-  font-size: var(--sys-typography-body-text-font-size);
-  color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
+  font-size: 1rem;
+  color: var(--sys-color-neutral-30);
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .social-button:hover {
   background-color: var(--sys-color-neutral-95);
-  border-color: var(--sys-color-neutral-80);
+  border-color: var(--sys-color-neutral-70);
 }
 
 .social-button-google {
