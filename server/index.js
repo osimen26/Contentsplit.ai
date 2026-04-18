@@ -20,13 +20,13 @@ dotenv.config({ path: join(__dirname, '.env') })
 const app = express()
 const PORT = process.env.PORT || 3001
 
-// ── OPENAI CONFIG ────────────────────────────────────────────────────────────
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY
-const OPENAI_BASE_URL = 'https://api.openai.com/v1'
-const OPENAI_MODEL = 'gpt-4o-mini' // fast and cost-effective OpenAI model
+// ── DEEPSEEK CONFIG ─────────────────────────────────────────────────────────
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY
+const DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
+const DEEPSEEK_MODEL = 'deepseek-chat'
 
-if (!OPENAI_API_KEY) {
-  console.error('❌  OPENAI_API_KEY is not set in server/.env')
+if (!DEEPSEEK_API_KEY) {
+  console.error('❌  DEEPSEEK_API_KEY is not set in server/.env')
   process.exit(1)
 }
 
@@ -78,7 +78,7 @@ ${inputText}
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', model: OPENAI_MODEL })
+  res.json({ status: 'ok', model: DEEPSEEK_MODEL })
 })
 
 // Mock auth (replace with real auth system)
@@ -94,6 +94,15 @@ app.post('/api/auth/register', (req, res) => {
 
 app.get('/api/auth/me', requireAuth, (req, res) => {
   res.json({ id: '1', email: 'user@example.com', tier: 'free', created_at: new Date().toISOString() })
+})
+
+app.post('/api/auth/recover', (req, res) => {
+  const { email } = req.body
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' })
+  }
+  console.log(`Password recovery requested for: ${email}`)
+  res.json({ message: 'If an account exists, a recovery email has been sent.', success: true })
 })
 
 // Conversions list (mock history)
@@ -129,14 +138,14 @@ app.post('/api/conversions/generate', requireAuth, async (req, res) => {
           prompt = `You are writing from the perspective of a ${persona}.\n` + prompt;
         }
 
-        const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
+        const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${OPENAI_API_KEY}`, // ← key stays server-side only
+            Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
           },
           body: JSON.stringify({
-            model: OPENAI_MODEL,
+            model: DEEPSEEK_MODEL,
             messages: [{ role: 'user', content: prompt }],
             temperature: 0.7,
             max_tokens: 1024,
@@ -145,10 +154,12 @@ app.post('/api/conversions/generate', requireAuth, async (req, res) => {
 
         if (!response.ok) {
           const err = await response.text()
-          throw new Error(`OpenAI error for ${platform}: ${err}`)
+          console.error(`DeepSeek API error for ${platform}:`, err)
+          throw new Error(`DeepSeek error for ${platform}: ${err}`)
         }
 
         const data = await response.json()
+        console.log('DeepSeek response:', data)
         const content = data.choices?.[0]?.message?.content || ''
 
         return {
@@ -181,7 +192,7 @@ app.post('/api/conversions/generate', requireAuth, async (req, res) => {
       return res.status(400).json({ error: err.errors[0].message })
     }
     console.error('Generation error:', err.message)
-    res.status(500).json({ error: 'Content generation failed. Check your OpenAI API key.' })
+    res.status(500).json({ error: 'Content generation failed. Check your DeepSeek API key.' })
   }
 })
 
@@ -207,6 +218,6 @@ app.get('/api/users/usage', (req, res) => {
 // ── START ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`\n🚀  ContentSplit backend running at http://localhost:${PORT}`)
-  console.log(`🔐  OpenAI API key: ${OPENAI_API_KEY ? '✓ loaded' : '✗ MISSING'}`)
-  console.log(`⚡  Model: ${OPENAI_MODEL}\n`)
+  console.log(`🔐  DeepSeek API key: ${DEEPSEEK_API_KEY ? '✓ loaded' : '✗ MISSING'}`)
+  console.log(`⚡  Model: ${DEEPSEEK_MODEL}\n`)
 })

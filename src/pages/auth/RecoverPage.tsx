@@ -2,20 +2,32 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, CheckCircle } from 'lucide-react'
 import { Toast } from '@components/ui'
+import { apiClient } from '@/services/api-client'
 
 const RecoverPage: React.FC = () => {
   const [email, setEmail] = useState('')
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isToastVisible, setIsToastVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email) return
     
-    // In a real app we would call a recovering mutation from query-hooks
-    // updateProfile or auth reset logic
-    setIsSubmitted(true)
-    setIsToastVisible(true)
+    setIsLoading(true)
+    try {
+      await apiClient.request({
+        url: '/auth/recover',
+        method: 'POST',
+        data: { email },
+      })
+      setIsSubmitted(true)
+      setIsToastVisible(true)
+    } catch (err) {
+      console.error('Recovery error:', err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -75,8 +87,8 @@ const RecoverPage: React.FC = () => {
                   required
                 />
               </div>
-              <button type="submit" className="login-primary-action">
-                Send Recovery Email
+              <button type="submit" className="login-primary-action" disabled={isLoading}>
+                {isLoading ? 'Sending...' : 'Send Recovery Email'}
               </button>
             </form>
             
