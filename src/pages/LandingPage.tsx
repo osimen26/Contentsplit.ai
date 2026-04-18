@@ -52,7 +52,7 @@ const LandingPage: React.FC = () => {
           <span style={{ color: 'var(--sys-color-roles-primary-color-role-primary-role)' }}>Multiply.</span>
         </h1>
         <p className="hero-subtitle" style={{ fontSize: '1.25rem', color: 'var(--sys-color-neutral-30)', maxWidth: '750px', marginTop: '24px', marginBottom: '0' }}>
-          Turn a single brain-dump into a week’s worth of platform-native content. ContentSplit learns your exact Brand Voice and automates the repetition—zero prompt engineering required.
+          Turn your raw ideas into a full week of ready-to-post content. We adapt to your natural voice and handle the heavy lifting, so you never have to write complex prompts again.
         </p>
         
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center', justifyContent: 'center', marginTop: '32px' }}>
