@@ -230,7 +230,7 @@ const LandingPage: React.FC = () => {
             </div>
             <h3 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '16px', color: 'var(--sys-color-neutral-10)' }}>Zero-Prompt Generation</h3>
             <p style={{ color: 'var(--sys-color-neutral-40)', lineHeight: '1.6', fontSize: '1.1rem', maxWidth: '420px', marginTop: 'auto' }}>
-              Stop fighting with ChatGPT. Just paste your raw thoughts. We handle the strict formatting, line breaks, and narrative structure automatically.
+              No more battling complex AI prompts. Simply drop your rough ideas, and we'll instantly handle the formatting, line breaks, and structure for you.
             </p>
           </div>
 
