@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Sparkles, ArrowRight, Check } from 'lucide-react'
-import { useUpdateProfile } from '@services/query-hooks'
 
 const PERSONAS = [
   { id: 'founder', label: 'Founder / CEO', description: 'Visionary, authoritative, authentic' },
@@ -23,7 +22,6 @@ const OnboardingPage: React.FC = () => {
   const [tone, setTone] = useState('')
   
   const navigate = useNavigate()
-  const { mutate: updateProfile, isPending } = useUpdateProfile()
 
   const handleNext = () => {
     if (step === 1 && persona) setStep(2)
@@ -31,11 +29,8 @@ const OnboardingPage: React.FC = () => {
 
   const handleComplete = () => {
     if (!tone) return
-    updateProfile({ persona, tone } as any, {
-      onSuccess: () => {
-        navigate('/dashboard')
-      }
-    })
+    // Skip profile update since backend doesn't store persona/tone - go directly to dashboard
+    navigate('/dashboard')
   }
 
   return (
@@ -199,21 +194,21 @@ const OnboardingPage: React.FC = () => {
               </button>
               <button
                 onClick={handleComplete}
-                disabled={!tone || isPending}
+                disabled={!tone}
                 style={{
                   flex: 1,
                   padding: '16px',
-                  backgroundColor: (!tone || isPending) ? 'var(--sys-color-neutral-90)' : 'var(--sys-color-neutral-10)',
-                  color: (!tone || isPending) ? 'var(--sys-color-neutral-60)' : 'var(--sys-color-surface-container-lowest)',
+                  backgroundColor: !tone ? 'var(--sys-color-neutral-90)' : 'var(--sys-color-neutral-10)',
+                  color: !tone ? 'var(--sys-color-neutral-60)' : 'var(--sys-color-surface-container-lowest)',
                   borderRadius: '8px',
                   fontWeight: 600,
                   fontSize: '1rem',
                   border: 'none',
-                  cursor: (!tone || isPending) ? 'not-allowed' : 'pointer',
+                  cursor: !tone ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s'
                 }}
               >
-                {isPending ? 'Saving...' : 'Finish Setup'}
+                Finish Setup
               </button>
             </div>
           </div>

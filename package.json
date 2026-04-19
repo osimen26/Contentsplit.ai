@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/osimen26/Contentsplit.ai#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.103.3",
     "@tanstack/react-query": "^5.99.0",
     "@tanstack/react-query-devtools": "^5.99.0",
     "axios": "^1.15.0",

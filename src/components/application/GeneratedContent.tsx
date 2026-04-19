@@ -61,7 +61,6 @@ export interface GeneratedContentProps {
   isLoading?: boolean
   onRegenerate?: () => void
   title?: string
-  subtitle?: string
   className?: string
 }
 
@@ -73,7 +72,6 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
   isLoading = false,
   onRegenerate,
   title = 'Generated Content',
-  subtitle,
   className = '',
 }) => {
   // --- Copy state ---
@@ -97,15 +95,20 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
     // On first render just show content immediately (no animation), keeps tests reliable
     if (firstRender.current) {
       firstRender.current = false
-      setStreamedText(content)
-      setEditedContent(content)
-      setIsEditing(false)
+      // Defer state updates to avoid direct setState in effect
+      requestAnimationFrame(() => {
+        setStreamedText(content)
+        setEditedContent(content)
+        setIsEditing(false)
+      })
       return
     }
 
-    // Start streaming animation
-    setStreamedText('')
-    setIsStreaming(true)
+    // Start streaming animation - defer initial state to avoid lint error
+    requestAnimationFrame(() => {
+      setStreamedText('')
+      setIsStreaming(true)
+    })
     let i = 0
     if (streamRef.current) clearInterval(streamRef.current)
 
@@ -138,20 +141,16 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
     } catch { /* silent fail */ }
   }
 
-  const handleSaveEdit = () => {
-    setIsEditing(false)
-  }
-
   const activePlatform = platforms.find(p => p.id === activeTab)
   const displayText = isEditing ? editedContent : streamedText
   const characterCount = displayText.length
   const characterLimit = activePlatform?.characterLimit || 280
   const isOverLimit = characterCount > characterLimit
   const isCopied = copiedId === activeTab
-  const currentIcon = platform.icon || getPlatformIcon(activeTab)
+  const currentIcon = activePlatform?.icon || getPlatformIcon(activeTab)
 
   return (
-    <Card variant="elevated" className={`generated-content claude-style ${className}`}>
+    <Card variant="elevated" className={`generated-content claude-style ${className}`} data-testid="generated-content-card">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sys-spacing-lg)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sys-spacing-sm)' }}>
           <span style={{ color: 'var(--sys-color-neutral-60)' }}>{currentIcon}</span>

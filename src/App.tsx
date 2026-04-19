@@ -17,6 +17,7 @@ import { ErrorBoundary } from '@components/ui/ErrorBoundary'
 import { PageViewTracker } from '@components/analytics/PageViewTracker'
 
 const ContentCreationPage = lazy(() => import('@pages/ContentCreationPage'))
+const ConversionDetailPage = lazy(() => import('@pages/ConversionDetailPage'))
 const SettingsPage = lazy(() => import('@pages/SettingsPage'))
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'))
@@ -57,7 +58,8 @@ function App() {
                     <Route path="/dashboard" element={<ClaudeLayout />}>
                       <Route index element={<ContentCreationPage />} />
                       <Route path="create" element={<ContentCreationPage />} />
-                      <Route path="settings/*" element={<SettingsPage />} />
+                      <Route path="c/:id" element={<ConversionDetailPage />} />
+                      <Route path="settings" element={<SettingsPage />} />
                     </Route>
                     <Route path="/onboarding" element={<OnboardingPage />} />
                   </Route>

@@ -7,6 +7,9 @@ export interface User {
   tier: 'free' | 'pro' | 'agency'
   created_at: string
   oauth_provider?: string
+  displayName?: string
+  nickname?: string
+  preferences?: string
 }
 
 export interface Conversion {

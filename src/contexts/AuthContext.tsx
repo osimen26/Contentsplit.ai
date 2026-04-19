@@ -38,9 +38,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [])
 
   const { data: user, isLoading: isUserLoading, refetch } = useCurrentUser({
-    // Type override for UseQueryOptions (we are intercepting the options type via generic override)
+    queryKey: ['user'],
     enabled: tokenExists,
-  } as any)
+  })
 
   const loginMutation = useLogin()
   const logoutMutation = useLogout()

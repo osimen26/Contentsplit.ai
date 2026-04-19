@@ -232,6 +232,7 @@
 .content-input-generate-button {
   flex: 1;
   max-width: 300px;
+  font-size: 24px;
 }
 
 .content-input-secondary-controls {
