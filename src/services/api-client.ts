@@ -10,6 +10,8 @@ export interface User {
   displayName?: string
   nickname?: string
   preferences?: string
+  persona?: string
+  tone?: string
 }
 
 export interface Conversion {
@@ -111,6 +113,20 @@ class ApiClient {
 
   async getCurrentUser(): Promise<User> {
     const response = await this.client.get('/auth/me')
+    return response.data
+  }
+
+  async logout(): Promise<void> {
+    await this.client.post('/auth/logout')
+  }
+
+  async recoverPassword(email: string): Promise<{ success: boolean; message: string }> {
+    const response = await this.client.post('/auth/recover', { email })
+    return response.data
+  }
+
+  async resetPassword(email: string, token: string, newPassword: string): Promise<{ token: string; user: User }> {
+    const response = await this.client.post('/auth/reset-password', { email, token, newPassword })
     return response.data
   }
 

@@ -143,6 +143,53 @@ function generateToken() {
   return crypto.randomBytes(32).toString('hex')
 }
 
+// Email sending (placeholder - use Resend/SendGrid/AWS SES in production)
+async function sendRecoveryEmail(toEmail, token, fromEmail) {
+  const APP_URL = process.env.APP_URL || 'http://localhost:3000'
+  const recoveryLink = `${APP_URL}/reset-password?token=${token}&email=${encodeURIComponent(toEmail)}`
+  
+  const emailHtml = `
+<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #1a1a1a;">ContentSplit - Password Recovery</h2>
+  <p>You requested to reset your password. Click the button below to create a new password:</p>
+  <a href="${recoveryLink}" style="display: inline-block; background: #1a1a1a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin: 20px 0;">
+    Reset Password
+  </a>
+  <p style="color: #666; font-size: 14px;">This link expires in 1 hour.</p>
+  <p style="color: #666; font-size: 14px;">If you didn't request this, ignore this email.</p>
+</body>
+</html>
+  `.trim()
+
+  if (process.env.SMTP_HOST) {
+    // Production: send via SMTP
+    const nodemailer = await import('nodemailer')
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    })
+    
+    await transporter.sendMail({
+      from: fromEmail,
+      to: toEmail,
+      subject: 'ContentSplit - Password Recovery',
+      html: emailHtml,
+    })
+    
+    console.log(`📧 Recovery email sent to ${toEmail}`)
+  } else {
+    console.log(`📧 Would send email to ${toEmail} (SMTP not configured)`)
+    console.log(`   Preview: ${recoveryLink}`)
+  }
+}
+
 // Auth middleware
 function requireAuth(req, res, next) {
   const auth = req.headers.authorization
@@ -332,16 +379,6 @@ app.post('/api/auth/logout', requireAuth, (req, res) => {
   const token = auth.replace('Bearer ', '')
   sessionsDb.delete(token)
   res.json({ success: true })
-})
-
-// Password recovery
-app.post('/api/auth/recover', (req, res) => {
-  const { email } = req.body
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' })
-  }
-  console.log(`Password recovery requested for: ${email}`)
-  res.json({ message: 'If an account exists, a recovery email has been sent.', success: true })
 })
 
 // ── CONTENT GENERATION ─────────────────────────────────────────────────────
@@ -608,15 +645,17 @@ app.get('/api/users/usage', requireAuth, async (req, res) => {
   }
 })
 
-// Update profile
+// Update profile or onboarding
 app.patch('/api/users/profile', requireAuth, async (req, res) => {
   try {
-    const { displayName, nickname } = req.body
+    const { displayName, nickname, persona, tone } = req.body
     const userDb = getUserDb()
     
     const updates = {}
     if (displayName !== undefined) updates.display_name = displayName
     if (nickname !== undefined) updates.nickname = nickname
+    if (persona !== undefined) updates.persona = persona
+    if (tone !== undefined) updates.tone = tone
 
     const user = await userDb.update(req.userId, updates)
     
@@ -629,6 +668,97 @@ app.patch('/api/users/profile', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('Update profile error:', err)
     res.status(500).json({ error: 'Failed to update profile' })
+  }
+})
+
+// Password recovery with email
+app.post('/api/auth/recover', async (req, res) => {
+  try {
+    const { email } = req.body
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' })
+    }
+
+    const userDb = getUserDb()
+    const user = await userDb.findByEmail(email)
+    
+    if (!user) {
+      // Return success even if user not found (security)
+      return res.json({ success: true, message: 'If an account exists, a recovery email has been sent.' })
+    }
+
+    // Generate recovery token
+    const recoveryToken = generateToken()
+    const expiresAt = Date.now() + (60 * 60 * 1000) // 1 hour
+    
+    // Store recovery token (in production, use Redis or database)
+    sessionsDb.set(`recovery:${email}`, { token: recoveryToken, expiresAt })
+
+    // In production, send email via SMTP/Resend/SendGrid
+    const RECOVERY_EMAIL_FROM = process.env.RECOVERY_EMAIL_FROM || 'noreply@contentsplit.ai'
+    const APP_URL = process.env.APP_URL || 'http://localhost:3000'
+    const recoveryLink = `${APP_URL}/reset-password?token=${recoveryToken}&email=${encodeURIComponent(email)}`
+    
+    console.log(`📧 Password recovery email would be sent to: ${email}`)
+    console.log(`   Recovery link: ${recoveryLink}`)
+    
+    // If SMTP configured, send the email
+    if (process.env.SMTP_HOST) {
+      await sendRecoveryEmail(email, recoveryToken, RECOVERY_EMAIL_FROM)
+    }
+
+    res.json({ success: true, message: 'If an account exists, a recovery email has been sent.' })
+  } catch (err) {
+    console.error('Recovery error:', err)
+    res.status(500).json({ error: 'Failed to process recovery request' })
+  }
+})
+
+// Reset password with token
+app.post('/api/auth/reset-password', async (req, res) => {
+  try {
+    const { email, token, newPassword } = req.body
+    
+    if (!email || !token || !newPassword) {
+      return res.status(400).json({ error: 'Email, token, and new password are required' })
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' })
+    }
+
+    // Verify recovery token
+    const stored = sessionsDb.get(`recovery:${email}`)
+    if (!stored || stored.token !== token || stored.expiresAt < Date.now()) {
+      return res.status(400).json({ error: 'Invalid or expired recovery token' })
+    }
+
+    const userDb = getUserDb()
+    const user = await userDb.findByEmail(email)
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    // Update password
+    await userDb.update(user.id, { password_hash: hashPassword(newPassword) })
+    
+    // Delete recovery token
+    sessionsDb.delete(`recovery:${email}`)
+    
+    // Create new session
+    const newToken = generateToken()
+    sessionsDb.set(newToken, {
+      userId: user.id,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000)
+    })
+
+    const { password_hash, ...userWithoutPassword } = user
+    res.json({ token: newToken, user: userWithoutPassword })
+  } catch (err) {
+    console.error('Reset password error:', err)
+    res.status(500).json({ error: 'Failed to reset password' })
   }
 })
 

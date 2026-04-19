@@ -60,9 +60,12 @@ export const useLogout = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: () => {
-      localStorage.removeItem('auth_token')
-      return Promise.resolve()
+    mutationFn: async () => {
+      try {
+        await apiClient.logout()
+      } finally {
+        localStorage.removeItem('auth_token')
+      }
     },
     onSuccess: () => {
       queryClient.setQueryData(queryKeys.user, null)

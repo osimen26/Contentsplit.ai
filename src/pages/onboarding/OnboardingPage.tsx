@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Sparkles, ArrowRight, Check } from 'lucide-react'
+import { apiClient } from '@/services/api-client'
 
 const PERSONAS = [
   { id: 'founder', label: 'Founder / CEO', description: 'Visionary, authoritative, authentic' },
@@ -20,6 +21,7 @@ const OnboardingPage: React.FC = () => {
   const [step, setStep] = useState(1)
   const [persona, setPersona] = useState('')
   const [tone, setTone] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
   
   const navigate = useNavigate()
 
@@ -27,10 +29,18 @@ const OnboardingPage: React.FC = () => {
     if (step === 1 && persona) setStep(2)
   }
 
-  const handleComplete = () => {
-    if (!tone) return
-    // Skip profile update since backend doesn't store persona/tone - go directly to dashboard
-    navigate('/dashboard')
+  const handleComplete = async () => {
+    if (!tone || isSaving) return
+    
+    setIsSaving(true)
+    try {
+      await apiClient.updateUserProfile({ persona, tone })
+      navigate('/dashboard')
+    } catch (err) {
+      console.error('Failed to save preferences:', err)
+      // Still navigate to dashboard even if save fails
+      navigate('/dashboard')
+    }
   }
 
   return (
@@ -194,21 +204,21 @@ const OnboardingPage: React.FC = () => {
               </button>
               <button
                 onClick={handleComplete}
-                disabled={!tone}
+                disabled={!tone || isSaving}
                 style={{
                   flex: 1,
                   padding: '16px',
-                  backgroundColor: !tone ? 'var(--sys-color-neutral-90)' : 'var(--sys-color-neutral-10)',
-                  color: !tone ? 'var(--sys-color-neutral-60)' : 'var(--sys-color-surface-container-lowest)',
+                  backgroundColor: !tone || isSaving ? 'var(--sys-color-neutral-90)' : 'var(--sys-color-neutral-10)',
+                  color: !tone || isSaving ? 'var(--sys-color-neutral-60)' : 'var(--sys-color-surface-container-lowest)',
                   borderRadius: '8px',
                   fontWeight: 600,
                   fontSize: '1rem',
                   border: 'none',
-                  cursor: !tone ? 'not-allowed' : 'pointer',
+                  cursor: !tone || isSaving ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s'
                 }}
               >
-                Finish Setup
+                {isSaving ? 'Saving...' : 'Finish Setup'}
               </button>
             </div>
           </div>
