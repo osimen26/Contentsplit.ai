@@ -34,10 +34,9 @@ const RegisterPage: React.FC = () => {
     setError('')
     try {
       await registerUser({ email, password })
-      // After registration, go directly to dashboard - no need for onboarding
-      navigate('/dashboard')
+      navigate('/onboarding')
     } catch (err) {
-      console.error(err)
+      console.error('Registration error:', err)
       setError('Registration failed. Please try again.')
     }
   }

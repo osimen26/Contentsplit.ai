@@ -61,11 +61,13 @@ const sessionsDb = new Map()
 function getUserDb() {
   return supabase ? {
     async findByEmail(email) {
+      console.log('findByEmail:', email)
       const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('email', email)
         .single()
+      console.log('findByEmail result:', { error: error?.message })
       if (error && error.code !== 'PGRST116') throw error
       return data || null
     },
@@ -79,6 +81,7 @@ function getUserDb() {
       return data || null
     },
     async create(email, password) {
+      console.log('Creating user in Supabase:', email)
       const { data, error } = await supabase
         .from('users')
         .insert({ 
@@ -87,6 +90,12 @@ function getUserDb() {
           tier: 'free'
         })
         .select()
+      console.log('Insert result:', { error: error?.message, data: !!data })
+      if (error) {
+        console.error('Supabase insert error:', error)
+        throw error
+      }
+      return data
         .single()
       if (error) throw error
       return data
@@ -261,11 +270,21 @@ ${inputText}
 // ── ROUTES ───────────────────────────────────────────────────────────────────
 
 // Health check
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
+  let tableStatus = 'unknown'
+  if (supabase) {
+    try {
+      const { error } = await supabase.from('users').select('id').limit(1)
+      tableStatus = error ? error.message : 'ok'
+    } catch (e) {
+      tableStatus = e.message
+    }
+  }
   res.json({ 
     status: 'ok', 
     model: DEEPSEEK_MODEL,
-    database: supabase ? 'connected' : 'mock'
+    database: supabase ? 'connected' : 'mock',
+    table_status: tableStatus
   })
 })
 
@@ -324,6 +343,7 @@ app.post('/api/auth/register', async (req, res) => {
     }
 
     const userDb = getUserDb()
+    console.log('Attempting to register:', email)
     
     // Check if user exists
     const existing = await userDb.findByEmail(email)
@@ -332,7 +352,9 @@ app.post('/api/auth/register', async (req, res) => {
     }
 
     // Create user
+    console.log('Creating user...')
     const user = await userDb.create(email, password)
+    console.log('User created:', user.id)
 
     // Create session
     const token = generateToken()
@@ -350,8 +372,8 @@ app.post('/api/auth/register', async (req, res) => {
       user: userWithoutPassword 
     })
   } catch (err) {
-    console.error('Registration error:', err)
-    res.status(500).json({ error: 'Registration failed' })
+    console.error('Registration error:', err.message, err.stack)
+    res.status(500).json({ error: 'Registration failed: ' + err.message })
   }
 })
 

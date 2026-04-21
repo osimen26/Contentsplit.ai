@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { Wand2, Zap, Layers, Sparkles, Lock, CheckCircle, ArrowRight, MessageSquare, Mail, ChevronDown, Star, EyeOff, Brain, FileLock } from 'lucide-react'
+import { Wand2, Zap, Layers, Sparkles, Lock, CheckCircle, ArrowRight, MessageSquare, Mail, ChevronDown, Star, EyeOff, Brain } from 'lucide-react'
 import { useAuth } from '@contexts/AuthContext'
 import Avatar from '@components/ui/Avatar'
 import '../styles/landing.css'
