@@ -585,6 +585,55 @@ app.get('/api/conversions', requireAuth, async (req, res) => {
   }
 })
 
+// Get single conversion
+app.get('/api/conversions/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params
+
+    if (supabase) {
+      const { data: conversion, error } = await supabase
+        .from('conversions')
+        .select('*')
+        .eq('id', id)
+        .eq('user_id', req.userId)
+        .single()
+
+      if (error) throw error
+      if (!conversion) {
+        return res.status(404).json({ error: 'Conversion not found' })
+      }
+      res.json(conversion)
+    } else {
+      res.status(404).json({ error: 'Conversion not found' })
+    }
+  } catch (err) {
+    console.error('Get conversion error:', err)
+    res.status(500).json({ error: 'Failed to get conversion' })
+  }
+})
+
+// Get outputs for a conversion
+app.get('/api/conversions/:id/outputs', optionalAuth, async (req, res) => {
+  try {
+    const { id } = req.params
+
+    if (supabase) {
+      const { data: outputs, error } = await supabase
+        .from('outputs')
+        .select('*')
+        .eq('conversion_id', id)
+
+      if (error) throw error
+      res.json(outputs || [])
+    } else {
+      res.json([])
+    }
+  } catch (err) {
+    console.error('Get outputs error:', err)
+    res.status(500).json({ error: 'Failed to get outputs' })
+  }
+})
+
 // Regeneration
 app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
   try {
@@ -724,6 +773,30 @@ app.patch('/api/users/profile', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('Update profile error:', err)
     res.status(500).json({ error: 'Failed to update profile' })
+  }
+})
+
+// Update subscription tier
+app.post('/api/users/subscription', requireAuth, async (req, res) => {
+  try {
+    const { tier } = req.body
+    
+    if (!tier || !['free', 'pro', 'agency'].includes(tier)) {
+      return res.status(400).json({ error: 'Invalid tier' })
+    }
+
+    const userDb = getUserDb()
+    const user = await userDb.update(req.userId, { tier })
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    const { password_hash, ...userWithoutPassword } = user
+    res.json(userWithoutPassword)
+  } catch (err) {
+    console.error('Update subscription error:', err)
+    res.status(500).json({ error: 'Failed to update subscription' })
   }
 })
 

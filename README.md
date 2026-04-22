@@ -235,6 +235,72 @@ Required environment variables (see `.env.example`):
 
 ISC License
 
+## Payment System
+
+ContentSplit.ai integrates with **Flutterwave** for Nigerian Naira (NGN) payments, with support for **Stripe** as an alternative.
+
+### Subscription Tiers
+
+| Tier | Price (NGN) | Conversions/Month | Features |
+|------|--------------|------------------|----------|
+| Free | ₦0 | 10/month | Basic tones |
+| Pro | ₦5,000 | 100/month | All tones, Priority support |
+| Agency | ₦15,000 | Unlimited | All tones, Team access, Priority support |
+
+### Flutterwave Setup
+
+1. **Get API Keys**
+   - Go to [Flutterwave Dashboard](https://dashboard.flutterwave.com/dashboard/settings/apis)
+   - Copy your **Public Key** and **Secret Key**
+
+2. **Configure Environment Variables**
+   ```bash
+   # server/.env
+   FLUTTERWAVE_PUBLIC_KEY=your_public_key
+   FLUTTERWAVE_SECRET_KEY=your_secret_key
+   FLUTTERWAVE_SECRET_HASH=your_secret_hash
+   APP_URL=http://localhost:3000
+   ```
+
+3. **Set Up Webhook** (for automatic payment verification)
+   - Go to Flutterwave Dashboard → Settings → Webhooks
+   - Add URL: `https://your-server.com/api/payments/webhook`
+   - Set the secret hash you generated
+
+### Payment Flow
+
+```
+1. User selects plan in app
+2. App calls POST /api/payments/initiate
+3. Server creates Flutterwave payment link
+4. User redirected to Flutterwave checkout
+5. User completes payment
+6. Flutterwave sends webhook to server
+7. Server updates user tier in database
+```
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| GET | `/api/plans` | Get available subscription plans |
+| POST | `/api/payments/initiate` | Create payment link (requires auth) |
+| POST | `/api/payments/webhook` | Flutterwave webhook handler |
+| GET | `/api/payments/verify/:reference` | Verify payment after redirect |
+
+### Stripe Backup (Optional)
+
+Stripe can be used as an alternative. Add keys:
+
+```bash
+# server/.env
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_PRO_PRICE_ID=price_...
+STRIPE_AGENCY_PRICE_ID=price_...
+```
+
+---
+
 ## Support
 
 For issues and feature requests, please use the [GitHub Issues](https://github.com/osimen26/Contentsplit.ai/issues).
