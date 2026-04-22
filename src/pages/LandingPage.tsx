@@ -487,6 +487,153 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section style={{ padding: '96px 5%', backgroundColor: 'var(--sys-color-surface-container-low)' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <h2 className="features-title" style={{ textAlign: 'center', marginBottom: '16px' }}>Simple, transparent pricing</h2>
+          <p style={{ textAlign: 'center', color: 'var(--sys-color-neutral-50)', marginBottom: '48px', fontSize: '1.1rem' }}>
+            Start free. Upgrade when you're ready.
+          </p>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
+            {/* Free Plan */}
+            <div style={{ 
+              padding: '32px', 
+              background: 'var(--sys-color-surface-container-high)', 
+              borderRadius: '16px',
+              border: '1px solid var(--sys-color-neutral-90)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>Starter</h3>
+              <div style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '4px', color: 'var(--sys-color-neutral-10)' }}>
+                Free
+              </div>
+              <p style={{ color: 'var(--sys-color-neutral-50)', fontSize: '0.9rem', marginBottom: '24px' }}>Forever</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> 10 conversions/mo
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Basic tones
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Twitter & LinkedIn
+                </li>
+              </ul>
+              <Link to="/register" style={{ 
+                display: 'block', 
+                padding: '12px 24px', 
+                background: 'transparent', 
+                border: '1px solid var(--sys-color-neutral-80)',
+                borderRadius: '8px',
+                textAlign: 'center',
+                color: 'var(--sys-color-neutral-20)',
+                textDecoration: 'none',
+                fontWeight: 600
+              }}>
+                Get Started
+              </Link>
+            </div>
+
+            {/* Pro Plan */}
+            <div style={{ 
+              padding: '32px', 
+              background: 'var(--sys-color-primary-98)', 
+              borderRadius: '16px',
+              border: '2px solid var(--sys-color-primary-40)',
+              position: 'relative'
+            }}>
+              <div style={{ 
+                position: 'absolute', 
+                top: '-12px', 
+                right: '24px', 
+                background: 'var(--sys-color-primary-40)', 
+                color: 'white',
+                padding: '4px 12px',
+                borderRadius: '12px',
+                fontSize: '0.75rem',
+                fontWeight: 600
+              }}>
+                POPULAR
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '8px', color: 'var(--sys-color-primary-20)' }}>Pro</h3>
+              <div style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '4px', color: 'var(--sys-color-primary-20)' }}>
+                {'5,000 NGN'}
+                <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--sys-color-neutral-50)' }}>/mo</span>
+              </div>
+              <p style={{ color: 'var(--sys-color-neutral-50)', fontSize: '0.9rem', marginBottom: '24px' }}>Billed monthly</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> 100 conversions/mo
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> All tones
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> All platforms
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Priority support
+                </li>
+              </ul>
+              <Link to="/register?plan=pro" style={{ 
+                display: 'block', 
+                padding: '12px 24px', 
+                background: 'var(--sys-color-primary-40)', 
+                borderRadius: '8px',
+                textAlign: 'center',
+                color: 'white',
+                textDecoration: 'none',
+                fontWeight: 600
+              }}>
+                Upgrade to Pro
+              </Link>
+            </div>
+
+            {/* Agency Plan */}
+            <div style={{ 
+              padding: '32px', 
+              background: 'var(--sys-color-surface-container-high)', 
+              borderRadius: '16px',
+              border: '1px solid var(--sys-color-neutral-90)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>Agency</h3>
+              <div style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '4px', color: 'var(--sys-color-neutral-10)' }}>
+                {'15000 NGN'}
+                <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--sys-color-neutral-50)' }}>/mo</span>
+              </div>
+              <p style={{ color: 'var(--sys-color-neutral-50)', fontSize: '0.9rem', marginBottom: '24px' }}>Billed monthly</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Unlimited conversions
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> All tones
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Team access
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Priority support
+                </li>
+              </ul>
+              <Link to="/register?plan=agency" style={{ 
+                display: 'block', 
+                padding: '12px 24px', 
+                background: 'transparent', 
+                border: '1px solid var(--sys-color-neutral-80)',
+                borderRadius: '8px',
+                textAlign: 'center',
+                color: 'var(--sys-color-neutral-20)',
+                textDecoration: 'none',
+                fontWeight: 600
+              }}>
+                Upgrade to Agency
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Section */}
       <section style={{ padding: 'var(--sys-spacing-4xl) 5%', backgroundColor: 'var(--sys-color-primary-99)' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>

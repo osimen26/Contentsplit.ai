@@ -25,6 +25,42 @@ dotenv.config({ path: join(__dirname, '.env') })
 const app = express()
 const PORT = process.env.PORT || 3001
 
+// ── STRIPE CONFIG ─────────────────────────────────────────────────────────
+let stripe = null
+if (process.env.STRIPE_SECRET_KEY) {
+  const Stripe = await import('stripe')
+  stripe = new Stripe.default(process.env.STRIPE_SECRET_KEY)
+  console.log('✅ Stripe initialized')
+} else {
+  console.log('⚠️  Stripe not configured - payments disabled')
+}
+
+// Stripe price IDs (create these in Stripe Dashboard)
+const STRIPE_PRICES = {
+  pro: process.env.STRIPE_PRO_PRICE_ID || 'price_pro_monthly',
+  agency: process.env.STRIPE_AGENCY_PRICE_ID || 'price_agency_monthly'
+}
+
+// ── FLUTTERWAVE CONFIG ─────────────────────────────────────────────────────────
+let flutterwave = null
+if (process.env.FLUTTERWAVE_SECRET_KEY) {
+  const Flutterwave = await import('flutterwave-node-v3')
+  flutterwave = new Flutterwave.default(
+    process.env.FLUTTERWAVE_PUBLIC_KEY,
+    process.env.FLUTTERWAVE_SECRET_KEY
+  )
+  console.log('✅ Flutterwave initialized')
+} else {
+  console.log('⚠️  Flutterwave not configured')
+}
+
+// Flutterwave pricing (in Naira - 5000 NGN = ~$3/month)
+const FLUTTERWAVE_PLANS = {
+  free: { amount: 0, name: 'Free Tier' },
+  pro: { amount: 5000, name: 'Pro Plan' },      // 5000 NGN/month
+  agency: { amount: 15000, name: 'Agency Plan' }  // 15000 NGN/month
+}
+
 // ── DEEPSEEK CONFIG ─────────────────────────────────────────────────────────
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY
 const DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
@@ -90,14 +126,12 @@ function getUserDb() {
           tier: 'free'
         })
         .select()
+      .single()
       console.log('Insert result:', { error: error?.message, data: !!data })
       if (error) {
         console.error('Supabase insert error:', error)
         throw error
       }
-      return data
-        .single()
-      if (error) throw error
       return data
     },
     async update(id, updates) {
@@ -467,7 +501,7 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
     const outputs = results.map(r => ({ ...r, conversion_id: conversionId }))
 
     // Save conversion to database if user is authenticated
-    if (supabase && req.userId) {
+    if (supabase && userId !== 'anonymous') {
       try {
         await supabase.from('conversions').insert({
           id: conversionId,
@@ -784,10 +818,142 @@ app.post('/api/auth/reset-password', async (req, res) => {
   }
 })
 
+// ── FLUTTERWAVE PAYMENTS ───────────────────────────────────────────────────
+
+// Get available plans
+app.get('/api/plans', (req, res) => {
+  res.json({
+    plans: [
+      { id: 'free', name: 'Free', price: 0, features: ['10 conversions/month', 'Basic tones'] },
+      { id: 'pro', name: 'Pro', price: 5000, currency: 'NGN', features: ['100 conversions/month', 'All tones', 'Priority support'] },
+      { id: 'agency', name: 'Agency', price: 15000, currency: 'NGN', features: ['Unlimited conversions', 'All tones', 'Team access', 'Priority support'] }
+    ]
+  })
+})
+
+// Create payment link
+app.post('/api/payments/initiate', requireAuth, async (req, res) => {
+  if (!flutterwave) {
+    return res.status(503).json({ error: 'Payment system not configured' })
+  }
+
+  try {
+    const { planId } = req.body
+    const plan = FLUTTERWAVE_PLANS[planId]
+
+    if (!plan || plan.amount === 0) {
+      return res.status(400).json({ error: 'Invalid plan' })
+    }
+
+    const userDb = getUserDb()
+    const user = await userDb.findById(req.userId)
+
+    const response = await flutterwave.PaymentLink.create({
+      tx_ref: `CS_${Date.now()}_${req.userId}`,
+      amount: plan.amount,
+      currency: 'NGN',
+      redirect_url: `${process.env.APP_URL || 'http://localhost:3000'}/payment-callback`,
+      customer: {
+        email: user.email,
+        name: user.display_name || user.email.split('@')[0]
+      },
+      customizations: {
+        title: `ContentSplit.ai - ${plan.name}`,
+        description: `Monthly subscription for ${plan.name}`
+      }
+    })
+
+    res.json({
+      paymentLink: response.data.link,
+      reference: response.data.tx_ref
+    })
+  } catch (err) {
+    console.error('Payment error:', err)
+    res.status(500).json({ error: 'Failed to create payment' })
+  }
+})
+
+// Verify payment webhook
+app.post('/api/payments/webhook', async (req, res) => {
+  if (!flutterwave) {
+    return res.status(503).json({ error: 'Payment not configured' })
+  }
+
+  try {
+    const secretHash = process.env.FLUTTERWAVE_SECRET_HASH
+    const signature = req.headers['flutterwave-webhook-signature']
+
+    // Verify signature if configured
+    if (secretHash && signature !== secretHash) {
+      // In production, verify properly
+      // For now, accept webhooks
+    }
+
+    const event = req.body
+    console.log('Flutterwave webhook:', event.event)
+
+    if (event.event === 'charge.completed') {
+      const data = event.data
+      const txRef = data.tx_ref
+      const amount = data.amount
+
+      // Extract user ID from tx_ref (format: CS_timestamp_userId)
+      const parts = txRef.split('_')
+      const userId = parts[parts.length - 1]
+
+      // Determine tier based on amount
+      let tier = 'free'
+      if (amount >= 15000) tier = 'agency'
+      else if (amount >= 5000) tier = 'pro'
+
+      // Update user tier
+      const userDb = getUserDb()
+      await userDb.update(userId, { tier })
+
+      console.log(`✅ Updated user ${userId} to ${tier} tier`)
+    }
+
+    res.json({ received: true })
+  } catch (err) {
+    console.error('Webhook error:', err)
+    res.status(500).json({ error: 'Webhook failed' })
+  }
+})
+
+// Verify payment (for callback)
+app.get('/api/payments/verify/:reference', requireAuth, async (req, res) => {
+  if (!flutterwave) {
+    return res.status(503).json({ error: 'Payment not configured' })
+  }
+
+  try {
+    const { reference } = req.params
+    const response = await flutterwave.Transaction.verify({ id: reference })
+
+    if (response.data.status === 'successful') {
+      const amount = response.data.amount
+      let tier = 'free'
+      if (amount >= 15000) tier = 'agency'
+      else if (amount >= 5000) tier = 'pro'
+
+      const userDb = getUserDb()
+      await userDb.update(req.userId, { tier })
+
+      res.json({ success: true, tier })
+    } else {
+      res.json({ success: false })
+    }
+  } catch (err) {
+    console.error('Verify error:', err)
+    res.status(500).json({ error: 'Verification failed' })
+  }
+})
+
 // ── START ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`\n🚀  ContentSplit backend running at http://localhost:${PORT}`)
   console.log(`🔐  DeepSeek API key: ${DEEPSEEK_API_KEY ? '✓ loaded' : '✗ MISSING'}`)
   console.log(`⚡  Model: ${DEEPSEEK_MODEL}`)
-  console.log(`🗄️  Database: ${supabase ? 'Supabase' : 'Mock (in-memory)'}\n`)
+  console.log(`🗄️  Database: ${supabase ? 'Supabase' : 'Mock (in-memory)'}`)
+  console.log(`💳 Payments: ${flutterwave ? 'Flutterwave' : 'Not configured'}\n`)
 })

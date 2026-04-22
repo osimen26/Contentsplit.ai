@@ -14,6 +14,14 @@ export interface User {
   tone?: string
 }
 
+export interface Plan {
+  id: string
+  name: string
+  price: number
+  currency?: string
+  features: string[]
+}
+
 export interface Conversion {
   id: string
   user_id: string
@@ -177,6 +185,22 @@ class ApiClient {
     conversions_this_month: number
   }> {
     const response = await this.client.get('/users/usage')
+    return response.data
+  }
+
+  // Plans & Payments
+  async getPlans(): Promise<{ plans: Plan[] }> {
+    const response = await this.client.get('/plans')
+    return response.data
+  }
+
+  async initiatePayment(planId: string): Promise<{ paymentLink: string; reference: string }> {
+    const response = await this.client.post('/payments/initiate', { planId })
+    return response.data
+  }
+
+  async verifyPayment(reference: string): Promise<{ success: boolean; tier: string }> {
+    const response = await this.client.get(`/payments/verify/${reference}`)
     return response.data
   }
 
