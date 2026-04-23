@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
-import { useCurrentUser } from '@/services/query-hooks'
-import { TierUsagePanel } from '@components/application'
+import { useCurrentUser, useUpdateProfile } from '@/services/query-hooks'
+import { useTheme } from '@/contexts/ThemeContext'
+import { User, Palette, CreditCard } from 'lucide-react'
 
-type SettingsSection = 'general' | 'account' | 'billing' | 'notifications'
+type SettingsSection = 'account' | 'appearance' | 'billing'
 
-const NAV_ITEMS: { id: SettingsSection; label: string }[] = [
-  { id: 'general', label: 'General' },
-  { id: 'account', label: 'Account' },
-  { id: 'notifications', label: 'Notifications' },
-  { id: 'billing', label: 'Billing' },
+const NAV_ITEMS: { id: SettingsSection; label: string; icon: React.ReactNode }[] = [
+  { id: 'account', label: 'Account', icon: <User size={18} /> },
+  { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
+  { id: 'billing', label: 'Billing', icon: <CreditCard size={18} /> },
 ]
 
-// Small iOS-style toggle
 const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = ({ checked, onChange }) => (
   <button
     role="switch"
@@ -66,15 +65,74 @@ const SectionDivider: React.FC<{ title: string; subtitle?: string }> = ({ title,
   </div>
 )
 
-const GeneralSection: React.FC = () => {
+const ThemeModeSelector: React.FC = () => {
+  const { theme, setTheme } = useTheme()
+  const modes: Array<{ id: 'light' | 'dark' | 'system'; label: string }> = [
+    { id: 'light', label: 'Light' },
+    { id: 'dark', label: 'Dark' },
+    { id: 'system', label: 'System' },
+  ]
+
+  return (
+    <div style={{ display: 'flex', gap: 12 }}>
+      {modes.map(mode => {
+        const isSelected = theme === mode.id
+        return (
+          <button
+            key={mode.id}
+            onClick={() => setTheme(mode.id)}
+            style={{
+              width: 100, padding: '10px 0',
+              borderRadius: 10,
+              border: isSelected ? '2px solid var(--sys-color-primary-40)' : '1px solid var(--sys-color-border-tertiary)',
+              backgroundColor: mode.id === 'dark' ? '#1a1a1a' : mode.id === 'system' ? 'linear-gradient(135deg,#fff 50%,#1a1a1a 50%)' : 'var(--sys-color-neutral-98)',
+              color: mode.id === 'dark' ? 'white' : 'var(--sys-color-neutral-20)',
+              fontSize: '0.8rem', fontWeight: 500,
+              cursor: 'pointer',
+              transition: 'border-color 0.15s',
+            }}
+          >
+            {mode.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+const AccountSection: React.FC = () => {
   const { data: user } = useCurrentUser()
+  const updateProfile = useUpdateProfile()
   const username = (user?.email || 'user@example.com').split('@')[0]
   const initials = username.slice(0, 2).toUpperCase()
   const tier = user?.tier === 'pro' ? 'Pro' : user?.tier === 'agency' ? 'Enterprise' : 'Free'
   const [notifications, setNotifications] = useState({ responses: true, dispatch: false })
-  const [displayName, setDisplayName] = useState(username)
-  const [nickname, setNickname]       = useState(username)
-  const [bio, setBio]                 = useState('')
+
+  const getInitialValues = () => ({
+    displayName: user?.displayName || username,
+    nickname: user?.nickname || username,
+    bio: user?.preferences || '',
+  })
+
+  const [initialValues] = useState(getInitialValues)
+  const [displayName, setDisplayName] = useState(initialValues.displayName)
+  const [nickname, setNickname] = useState(initialValues.nickname)
+  const [bio, setBio] = useState(initialValues.bio)
+
+  const handleSave = () => {
+    updateProfile.mutate({
+      displayName,
+      nickname,
+      preferences: bio,
+    })
+  }
+
+  const handleCancel = () => {
+    const reset = getInitialValues()
+    setDisplayName(reset.displayName)
+    setNickname(reset.nickname)
+    setBio(reset.bio)
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
@@ -207,10 +265,20 @@ const GeneralSection: React.FC = () => {
             borderTop: '1px solid var(--sys-color-border-tertiary)',
             marginTop: 4,
           }}>
-            <button className="button button-filled" style={{ padding: '10px 28px', fontWeight: 600, fontSize: '0.9rem' }}>
-              Save changes
+            <button
+              className="button button-filled"
+              onClick={handleSave}
+              disabled={updateProfile.isPending}
+              style={{ padding: '10px 28px', fontWeight: 600, fontSize: '0.9rem' }}
+            >
+              {updateProfile.isPending ? 'Saving...' : 'Save changes'}
             </button>
-            <button className="button button-outlined" style={{ padding: '10px 20px', fontWeight: 500, fontSize: '0.9rem' }}>
+            <button
+              className="button button-outlined"
+              onClick={handleCancel}
+              disabled={updateProfile.isPending}
+              style={{ padding: '10px 20px', fontWeight: 500, fontSize: '0.9rem' }}
+            >
               Cancel
             </button>
           </div>
@@ -256,24 +324,7 @@ const GeneralSection: React.FC = () => {
         <SectionDivider title="Appearance" />
         <div>
           <p style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--sys-color-neutral-20)', marginBottom: 12 }}>Color mode</p>
-          <div style={{ display: 'flex', gap: 12 }}>
-            {['Light', 'Dark', 'System'].map(mode => (
-              <button
-                key={mode}
-                style={{
-                  width: 100, padding: '10px 0',
-                  borderRadius: 10,
-                  border: mode === 'Light' ? '2px solid var(--sys-color-primary-40)' : '1px solid var(--sys-color-border-tertiary)',
-                  backgroundColor: mode === 'Dark' ? '#1a1a1a' : mode === 'System' ? 'linear-gradient(135deg,#fff 50%,#1a1a1a 50%)' : 'var(--sys-color-neutral-98)',
-                  color: mode === 'Dark' ? 'white' : 'var(--sys-color-neutral-20)',
-                  fontSize: '0.8rem', fontWeight: 500,
-                  cursor: 'pointer',
-                }}
-              >
-                {mode}
-              </button>
-            ))}
-          </div>
+          <ThemeModeSelector />
         </div>
       </section>
     </div>
@@ -281,98 +332,129 @@ const GeneralSection: React.FC = () => {
 }
 
 const SettingsPage: React.FC = () => {
-  const [active, setActive] = useState<SettingsSection>('general')
+  const [active, setActive] = useState<SettingsSection>('account')
 
   return (
     <div style={{
       display: 'flex', height: '100%', overflow: 'hidden',
-      backgroundColor: 'var(--sys-color-neutral-99)',
+      backgroundColor: 'var(--sys-color-neutral-100)',
     }}>
 
-      {/* Left Nav */}
+      {/* Left Nav - Claude inspired sidebar */}
       <nav style={{
-        width: 200, flexShrink: 0,
-        padding: '40px 24px',
+        width: 220, flexShrink: 0,
+        padding: '24px 12px',
         borderRight: '1px solid var(--sys-color-border-tertiary)',
-        display: 'flex', flexDirection: 'column', gap: 0,
+        display: 'flex', flexDirection: 'column', gap: 2,
         overflowY: 'auto',
+        backgroundColor: 'var(--sys-color-neutral-100)',
       }}>
-        <h1 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)', marginBottom: 24 }}>Settings</h1>
-        {NAV_ITEMS.map(item => (
-          <button
-            key={item.id}
-            onClick={() => setActive(item.id)}
-            style={{
-              display: 'block', width: '100%',
-              textAlign: 'left',
-              padding: '8px 12px',
-              marginBottom: 2,
-              borderRadius: 7,
-              border: 'none',
-              backgroundColor: active === item.id ? 'var(--sys-color-neutral-90)' : 'transparent',
-              color: active === item.id ? 'var(--sys-color-neutral-10)' : 'var(--sys-color-neutral-40)',
-              fontSize: '0.9rem',
-              fontWeight: active === item.id ? 500 : 400,
-              cursor: 'pointer',
-              transition: 'background-color 0.15s',
-            }}
-            onMouseEnter={e => { if (active !== item.id) e.currentTarget.style.backgroundColor = 'var(--sys-color-neutral-93)' }}
-            onMouseLeave={e => { if (active !== item.id) e.currentTarget.style.backgroundColor = 'transparent' }}
-          >
-            {item.label}
-          </button>
-        ))}
+        <h1 style={{ 
+          fontSize: '1.1rem', 
+          fontWeight: 600, 
+          color: 'var(--sys-color-neutral-10)', 
+          marginBottom: 24,
+          padding: '0 12px',
+        }}>
+          Settings
+        </h1>
+        {NAV_ITEMS.map(item => {
+          const isActive = active === item.id
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActive(item.id)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                width: '100%',
+                textAlign: 'left',
+                padding: '10px 12px',
+                borderRadius: 8,
+                border: 'none',
+                backgroundColor: isActive ? 'var(--sys-color-neutral-90)' : 'transparent',
+                color: isActive ? 'var(--sys-color-neutral-10)' : 'var(--sys-color-neutral-40)',
+                fontSize: '0.9rem',
+                fontWeight: isActive ? 500 : 400,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <span style={{ 
+                color: isActive ? 'var(--sys-color-primary-50)' : 'var(--sys-color-neutral-40)',
+                display: 'flex',
+              }}>
+                {item.icon}
+              </span>
+              {item.label}
+            </button>
+          )
+        })}
       </nav>
 
       {/* Main Content */}
-      <main style={{ flex: 1, padding: '40px 48px', overflowY: 'auto', maxWidth: 760 }}>
-        {active === 'general' && <GeneralSection />}
-        {active === 'account' && (
-          <div>
-            <SectionDivider title="Account" />
-            <p style={{ color: 'var(--sys-color-neutral-50)' }}>Account settings coming soon.</p>
-          </div>
-        )}
-        {active === 'notifications' && (
-          <div>
-            <SectionDivider title="Notifications" />
-            <p style={{ color: 'var(--sys-color-neutral-50)' }}>Notification preferences are available in General.</p>
-          </div>
-        )}
-        {active === 'billing' && (
-          <TierUsagePanel
-            currentPlan={{
-              title: 'Free Plan',
-              badge: 'Active',
-              description: 'You are on the free tier with limited monthly credits.',
-              features: [
-                { id: '1', text: '5,000 credits/month' },
-                { id: '2', text: 'Twitter, LinkedIn, Instagram, Email' },
-                { id: '3', text: 'Community support' },
-              ],
-            }}
-            usageStats={[
-              { id: 'credits', title: 'Credits Used', value: '1,234', label: 'of 5,000 total', progress: 25 },
-              { id: 'conversions', title: 'Conversions', value: '12', label: 'this month', progress: 24 },
-              { id: 'success', title: 'Success Rate', value: '94%', label: 'average', progress: 94 },
-            ]}
-            upgradeOptions={[
-              {
-                id: 'pro', title: 'Pro', price: '$19', period: 'month',
-                features: [
-                  { id: 'f1', text: '30,000 credits/month' },
-                  { id: 'f2', text: 'Priority support' },
-                  { id: 'f3', text: 'Advanced analytics' },
-                ],
-                buttonText: 'Upgrade to Pro',
-              },
-            ]}
-            billingInfo={{ nextBillingDate: '—', paymentMethod: 'None', billingEmail: '' }}
-          />
-        )}
+      <main style={{ 
+        flex: 1, 
+        padding: '32px 40px', 
+        overflowY: 'auto', 
+        maxWidth: 680,
+      }}>
+        {active === 'account' && <AccountSection />}
+        {active === 'appearance' && <AppearanceSection />}
+        {active === 'billing' && <BillingSection />}
       </main>
     </div>
   )
 }
+
+// Appearance section component
+const AppearanceSection: React.FC = () => {
+  const { theme, setTheme } = useTheme()
+  const modes: Array<{ id: 'light' | 'dark' | 'system'; label: string }> = [
+    { id: 'light', label: 'Light' },
+    { id: 'dark', label: 'Dark' },
+    { id: 'system', label: 'System' },
+  ]
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <SectionDivider title="Appearance" subtitle="Customize how ContentSplit looks." />
+      <section>
+        <p style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--sys-color-neutral-20)', marginBottom: 12 }}>Color mode</p>
+        <div style={{ display: 'flex', gap: 12 }}>
+          {modes.map(mode => {
+            const isSelected = theme === mode.id
+            return (
+              <button
+                key={mode.id}
+                onClick={() => setTheme(mode.id)}
+                style={{
+                  width: 100, padding: '12px 0',
+                  borderRadius: 10,
+                  border: isSelected ? '2px solid var(--sys-color-primary-40)' : '1px solid var(--sys-color-border-tertiary)',
+                  backgroundColor: mode.id === 'dark' ? '#1a1a1a' : mode.id === 'system' ? 'linear-gradient(135deg,#fff 50%,#1a1a1a 50%)' : 'var(--sys-color-neutral-98)',
+                  color: mode.id === 'dark' ? 'white' : 'var(--sys-color-neutral-20)',
+                  fontSize: '0.85rem', fontWeight: 500,
+                  cursor: 'pointer',
+                }}
+              >
+                {mode.label}
+              </button>
+            )
+          })}
+        </div>
+      </section>
+    </div>
+  )
+}
+
+// Billing section placeholder  
+const BillingSection: React.FC = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+    <SectionDivider title="Billing" subtitle="Manage your subscription and credits." />
+    <p style={{ color: 'var(--sys-color-neutral-50)' }}>Billing settings coming soon.</p>
+  </div>
+)
 
 export default SettingsPage

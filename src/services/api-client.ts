@@ -7,6 +7,21 @@ export interface User {
   tier: 'free' | 'pro' | 'agency'
   created_at: string
   oauth_provider?: string
+  displayName?: string
+  nickname?: string
+  preferences?: string
+  persona?: string
+  tone?: string
+  firstName?: string
+  lastName?: string
+}
+
+export interface Plan {
+  id: string
+  name: string
+  price: number
+  currency?: string
+  features: string[]
 }
 
 export interface Conversion {
@@ -101,13 +116,27 @@ class ApiClient {
     return response.data
   }
 
-  async register(email: string, password: string): Promise<{ token: string; user: User }> {
-    const response = await this.client.post('/auth/register', { email, password })
+  async register(email: string, password: string, firstName?: string, lastName?: string): Promise<{ token: string; user: User }> {
+    const response = await this.client.post('/auth/register', { email, password, firstName, lastName })
     return response.data
   }
 
   async getCurrentUser(): Promise<User> {
     const response = await this.client.get('/auth/me')
+    return response.data
+  }
+
+  async logout(): Promise<void> {
+    await this.client.post('/auth/logout')
+  }
+
+  async recoverPassword(email: string): Promise<{ success: boolean; message: string }> {
+    const response = await this.client.post('/auth/recover', { email })
+    return response.data
+  }
+
+  async resetPassword(email: string, token: string, newPassword: string): Promise<{ token: string; user: User }> {
+    const response = await this.client.post('/auth/reset-password', { email, token, newPassword })
     return response.data
   }
 
@@ -158,6 +187,22 @@ class ApiClient {
     conversions_this_month: number
   }> {
     const response = await this.client.get('/users/usage')
+    return response.data
+  }
+
+  // Plans & Payments
+  async getPlans(): Promise<{ plans: Plan[] }> {
+    const response = await this.client.get('/plans')
+    return response.data
+  }
+
+  async initiatePayment(planId: string): Promise<{ paymentLink: string; reference: string }> {
+    const response = await this.client.post('/payments/initiate', { planId })
+    return response.data
+  }
+
+  async verifyPayment(reference: string): Promise<{ success: boolean; tier: string }> {
+    const response = await this.client.get(`/payments/verify/${reference}`)
     return response.data
   }
 

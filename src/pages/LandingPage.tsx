@@ -1,8 +1,85 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { Wand2, Zap, Layers, Sparkles, Shield, Lock, CheckCircle, ArrowRight, MessageSquare, Mail } from 'lucide-react'
+import { Wand2, Zap, Layers, Sparkles, Lock, CheckCircle, ArrowRight, MessageSquare, Mail, ChevronDown, Star, EyeOff, Brain } from 'lucide-react'
 import { useAuth } from '@contexts/AuthContext'
+import Avatar from '@components/ui/Avatar'
 import '../styles/landing.css'
+
+interface FAQItemProps {
+  question: string
+  answer: string
+}
+
+const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const toggle = () => setIsOpen(!isOpen)
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      toggle()
+    }
+  }
+
+  return (
+    <div 
+      style={{ 
+        background: 'var(--sys-color-neutral-99)', 
+        padding: 'var(--sys-spacing-lg)', 
+        borderRadius: 'var(--sys-radius-card)', 
+        border: '1px solid var(--sys-color-neutral-90)',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+      }}
+      onClick={toggle}
+      onKeyDown={handleKeyDown}
+      role="button"
+      aria-expanded={isOpen}
+      tabIndex={0}
+      onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--sys-color-neutral-80)'}
+      onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--sys-color-neutral-90)'}
+      onFocus={(e) => e.currentTarget.style.outline = '2px solid var(--sys-color-primary)'}
+      onBlur={(e) => e.currentTarget.style.outline = 'none'}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--sys-spacing-md)' }}>
+        <h4 style={{ 
+          fontSize: 'var(--sys-font-title-small-regular-font-size)', 
+          fontWeight: 600, 
+          margin: 0,
+          color: 'var(--sys-color-neutral-10)' 
+        }}>
+          {question}
+        </h4>
+        <ChevronDown 
+          size={20} 
+          color="var(--sys-color-neutral-40)"
+          style={{ 
+            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s ease',
+            flexShrink: 0
+          }} 
+        />
+      </div>
+      <div 
+        style={{ 
+          maxHeight: isOpen ? '200px' : '0',
+          overflow: 'hidden',
+          transition: 'max-height 0.3s ease, margin-top 0.3s ease',
+          marginTop: isOpen ? 'var(--sys-spacing-md)' : '0',
+        }}
+      >
+        <p style={{ 
+          color: 'var(--sys-color-neutral-50)', 
+          lineHeight: 1.6,
+          margin: 0,
+          fontSize: 'var(--sys-font-body-text-regular-font-size)',
+        }}>
+          {answer}
+        </p>
+      </div>
+    </div>
+  )
+}
 
 const TwitterIcon = ({ size, color }: { size: number, color: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
@@ -269,69 +346,319 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* NEW SECTION: Social Proof / Testimonials */}
+      {/* Social Proof / Testimonials */}
       <section style={{ padding: '96px 5%', backgroundColor: 'var(--sys-color-surface-container-low)', textAlign: 'center' }}>
-        <h2 className="features-title" style={{ marginBottom: '64px' }}>Loved by growth teams and solo-creators alike</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px', maxWidth: '1100px', margin: '0 auto', textAlign: 'left' }}>
-          <div style={{ background: 'var(--sys-color-surface-container-lowest)', padding: '32px', borderRadius: '16px', boxShadow: 'var(--sys-elevation-1)' }}>
-            <p style={{ fontStyle: 'italic', color: 'var(--sys-color-neutral-30)', marginBottom: '24px', lineHeight: 1.6 }}>"ContentSplit has entirely reshaped the way I approach content. It saves me over 10 hours a week—I literally just paste my raw brain dumps and it hands me perfect threads. Absolutely elite tool."</p>
-            <div style={{ fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>Sarah J.</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Growth Marketer</div>
+        <h2 className="features-title" style={{ marginBottom: '64px' }}>Join 10,000+ creators who save 10+ hours/week</h2>
+        
+        <style>{`
+          .testimonial-card {
+            background: var(--sys-color-surface-container-lowest);
+            padding: 32px;
+            borderRadius: 16px;
+            boxShadow: var(--sys-elevation-1);
+            textAlign: left;
+            transition: all 0.3s ease;
+            cursor: default;
+            border: 1px solid transparent;
+            display: flex;
+            flex-direction: column;
+          }
+          .testimonial-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px -10px rgba(107, 97, 231, 0.2);
+            border-color: var(--sys-color-roles-primary-color-role-primary-role);
+            background: var(--sys-color-primary-99);
+          }
+          .star-rating {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 16px;
+          }
+          .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            color: var(--sys-color-success);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+          .metric-tag {
+            display: inline-block;
+            background: var(--sys-color-primary-95);
+            color: var(--sys-color-primary);
+            padding: 4px 10px;
+            borderRadius: 20px;
+            fontSize: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+          }
+        `}</style>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', maxWidth: '1100px', margin: '0 auto' }}>
+          {/* Sarah J. */}
+          <div className="testimonial-card">
+            <div className="star-rating">
+              {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="var(--sys-color-roles-accent-color-role-accent-role)" color="var(--sys-color-roles-accent-color-role-accent-role)" />)}
+            </div>
+            <div style={{ marginBottom: '12px' }}>
+              <span className="metric-tag">10 hrs/week saved</span>
+              <span className="metric-tag">Verified User</span>
+            </div>
+            <p style={{ fontStyle: 'italic', color: 'var(--sys-color-neutral-10)', marginBottom: '24px', lineHeight: 1.6, fontSize: '1rem' }}>
+              "ContentSplit has entirely reshaped the way I approach content. It saves me over 10 hours a week—I literally just paste my raw brain dumps and it hands me perfect threads. Absolutely elite tool."
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: 'auto' }}>
+              <Avatar name="Sarah J." src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80" />
+              <div>
+                <div style={{ fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>Sarah J.</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Growth Marketer at TechFlow</div>
+              </div>
+            </div>
           </div>
-          <div style={{ background: 'var(--sys-color-surface-container-lowest)', padding: '32px', borderRadius: '16px', boxShadow: 'var(--sys-elevation-1)' }}>
-            <p style={{ fontStyle: 'italic', color: 'var(--sys-color-neutral-30)', marginBottom: '24px', lineHeight: 1.6 }}>"I'm deeply impressed by how good the generated replies are. The Brand Voice engine actually gets it right. It sounds exactly like me, preventing endless editing."</p>
-            <div style={{ fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>Marcus D.</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>SaaS Founder</div>
+
+          {/* Marcus D. */}
+          <div className="testimonial-card">
+            <div className="star-rating">
+              {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="var(--sys-color-roles-accent-color-role-accent-role)" color="var(--sys-color-roles-accent-color-role-accent-role)" />)}
+            </div>
+            <div style={{ marginBottom: '12px' }}>
+              <span className="metric-tag">Brand Voice</span>
+              <span className="metric-tag">Verified User</span>
+            </div>
+            <p style={{ fontStyle: 'italic', color: 'var(--sys-color-neutral-10)', marginBottom: '24px', lineHeight: 1.6, fontSize: '1rem' }}>
+              "I'm deeply impressed by how good the generated replies are. The Brand Voice engine actually gets it right. It sounds exactly like me, preventing endless editing."
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: 'auto' }}>
+              <Avatar name="Marcus D." src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80" />
+              <div>
+                <div style={{ fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>Marcus D.</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Founder, LaunchPad</div>
+              </div>
+            </div>
           </div>
-          <div style={{ background: 'var(--sys-color-surface-container-lowest)', padding: '32px', borderRadius: '16px', boxShadow: 'var(--sys-elevation-1)' }}>
-            <p style={{ fontStyle: 'italic', color: 'var(--sys-color-neutral-30)', marginBottom: '24px', lineHeight: 1.6 }}>"Instead of paying a social media manager $2,000/mo, I use this. The parallel processing gives me 5 platforms of content in 15 seconds. Unbelievable ROI."</p>
-            <div style={{ fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>Elena W.</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Content Agency Owner</div>
+
+          {/* Elena W. */}
+          <div className="testimonial-card">
+            <div className="star-rating">
+              {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="var(--sys-color-roles-accent-color-role-accent-role)" color="var(--sys-color-roles-accent-color-role-accent-role)" />)}
+            </div>
+            <div style={{ marginBottom: '12px' }}>
+              <span className="metric-tag">$2,000/mo saved</span>
+              <span className="metric-tag">15 seconds</span>
+            </div>
+            <p style={{ fontStyle: 'italic', color: 'var(--sys-color-neutral-10)', marginBottom: '24px', lineHeight: 1.6, fontSize: '1rem' }}>
+              "Instead of paying a social media manager $2,000/mo, I use this. The parallel processing gives me 5 platforms of content in 15 seconds. Unbelievable ROI."
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: 'auto' }}>
+              <Avatar name="Elena W." src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80" />
+              <div>
+                <div style={{ fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>Elena W.</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Owner, ContentAgency Co</div>
+              </div>
+            </div>
           </div>
+
         </div>
       </section>
 
       {/* Security Section */}
       <section style={{ padding: '96px 5%', backgroundColor: 'var(--sys-color-surface-container-lowest)' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
-          <h2 className="features-title" style={{ marginBottom: '64px' }}>Enterprise-grade boundaries for your IP</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '32px', textAlign: 'left' }}>
-            <div>
-              <Lock size={32} color="var(--sys-color-neutral-40)" style={{ marginBottom: '16px' }} />
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '8px' }}>End-to-End Encryption</h3>
-              <p style={{ color: 'var(--sys-color-neutral-50)' }}>Your proprietary drafts and thoughts are strictly encrypted in transit and at rest.</p>
+          <h2 className="features-title" style={{ marginBottom: '64px' }}>Your content, your control</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px', textAlign: 'left' }}>
+            <div style={{ padding: '32px', background: 'var(--sys-color-neutral-99)', borderRadius: '16px', border: '1px solid var(--sys-color-neutral-90)' }}>
+              <Lock size={40} color="var(--sys-color-primary)" style={{ marginBottom: '16px' }} />
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>Bank-level encryption</h3>
+              <p style={{ color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>AES-256 encryption at rest, TLS 1.3 in transit. Same standard banks use to protect your data.</p>
             </div>
-            <div>
-              <Shield size={32} color="var(--sys-color-neutral-40)" style={{ marginBottom: '16px' }} />
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '8px' }}>Absolute Privacy</h3>
-              <p style={{ color: 'var(--sys-color-neutral-50)' }}>We never train public AI models on your private drafts or internal business communication.</p>
+            <div style={{ padding: '32px', background: 'var(--sys-color-neutral-99)', borderRadius: '16px', border: '1px solid var(--sys-color-neutral-90)' }}>
+              <EyeOff size={40} color="var(--sys-color-primary)" style={{ marginBottom: '16px' }} />
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>We never share your data</h3>
+              <p style={{ color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>Your drafts never leave our systems without your permission. Your content stays private.</p>
             </div>
-            <div>
-              <CheckCircle size={32} color="var(--sys-color-neutral-40)" style={{ marginBottom: '16px' }} />
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '8px' }}>SOC-Secure Architecture</h3>
-              <p style={{ color: 'var(--sys-color-neutral-50)' }}>Secured entirely by industry-best encryption parameters via our advanced, isolated proxy layer.</p>
+            <div style={{ padding: '32px', background: 'var(--sys-color-neutral-99)', borderRadius: '16px', border: '1px solid var(--sys-color-neutral-90)' }}>
+              <Brain size={40} color="var(--sys-color-primary)" style={{ marginBottom: '16px' }} />
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>No AI training on your data</h3>
+              <p style={{ color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>We never use your content to train AI models. Your data is yours. Delete anytime.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* NEW SECTION: FAQ */}
-      <section style={{ padding: '96px 5%', backgroundColor: 'var(--sys-color-primary-99)' }}>
+      {/* Pricing Section */}
+      <section style={{ padding: '96px 5%', backgroundColor: 'var(--sys-color-surface-container-low)' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <h2 className="features-title" style={{ textAlign: 'center', marginBottom: '16px' }}>Simple, transparent pricing</h2>
+          <p style={{ textAlign: 'center', color: 'var(--sys-color-neutral-50)', marginBottom: '48px', fontSize: '1.1rem' }}>
+            Start free. Upgrade when you're ready.
+          </p>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
+            {/* Free Plan */}
+            <div style={{ 
+              padding: '32px', 
+              background: 'var(--sys-color-surface-container-high)', 
+              borderRadius: '16px',
+              border: '1px solid var(--sys-color-neutral-90)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>Starter</h3>
+              <div style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '4px', color: 'var(--sys-color-neutral-10)' }}>
+                Free
+              </div>
+              <p style={{ color: 'var(--sys-color-neutral-50)', fontSize: '0.9rem', marginBottom: '24px' }}>Forever</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> 10 conversions/mo
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Basic tones
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Twitter & LinkedIn
+                </li>
+              </ul>
+              <Link to="/register" style={{ 
+                display: 'block', 
+                padding: '12px 24px', 
+                background: 'transparent', 
+                border: '1px solid var(--sys-color-neutral-80)',
+                borderRadius: '8px',
+                textAlign: 'center',
+                color: 'var(--sys-color-neutral-20)',
+                textDecoration: 'none',
+                fontWeight: 600
+              }}>
+                Get Started
+              </Link>
+            </div>
+
+            {/* Pro Plan */}
+            <div style={{ 
+              padding: '32px', 
+              background: 'var(--sys-color-primary-98)', 
+              borderRadius: '16px',
+              border: '2px solid var(--sys-color-primary-40)',
+              position: 'relative'
+            }}>
+              <div style={{ 
+                position: 'absolute', 
+                top: '-12px', 
+                right: '24px', 
+                background: 'var(--sys-color-primary-40)', 
+                color: 'white',
+                padding: '4px 12px',
+                borderRadius: '12px',
+                fontSize: '0.75rem',
+                fontWeight: 600
+              }}>
+                POPULAR
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '8px', color: 'var(--sys-color-primary-20)' }}>Pro</h3>
+              <div style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '4px', color: 'var(--sys-color-primary-20)' }}>
+                {'5,000 NGN'}
+                <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--sys-color-neutral-50)' }}>/mo</span>
+              </div>
+              <p style={{ color: 'var(--sys-color-neutral-50)', fontSize: '0.9rem', marginBottom: '24px' }}>Billed monthly</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> 100 conversions/mo
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> All tones
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> All platforms
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Priority support
+                </li>
+              </ul>
+              <Link to="/register?plan=pro" style={{ 
+                display: 'block', 
+                padding: '12px 24px', 
+                background: 'var(--sys-color-primary-40)', 
+                borderRadius: '8px',
+                textAlign: 'center',
+                color: 'white',
+                textDecoration: 'none',
+                fontWeight: 600
+              }}>
+                Upgrade to Pro
+              </Link>
+            </div>
+
+            {/* Agency Plan */}
+            <div style={{ 
+              padding: '32px', 
+              background: 'var(--sys-color-surface-container-high)', 
+              borderRadius: '16px',
+              border: '1px solid var(--sys-color-neutral-90)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>Agency</h3>
+              <div style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '4px', color: 'var(--sys-color-neutral-10)' }}>
+                {'15000 NGN'}
+                <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--sys-color-neutral-50)' }}>/mo</span>
+              </div>
+              <p style={{ color: 'var(--sys-color-neutral-50)', fontSize: '0.9rem', marginBottom: '24px' }}>Billed monthly</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Unlimited conversions
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> All tones
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Team access
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
+                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Priority support
+                </li>
+              </ul>
+              <Link to="/register?plan=agency" style={{ 
+                display: 'block', 
+                padding: '12px 24px', 
+                background: 'transparent', 
+                border: '1px solid var(--sys-color-neutral-80)',
+                borderRadius: '8px',
+                textAlign: 'center',
+                color: 'var(--sys-color-neutral-20)',
+                textDecoration: 'none',
+                fontWeight: 600
+              }}>
+                Upgrade to Agency
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section style={{ padding: 'var(--sys-spacing-4xl) 5%', backgroundColor: 'var(--sys-color-primary-99)' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <h2 className="features-title" style={{ textAlign: 'center', marginBottom: '64px' }}>Everything you need to know</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ background: 'var(--sys-color-surface-container-lowest)', padding: '24px', borderRadius: '16px', border: '1px solid var(--sys-color-border-tertiary)' }}>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>Do I need to write complex prompts?</h4>
-              <p style={{ color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>Absolutely not. ContentSplit is a "Zero-Prompt" engine. You simply paste your text. Your pre-configured Brand Voice (Persona + Tone) handles all the strict instructional architecture behind the scenes.</p>
-            </div>
-            <div style={{ background: 'var(--sys-color-surface-container-lowest)', padding: '24px', borderRadius: '16px', border: '1px solid var(--sys-color-border-tertiary)' }}>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>Does the output sound like an AI wrote it?</h4>
-              <p style={{ color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>Because our ingestion engine strictly adheres to your configured Persona and Tone parameters, the output avoids standard "ChatGPT-isms". We explicitly instruct the model to use your syntax.</p>
-            </div>
-            <div style={{ background: 'var(--sys-color-surface-container-lowest)', padding: '24px', borderRadius: '16px', border: '1px solid var(--sys-color-border-tertiary)' }}>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>What platforms do you support out of the box?</h4>
-              <p style={{ color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>We natively generate optimized outputs for Twitter (Threads), LinkedIn (Thought Leadership Posts), Instagram (Captions), and Email (Newsletters).</p>
-            </div>
+          <h2 className="features-title" style={{ textAlign: 'center', marginBottom: 'var(--sys-spacing-2xl)' }}>Need help repurposing your content?</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sys-spacing-lg)' }}>
+            <FAQItem 
+              question="What is ContentSplit?"
+              answer="AI-powered app that turns long-form content into platform-ready posts for Twitter, LinkedIn, Instagram, and Email in under 8 seconds."
+            />
+            <FAQItem 
+              question="Do I need to write prompts?"
+              answer="No. Just paste your content and click convert. Fully automated."
+            />
+            <FAQItem 
+              question="How fast?"
+              answer="All 4 outputs generated in under 8 seconds."
+            />
+            <FAQItem 
+              question="Will it sound like AI?"
+              answer="No. Every post sounds like you wrote it."
+            />
+            <FAQItem 
+              question="Is there a free plan?"
+              answer="Yes. Starter plan lets you try with limited usage."
+            />
           </div>
         </div>
       </section>

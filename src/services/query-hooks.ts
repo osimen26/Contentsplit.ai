@@ -47,8 +47,8 @@ export const useRegister = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      apiClient.register(email, password),
+    mutationFn: ({ email, password, firstName, lastName }: { email: string; password: string; firstName?: string; lastName?: string }) =>
+      apiClient.register(email, password, firstName, lastName),
     onSuccess: (data) => {
       localStorage.setItem('auth_token', data.token)
       queryClient.setQueryData(queryKeys.user, data.user)
@@ -60,9 +60,12 @@ export const useLogout = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: () => {
-      localStorage.removeItem('auth_token')
-      return Promise.resolve()
+    mutationFn: async () => {
+      try {
+        await apiClient.logout()
+      } finally {
+        localStorage.removeItem('auth_token')
+      }
     },
     onSuccess: () => {
       queryClient.setQueryData(queryKeys.user, null)

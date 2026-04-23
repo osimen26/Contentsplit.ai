@@ -98,7 +98,9 @@ const ContentCreationPage: React.FC = () => {
 
   useEffect(() => {
     if (!selectedPlatforms.includes(activeTab) && selectedPlatforms.length > 0) {
-      setActiveTab(selectedPlatforms[0])
+      requestAnimationFrame(() => {
+        setActiveTab(selectedPlatforms[0])
+      })
     }
   }, [selectedPlatforms, activeTab])
 

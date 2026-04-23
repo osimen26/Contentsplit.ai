@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useConversions, useCurrentUser } from '@/services/query-hooks'
 import {
@@ -11,7 +11,10 @@ import {
   Sparkles,
   Menu,
   X as XIcon,
+  FileText,
 } from 'lucide-react'
+
+
 
 export interface ClaudeLayoutProps {
   children?: React.ReactNode
@@ -20,37 +23,40 @@ export interface ClaudeLayoutProps {
 const SIDEBAR_W_EXPANDED = 260
 const SIDEBAR_W_COLLAPSED = 72
 
-const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
-  const [collapsed, setCollapsed] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [search, setSearch] = useState('')
-  const location = useLocation()
-  const navigate = useNavigate()
-
-  const { data: currentUser } = useCurrentUser()
-  const { data: conversionsData } = useConversions(1, 30)
-  const conversions = conversionsData?.data || []
-
-  // Flat "Recents" list, filtered by search
-  const recentItems = useMemo(() => {
-    if (!conversions.length) return []
-    const q = search.toLowerCase()
-    return conversions
-      .slice(0, 25)
-      .filter(c => !q || c.input_text.toLowerCase().includes(q))
-  }, [conversions, search])
-
+// Sidebar content component - defined outside to avoid recreation
+const SidebarContentComponent: React.FC<{
+  collapsed: boolean
+  inDrawer: boolean
+  search: string
+  onSearchChange: (v: string) => void
+  onToggleCollapse?: () => void
+  recentItems: Array<{ id: string; input_text: string }>
+  location: ReturnType<typeof useLocation>
+  onNavigate: () => void
+  onMobileClose: () => void
+  currentUser: { email?: string; tier?: string } | undefined
+  isFree: boolean
+  isActive: (path: string) => boolean
+}> = ({
+  collapsed,
+  inDrawer,
+  search,
+  onSearchChange,
+  onToggleCollapse,
+  recentItems,
+  location,
+  onNavigate,
+  onMobileClose,
+  currentUser,
+  isFree,
+  isActive,
+}) => {
   const username = (currentUser?.email || 'user@example.com').split('@')[0]
   const avatarLetter = (currentUser?.email || 'U')[0].toUpperCase()
   const tier = currentUser?.tier === 'agency' ? 'Enterprise' : currentUser?.tier === 'pro' ? 'Pro' : 'Free'
-  const isFree = !currentUser?.tier || currentUser?.tier === 'free'
 
-  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/')
-
-  // Shared sidebar content
-  const SidebarContent = ({ inDrawer = false }: { inDrawer?: boolean }) => (
+  return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-
       {/* ── TOP: Brand + Toggle ── */}
       <div style={{
         display: 'flex', alignItems: 'center',
@@ -72,9 +78,9 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
             </span>
           </div>
         )}
-        {!inDrawer && (
+        {!inDrawer && onToggleCollapse && (
           <button
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={onToggleCollapse}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -83,14 +89,12 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
               color: 'var(--sys-color-neutral-50)', cursor: 'pointer',
               transition: 'background-color 0.15s',
             }}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--sys-color-neutral-90)'}
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         )}
         {inDrawer && (
-          <button onClick={() => setMobileOpen(false)} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4 }}>
+          <button onClick={onMobileClose} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4 }}>
             <XIcon size={20} color="var(--sys-color-neutral-40)" />
           </button>
         )}
@@ -99,7 +103,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       {/* ── NEW CONVERSION ── */}
       <div style={{ padding: '8px 10px', flexShrink: 0 }}>
         <button
-          onClick={() => { navigate('/'); setMobileOpen(false) }}
+          onClick={onNavigate}
           style={{
             width: '100%',
             display: 'flex', alignItems: 'center',
@@ -112,11 +116,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
             color: 'var(--sys-color-neutral-20)',
             fontWeight: 500, fontSize: '0.9rem',
             cursor: 'pointer',
-            transition: 'background-color 0.15s',
           }}
-          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--sys-color-neutral-90)'}
-          onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
-          aria-label="New Conversion"
         >
           <Plus size={16} strokeWidth={2.5} />
           {(!collapsed || inDrawer) && 'New Conversion'}
@@ -138,7 +138,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
               type="text"
               placeholder="Search conversions…"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => onSearchChange(e.target.value)}
               style={{
                 border: 'none', background: 'transparent', outline: 'none',
                 fontSize: '0.85rem', color: 'var(--sys-color-neutral-20)',
@@ -171,15 +171,18 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
             )}
             {recentItems.map(item => {
               const active = location.pathname === `/c/${item.id}`
-              const label = item.input_text.slice(0, 32) + (item.input_text.length > 32 ? '…' : '')
+              const label = item.input_text.slice(0, 28) + (item.input_text.length > 28 ? '…' : '')
+              
               return (
                 <Link
                   key={item.id}
                   to={`/c/${item.id}`}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={onMobileClose}
                   style={{
-                    display: 'block',
-                    padding: '7px 10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 10px',
                     marginBottom: 1,
                     borderRadius: 7,
                     textDecoration: 'none',
@@ -189,23 +192,19 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
                     backgroundColor: active ? 'var(--sys-color-neutral-90)' : 'transparent',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    transition: 'background-color 0.15s, color 0.15s',
                   }}
-                  onMouseEnter={e => {
-                    if (!active) {
-                      e.currentTarget.style.backgroundColor = 'var(--sys-color-neutral-92)'
-                      e.currentTarget.style.color = 'var(--sys-color-neutral-10)'
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    if (!active) {
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                      e.currentTarget.style.color = 'var(--sys-color-neutral-30)'
-                    }
-                  }}
+                  title={`${item.input_text}`}
                 >
-                  {label}
+                  <span style={{ color: 'var(--sys-color-primary-50)', flexShrink: 0 }}>
+                    <FileText size={12} />
+                  </span>
+                  <span style={{
+                    flex: 1,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}>
+                    {label}
+                  </span>
                 </Link>
               )
             })}
@@ -213,7 +212,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         )}
       </div>
 
-      {/* ── FOOTER: Settings, Help, Profile + Upgrade ── */}
+      {/* ── FOOTER: Settings + Profile ── */}
       <div style={{
         flexShrink: 0,
         borderTop: '1px solid var(--sys-color-border-tertiary)',
@@ -222,26 +221,23 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         flexDirection: 'column',
         gap: 2,
       }}>
-        {/* Settings */}
         <FooterLink
-          to="/settings"
+          to="/dashboard/settings"
           icon={<Settings size={16} />}
           label="Settings"
           active={isActive('/settings')}
           collapsed={collapsed && !inDrawer}
-          onClick={() => setMobileOpen(false)}
+          onClick={onMobileClose}
         />
-        {/* Help */}
         <FooterLink
           to="/help"
           icon={<HelpCircle size={16} />}
           label="Help & Support"
           active={isActive('/help')}
           collapsed={collapsed && !inDrawer}
-          onClick={() => setMobileOpen(false)}
+          onClick={onMobileClose}
         />
 
-        {/* Profile row */}
         {(!collapsed || inDrawer) && (
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -269,7 +265,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
 
             {isFree && (
               <Link
-                to="/settings"
+                to="/dashboard/settings"
                 style={{
                   flexShrink: 0,
                   padding: '4px 10px',
@@ -280,11 +276,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
                   fontSize: '0.78rem',
                   fontWeight: 600,
                   textDecoration: 'none',
-                  transition: 'background-color 0.15s',
-                  whiteSpace: 'nowrap',
                 }}
-                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--sys-color-neutral-90)'}
-                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 Upgrade
               </Link>
@@ -294,6 +286,70 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       </div>
     </div>
   )
+}
+
+// Small footer link component
+const FooterLink: React.FC<{
+  to: string
+  icon: React.ReactNode
+  label: string
+  active: boolean
+  collapsed: boolean
+  onClick?: () => void
+}> = ({ to, icon, label, active, collapsed, onClick }) => (
+  <Link
+    to={to}
+    onClick={onClick}
+    style={{
+      display: 'flex', alignItems: 'center',
+      gap: 8,
+      padding: '7px 10px',
+      marginBottom: 1,
+      borderRadius: 7,
+      textDecoration: 'none',
+      fontSize: '0.88rem',
+      fontWeight: active ? 500 : 400,
+      color: active ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-40)',
+      backgroundColor: active ? 'var(--sys-color-primary-95)' : 'transparent',
+      justifyContent: collapsed ? 'center' : 'flex-start',
+      transition: 'background-color 0.15s',
+    }}
+    title={collapsed ? label : undefined}
+  >
+    {icon}
+    {!collapsed && label}
+  </Link>
+)
+
+const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
+  const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const { data: currentUser } = useCurrentUser()
+  const { data: conversionsData } = useConversions(1, 30)
+  const conversionsList = useMemo(() => conversionsData?.data || [], [conversionsData])
+
+  // Flat "Recents" list, filtered by search
+  const recentItems = useMemo(() => {
+    if (!conversionsList.length) return []
+    const q = search.toLowerCase()
+    return conversionsList
+      .slice(0, 25)
+      .filter(c => !q || c.input_text.toLowerCase().includes(q))
+  }, [conversionsList, search])
+
+  const isFree = !currentUser?.tier || currentUser?.tier === 'free'
+  const isActive = useCallback((path: string) => location.pathname === path || location.pathname.startsWith(path + '/'), [location])
+
+  const handleNavigate = useCallback(() => {
+    navigate('/')
+    setMobileOpen(false)
+  }, [navigate])
+
+  const handleMobileClose = useCallback(() => setMobileOpen(false), [])
 
   return (
     <>
@@ -339,12 +395,24 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         transition: 'transform 0.25s ease',
         display: 'flex', flexDirection: 'column',
       }} className="mobile-drawer">
-        <SidebarContent inDrawer />
+        <SidebarContentComponent
+          collapsed={collapsed}
+          inDrawer
+          search={search}
+          onSearchChange={setSearch}
+          onToggleCollapse={() => setCollapsed(c => !c)}
+          recentItems={recentItems}
+          location={location}
+          onNavigate={handleNavigate}
+          onMobileClose={handleMobileClose}
+          currentUser={currentUser}
+          isFree={isFree}
+          isActive={isActive}
+        />
       </div>
 
       {/* ── DESKTOP LAYOUT ── */}
       <div className={`claude-layout ${collapsed ? 'sidebar-collapsed' : ''}`} style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-
         {/* Desktop Sidebar */}
         <aside style={{
           width: collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED,
@@ -358,7 +426,20 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           display: 'flex',
           flexDirection: 'column',
         }} className="claude-sidebar desktop-sidebar">
-          <SidebarContent />
+          <SidebarContentComponent
+            collapsed={collapsed}
+            inDrawer={false}
+            search={search}
+            onSearchChange={setSearch}
+            onToggleCollapse={() => setCollapsed(c => !c)}
+            recentItems={recentItems}
+            location={location}
+            onNavigate={handleNavigate}
+            onMobileClose={handleMobileClose}
+            currentUser={currentUser}
+            isFree={isFree}
+            isActive={isActive}
+          />
         </aside>
 
         {/* Main Content */}
@@ -388,36 +469,5 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
     </>
   )
 }
-
-// Small reusable footer link
-const FooterLink: React.FC<{
-  to: string; icon: React.ReactNode; label: string;
-  active: boolean; collapsed: boolean; onClick?: () => void
-}> = ({ to, icon, label, active, collapsed, onClick }) => (
-  <Link
-    to={to}
-    onClick={onClick}
-    style={{
-      display: 'flex', alignItems: 'center',
-      gap: 8,
-      padding: '7px 10px',
-      marginBottom: 1,
-      borderRadius: 7,
-      textDecoration: 'none',
-      fontSize: '0.88rem',
-      fontWeight: active ? 500 : 400,
-      color: active ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-40)',
-      backgroundColor: active ? 'var(--sys-color-primary-95)' : 'transparent',
-      justifyContent: collapsed ? 'center' : 'flex-start',
-      transition: 'background-color 0.15s',
-    }}
-    onMouseEnter={e => { if (!active) e.currentTarget.style.backgroundColor = 'var(--sys-color-neutral-90)' }}
-    onMouseLeave={e => { if (!active) e.currentTarget.style.backgroundColor = 'transparent' }}
-    title={collapsed ? label : undefined}
-  >
-    {icon}
-    {!collapsed && label}
-  </Link>
-)
 
 export default ClaudeLayout
