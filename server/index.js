@@ -20,7 +20,13 @@ import crypto from 'crypto'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // Load server-only .env (not VITE_* prefixed — never exposed to browser)
-dotenv.config({ path: join(__dirname, '.env') })
+// For local dev, loads from .env file. For Vercel, env vars come from dashboard
+const envPath = join(__dirname, '.env')
+try {
+  dotenv.config({ path: envPath })
+} catch (e) {
+  // Vercel doesn't have .env file - env vars are set in dashboard
+}
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -428,6 +434,61 @@ app.post('/api/auth/register', async (req, res) => {
   } catch (err) {
     console.error('Registration error:', err.message, err.stack)
     res.status(500).json({ error: 'Registration failed: ' + err.message })
+  }
+})
+
+// Google Auth
+app.post('/api/auth/google', async (req, res) => {
+  try {
+    const { access_token } = req.body
+    if (!access_token) {
+      return res.status(400).json({ error: 'Google access token is required' })
+    }
+
+    // Fetch user profile from Google using the access token
+    const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    })
+    
+    if (!userInfoRes.ok) {
+      return res.status(401).json({ error: 'Invalid Google token' })
+    }
+    
+    const payload = await userInfoRes.json()
+    const email = payload.email
+    const firstName = payload.given_name || ''
+    const lastName = payload.family_name || ''
+    
+    if (!email) {
+      return res.status(400).json({ error: 'No email provided by Google' })
+    }
+
+    const userDb = getUserDb()
+    let user = await userDb.findByEmail(email)
+    
+    if (!user) {
+      // Create user if they don't exist. We use a random UUID as the password hash
+      // because they authenticate via Google and will not use a password.
+      user = await userDb.create(email, crypto.randomUUID(), firstName, lastName)
+    }
+
+    // Create session
+    const token = generateToken()
+    sessionsDb.set(token, {
+      userId: user.id,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
+    })
+
+    const { password_hash, ...userWithoutPassword } = user
+
+    res.json({ 
+      token, 
+      user: userWithoutPassword 
+    })
+  } catch (err) {
+    console.error('Google auth error:', err)
+    res.status(500).json({ error: 'Google auth failed' })
   }
 })
 
