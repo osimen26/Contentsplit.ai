@@ -12,7 +12,9 @@ import {
   Menu,
   X as XIcon,
   FileText,
+  LogOut,
 } from 'lucide-react'
+import { useAuth } from '@contexts/AuthContext'
 
 
 
@@ -34,6 +36,7 @@ const SidebarContentComponent: React.FC<{
   location: ReturnType<typeof useLocation>
   onNavigate: () => void
   onMobileClose: () => void
+  onLogout: () => void
   currentUser: { email?: string; tier?: string } | undefined
   isFree: boolean
   isActive: (path: string) => boolean
@@ -47,6 +50,7 @@ const SidebarContentComponent: React.FC<{
   location,
   onNavigate,
   onMobileClose,
+  onLogout,
   currentUser,
   isFree,
   isActive,
@@ -237,6 +241,28 @@ const SidebarContentComponent: React.FC<{
           collapsed={collapsed && !inDrawer}
           onClick={onMobileClose}
         />
+        <button
+          onClick={() => { onLogout(); onMobileClose(); }}
+          style={{
+            display: 'flex', alignItems: 'center',
+            gap: 8,
+            padding: '7px 10px',
+            marginBottom: 1,
+            borderRadius: 7,
+            border: 'none',
+            fontSize: '0.88rem',
+            fontWeight: 400,
+            color: 'var(--sys-color-roles-error-color-role-error-role)',
+            backgroundColor: 'transparent',
+            justifyContent: (collapsed && !inDrawer) ? 'center' : 'flex-start',
+            cursor: 'pointer',
+            transition: 'background-color 0.15s',
+          }}
+          title={(collapsed && !inDrawer) ? "Log Out" : undefined}
+        >
+          <LogOut size={16} />
+          {(!collapsed || inDrawer) && "Log Out"}
+        </button>
 
         {(!collapsed || inDrawer) && (
           <div style={{
@@ -327,6 +353,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
   const [search, setSearch] = useState('')
   const location = useLocation()
   const navigate = useNavigate()
+  const { logout } = useAuth()
 
   const { data: currentUser } = useCurrentUser()
   const { data: conversionsData } = useConversions(1, 30)
@@ -405,6 +432,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           location={location}
           onNavigate={handleNavigate}
           onMobileClose={handleMobileClose}
+          onLogout={logout}
           currentUser={currentUser}
           isFree={isFree}
           isActive={isActive}
@@ -436,6 +464,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
             location={location}
             onNavigate={handleNavigate}
             onMobileClose={handleMobileClose}
+            onLogout={logout}
             currentUser={currentUser}
             isFree={isFree}
             isActive={isActive}

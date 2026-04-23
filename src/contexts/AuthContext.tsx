@@ -52,8 +52,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const logout = () => {
-    logoutMutation.mutate()
+    localStorage.removeItem('auth_token')
     setTokenExists(false)
+    logoutMutation.mutate()
+    window.location.href = '/login'
   }
 
   const updateUser = (updates: Partial<User>) => {
