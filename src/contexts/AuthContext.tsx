@@ -8,6 +8,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>
   logout: () => void
   updateUser: (updates: Partial<User>) => void
+  notifyLoggedIn: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -56,6 +57,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setTokenExists(false)
   }
 
+  // Called after registration (token already set in localStorage by useRegister onSuccess)
+  const notifyLoggedIn = () => {
+    setTokenExists(true)
+    refetch()
+  }
+
   const updateUser = (updates: Partial<User>) => {
     console.warn("Please use useUpdateProfile from @services/query-hooks instead of the context", updates)
   }
@@ -64,7 +71,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isLoading = tokenExists && isUserLoading
 
   return (
-    <AuthContext.Provider value={{ user: user || null, isLoading, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user: user || null, isLoading, login, logout, updateUser, notifyLoggedIn }}>
       {children}
     </AuthContext.Provider>
   )

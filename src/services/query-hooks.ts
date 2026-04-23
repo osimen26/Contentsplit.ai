@@ -63,11 +63,13 @@ export const useLogout = () => {
     mutationFn: async () => {
       try {
         await apiClient.logout()
+      } catch (err) {
+        console.warn('Backend logout failed, proceeding with local logout', err)
       } finally {
         localStorage.removeItem('auth_token')
       }
     },
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.setQueryData(queryKeys.user, null)
       queryClient.clear()
     },

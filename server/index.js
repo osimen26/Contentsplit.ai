@@ -116,21 +116,37 @@ function getUserDb() {
       if (error && error.code !== 'PGRST116') throw error
       return data || null
     },
-    async create(email, password, firstName, lastName) {
+async create(email, password, firstName, lastName) {
       console.log('Creating user in Supabase:', email)
+      // Only add name fields if provided (they may not exist in DB)
+      let userData = { 
+        email, 
+        password_hash: hashPassword(password),
+        tier: 'free',
+      }
+      
       const { data, error } = await supabase
         .from('users')
-        .insert({ 
-          email, 
-          password_hash: hashPassword(password),
-          tier: 'free',
-          first_name: firstName || null,
-          last_name: lastName || null
-        })
+        .insert(userData)
         .select()
-      .single()
+        .single()
       console.log('Insert result:', { error: error?.message, data: !!data })
       if (error) {
+        console.log('Error details:', JSON.stringify(error))
+        // Check if it's a column missing error, try without name fields
+        if (error.message && (error.message.includes('first_name') || error.message.includes('last_name') || error.message.includes('column'))) {
+          console.log('Detected missing column error, retrying without name fields...')
+          const { data: retryData, error: retryError } = await supabase
+            .from('users')
+            .insert({ email, password_hash: hashPassword(password), tier: 'free' })
+            .select()
+            .single()
+          if (retryError) {
+            console.error('Supabase insert error:', retryError)
+            throw retryError
+          }
+          return retryData
+        }
         console.error('Supabase insert error:', error)
         throw error
       }
@@ -442,12 +458,14 @@ app.post('/api/auth/logout', requireAuth, (req, res) => {
 })
 
 // ── CONTENT GENERATION ─────────────────────────────────────────────────────
+const VALID_TONES = ['professional', 'casual', 'punchy', 'friendly']
+
 const generateSchema = z.object({
   input_text: z.string().min(1, 'Content is required').refine((val) => {
     const wordCount = val.trim().split(/\s+/).length;
     return wordCount >= 10 && wordCount <= 5000;
   }, { message: 'Content must be between 10 and 5,000 words.' }),
-  tone_mode: z.string().optional().default('casual'),
+  tone_mode: z.string().optional().default('casual').transform(t => VALID_TONES.includes(t) ? t : 'casual'),
   platforms: z.array(z.string()).min(1, 'Please select at least one platform'),
   persona: z.string().optional()
 })

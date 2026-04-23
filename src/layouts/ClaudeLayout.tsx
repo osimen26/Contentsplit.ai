@@ -12,7 +12,9 @@ import {
   Menu,
   X as XIcon,
   FileText,
+  LogOut,
 } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 
 
 
@@ -34,6 +36,7 @@ const SidebarContentComponent: React.FC<{
   location: ReturnType<typeof useLocation>
   onNavigate: () => void
   onMobileClose: () => void
+  onLogout: () => void
   currentUser: { email?: string; tier?: string } | undefined
   isFree: boolean
   isActive: (path: string) => boolean
@@ -47,6 +50,7 @@ const SidebarContentComponent: React.FC<{
   location,
   onNavigate,
   onMobileClose,
+  onLogout,
   currentUser,
   isFree,
   isActive,
@@ -170,13 +174,13 @@ const SidebarContentComponent: React.FC<{
               </p>
             )}
             {recentItems.map(item => {
-              const active = location.pathname === `/c/${item.id}`
+              const active = location.pathname === `/dashboard/c/${item.id}`
               const label = item.input_text.slice(0, 28) + (item.input_text.length > 28 ? '…' : '')
               
               return (
                 <Link
                   key={item.id}
-                  to={`/c/${item.id}`}
+                  to={`/dashboard/c/${item.id}`}
                   onClick={onMobileClose}
                   style={{
                     display: 'flex',
@@ -236,6 +240,15 @@ const SidebarContentComponent: React.FC<{
           active={isActive('/help')}
           collapsed={collapsed && !inDrawer}
           onClick={onMobileClose}
+        />
+        <FooterAction
+          icon={<LogOut size={16} />}
+          label="Log out"
+          collapsed={collapsed && !inDrawer}
+          onClick={() => {
+            onLogout()
+            if (inDrawer) onMobileClose()
+          }}
         />
 
         {(!collapsed || inDrawer) && (
@@ -321,6 +334,39 @@ const FooterLink: React.FC<{
   </Link>
 )
 
+// Action button for the footer (like logout)
+const FooterAction: React.FC<{
+  icon: React.ReactNode
+  label: string
+  collapsed: boolean
+  onClick: () => void
+}> = ({ icon, label, collapsed, onClick }) => (
+  <button
+    onClick={onClick}
+    style={{
+      display: 'flex', alignItems: 'center',
+      gap: 8,
+      padding: '7px 10px',
+      marginBottom: 1,
+      borderRadius: 7,
+      border: 'none',
+      cursor: 'pointer',
+      fontSize: '0.88rem',
+      fontWeight: 400,
+      color: 'var(--sys-color-neutral-40)',
+      backgroundColor: 'transparent',
+      justifyContent: collapsed ? 'center' : 'flex-start',
+      transition: 'background-color 0.15s',
+      width: '100%',
+      fontFamily: 'inherit',
+    }}
+    title={collapsed ? label : undefined}
+  >
+    {icon}
+    {!collapsed && label}
+  </button>
+)
+
 const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -329,6 +375,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
   const navigate = useNavigate()
 
   const { data: currentUser } = useCurrentUser()
+  const { logout } = useAuth()
   const { data: conversionsData } = useConversions(1, 30)
   const conversionsList = useMemo(() => conversionsData?.data || [], [conversionsData])
 
@@ -345,7 +392,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
   const isActive = useCallback((path: string) => location.pathname === path || location.pathname.startsWith(path + '/'), [location])
 
   const handleNavigate = useCallback(() => {
-    navigate('/')
+    navigate('/dashboard')
     setMobileOpen(false)
   }, [navigate])
 
@@ -405,6 +452,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           location={location}
           onNavigate={handleNavigate}
           onMobileClose={handleMobileClose}
+          onLogout={logout}
           currentUser={currentUser}
           isFree={isFree}
           isActive={isActive}
@@ -436,6 +484,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
             location={location}
             onNavigate={handleNavigate}
             onMobileClose={handleMobileClose}
+            onLogout={logout}
             currentUser={currentUser}
             isFree={isFree}
             isActive={isActive}

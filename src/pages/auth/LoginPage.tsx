@@ -17,11 +17,15 @@ const LoginPage: React.FC = () => {
       navigate('/dashboard')
     } catch (err: unknown) {
       console.error(err)
-      const errorMessage = err instanceof Error ? err.message : ''
-      if (errorMessage.includes('Invalid credentials')) {
+      // Axios wraps the real server message in err.response.data.error
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const serverMsg: string = (err as any)?.response?.data?.error || (err instanceof Error ? err.message : '')
+      if (serverMsg.includes('Invalid credentials')) {
         setError('Invalid email or password. Please check your credentials.')
+      } else if (serverMsg.includes('connect') || serverMsg.includes('Network') || !serverMsg) {
+        setError('Cannot reach the server. Make sure the backend is running.')
       } else {
-        setError('Failed to login. Please try again.')
+        setError(serverMsg || 'Failed to login. Please try again.')
       }
     }
   }

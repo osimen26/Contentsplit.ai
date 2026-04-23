@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useRegister } from '@/services/query-hooks'
+import { useAuth } from '@/contexts/AuthContext'
 
 const RegisterPage: React.FC = () => {
   const [firstName, setFirstName] = useState('')
@@ -11,6 +12,7 @@ const RegisterPage: React.FC = () => {
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const { mutateAsync: registerUser, isPending } = useRegister()
+  const { notifyLoggedIn } = useAuth()
 
   const getPasswordStrength = () => {
     if (!password) return 0
@@ -34,16 +36,21 @@ const RegisterPage: React.FC = () => {
     setError('')
     try {
       await registerUser({ email, password, firstName, lastName })
+      notifyLoggedIn()
       navigate('/onboarding')
     } catch (err: unknown) {
       console.error('Registration error:', err)
-      const errorMessage = err instanceof Error ? err.message : ''
-      if (errorMessage.includes('already registered') || errorMessage.includes('Email already')) {
+      // Axios wraps the real server message in err.response.data.error
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const serverMsg: string = (err as any)?.response?.data?.error || (err instanceof Error ? err.message : '')
+      if (serverMsg.includes('already registered') || serverMsg.includes('Email already')) {
         setError('An account with this email already exists. Please log in or use a different email.')
-      } else if (errorMessage.includes('Password must be at least 8')) {
+      } else if (serverMsg.includes('Password must be at least 8')) {
         setError('Password must be at least 8 characters.')
+      } else if (serverMsg.includes('connect') || serverMsg.includes('Network') || !serverMsg) {
+        setError('Cannot reach the server. Please make sure the backend is running.')
       } else {
-        setError('Registration failed. Please try again.')
+        setError(serverMsg || 'Registration failed. Please try again.')
       }
     }
   }
@@ -125,8 +132,11 @@ const RegisterPage: React.FC = () => {
               <div className={`password-requirement ${password.length >= 8 ? 'met' : ''}`}>
                 8+ characters
               </div>
-              <div className={`password-requirement ${/[A-Z]/.test(password) && /[0-9]/.test(password) ? 'met' : ''}`}>
-                Uppercase letter & number
+              <div className={`password-requirement ${/[A-Z]/.test(password) ? 'met' : ''}`}>
+                Uppercase letter
+              </div>
+              <div className={`password-requirement ${/[0-9]/.test(password) ? 'met' : ''}`}>
+                Number
               </div>
             </div>
           </div>
