@@ -71,7 +71,8 @@ export interface PaginatedResponse<T> {
 class ApiClient {
   private client: AxiosInstance
 
-  constructor(baseURL = import.meta.env.VITE_API_BASE_URL || '/api') {
+  // Default to production Vercel API - collaborators can override with VITE_API_BASE_URL in .env.local for local dev
+  constructor(baseURL = import.meta.env.VITE_API_BASE_URL || 'https://contentsplit-84woz808p-osimenvictor-6244s-projects.vercel.app/api') {
     this.client = axios.create({
       baseURL,
       timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000', 10),
@@ -113,6 +114,11 @@ class ApiClient {
   // Auth
   async login(email: string, password: string): Promise<{ token: string; user: User }> {
     const response = await this.client.post('/auth/login', { email, password })
+    return response.data
+  }
+
+  async googleAuth(access_token: string): Promise<{ token: string; user: User }> {
+    const response = await this.client.post('/auth/google', { access_token })
     return response.data
   }
 
