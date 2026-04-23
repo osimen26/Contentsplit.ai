@@ -116,14 +116,16 @@ function getUserDb() {
       if (error && error.code !== 'PGRST116') throw error
       return data || null
     },
-    async create(email, password) {
+    async create(email, password, firstName, lastName) {
       console.log('Creating user in Supabase:', email)
       const { data, error } = await supabase
         .from('users')
         .insert({ 
           email, 
           password_hash: hashPassword(password),
-          tier: 'free'
+          tier: 'free',
+          first_name: firstName || null,
+          last_name: lastName || null
         })
         .select()
       .single()
@@ -151,12 +153,14 @@ function getUserDb() {
     findById(id) {
       return usersDb.get(id) || null
     },
-    create(email, password) {
+    create(email, password, firstName, lastName) {
       const user = { 
         id: crypto.randomUUID(), 
         email, 
         password_hash: hashPassword(password),
         tier: 'free', 
+        first_name: firstName,
+        last_name: lastName,
         created_at: new Date().toISOString() 
       }
       usersDb.set(user.id, user)
@@ -366,7 +370,7 @@ app.post('/api/auth/login', async (req, res) => {
 // Register
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { email, password, firstName, lastName } = req.body
     
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' })
@@ -387,7 +391,7 @@ app.post('/api/auth/register', async (req, res) => {
 
     // Create user
     console.log('Creating user...')
-    const user = await userDb.create(email, password)
+    const user = await userDb.create(email, password, firstName, lastName)
     console.log('User created:', user.id)
 
     // Create session

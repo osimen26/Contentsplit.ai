@@ -12,6 +12,8 @@ export interface User {
   preferences?: string
   persona?: string
   tone?: string
+  firstName?: string
+  lastName?: string
 }
 
 export interface Plan {
@@ -114,8 +116,8 @@ class ApiClient {
     return response.data
   }
 
-  async register(email: string, password: string): Promise<{ token: string; user: User }> {
-    const response = await this.client.post('/auth/register', { email, password })
+  async register(email: string, password: string, firstName?: string, lastName?: string): Promise<{ token: string; user: User }> {
+    const response = await this.client.post('/auth/register', { email, password, firstName, lastName })
     return response.data
   }
 

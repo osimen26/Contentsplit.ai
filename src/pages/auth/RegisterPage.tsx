@@ -33,7 +33,7 @@ const RegisterPage: React.FC = () => {
     }
     setError('')
     try {
-      await registerUser({ email, password })
+      await registerUser({ email, password, firstName, lastName })
       navigate('/onboarding')
     } catch (err: unknown) {
       console.error('Registration error:', err)
