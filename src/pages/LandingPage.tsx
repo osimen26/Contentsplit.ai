@@ -47,7 +47,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
       onClick={toggle}
       onKeyDown={handleKeyDown}
       role="button"
-      aria-expanded={isOpen ? "true" : "false"}
+      aria-expanded={isOpen}
       tabIndex={0}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = 'var(--sys-color-primary-40)'
@@ -123,8 +123,8 @@ const LandingPage: React.FC = () => {
           className="mobile-menu-toggle" 
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="Toggle menu"
-          aria-expanded={isMenuOpen ? "true" : "false"}
-        >
+aria-expanded={isMenuOpen}
+          >
           {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
 
@@ -547,14 +547,14 @@ const LandingPage: React.FC = () => {
 
       {/* Pricing Section */}
       <section className="pricing-section">
-        <h2 className="features-title" style={{ textAlign: 'center', marginBottom: '64px' }}>Simple, transparent pricing</h2>
+        <h2 className="features-title" style={{ textAlign: 'center', marginBottom: 'var(--sys-spacing-3xl)' }}>Simple, transparent pricing</h2>
         
         <div className="pricing-grid">
           {/* Starter Plan */}
           <div className="pricing-card">
             <h3 className="pricing-title">Starter</h3>
             <div className="pricing-price">Free</div>
-            <p className="pricing-billing">Forever</p>
+            <p className="pricing-billing">Forever free</p>
             <ul className="pricing-list">
               <li className="pricing-list-item"><CheckCircle size={18} color="var(--sys-color-primary-40)" /> 10 conversions/mo</li>
               <li className="pricing-list-item"><CheckCircle size={18} color="var(--sys-color-primary-40)" /> Basic tones</li>
@@ -568,7 +568,6 @@ const LandingPage: React.FC = () => {
             <div className="pricing-badge">Popular</div>
             <h3 className="pricing-title">Pro</h3>
             <div className="pricing-price">₦5,000<span>/mo</span></div>
-            <p className="pricing-billing">Billed monthly</p>
             <ul className="pricing-list">
               <li className="pricing-list-item"><CheckCircle size={18} color="var(--sys-color-primary-40)" /> 100 conversions/mo</li>
               <li className="pricing-list-item"><CheckCircle size={18} color="var(--sys-color-primary-40)" /> All tones</li>
@@ -582,12 +581,10 @@ const LandingPage: React.FC = () => {
           <div className="pricing-card">
             <h3 className="pricing-title">Agency</h3>
             <div className="pricing-price">₦15,000<span>/mo</span></div>
-            <p className="pricing-billing">Billed monthly</p>
             <ul className="pricing-list">
               <li className="pricing-list-item"><CheckCircle size={18} color="var(--sys-color-primary-40)" /> Unlimited conversions</li>
               <li className="pricing-list-item"><CheckCircle size={18} color="var(--sys-color-primary-40)" /> All tones</li>
               <li className="pricing-list-item"><CheckCircle size={18} color="var(--sys-color-primary-40)" /> Team access</li>
-              <li className="pricing-list-item"><CheckCircle size={18} color="var(--sys-color-primary-40)" /> Priority support</li>
             </ul>
             <Link to="/register?plan=agency" className="pricing-btn secondary">Contact Sales</Link>
           </div>

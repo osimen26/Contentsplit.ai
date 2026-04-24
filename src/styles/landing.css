@@ -607,29 +607,29 @@
 
 .pricing-card {
   background: var(--sys-color-neutral-99);
-  border-radius: 12px;
-  padding: 40px 32px;
+  border-radius: var(--sys-radius-lg);
+  padding: var(--sys-spacing-xl) var(--sys-spacing-l);
   border: 1px solid var(--sys-color-neutral-90);
   display: flex;
   flex-direction: column;
-  transition: all 0.2s ease;
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
 }
 
 .pricing-card:hover {
   border-color: var(--sys-color-primary-40);
-  box-shadow: 0 8px 24px rgba(107, 97, 231, 0.12);
+  box-shadow: var(--sys-elevation-2);
 }
 
 .pricing-card.pro {
   background: var(--sys-color-primary-98);
   border: 2px solid var(--sys-color-primary-40);
   position: relative;
-  box-shadow: 0 10px 25px rgba(107, 97, 231, 0.1);
+  box-shadow: var(--sys-elevation-2);
 }
 
 .pricing-card.pro:hover {
   border-color: var(--sys-color-primary-30);
-  box-shadow: 0 12px 32px rgba(107, 97, 231, 0.18);
+  box-shadow: var(--sys-elevation-3);
 }
 
 .pricing-badge {
@@ -638,9 +638,9 @@
   right: 32px;
   background: var(--sys-color-primary-40);
   color: var(--sys-color-neutral-99);
-  padding: 6px 16px;
-  border-radius: 16px;
-  font-size: 0.75rem;
+  padding: var(--sys-spacing-xs) var(--sys-spacing-md);
+  border-radius: var(--sys-radius-xl);
+  font-size: var(--sys-font-caption-regular-font-size);
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -649,7 +649,8 @@
 .pricing-title {
   font-size: var(--sys-font-title-medium-regular-font-size);
   font-weight: 700;
-  margin-bottom: 8px;
+  line-height: var(--sys-font-title-medium-regular-line-height);
+  margin-bottom: var(--sys-spacing-s);
   color: var(--sys-color-neutral-10);
 }
 
@@ -660,11 +661,11 @@
 .pricing-price {
   font-size: var(--sys-font-headline-large-regular-font-size);
   font-weight: 700;
-  color: var(--sys-color-neutral-10);
-  margin-bottom: 8px;
+  line-height: var(--sys-font-headline-large-regular-line-height);
+  margin-bottom: var(--sys-spacing-md);
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: var(--sys-spacing-xs);
 }
 
 .pricing-card.pro .pricing-price {
@@ -674,44 +675,50 @@
 .pricing-price span {
   font-size: var(--sys-font-body-text-regular-font-size);
   font-weight: 400;
+  line-height: var(--sys-font-body-text-regular-line-height);
   color: var(--sys-color-neutral-50);
 }
 
 .pricing-billing {
   color: var(--sys-color-neutral-50);
-  font-size: var(--sys-font-body-text-regular-font-size);
-  margin-bottom: 32px;
+  font-size: var(--sys-font-caption-regular-font-size);
+  line-height: var(--sys-font-caption-regular-line-height);
+  margin-bottom: var(--sys-spacing-lg);
 }
 
 .pricing-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 40px 0;
+  margin: 0 0 var(--sys-spacing-lg) 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--sys-spacing-sm);
   flex: 1;
 }
 
 .pricing-list-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--sys-spacing-sm);
   color: var(--sys-color-neutral-30);
   font-size: var(--sys-font-body-text-regular-font-size);
   font-weight: 500;
+  line-height: var(--sys-font-body-text-regular-line-height);
 }
 
 .pricing-btn {
   display: block;
   text-align: center;
-  padding: 14px 24px;
-  border-radius: 8px;
+  padding: var(--sys-spacing-md) var(--sys-spacing-lg);
+  border-radius: var(--sys-radius-button);
+  font-size: var(--sys-font-body-text-semi-bold-font-size);
   font-weight: 600;
+  line-height: var(--sys-font-body-text-semi-bold-line-height);
   text-decoration: none;
-  transition: all 0.2s;
+  transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
   width: 100%;
   box-sizing: border-box;
+  margin-top: var(--sys-spacing-lg);
 }
 
 .pricing-btn.secondary {

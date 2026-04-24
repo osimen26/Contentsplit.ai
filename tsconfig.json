@@ -21,8 +21,9 @@
     "noFallthroughCasesInSwitch": true,
 
     /* Path aliases */
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": 6.0,
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
