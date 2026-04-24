@@ -98,7 +98,7 @@ app.use(express.json({ limit: '1mb' }))
 
 // In-memory fallback if no database
 const usersDb = new Map()
-const sessionsDb = new Map()
+const JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_KEY || 'contentsplit-secret-key'
 
 function getUserDb() {
   return supabase ? {
@@ -208,8 +208,29 @@ function verifyPassword(password, hash) {
   return hashPassword(password) === hash
 }
 
-function generateToken() {
-  return crypto.randomBytes(32).toString('hex')
+function generateToken(userId) {
+  const payload = Buffer.from(JSON.stringify({ 
+    userId, 
+    expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
+  })).toString('base64')
+  const signature = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('base64')
+  return `${payload}.${signature}`
+}
+
+function verifyToken(token) {
+  try {
+    const [payload, signature] = token.split('.')
+    if (!payload || !signature) return null
+    const expectedSignature = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('base64')
+    if (signature !== expectedSignature) return null
+    
+    const data = JSON.parse(Buffer.from(payload, 'base64').toString('utf8'))
+    if (data.expiresAt < Date.now()) return null
+    
+    return data
+  } catch (err) {
+    return null
+  }
 }
 
 // Email sending (placeholder - use Resend/SendGrid/AWS SES in production)
@@ -267,16 +288,10 @@ function requireAuth(req, res, next) {
   }
   
   const token = auth.replace('Bearer ', '')
-  const session = sessionsDb.get(token)
+  const session = verifyToken(token)
   
   if (!session) {
     return res.status(401).json({ error: 'Invalid or expired token' })
-  }
-  
-  // Check token expiry
-  if (session.expiresAt && session.expiresAt < Date.now()) {
-    sessionsDb.delete(token)
-    return res.status(401).json({ error: 'Token expired' })
   }
   
   req.userId = session.userId
@@ -289,8 +304,8 @@ function optionalAuth(req, res, next) {
   const auth = req.headers.authorization
   if (auth && auth.startsWith('Bearer ')) {
     const token = auth.replace('Bearer ', '')
-    const session = sessionsDb.get(token)
-    if (session && (!session.expiresAt || session.expiresAt > Date.now())) {
+    const session = verifyToken(token)
+    if (session) {
       req.userId = session.userId
       req.session = session
     }
@@ -369,12 +384,7 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     // Create session
-    const token = generateToken()
-    sessionsDb.set(token, {
-      userId: user.id,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
-    })
+    const token = generateToken(user.id)
 
     // Remove password hash from response
     const { password_hash, ...userWithoutPassword } = user
@@ -417,12 +427,7 @@ app.post('/api/auth/register', async (req, res) => {
     console.log('User created:', user.id)
 
     // Create session
-    const token = generateToken()
-    sessionsDb.set(token, {
-      userId: user.id,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000)
-    })
+    const token = generateToken(user.id)
 
     // Remove password hash from response
     const { password_hash, ...userWithoutPassword } = user
@@ -473,12 +478,7 @@ app.post('/api/auth/google', async (req, res) => {
     }
 
     // Create session
-    const token = generateToken()
-    sessionsDb.set(token, {
-      userId: user.id,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
-    })
+    const token = generateToken(user.id)
 
     const { password_hash, ...userWithoutPassword } = user
 
@@ -512,9 +512,7 @@ app.get('/api/auth/me', requireAuth, async (req, res) => {
 
 // Logout
 app.post('/api/auth/logout', requireAuth, (req, res) => {
-  const auth = req.headers.authorization
-  const token = auth.replace('Bearer ', '')
-  sessionsDb.delete(token)
+  // With stateless tokens, the client handles logout by clearing localStorage
   res.json({ success: true })
 })
 

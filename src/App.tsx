@@ -22,6 +22,7 @@ const SettingsPage = lazy(() => import('@pages/SettingsPage'))
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'))
 const RecoverPage = lazy(() => import('./pages/auth/RecoverPage'))
+const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage'))
 const AuthLayout = lazy(() => import('@/layouts/AuthLayout'))
 const OnboardingPage = lazy(() => import('./pages/onboarding/OnboardingPage'))
 const LandingPage = lazy(() => import('./pages/LandingPage'))
@@ -69,6 +70,7 @@ function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/recover" element={<RecoverPage />} />
+                    <Route path="/reset-password" element={<ResetPasswordPage />} />
                   </Route>
                 </Routes>
               </Suspense>
