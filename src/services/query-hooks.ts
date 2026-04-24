@@ -34,8 +34,25 @@ export const useLogin = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      apiClient.login(email, password),
+    mutationFn: async ({ email, password }: { email: string; password: string }) => {
+      const data = await apiClient.login(email, password)
+      return data
+    },
+    onSuccess: (data) => {
+      localStorage.setItem('auth_token', data.token)
+      queryClient.setQueryData(queryKeys.user, data.user)
+    },
+  })
+}
+
+export const useGoogleAuthMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ access_token }: { access_token: string }) => {
+      const data = await apiClient.googleAuth(access_token)
+      return data
+    },
     onSuccess: (data) => {
       localStorage.setItem('auth_token', data.token)
       queryClient.setQueryData(queryKeys.user, data.user)

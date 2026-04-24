@@ -71,6 +71,7 @@ export interface PaginatedResponse<T> {
 class ApiClient {
   private client: AxiosInstance
 
+  // Uses relative path so it works on any domain (localhost via Vite proxy, or Vercel production)
   constructor(baseURL = import.meta.env.VITE_API_BASE_URL || '/api') {
     this.client = axios.create({
       baseURL,
@@ -113,6 +114,11 @@ class ApiClient {
   // Auth
   async login(email: string, password: string): Promise<{ token: string; user: User }> {
     const response = await this.client.post('/auth/login', { email, password })
+    return response.data
+  }
+
+  async googleAuth(access_token: string): Promise<{ token: string; user: User }> {
+    const response = await this.client.post('/auth/google', { access_token })
     return response.data
   }
 

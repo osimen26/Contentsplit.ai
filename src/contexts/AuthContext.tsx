@@ -9,6 +9,8 @@ interface AuthContextType {
   logout: () => void
   updateUser: (updates: Partial<User>) => void
   notifyLoggedIn: () => void
+  setTokenExists: (exists: boolean) => void
+  refetch: () => Promise<unknown>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -71,7 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isLoading = tokenExists && isUserLoading
 
   return (
-    <AuthContext.Provider value={{ user: user || null, isLoading, login, logout, updateUser, notifyLoggedIn }}>
+    <AuthContext.Provider value={{ user: user || null, isLoading, login, logout, updateUser, notifyLoggedIn, setTokenExists, refetch }}>
       {children}
     </AuthContext.Provider>
   )
