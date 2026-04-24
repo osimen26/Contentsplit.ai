@@ -34,7 +34,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     if (saved === 'light' || saved === 'dark' || saved === 'system') {
       return saved
     }
-    return 'system'
+    return 'light'
   })
 
   const resolvedTheme = theme === 'system' ? getSystemTheme() : theme

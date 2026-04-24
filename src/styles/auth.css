@@ -5,13 +5,13 @@
   justify-content: center;
   min-height: 100vh;
   padding: 24px;
-  background-color: #ffffff;
+  background-color: var(--sys-color-neutral-100);
 }
 
 .login-card {
   width: 100%;
   max-width: 440px;
-  background-color: #ffffff;
+  background-color: var(--sys-color-neutral-100);
   border-radius: 16px;
   padding: 48px 40px;
   box-shadow: none;
@@ -48,7 +48,7 @@
 }
 
 .login-input {
-  background-color: #ffffff;
+  background-color: var(--sys-color-neutral-100);
   border: 1px solid var(--sys-color-neutral-80);
   border-radius: 8px;
   padding: 14px 16px;
@@ -59,15 +59,9 @@
   transition: all 0.2s ease;
 }
 
-.login-input:focus {
-  border-color: var(--sys-color-roles-primary-color-role-primary-role);
-  outline: none;
-  box-shadow: 0 0 0 1px var(--sys-color-roles-primary-color-role-primary-role);
-}
-
 .login-primary-action {
   background-color: var(--sys-color-roles-primary-color-role-primary-role);
-  color: #ffffff;
+  color: var(--sys-color-neutral-100);
   border: none;
   border-radius: 8px;
   padding: 14px 24px;
@@ -137,7 +131,7 @@
   justify-content: center;
   gap: 12px;
   padding: 14px 16px;
-  background-color: #ffffff;
+  background-color: var(--sys-color-neutral-100);
   border: 1px solid var(--sys-color-neutral-80);
   border-radius: 8px;
   font-family: var(--sys-typography-body-text-font-family);
