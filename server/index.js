@@ -1106,10 +1106,14 @@ app.get('/api/payments/verify/:reference', requireAuth, async (req, res) => {
 })
 
 // ── START ─────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n🚀  ContentSplit backend running at http://localhost:${PORT}`)
-  console.log(`🔐  DeepSeek API key: ${DEEPSEEK_API_KEY ? '✓ loaded' : '✗ MISSING'}`)
-  console.log(`⚡  Model: ${DEEPSEEK_MODEL}`)
-  console.log(`🗄️  Database: ${supabase ? 'Supabase' : 'Mock (in-memory)'}`)
-  console.log(`💳 Payments: ${flutterwave ? 'Flutterwave' : 'Not configured'}\n`)
-})
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`\n🚀  ContentSplit backend running at http://localhost:${PORT}`)
+    console.log(`🔐  DeepSeek API key: ${DEEPSEEK_API_KEY ? '✓ loaded' : '✗ MISSING'}`)
+    console.log(`⚡  Model: ${DEEPSEEK_MODEL}`)
+    console.log(`🗄️  Database: ${supabase ? 'Supabase' : 'Mock (in-memory)'}`)
+    console.log(`💳 Payments: ${flutterwave ? 'Flutterwave' : 'Not configured'}\n`)
+  })
+}
+
+export default app
