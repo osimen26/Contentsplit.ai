@@ -123,18 +123,17 @@ const LandingPage: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="landing-hero" style={{ paddingBottom: '40px' }}>
+      <section className="landing-hero animate-fade-in" style={{ paddingBottom: '40px' }}>
         <h1 className="hero-title" style={{ fontSize: 'clamp(3rem, 7vw, 5rem)', lineHeight: 1 }}>
-          Don't just write.<br/>
-          <span style={{ color: 'var(--sys-color-roles-primary-color-role-primary-role)' }}>Multiply.</span>
+          Scale your thoughts.
         </h1>
         <p className="hero-subtitle" style={{ fontSize: '1.25rem', color: 'var(--sys-color-neutral-30)', maxWidth: '750px', marginTop: '24px', marginBottom: '0' }}>
-          Turn a single brain-dump into a week’s worth of platform-native content. ContentSplit learns your exact Brand Voice and automates the repetition—zero prompt engineering required.
+          Turn a single idea into a week of high-converting content. ContentSplit adopts your personal voice to instantly generate native posts for every platform.
         </p>
         
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center', justifyContent: 'center', marginTop: '32px' }}>
-          <Link to="/register" className="cta-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '18px 48px', fontSize: '1.2rem', color: '#ffffff' }}>
-            Start Multiplying For Free <ArrowRight size={20} />
+          <Link to="/register" className="cta-primary cta-glow" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '18px 48px', fontSize: '1.2rem', color: '#ffffff' }}>
+            Start Scaling For Free <ArrowRight size={20} />
           </Link>
         </div>
 
@@ -157,9 +156,9 @@ const LandingPage: React.FC = () => {
 
       {/* Dashboard Mockup Section */}
       <section style={{ backgroundColor: 'var(--sys-color-primary-99)', paddingBottom: '96px', marginTop: '-40px' }}>
-        <div className="dashboard-mockup-wrapper">
-          <div className="dashboard-mockup-background"></div>
-          <div className="dashboard-mockup-window">
+        <div className="dashboard-mockup-wrapper animate-float">
+          <div className="dashboard-mockup-background mockup-glow"></div>
+          <div className="dashboard-mockup-window glass-panel">
              <div className="mock-sidebar">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '1.2rem', marginBottom: '24px' }}>
                   <MessageSquare size={20} color="var(--sys-color-roles-primary-color-role-primary-role)" /> Chat Board
@@ -204,10 +203,10 @@ const LandingPage: React.FC = () => {
           {/* Step 1 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', textAlign: 'left' }}>
             <div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--sys-color-neutral-20)', marginBottom: '12px' }}>Define your identity</h3>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--sys-color-neutral-20)', marginBottom: '12px' }}>Define your voice</h3>
               <p style={{ color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>Set your Persona and Tone exactly once. We secure and lock in your Brand Voice instantly.</p>
             </div>
-            <div style={{ background: 'var(--sys-color-primary-99)', borderRadius: '24px', padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minHeight: '200px', border: '1px solid var(--sys-color-border-tertiary)' }}>
+            <div className="glass-panel" style={{ borderRadius: '24px', padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minHeight: '200px', border: '1px solid var(--sys-color-border-tertiary)' }}>
               <div style={{ padding: '6px 16px', background: '#fce7f3', color: '#be185d', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700, marginBottom: 'auto' }}>Takes 1 min</div>
               <div style={{ display: 'flex', gap: '16px', marginTop: '32px', alignSelf: 'center' }}>
                  <div style={{ width: '64px', height: '64px', background: 'white', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}><TwitterIcon size={32} color="#1DA1F2" /></div>
@@ -219,10 +218,10 @@ const LandingPage: React.FC = () => {
           {/* Step 2 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', textAlign: 'left' }}>
             <div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--sys-color-neutral-20)', marginBottom: '12px' }}>We learn your context</h3>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--sys-color-neutral-20)', marginBottom: '12px' }}>We adopt your context</h3>
               <p style={{ color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>No sterile AI robot-speak. ContentSplit inherits your unique cadence organically.</p>
             </div>
-            <div style={{ background: 'var(--sys-color-primary-99)', borderRadius: '24px', padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minHeight: '200px', border: '1px solid var(--sys-color-border-tertiary)' }}>
+            <div className="glass-panel" style={{ borderRadius: '24px', padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minHeight: '200px', border: '1px solid var(--sys-color-border-tertiary)' }}>
               <div style={{ padding: '6px 16px', background: '#fef08a', color: '#854d0e', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700, marginBottom: 'auto' }}>Takes 5 min</div>
               <div style={{ display: 'flex', gap: '16px', marginTop: '32px', alignSelf: 'center' }}>
                  <div style={{ width: '80px', height: '64px', background: 'white', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', position: 'relative' }}>
@@ -235,10 +234,10 @@ const LandingPage: React.FC = () => {
           {/* Step 3 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', textAlign: 'left' }}>
             <div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--sys-color-neutral-20)', marginBottom: '12px' }}>Paste and distribute</h3>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--sys-color-neutral-20)', marginBottom: '12px' }}>Publish everywhere</h3>
               <p style={{ color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>Drop a single draft. Approve perfectly formatted threads and posts simultaneously.</p>
             </div>
-            <div style={{ background: 'var(--sys-color-primary-99)', borderRadius: '24px', padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minHeight: '200px', border: '1px solid var(--sys-color-border-tertiary)' }}>
+            <div className="glass-panel" style={{ borderRadius: '24px', padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minHeight: '200px', border: '1px solid var(--sys-color-border-tertiary)' }}>
               <div style={{ padding: '6px 16px', background: '#e0e7ff', color: '#4338ca', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700, marginBottom: 'auto' }}>Save 10+ hours a week</div>
               <div style={{ marginTop: '24px', width: '100%', background: 'white', borderRadius: '8px', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)', marginBottom: '8px', fontWeight: 600 }}>Draft Ready: LinkedIn Post</div>
@@ -253,95 +252,90 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Feature Grid Section */}
-      <section className="features-section" style={{ backgroundColor: 'var(--sys-color-primary-99)' }}>
+      <section className="features-section" style={{ backgroundColor: 'var(--sys-color-surface-container-lowest)' }}>
         <div className="features-header">
-          <h2 className="features-title">The engine behind your content empire</h2>
+          <h2 className="features-title">The engine behind your <span style={{ color: 'var(--sys-color-roles-primary-color-role-primary-role)' }}>content empire</span></h2>
         </div>
         
-        <style>{`
-          .bento-grid {
-            display: grid;
-            gap: 24px;
-            grid-template-columns: 1fr;
-            padding: 0 5%;
-            max-width: 1200px;
-            margin: 0 auto;
-          }
-          .bento-card {
-            background: var(--sys-color-surface-container-lowest);
-            display: flex;
-            flex-direction: column;
-            padding: 40px;
-            border-radius: 24px;
-            border: 1px solid var(--sys-color-border-tertiary);
-            transition: transform 0.2s;
-          }
-          .bento-card:hover { border-color: var(--sys-color-border-secondary); }
-          .bento-card-icon {
-            background: var(--sys-color-primary-99);
-            padding: 14px;
-            border-radius: 16px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-            align-self: flex-start;
-          }
-          @media (min-width: 900px) {
-            .bento-grid {
-              grid-template-columns: repeat(3, 1fr);
-              grid-auto-rows: minmax(320px, auto);
-            }
-            .bento-large-1 { grid-column: span 2; }
-            .bento-small-1 { grid-column: span 1; }
-            .bento-small-2 { grid-column: span 1; }
-            .bento-large-2 { grid-column: span 2; }
-          }
-        `}</style>
-        
         <div className="bento-grid">
-          {/* Card 1: Large Span */}
-          <div className="bento-card bento-large-1">
-            <div className="bento-card-icon">
-              <Zap size={32} color="var(--sys-color-roles-primary-color-role-primary-role)" />
+          {/* Card 1: Zero-Prompt Generation (Large Span 2) */}
+          <div className="bento-card bento-1" style={{ background: 'var(--sys-color-roles-primary-color-role-primary-role)', color: 'white' }}>
+            <div className="bento-icon bento-icon-purple-light">
+              <Sparkles size={20} color="white" />
             </div>
-            <h3 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '16px', color: 'var(--sys-color-neutral-10)' }}>Zero-Prompt Generation</h3>
-            <p style={{ color: 'var(--sys-color-neutral-40)', lineHeight: '1.6', fontSize: '1.1rem', maxWidth: '420px', marginTop: 'auto' }}>
+            <h3 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '16px' }}>Zero-Prompt Generation</h3>
+            <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.6', fontSize: '1.05rem', maxWidth: '480px', marginBottom: '40px' }}>
               No more battling complex AI prompts. Simply drop your rough ideas, and we'll instantly handle the formatting, line breaks, and structure for you.
             </p>
+            <div className="bento-tags" style={{ marginTop: 'auto' }}>
+              <div className="bento-tag bento-tag-circle">
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                   AI <Zap size={14} fill="currentColor" />
+                 </div>
+              </div>
+              <div className="bento-tag bento-tag-purple-light">Instant Results</div>
+            </div>
           </div>
 
-          {/* Card 2: Small Span */}
-          <div className="bento-card bento-small-1">
-            <div className="bento-card-icon">
-              <Layers size={32} color="var(--sys-color-roles-primary-color-role-primary-role)" />
+          {/* Card 2: Native Nuance (Tall Span Row 2) */}
+          <div className="bento-card bento-2">
+            <div className="bento-icon bento-icon-purple">
+              <Layers size={20} color="white" />
             </div>
-            <h3 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '16px', color: 'var(--sys-color-neutral-10)' }}>Native Nuance</h3>
-            <p style={{ color: 'var(--sys-color-neutral-40)', lineHeight: '1.6', fontSize: '1.1rem', marginTop: 'auto' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '12px', color: 'var(--sys-color-neutral-10)' }}>Native Nuance</h3>
+            <p style={{ color: 'var(--sys-color-neutral-40)', lineHeight: '1.6', fontSize: '0.95rem', marginBottom: '24px' }}>
               A Thread isn't just a chopped up post. Outputs are highly optimized for every specific destination format.
             </p>
+            <div className="bento-platform-list">
+              <div className="bento-platform-item">
+                <div className="platform-icon-wrap" style={{ background: '#f0f4f8' }}><TwitterIcon size={14} color="#1DA1F2" /></div>
+                <span>X Threads</span>
+              </div>
+              <div className="bento-platform-item">
+                <div className="platform-icon-wrap" style={{ background: '#e1f0f8' }}><LinkedinIcon size={14} color="#0077b5" /></div>
+                <span>LinkedIn Posts</span>
+              </div>
+              <div className="bento-platform-item">
+                <div className="platform-icon-wrap" style={{ background: '#fce4ec' }}><InstagramIcon size={14} color="#E1306C" /></div>
+                <span>Instagram Captions</span>
+              </div>
+              <div className="bento-platform-item">
+                <div className="platform-icon-wrap" style={{ background: '#f3e5f5' }}><Mail size={14} color="#8e24aa" /></div>
+                <span>Email Intros</span>
+              </div>
+            </div>
           </div>
 
-          {/* Card 3: Small Span */}
-          <div className="bento-card bento-small-2">
-            <div className="bento-card-icon">
-              <CheckCircle size={32} color="var(--sys-color-roles-primary-color-role-primary-role)" />
+          {/* Card 3: Instant Export (Bottom Left) */}
+          <div className="bento-card bento-3">
+            <div className="bento-icon bento-icon-green">
+              <CheckCircle size={20} color="#10b981" />
             </div>
-            <h3 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '16px', color: 'var(--sys-color-neutral-10)' }}>Instant Export</h3>
-            <p style={{ color: 'var(--sys-color-neutral-40)', lineHeight: '1.6', fontSize: '1.1rem', marginTop: 'auto' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '12px', color: 'var(--sys-color-neutral-10)' }}>Instant Export</h3>
+            <p style={{ color: 'var(--sys-color-neutral-40)', lineHeight: '1.6', fontSize: '0.95rem', marginBottom: '40px' }}>
               Read, review, edit inline, and copy high-converting drafts directly to your clipboard in one tap. No bloat.
             </p>
+            <div className="bento-tags" style={{ marginTop: 'auto' }}>
+              <div className="bento-tag bento-tag-green">One-Click Copy</div>
+              <div className="bento-tag bento-tag-gray">No Export Queue</div>
+            </div>
           </div>
 
-          {/* Card 4: Large Span */}
-          <div className="bento-card bento-large-2" style={{ position: 'relative', overflow: 'hidden' }}>
-            <div className="bento-card-icon">
-              <Wand2 size={32} color="var(--sys-color-roles-primary-color-role-primary-role)" />
+          {/* Card 4: Mass-Parallel Processing (Bottom Middle) */}
+          <div className="bento-card bento-4" style={{ background: '#f8f7ff' }}>
+            <div className="bento-icon bento-icon-purple">
+              <Zap size={20} color="white" fill="white" />
             </div>
-            <h3 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '16px', color: 'var(--sys-color-neutral-10)' }}>Mass-Parallel Processing</h3>
-            <p style={{ color: 'var(--sys-color-neutral-40)', lineHeight: '1.6', fontSize: '1.1rem', maxWidth: '420px', marginTop: 'auto' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '12px', color: 'var(--sys-color-neutral-10)' }}>Mass-Parallel Processing</h3>
+            <p style={{ color: 'var(--sys-color-neutral-40)', lineHeight: '1.6', fontSize: '0.95rem', marginBottom: '40px' }}>
               While other tools force you to generate posts one by one, our backend architecture builds your entire multi-channel campaign concurrently to save you hours of wait time.
             </p>
+            <div className="bento-tags" style={{ marginTop: 'auto' }}>
+              <div className="bento-tag bento-tag-white-purple">
+                <div style={{ width: '6px', height: '6px', borderRadius: '3px', background: 'var(--sys-color-roles-primary-color-role-primary-role)' }}></div>
+                4 platforms. Simultaneously.
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -488,148 +482,50 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Pricing Section */}
-      <section style={{ padding: '96px 5%', backgroundColor: 'var(--sys-color-surface-container-low)' }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <h2 className="features-title" style={{ textAlign: 'center', marginBottom: '16px' }}>Simple, transparent pricing</h2>
-          <p style={{ textAlign: 'center', color: 'var(--sys-color-neutral-50)', marginBottom: '48px', fontSize: '1.1rem' }}>
-            Start free. Upgrade when you're ready.
-          </p>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
-            {/* Free Plan */}
-            <div style={{ 
-              padding: '32px', 
-              background: 'var(--sys-color-surface-container-high)', 
-              borderRadius: '16px',
-              border: '1px solid var(--sys-color-neutral-90)'
-            }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>Starter</h3>
-              <div style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '4px', color: 'var(--sys-color-neutral-10)' }}>
-                Free
-              </div>
-              <p style={{ color: 'var(--sys-color-neutral-50)', fontSize: '0.9rem', marginBottom: '24px' }}>Forever</p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> 10 conversions/mo
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Basic tones
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Twitter & LinkedIn
-                </li>
-              </ul>
-              <Link to="/register" style={{ 
-                display: 'block', 
-                padding: '12px 24px', 
-                background: 'transparent', 
-                border: '1px solid var(--sys-color-neutral-80)',
-                borderRadius: '8px',
-                textAlign: 'center',
-                color: 'var(--sys-color-neutral-20)',
-                textDecoration: 'none',
-                fontWeight: 600
-              }}>
-                Get Started
-              </Link>
-            </div>
+      <section className="pricing-section">
+        <h2 className="features-title" style={{ textAlign: 'center', marginBottom: '64px' }}>Simple, transparent pricing</h2>
+        
+        <div className="pricing-grid">
+          {/* Starter Plan */}
+          <div className="pricing-card">
+            <h3 className="pricing-title">Starter</h3>
+            <div className="pricing-price">Free</div>
+            <p className="pricing-billing">Forever</p>
+            <ul className="pricing-list">
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> 10 conversions/mo</li>
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> Basic tones</li>
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> Twitter & LinkedIn</li>
+            </ul>
+            <Link to="/register" className="pricing-btn secondary">Get Started</Link>
+          </div>
 
-            {/* Pro Plan */}
-            <div style={{ 
-              padding: '32px', 
-              background: 'var(--sys-color-primary-98)', 
-              borderRadius: '16px',
-              border: '2px solid var(--sys-color-primary-40)',
-              position: 'relative'
-            }}>
-              <div style={{ 
-                position: 'absolute', 
-                top: '-12px', 
-                right: '24px', 
-                background: 'var(--sys-color-primary-40)', 
-                color: 'white',
-                padding: '4px 12px',
-                borderRadius: '12px',
-                fontSize: '0.75rem',
-                fontWeight: 600
-              }}>
-                POPULAR
-              </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '8px', color: 'var(--sys-color-primary-20)' }}>Pro</h3>
-              <div style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '4px', color: 'var(--sys-color-primary-20)' }}>
-                {'5,000 NGN'}
-                <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--sys-color-neutral-50)' }}>/mo</span>
-              </div>
-              <p style={{ color: 'var(--sys-color-neutral-50)', fontSize: '0.9rem', marginBottom: '24px' }}>Billed monthly</p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> 100 conversions/mo
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> All tones
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> All platforms
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-primary-20)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Priority support
-                </li>
-              </ul>
-              <Link to="/register?plan=pro" style={{ 
-                display: 'block', 
-                padding: '12px 24px', 
-                background: 'var(--sys-color-primary-40)', 
-                borderRadius: '8px',
-                textAlign: 'center',
-                color: 'white',
-                textDecoration: 'none',
-                fontWeight: 600
-              }}>
-                Upgrade to Pro
-              </Link>
-            </div>
+          {/* Pro Plan */}
+          <div className="pricing-card pro">
+            <div className="pricing-badge">POPULAR</div>
+            <h3 className="pricing-title">Pro</h3>
+            <div className="pricing-price">5,000 NGN<span>/mo</span></div>
+            <p className="pricing-billing">Billed monthly</p>
+            <ul className="pricing-list">
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> 100 conversions/mo</li>
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> All tones</li>
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> All platforms</li>
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> Priority support</li>
+            </ul>
+            <Link to="/register?plan=pro" className="pricing-btn primary">Upgrade to Pro</Link>
+          </div>
 
-            {/* Agency Plan */}
-            <div style={{ 
-              padding: '32px', 
-              background: 'var(--sys-color-surface-container-high)', 
-              borderRadius: '16px',
-              border: '1px solid var(--sys-color-neutral-90)'
-            }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '8px', color: 'var(--sys-color-neutral-10)' }}>Agency</h3>
-              <div style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '4px', color: 'var(--sys-color-neutral-10)' }}>
-                {'15000 NGN'}
-                <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--sys-color-neutral-50)' }}>/mo</span>
-              </div>
-              <p style={{ color: 'var(--sys-color-neutral-50)', fontSize: '0.9rem', marginBottom: '24px' }}>Billed monthly</p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Unlimited conversions
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> All tones
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Team access
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sys-color-neutral-30)' }}>
-                  <CheckCircle size={16} color="var(--sys-color-primary-40)" /> Priority support
-                </li>
-              </ul>
-              <Link to="/register?plan=agency" style={{ 
-                display: 'block', 
-                padding: '12px 24px', 
-                background: 'transparent', 
-                border: '1px solid var(--sys-color-neutral-80)',
-                borderRadius: '8px',
-                textAlign: 'center',
-                color: 'var(--sys-color-neutral-20)',
-                textDecoration: 'none',
-                fontWeight: 600
-              }}>
-                Upgrade to Agency
-              </Link>
-            </div>
+          {/* Agency Plan */}
+          <div className="pricing-card">
+            <h3 className="pricing-title">Agency</h3>
+            <div className="pricing-price">15000 NGN<span>/mo</span></div>
+            <p className="pricing-billing">Billed monthly</p>
+            <ul className="pricing-list">
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> Unlimited conversions</li>
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> All tones</li>
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> Team access</li>
+              <li className="pricing-list-item"><CheckCircle size={18} color="#1e1b4b" /> Priority support</li>
+            </ul>
+            <Link to="/register?plan=agency" className="pricing-btn secondary">Upgrade to Agency</Link>
           </div>
         </div>
       </section>
