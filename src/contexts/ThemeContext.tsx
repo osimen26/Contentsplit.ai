@@ -31,10 +31,10 @@ interface ThemeProviderProps {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem('contentsplit-theme')
-    if (saved === 'light' || saved === 'dark' || saved === 'system') {
+    if (saved === 'light' || saved === 'dark') {
       return saved
     }
-    return 'system'
+    return 'light'
   })
 
   const resolvedTheme = theme === 'system' ? getSystemTheme() : theme
