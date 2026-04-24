@@ -2,7 +2,7 @@
 
 .dashboard-layout-root {
   display: flex;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: linear-gradient(-45deg, #fdfbfb, #ebedee, #fdfbfb, #e2ebf0);
   background-size: 400% 400%;
@@ -180,3 +180,25 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
   color: #6366f1 !important;
 }
+
+/* Animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes brightGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  from { transform: translate(0, 0); }
+  to { transform: translate(20px, 30px); }
+}
+

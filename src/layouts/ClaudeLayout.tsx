@@ -59,7 +59,7 @@ const SidebarContentComponent: React.FC<{
   const tier = currentUser?.tier === 'agency' ? 'Enterprise' : currentUser?.tier === 'pro' ? 'Pro' : 'Free'
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       {/* ── TOP: Brand + Toggle ── */}
       <div style={{
         display: 'flex', alignItems: 'center',
@@ -461,17 +461,18 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       </div>
 
       {/* ── DESKTOP LAYOUT ── */}
-      <div className={`claude-layout ${collapsed ? 'sidebar-collapsed' : ''}`} style={{ display: 'flex', height: '100vh', width: '100%', overflow: 'hidden' }}>
+      <div className={`claude-layout ${collapsed ? 'sidebar-collapsed' : ''}`} style={{ display: 'flex', height: '100dvh', width: '100%', overflow: 'hidden' }}>
         {/* Desktop Sidebar */}
         <aside style={{
           width: collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED,
           minWidth: collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED,
-          height: '100vh',
+          height: '100dvh',
           transition: 'width 0.22s ease, min-width 0.22s ease',
           overflow: 'hidden',
           flexShrink: 0,
           display: 'flex',
           flexDirection: 'column',
+          minHeight: 0,
         }} className="claude-sidebar desktop-sidebar dashboard-sidebar">
           <SidebarContentComponent
             collapsed={collapsed}
@@ -491,8 +492,8 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         </aside>
 
         {/* Main Content */}
-        <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }} className="claude-main dashboard-main">
-          <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
+        <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 0 }} className="claude-main dashboard-main">
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
             {children || <Outlet />}
           </div>
         </main>

@@ -122,8 +122,7 @@ const ContentCreationPage: React.FC = () => {
   const handleGenerate = () => {
     const userMsg = [...messages].reverse().find(m => m.role === 'user' && m.type === 'text')
     if (!userMsg?.text || selectedPlatforms.length === 0) return
-    const filtered = messages.filter(m => m.type !== 'preferences')
-    setMessages([...filtered, { id: crypto.randomUUID(), role: 'assistant', type: 'loading' }])
+    setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', type: 'loading' }])
     generateMutation.mutate(
       {
         input_text: userMsg.text,
@@ -136,7 +135,7 @@ const ContentCreationPage: React.FC = () => {
         onSuccess: (data) => {
           setCurrentConversionId(data.conversion.id)
           setMessages(prev => [
-            ...prev.filter(m => m.type !== 'loading'),
+            ...prev.filter(m => m.type !== 'loading' && m.type !== 'preferences'),
             { id: crypto.randomUUID(), role: 'assistant', type: 'result' }
           ])
         },
@@ -182,7 +181,7 @@ const ContentCreationPage: React.FC = () => {
   const mappedTones = toneOptions.map(t => ({ id: t.id, label: t.name, description: t.description, color: 'casual' as any }))
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, position: 'relative' }}>
 
       {/* ── ZONE 1: Empty State / Welcome Screen ── */}
       {!hasMessages && (
@@ -336,7 +335,7 @@ const ContentCreationPage: React.FC = () => {
                           <button
                             className="btn-gradient"
                             onClick={handleGenerate}
-                            disabled={selectedPlatforms.length === 0}
+                            disabled={selectedPlatforms.length === 0 || generateMutation.isPending}
                             style={{
                               padding: '14px 32px',
                               minWidth: 200,
@@ -346,8 +345,8 @@ const ContentCreationPage: React.FC = () => {
                               gap: 10,
                             }}
                           >
-                            <Sparkles size={18} />
-                            Generate Content
+                            <Sparkles size={18} className={generateMutation.isPending ? 'spin' : ''} />
+                            {generateMutation.isPending ? 'Generating...' : 'Generate Content'}
                           </button>
                           {selectedPlatforms.length === 0 && (
                             <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>
