@@ -606,3 +606,207 @@
 .pricing-btn.primary:hover {
   background: #312e81;
 }
+
+/* ==========================================================================
+   RESPONSIVE — Mobile First
+   ========================================================================== */
+
+/* ── Tablet (≤900px) ── */
+@media (max-width: 900px) {
+  /* Navbar */
+  .landing-navbar {
+    min-width: unset;
+    width: calc(100% - 32px);
+    top: 12px;
+    padding: 10px 20px;
+  }
+
+  .landing-nav-links {
+    gap: 10px;
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+  }
+
+  /* Hero */
+  .hero-section {
+    padding: 140px 5% 80px;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  /* Steps */
+  .steps-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .step-connector {
+    display: none;
+  }
+
+  /* Dashboard Mockup */
+  .dashboard-mockup-window {
+    height: 360px;
+    margin: 0 16px;
+  }
+
+  .mock-sidebar {
+    width: 160px;
+    padding: 16px;
+  }
+
+  /* Features title */
+  .features-title {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+  }
+
+  /* Pricing */
+  .pricing-section {
+    padding: 64px 5%;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
+}
+
+/* ── Mobile (≤600px) ── */
+@media (max-width: 600px) {
+  /* Navbar — hide nav links, show only logo + CTA */
+  .landing-navbar {
+    top: 8px;
+    padding: 10px 16px;
+  }
+
+  .landing-nav-links .nav-link:not(.nav-cta) {
+    display: none;
+  }
+
+  /* Hero */
+  .hero-section {
+    padding: 120px 5% 60px;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+    margin: 0 auto 32px;
+    max-width: 90%;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-cta-group a,
+  .hero-cta-group button {
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+  }
+
+  .hero-platforms {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .hero-capsule {
+    font-size: 0.8rem;
+    padding: 8px 14px;
+  }
+
+  /* Dashboard Mockup — hide sidebar on small screens */
+  .dashboard-mockup-window {
+    height: 240px;
+    margin: 0 8px;
+  }
+
+  .mock-sidebar {
+    display: none;
+  }
+
+  .mock-main {
+    padding: 20px;
+  }
+
+  /* Features section */
+  .features-section {
+    padding: 60px 5%;
+  }
+
+  .features-title {
+    font-size: clamp(1.35rem, 7vw, 2rem);
+    margin-bottom: 32px;
+  }
+
+  /* Bento grid — single column, no spanning */
+  .bento-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .bento-1,
+  .bento-2,
+  .bento-3,
+  .bento-4 {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+
+  .bento-card {
+    padding: 28px 24px;
+  }
+
+  /* Pricing */
+  .pricing-section {
+    padding: 48px 5%;
+  }
+
+  .pricing-price {
+    font-size: 2rem;
+  }
+
+  .pricing-card {
+    padding: 28px 24px;
+  }
+
+  /* Testimonials */
+  .testimonial-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* FAQ */
+  .faq-section {
+    padding: 48px 5%;
+  }
+
+  /* Footer */
+  .landing-footer {
+    flex-direction: column;
+    gap: 24px;
+    text-align: center;
+    padding: 32px 5%;
+  }
+
+  .footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+}
