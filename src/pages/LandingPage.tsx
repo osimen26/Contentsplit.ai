@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { Wand2, Zap, Layers, Sparkles, Lock, CheckCircle, ArrowRight, MessageSquare, Mail, ChevronDown, Star, EyeOff, Brain } from 'lucide-react'
+import { Wand2, Zap, Layers, Sparkles, Lock, CheckCircle, ArrowRight, MessageSquare, Mail, ChevronDown, Star, EyeOff, Brain, Twitter, Linkedin, Instagram } from 'lucide-react'
 import { useAuth } from '@contexts/AuthContext'
 import Avatar from '@components/ui/Avatar'
 import '../styles/landing.css'
@@ -288,15 +288,15 @@ const LandingPage: React.FC = () => {
             </p>
             <div className="bento-platform-list">
               <div className="bento-platform-item">
-                <div className="platform-icon-wrap" style={{ background: '#f0f4f8' }}><TwitterIcon size={14} color="#1DA1F2" /></div>
+                <div className="platform-icon-wrap" style={{ background: '#f0f4f8' }}><Twitter size={14} color="#1DA1F2" /></div>
                 <span>X Threads</span>
               </div>
               <div className="bento-platform-item">
-                <div className="platform-icon-wrap" style={{ background: '#e1f0f8' }}><LinkedinIcon size={14} color="#0077b5" /></div>
+                <div className="platform-icon-wrap" style={{ background: '#e1f0f8' }}><Linkedin size={14} color="#0077b5" /></div>
                 <span>LinkedIn Posts</span>
               </div>
               <div className="bento-platform-item">
-                <div className="platform-icon-wrap" style={{ background: '#fce4ec' }}><InstagramIcon size={14} color="#E1306C" /></div>
+                <div className="platform-icon-wrap" style={{ background: '#fce4ec' }}><Instagram size={14} color="#E1306C" /></div>
                 <span>Instagram Captions</span>
               </div>
               <div className="bento-platform-item">
