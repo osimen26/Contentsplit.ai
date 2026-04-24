@@ -1,15 +1,28 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import LoginPage from './LoginPage'
+import { AuthProvider } from '@contexts/AuthContext'
+
+const localStorageMock = {
+  getItem: vi.fn(() => null),
+  setItem: vi.fn(),
+  clear: vi.fn(),
+}
+vi.stubGlobal('localStorage', localStorageMock)
 
 const queryClient = new QueryClient()
 
 const renderWithProviders = (ui: React.ReactElement) => {
   return render(
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{ui}</BrowserRouter>
+      <GoogleOAuthProvider clientId="test-client-id">
+        <BrowserRouter>
+          <AuthProvider>{ui}</AuthProvider>
+        </BrowserRouter>
+      </GoogleOAuthProvider>
     </QueryClientProvider>
   )
 }

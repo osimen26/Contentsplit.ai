@@ -68,7 +68,7 @@ const SUGGESTIONS = [
   { icon: <Sparkles size={18} />, text: 'Create captions for my latest Instagram post' },
 ]
 
-type MessageType = 'text' | 'preferences' | 'loading' | 'result'
+type MessageType = 'text' | 'preferences' | 'loading' | 'result' | 'error'
 interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
@@ -137,6 +137,14 @@ const ContentCreationPage: React.FC = () => {
           setMessages(prev => [
             ...prev.filter(m => m.type !== 'loading'),
             { id: crypto.randomUUID(), role: 'assistant', type: 'result' }
+          ])
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: (err: any) => {
+          const errorMsg = err?.response?.data?.error || err?.message || 'Failed to generate content'
+          setMessages(prev => [
+            ...prev.filter(m => m.type !== 'loading'),
+            { id: crypto.randomUUID(), role: 'assistant', type: 'error', text: errorMsg }
           ])
         },
       }
@@ -359,6 +367,20 @@ const ContentCreationPage: React.FC = () => {
 
                   {/* ── Loading States ── */}
                   {msg.type === 'loading' && <ChatLoadingBubble />}
+
+                  {/* ── Error State ── */}
+                  {msg.type === 'error' && (
+                    <div style={{
+                      padding: 'var(--sys-spacing-lg)',
+                      borderRadius: 'var(--sys-radius-lg)',
+                      backgroundColor: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      color: '#b91c1c',
+                    }}>
+                      <p style={{ fontWeight: 500, marginBottom: 8 }}>Generation failed</p>
+                      <p style={{ fontSize: '0.9rem' }}>{msg.text}</p>
+                    </div>
+                  )}
 
                   {/* ── ZONE 3: Output Tabs (GeneratedContent + Regeneration) ── */}
                   {msg.type === 'result' && (
