@@ -32,9 +32,10 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ buttonText = 'Continue with Goo
         setTokenExists(true)
         await refetch()
         navigate('/onboarding')
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Google auth error:', err)
-        setError(err.response?.data?.error || 'Failed to authenticate with Google')
+        const errorMessage = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+        setError(errorMessage || 'Failed to authenticate with Google')
       } finally {
         setIsLoading(false)
       }

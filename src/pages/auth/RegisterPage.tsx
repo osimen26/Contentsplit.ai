@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useRegister } from '@/services/query-hooks'
 import { useAuth } from '@/contexts/AuthContext'
 import GoogleAuth from '@/components/auth/GoogleAuth'
+import { Eye, EyeOff } from 'lucide-react'
 
 const RegisterPage: React.FC = () => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
@@ -117,13 +119,22 @@ const RegisterPage: React.FC = () => {
           
           <div className="login-input-container registration-field-full">
             <input 
-              type="password" 
-              className="login-input" 
+              type={showPassword ? "text" : "password"} 
+              className="login-input password-input" 
               placeholder="Password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <button 
+              type="button" 
+              className="password-toggle-btn"
+              onClick={() => setShowPassword(!showPassword)}
+              tabIndex={-1}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
             {password.length > 0 && (
               <div className="password-strength">
                 <div className={`password-strength-fill ${strengthClass}`}></div>
@@ -160,13 +171,13 @@ const RegisterPage: React.FC = () => {
         <button type="submit" className="login-primary-action" disabled={isPending}>
           {isPending ? 'Creating Account...' : 'Create Account'}
         </button>
-
-        <div className="login-secondary-actions" style={{ justifyContent: 'center' }}>
-          <span style={{ fontSize: 'var(--sys-typography-body-small-text-font-size)', color: 'var(--sys-color-neutral-60)' }}>
-            Already have an account? <Link to="/login" className="login-link">Log in</Link>
-          </span>
-        </div>
       </form>
+
+      <div className="login-secondary-actions" style={{ justifyContent: 'center' }}>
+        <span style={{ fontSize: 'var(--sys-typography-body-small-text-font-size)', color: 'var(--sys-color-neutral-60)' }}>
+          Already have an account? <Link to="/login" className="login-link">Log in</Link>
+        </span>
+      </div>
 
       <div className="login-divider">
         <span className="login-divider-text">OR CONTINUE WITH</span>

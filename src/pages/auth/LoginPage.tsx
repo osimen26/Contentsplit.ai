@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLogin } from '@/services/query-hooks'
 import GoogleAuth from '@/components/auth/GoogleAuth'
+import { Eye, EyeOff } from 'lucide-react'
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const { mutateAsync: login, isPending } = useLogin()
@@ -55,24 +57,33 @@ const LoginPage: React.FC = () => {
         
         <div className="login-input-container">
           <input 
-            type="password" 
-            className="login-input" 
+            type={showPassword ? "text" : "password"} 
+            className="login-input password-input" 
             placeholder="Password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <button 
+            type="button" 
+            className="password-toggle-btn"
+            onClick={() => setShowPassword(!showPassword)}
+            tabIndex={-1}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
         </div>
 
         <button type="submit" className="login-primary-action" disabled={isPending}>
           {isPending ? 'Logging in...' : 'Log In'}
         </button>
-
-        <div className="login-secondary-actions">
-          <Link to="/register" className="login-link">Create account</Link>
-          <Link to="/recover" className="login-link">Forgot password?</Link>
-        </div>
       </form>
+
+      <div className="login-secondary-actions">
+        <Link to="/register" className="login-link">Create account</Link>
+        <Link to="/recover" className="login-link">Forgot password?</Link>
+      </div>
 
       <div className="login-divider">
         <span className="login-divider-text">OR CONTINUE WITH</span>
