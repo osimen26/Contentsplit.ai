@@ -71,8 +71,8 @@ export interface PaginatedResponse<T> {
 class ApiClient {
   private client: AxiosInstance
 
-  // Default to production Vercel API - collaborators can override with VITE_API_BASE_URL in .env.local for local dev
-  constructor(baseURL = import.meta.env.VITE_API_BASE_URL || 'https://contentsplit-84woz808p-osimenvictor-6244s-projects.vercel.app/api') {
+  // Uses relative path so it works on any domain (localhost via Vite proxy, or Vercel production)
+  constructor(baseURL = import.meta.env.VITE_API_BASE_URL || '/api') {
     this.client = axios.create({
       baseURL,
       timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000', 10),
