@@ -109,6 +109,10 @@
     border-radius: 16px !important;
     padding: 10px 12px !important;
   }
+  
+  .platform-grid {
+    display: none !important;
+  }
 }
 
 /* Mobile - hide platform/tone card borders for cleaner look */
