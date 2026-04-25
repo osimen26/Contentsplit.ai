@@ -263,4 +263,24 @@
     .platform-chip-group {
         justify-content: center;
     }
+    
+    .platform-card {
+        padding: var(--sys-spacing-sm);
+    }
+    
+    .platform-icon {
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+    }
+    
+    .platform-name,
+    .platform-card .platform-name {
+        font-size: 10px;
+    }
+    
+    .platform-description,
+    .platform-limits {
+        font-size: 9px;
+    }
 }
