@@ -942,6 +942,9 @@ app.post('/api/users/subscription', requireAuth, async (req, res) => {
 app.post('/api/auth/recover', async (req, res) => {
   try {
     const { email } = req.body
+    console.log('📧 Recover endpoint hit with email:', email)
+    res.setHeader('Content-Type', 'application/json')
+    
     if (!email) {
       return res.status(400).json({ error: 'Email is required' })
     }
@@ -960,6 +963,13 @@ app.post('/api/auth/recover', async (req, res) => {
     console.log(`📧 Password recovery email would be sent to: ${email}`)
     console.log(`   Recovery link: ${recoveryLink}`)
     console.log(`   RESEND_API_KEY set: ${!!process.env.RESEND_API_KEY}`)
+    
+    // Return debug info in response
+    const debugInfo = {
+      recoveryLink,
+      resendKeySet: !!process.env.RESEND_API_KEY,
+      appUrl: APP_URL
+    }
     
     if (process.env.RESEND_API_KEY) {
       try {
@@ -987,14 +997,18 @@ app.post('/api/auth/recover', async (req, res) => {
         })
         
         console.log(`📧 Recovery email sent via Resend:`, result)
+        res.json({ success: true, message: 'Recovery email sent!', debug: debugInfo })
       } catch (emailErr) {
         console.error('Resend error:', emailErr)
+        res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: { ...debugInfo, error: String(emailErr) } })
       }
     } else if (process.env.SMTP_HOST) {
       await sendRecoveryEmail(email, recoveryToken, process.env.RECOVERY_EMAIL_FROM || 'noreply@contentsplit.ai')
+      res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: debugInfo })
+    } else {
+      // No email service - return link in response for testing
+      res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: debugInfo })
     }
-
-    res.json({ success: true, message: 'If an account exists, a recovery email has been sent.' })
   } catch (err) {
     console.error('Recovery error:', err)
     res.status(500).json({ error: 'Failed to process recovery request' })

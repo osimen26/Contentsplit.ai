@@ -16,11 +16,17 @@ const RecoverPage: React.FC = () => {
     
     setIsLoading(true)
     try {
-      await apiClient.request({
+      const response = await apiClient.request({
         url: '/auth/recover',
         method: 'POST',
         data: { email },
       })
+      console.log('Recovery response:', response.data)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((response.data as any)?.debug) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        alert('Debug info: ' + JSON.stringify((response.data as any).debug, null, 2))
+      }
       setIsSubmitted(true)
       setIsToastVisible(true)
     } catch (err) {
