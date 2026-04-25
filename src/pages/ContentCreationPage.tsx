@@ -222,7 +222,7 @@ const ContentCreationPage: React.FC = () => {
             }}>
               Ready to repurpose?
             </h1>
-            <p style={{ color: '#475569', width: '100%', padding: '0 16px', boxSizing: 'border-box', lineHeight: 1.6, fontSize: '1rem' }}>
+            <p style={{ color: 'var(--sys-color-neutral-50)', width: '100%', padding: '0 16px', boxSizing: 'border-box', lineHeight: 1.6, fontSize: '1rem' }}>
                Paste your long-form content below to effortlessly adapt it for any platform.
             </p>
           </div>
