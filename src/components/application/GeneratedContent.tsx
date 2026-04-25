@@ -166,8 +166,8 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
                 padding: '6px 10px',
                 borderRadius: 'var(--sys-radius-md)',
                 border: 'none',
-                backgroundColor: 'transparent',
-                color: 'var(--sys-color-neutral-50)',
+                backgroundColor: 'var(--sys-color-roles-primary-color-role-primary-role)',
+                color: 'var(--sys-color-roles-primary-color-role-on-primary-role)',
                 fontSize: '0.75rem', fontWeight: 500, cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
