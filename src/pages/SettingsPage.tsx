@@ -412,17 +412,24 @@ const SettingsPage: React.FC = () => {
             width: 100% !important; 
             flex-direction: row !important;
             overflow-x: auto;
-            padding: 12px !important;
+            padding: 12px 8px !important;
             border-right: none;
             border-bottom: 1px solid var(--sys-color-border-tertiary);
+            gap: 4px !important;
+          }
+          .settings-nav h1 { display: none !important; }
+          .settings-nav button {
+            padding: 8px 12px !important;
+            font-size: 0.8rem !important;
+            white-space: nowrap;
           }
           .settings-main { 
-            padding: 20px 16px !important; 
+            padding: 16px !important; 
             max-width: 100% !important;
           }
         }
         @media (max-width: 480px) {
-          .settings-main { padding: 16px 12px !important; }
+          .settings-main { padding: 12px !important; }
         }
       `}</style>
     </div>
@@ -439,11 +446,11 @@ const AppearanceSection: React.FC = () => {
   ]
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <SectionDivider title="Appearance" subtitle="Customize how ContentSplit looks." />
       <section>
         <p style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--sys-color-neutral-20)', marginBottom: 12 }}>Color mode</p>
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 8 }}>
           {modes.map(mode => {
             const isSelected = theme === mode.id
             return (
@@ -451,7 +458,8 @@ const AppearanceSection: React.FC = () => {
                 key={mode.id}
                 onClick={() => setTheme(mode.id)}
                 style={{
-                  width: 100, padding: '12px 0',
+                  flex: 1,
+                  padding: '12px 8px',
                   borderRadius: 10,
                   border: isSelected ? '2px solid var(--sys-color-primary-40)' : '1px solid var(--sys-color-border-tertiary)',
                   backgroundColor: mode.id === 'dark' ? '#1a1a1a' : mode.id === 'system' ? 'linear-gradient(135deg,#fff 50%,#1a1a1a 50%)' : 'var(--sys-color-neutral-98)',
@@ -482,58 +490,45 @@ const BillingSection: React.FC = () => {
   const currentPlan = tiers.find(t => t.id === tier) || tiers[0]
   
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <SectionDivider title="Billing" subtitle="Manage your subscription and credits." />
       
       {/* Current Plan Card */}
       <section style={{
-        padding: 24,
-        borderRadius: 14,
+        padding: 16,
+        borderRadius: 12,
         border: '1px solid var(--sys-color-border-tertiary)',
         backgroundColor: 'var(--sys-color-neutral-98)',
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
           <div>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Current Plan</p>
-            <h3 style={{ margin: '4px 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>{currentPlan.name}</h3>
+            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Current Plan</p>
+            <h3 style={{ margin: '4px 0 0', fontSize: '1.2rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>{currentPlan.name}</h3>
           </div>
           <span style={{
-            padding: '4px 12px', borderRadius: 20,
-            fontSize: '0.75rem', fontWeight: 600,
+            padding: '4px 10px', borderRadius: 20,
+            fontSize: '0.7rem', fontWeight: 600,
             backgroundColor: tier === 'free' ? 'var(--sys-color-neutral-90)' : 'var(--sys-color-primary-90)',
             color: tier === 'free' ? 'var(--sys-color-neutral-40)' : 'var(--sys-color-primary-30)',
           }}>
-            {tier === 'free' ? 'Free' : tier === 'pro' ? 'Active' : 'Active'}
+            {tier === 'free' ? 'Free' : 'Active'}
           </span>
         </div>
         
-        {tier !== 'free' && (
-          <div style={{ display: 'flex', gap: 24, paddingTop: 16, borderTop: '1px solid var(--sys-color-border-tertiary)' }}>
-            <div>
-              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--sys-color-neutral-50)' }}>Amount</p>
-              <p style={{ margin: '4px 0 0', fontSize: '1.1rem', fontWeight: 600, color: 'var(--sys-color-neutral-10)' }}>₦{currentPlan.price.toLocaleString()}/mo</p>
-            </div>
-            <div>
-              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--sys-color-neutral-50)' }}>Next billing</p>
-              <p style={{ margin: '4px 0 0', fontSize: '1.1rem', fontWeight: 600, color: 'var(--sys-color-neutral-10)' }}>May 25, 2026</p>
-            </div>
-          </div>
-        )}
-        
         {tier === 'free' && (
-          <div style={{ paddingTop: 16, borderTop: '1px solid var(--sys-color-border-tertiary)' }}>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', marginBottom: 12 }}>Your usage this month</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-              <div style={{ flex: 1, height: 8, borderRadius: 4, backgroundColor: 'var(--sys-color-neutral-80)', overflow: 'hidden' }}>
-                <div style={{ width: '10%', height: '100%', backgroundColor: 'var(--sys-color-primary-40)', borderRadius: 4 }} />
+          <div style={{ paddingTop: 12, borderTop: '1px solid var(--sys-color-border-tertiary)' }}>
+            <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--sys-color-neutral-50)', marginBottom: 10 }}>Your usage this month</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+              <div style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: 'var(--sys-color-neutral-80)', overflow: 'hidden' }}>
+                <div style={{ width: '10%', height: '100%', backgroundColor: 'var(--sys-color-primary-40)', borderRadius: 3 }} />
               </div>
-              <span style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', whiteSpace: 'nowrap' }}>1 / 10</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)', whiteSpace: 'nowrap' }}>1/10</span>
             </div>
             <button
               style={{
-                width: '100%', padding: '12px 0', borderRadius: 10,
+                width: '100%', padding: '10px 0', borderRadius: 8,
                 backgroundColor: 'var(--sys-color-primary-40)',
-                color: 'white', border: 'none', fontWeight: 600, fontSize: '0.95rem',
+                color: 'white', border: 'none', fontWeight: 600, fontSize: '0.85rem',
                 cursor: 'pointer',
               }}
             >
@@ -543,69 +538,54 @@ const BillingSection: React.FC = () => {
         )}
       </section>
       
+      {/* Usage Stats */}
+      <section>
+        <SectionDivider title="Usage" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <div style={{
+            padding: 14, borderRadius: 10,
+            border: '1px solid var(--sys-color-border-tertiary)',
+            backgroundColor: 'var(--sys-color-neutral-98)',
+          }}>
+            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)' }}>Transformations</p>
+            <p style={{ margin: '6px 0 0', fontSize: '1.4rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>1</p>
+            <p style={{ margin: '2px 0 0', fontSize: '0.7rem', color: 'var(--sys-color-neutral-40)' }}>of 10 this month</p>
+          </div>
+          <div style={{
+            padding: 14, borderRadius: 10,
+            border: '1px solid var(--sys-color-border-tertiary)',
+            backgroundColor: 'var(--sys-color-neutral-98)',
+          }}>
+            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)' }}>Saved</p>
+            <p style={{ margin: '6px 0 0', fontSize: '1.4rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>0</p>
+            <p style={{ margin: '2px 0 0', fontSize: '0.7rem', color: 'var(--sys-color-neutral-40)' }}>items saved</p>
+          </div>
+        </div>
+      </section>
+      
       {/* Payment Method */}
       {tier !== 'free' && (
         <section>
           <SectionDivider title="Payment method" />
           <div style={{
-            display: 'flex', alignItems: 'center', gap: 16,
-            padding: 16, borderRadius: 10,
+            display: 'flex', alignItems: 'center', gap: 12,
+            padding: 12, borderRadius: 8,
             border: '1px solid var(--sys-color-border-tertiary)',
             backgroundColor: 'var(--sys-color-neutral-98)',
           }}>
-            <div style={{
-              width: 40, height: 28, borderRadius: 4,
-              backgroundColor: 'var(--sys-color-neutral-70)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <CreditCard size={18} color="var(--sys-color-neutral-30)" />
-            </div>
+            <CreditCard size={16} color="var(--sys-color-neutral-30)" />
             <div style={{ flex: 1 }}>
-              <p style={{ margin: 0, fontWeight: 500, color: 'var(--sys-color-neutral-10)' }}>Visa ending in 4242</p>
-              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Expires 12/27</p>
+              <p style={{ margin: 0, fontWeight: 500, color: 'var(--sys-color-neutral-10)', fontSize: '0.85rem' }}>Visa ending in 4242</p>
             </div>
             <button style={{
-              padding: '6px 12px', borderRadius: 6,
+              padding: '4px 10px', borderRadius: 4,
               backgroundColor: 'transparent', color: 'var(--sys-color-primary-50)',
-              border: '1px solid var(--sys-color-primary-40)', fontSize: '0.85rem', fontWeight: 500,
+              border: '1px solid var(--sys-color-primary-40)', fontSize: '0.75rem', fontWeight: 500,
               cursor: 'pointer',
             }}>
-              Update
+              Edit
             </button>
           </div>
-        </section>
-      )}
-      
-      {/* Usage Stats */}
-      <section>
-        <SectionDivider title="Usage" />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{
-            padding: 20, borderRadius: 12,
-            border: '1px solid var(--sys-color-border-tertiary)',
-            backgroundColor: 'var(--sys-color-neutral-98)',
-          }}>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Transformations</p>
-            <p style={{ margin: '8px 0 0', fontSize: '1.8rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>1</p>
-            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--sys-color-neutral-40)' }}>of 10 this month</p>
-          </div>
-          <div style={{
-            padding: 20, borderRadius: 12,
-            border: '1px solid var(--sys-color-border-tertiary)',
-            backgroundColor: 'var(--sys-color-neutral-98)',
-          }}>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Saved content</p>
-            <p style={{ margin: '8px 0 0', fontSize: '1.8rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>0</p>
-            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--sys-color-neutral-40)' }}>items saved</p>
-          </div>
-        </div>
-      </section>
-      
-      {/* Billing History */}
-      {tier !== 'free' && (
-        <section>
-          <SectionDivider title="Billing history" />
-          <p style={{ fontSize: '0.9rem', color: 'var(--sys-color-neutral-50)' }}>No invoices yet.</p>
         </section>
       )}
     </div>
