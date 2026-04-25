@@ -257,7 +257,7 @@
 
 @media (max-width: 600px) {
     .platform-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: 1fr;
     }
     
     .platform-chip-group {
@@ -266,12 +266,17 @@
     
     .platform-card {
         padding: var(--sys-spacing-sm);
+        flex-direction: row;
+        justify-content: flex-start;
+        text-align: left;
+        gap: 8px;
     }
     
     .platform-icon {
         width: 16px;
         height: 16px;
         font-size: 16px;
+        margin-bottom: 0;
     }
     
     .platform-name,
@@ -282,5 +287,9 @@
     .platform-description,
     .platform-limits {
         font-size: 9px;
+    }
+    
+    .platform-card-selected-indicator {
+        display: none;
     }
 }
