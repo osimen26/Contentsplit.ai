@@ -243,6 +243,7 @@ const SidebarContentComponent: React.FC<{
           icon={<LogOut size={16} />}
           label="Log out"
           collapsed={collapsed && !inDrawer}
+          isDanger={true}
           onClick={() => {
             onLogout()
             if (inDrawer) onMobileClose()
@@ -339,7 +340,8 @@ const FooterAction: React.FC<{
   label: string
   collapsed: boolean
   onClick: () => void
-}> = ({ icon, label, collapsed, onClick }) => (
+  isDanger?: boolean
+}> = ({ icon, label, collapsed, onClick, isDanger }) => (
   <button
     onClick={onClick}
     className="sidebar-link"
@@ -353,7 +355,7 @@ const FooterAction: React.FC<{
       cursor: 'pointer',
       fontSize: '0.88rem',
       fontWeight: 500,
-      color: '#475569',
+      color: isDanger ? '#ef4444' : '#475569',
       backgroundColor: 'transparent',
       justifyContent: collapsed ? 'center' : 'flex-start',
       width: '100%',
