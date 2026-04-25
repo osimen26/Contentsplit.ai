@@ -245,7 +245,7 @@ const ContentCreationPage: React.FC = () => {
                   alignItems: 'center',
                   gap: '16px',
                   padding: '20px 24px',
-                  color: '#1e293b',
+                  color: 'var(--sys-color-neutral-20)',
                   fontSize: '0.95rem',
                   fontWeight: 500,
                   textAlign: 'left',
@@ -352,7 +352,7 @@ const ContentCreationPage: React.FC = () => {
                             {generateMutation.isPending ? 'Generating...' : 'Generate Content'}
                           </button>
                           {selectedPlatforms.length === 0 && (
-                            <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>
+                            <span style={{ fontSize: '0.85rem', color: 'var(--sys-color-tertiary)', fontWeight: 500 }}>
                               Select at least one platform
                             </span>
                           )}
@@ -438,7 +438,7 @@ const ContentCreationPage: React.FC = () => {
             onSubmit={handleInputSubmit}
             placeholder="Paste your blog post or article here to convert…"
           />
-          <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.8rem', color: '#64748b', fontWeight: 500 }}>
+          <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.8rem', color: 'var(--sys-color-tertiary)', fontWeight: 500 }}>
             Press Enter to send · Shift+Enter for new line
           </p>
         </div>
