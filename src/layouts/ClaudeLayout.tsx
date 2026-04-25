@@ -13,6 +13,9 @@ import {
   X as XIcon,
   FileText,
   LogOut,
+  Home,
+  Wand2,
+  History,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import '@/styles/dashboard.css'
@@ -406,7 +409,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         display: 'none',
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
         height: 52,
-        backgroundColor: 'rgba(255,255,255,0.8)',
+        backgroundColor: 'rgba(255,255,255,0.9)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(0,0,0,0.05)',
         alignItems: 'center',
@@ -421,6 +424,49 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         </button>
         <span style={{ fontWeight: 700, fontSize: '1rem', color: '#1e293b' }}>ContentSplit</span>
       </header>
+
+      {/* ── MOBILE BOTTOM TAB BAR ── */}
+      <nav style={{
+        display: 'none',
+        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 200,
+        height: 'calc(52px + env(safe-area-inset-bottom))',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        backdropFilter: 'blur(12px)',
+        borderTop: '1px solid rgba(0,0,0,0.05)',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        padding: '0 8px',
+      }} className="mobile-tab-bar">
+        <Link
+          to="/dashboard"
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '8px 12px', textDecoration: 'none', color: location.pathname === '/dashboard' ? '#6366f1' : '#64748b' }}
+        >
+          <Home size={22} />
+          <span style={{ fontSize: '10px', fontWeight: 500 }}>Home</span>
+        </Link>
+        <Link
+          to="/create"
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '8px 12px', textDecoration: 'none', color: location.pathname === '/create' ? '#6366f1' : '#64748b' }}
+        >
+          <Wand2 size={22} />
+          <span style={{ fontSize: '10px', fontWeight: 500 }}>Create</span>
+        </Link>
+        <Link
+          to="/history"
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '8px 12px', textDecoration: 'none', color: location.pathname.includes('/history') ? '#6366f1' : '#64748b' }}
+        >
+          <History size={22} />
+          <span style={{ fontSize: '10px', fontWeight: 500 }}>History</span>
+        </Link>
+        <Link
+          to="/settings"
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '8px 12px', textDecoration: 'none', color: location.pathname.includes('/settings') ? '#6366f1' : '#64748b' }}
+        >
+          <Settings size={22} />
+          <span style={{ fontSize: '10px', fontWeight: 500 }}>Settings</span>
+        </Link>
+      </nav>
 
       {/* ── MOBILE DRAWER OVERLAY ── */}
       {mobileOpen && (
@@ -505,7 +551,8 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         @media (max-width: 768px) {
           .desktop-sidebar { display: none !important; }
           .mobile-header { display: flex !important; }
-          .claude-layout { padding-top: 52px; }
+          .mobile-tab-bar { display: flex !important; }
+          .claude-layout { padding-top: 52px; padding-bottom: 60px; }
           .mobile-drawer { display: flex !important; }
         }
         @media (min-width: 769px) {
