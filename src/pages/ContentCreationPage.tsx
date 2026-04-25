@@ -94,7 +94,9 @@ const ContentCreationPage: React.FC = () => {
   const hasMessages = messages.length > 0
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (outputsLoading) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
   }, [messages, outputsLoading])
 
   useEffect(() => {
