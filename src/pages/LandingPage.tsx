@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import {
-  Wand2,
   Zap,
   Layers,
   Sparkles,
