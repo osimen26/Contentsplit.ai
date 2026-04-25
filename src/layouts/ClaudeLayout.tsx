@@ -548,6 +548,20 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       </div>
 
       <style>{`
+        /* Desktop & Laptop */
+        @media (min-width: 1200px) {
+          .claude-sidebar { width: 280px; }
+          .mobile-header, .mobile-tab-bar { display: none !important; }
+        }
+        @media (min-width: 1024px) and (max-width: 1199px) {
+          .claude-sidebar { width: 260px; }
+          .mobile-header, .mobile-tab-bar { display: none !important; }
+        }
+        @media (min-width: 769px) and (max-width: 1023px) {
+          .claude-sidebar { width: 240px; }
+          .mobile-header, .mobile-tab-bar { display: none !important; }
+        }
+        /* Tablet */
         @media (max-width: 768px) {
           .desktop-sidebar { display: none !important; }
           .mobile-header { display: flex !important; }
@@ -555,9 +569,19 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           .claude-layout { padding-top: 52px; padding-bottom: 60px; }
           .mobile-drawer { display: flex !important; }
         }
-        @media (min-width: 769px) {
-          .mobile-header { display: none !important; }
-          .mobile-drawer { display: none !important; }
+        /* Small tablets */
+        @media (max-width: 600px) {
+          .platform-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        /* Very small phones */
+        @media (max-width: 380px) {
+          .mobile-tab-bar { gap: 2px; }
+          .mobile-tab-bar a { padding: 6px 8px; }
+          .mobile-tab-bar span { display: none; }
+        }
+        /* Large phones */
+        @media (min-width: 429px) and (max-width: 599px) {
+          .platform-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
         }
         * { scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.2) transparent; }
         ::-webkit-scrollbar { width: 6px; }
