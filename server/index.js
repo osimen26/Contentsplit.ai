@@ -20,7 +20,13 @@ import crypto from 'crypto'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // Load server-only .env (not VITE_* prefixed — never exposed to browser)
-dotenv.config({ path: join(__dirname, '.env') })
+// For local dev, loads from .env file. For Vercel, env vars come from dashboard
+const envPath = join(__dirname, '.env')
+try {
+  dotenv.config({ path: envPath })
+} catch (e) {
+  // Vercel doesn't have .env file - env vars are set in dashboard
+}
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -92,7 +98,9 @@ app.use(express.json({ limit: '1mb' }))
 
 // In-memory fallback if no database
 const usersDb = new Map()
-const sessionsDb = new Map()
+const conversionsDb = new Map()
+const outputsDb = new Map()
+const JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_KEY || 'contentsplit-secret-key'
 
 function getUserDb() {
   return supabase ? {
@@ -116,21 +124,37 @@ function getUserDb() {
       if (error && error.code !== 'PGRST116') throw error
       return data || null
     },
-    async create(email, password, firstName, lastName) {
+async create(email, password, firstName, lastName) {
       console.log('Creating user in Supabase:', email)
+      // Only add name fields if provided (they may not exist in DB)
+      let userData = { 
+        email, 
+        password_hash: hashPassword(password),
+        tier: 'free',
+      }
+      
       const { data, error } = await supabase
         .from('users')
-        .insert({ 
-          email, 
-          password_hash: hashPassword(password),
-          tier: 'free',
-          first_name: firstName || null,
-          last_name: lastName || null
-        })
+        .insert(userData)
         .select()
-      .single()
+        .single()
       console.log('Insert result:', { error: error?.message, data: !!data })
       if (error) {
+        console.log('Error details:', JSON.stringify(error))
+        // Check if it's a column missing error, try without name fields
+        if (error.message && (error.message.includes('first_name') || error.message.includes('last_name') || error.message.includes('column'))) {
+          console.log('Detected missing column error, retrying without name fields...')
+          const { data: retryData, error: retryError } = await supabase
+            .from('users')
+            .insert({ email, password_hash: hashPassword(password), tier: 'free' })
+            .select()
+            .single()
+          if (retryError) {
+            console.error('Supabase insert error:', retryError)
+            throw retryError
+          }
+          return retryData
+        }
         console.error('Supabase insert error:', error)
         throw error
       }
@@ -186,8 +210,29 @@ function verifyPassword(password, hash) {
   return hashPassword(password) === hash
 }
 
-function generateToken() {
-  return crypto.randomBytes(32).toString('hex')
+function generateToken(userId) {
+  const payload = Buffer.from(JSON.stringify({ 
+    userId, 
+    expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
+  })).toString('base64')
+  const signature = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('base64')
+  return `${payload}.${signature}`
+}
+
+function verifyToken(token) {
+  try {
+    const [payload, signature] = token.split('.')
+    if (!payload || !signature) return null
+    const expectedSignature = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('base64')
+    if (signature !== expectedSignature) return null
+    
+    const data = JSON.parse(Buffer.from(payload, 'base64').toString('utf8'))
+    if (data.expiresAt < Date.now()) return null
+    
+    return data
+  } catch (err) {
+    return null
+  }
 }
 
 // Email sending (placeholder - use Resend/SendGrid/AWS SES in production)
@@ -245,16 +290,10 @@ function requireAuth(req, res, next) {
   }
   
   const token = auth.replace('Bearer ', '')
-  const session = sessionsDb.get(token)
+  const session = verifyToken(token)
   
   if (!session) {
     return res.status(401).json({ error: 'Invalid or expired token' })
-  }
-  
-  // Check token expiry
-  if (session.expiresAt && session.expiresAt < Date.now()) {
-    sessionsDb.delete(token)
-    return res.status(401).json({ error: 'Token expired' })
   }
   
   req.userId = session.userId
@@ -267,8 +306,8 @@ function optionalAuth(req, res, next) {
   const auth = req.headers.authorization
   if (auth && auth.startsWith('Bearer ')) {
     const token = auth.replace('Bearer ', '')
-    const session = sessionsDb.get(token)
-    if (session && (!session.expiresAt || session.expiresAt > Date.now())) {
+    const session = verifyToken(token)
+    if (session) {
       req.userId = session.userId
       req.session = session
     }
@@ -347,12 +386,7 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     // Create session
-    const token = generateToken()
-    sessionsDb.set(token, {
-      userId: user.id,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
-    })
+    const token = generateToken(user.id)
 
     // Remove password hash from response
     const { password_hash, ...userWithoutPassword } = user
@@ -395,12 +429,7 @@ app.post('/api/auth/register', async (req, res) => {
     console.log('User created:', user.id)
 
     // Create session
-    const token = generateToken()
-    sessionsDb.set(token, {
-      userId: user.id,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000)
-    })
+    const token = generateToken(user.id)
 
     // Remove password hash from response
     const { password_hash, ...userWithoutPassword } = user
@@ -412,6 +441,56 @@ app.post('/api/auth/register', async (req, res) => {
   } catch (err) {
     console.error('Registration error:', err.message, err.stack)
     res.status(500).json({ error: 'Registration failed: ' + err.message })
+  }
+})
+
+// Google Auth
+app.post('/api/auth/google', async (req, res) => {
+  try {
+    const { access_token } = req.body
+    if (!access_token) {
+      return res.status(400).json({ error: 'Google access token is required' })
+    }
+
+    // Fetch user profile from Google using the access token
+    const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    })
+    
+    if (!userInfoRes.ok) {
+      return res.status(401).json({ error: 'Invalid Google token' })
+    }
+    
+    const payload = await userInfoRes.json()
+    const email = payload.email
+    const firstName = payload.given_name || ''
+    const lastName = payload.family_name || ''
+    
+    if (!email) {
+      return res.status(400).json({ error: 'No email provided by Google' })
+    }
+
+    const userDb = getUserDb()
+    let user = await userDb.findByEmail(email)
+    
+    if (!user) {
+      // Create user if they don't exist. We use a random UUID as the password hash
+      // because they authenticate via Google and will not use a password.
+      user = await userDb.create(email, crypto.randomUUID(), firstName, lastName)
+    }
+
+    // Create session
+    const token = generateToken(user.id)
+
+    const { password_hash, ...userWithoutPassword } = user
+
+    res.json({ 
+      token, 
+      user: userWithoutPassword 
+    })
+  } catch (err) {
+    console.error('Google auth error:', err)
+    res.status(500).json({ error: 'Google auth failed' })
   }
 })
 
@@ -435,19 +514,19 @@ app.get('/api/auth/me', requireAuth, async (req, res) => {
 
 // Logout
 app.post('/api/auth/logout', requireAuth, (req, res) => {
-  const auth = req.headers.authorization
-  const token = auth.replace('Bearer ', '')
-  sessionsDb.delete(token)
+  // With stateless tokens, the client handles logout by clearing localStorage
   res.json({ success: true })
 })
 
 // ── CONTENT GENERATION ─────────────────────────────────────────────────────
+const VALID_TONES = ['professional', 'casual', 'punchy', 'friendly']
+
 const generateSchema = z.object({
   input_text: z.string().min(1, 'Content is required').refine((val) => {
     const wordCount = val.trim().split(/\s+/).length;
     return wordCount >= 10 && wordCount <= 5000;
   }, { message: 'Content must be between 10 and 5,000 words.' }),
-  tone_mode: z.string().optional().default('casual'),
+  tone_mode: z.string().optional().default('casual').transform(t => VALID_TONES.includes(t) ? t : 'casual'),
   platforms: z.array(z.string()).min(1, 'Please select at least one platform'),
   persona: z.string().optional()
 })
@@ -505,18 +584,41 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
     const outputs = results.map(r => ({ ...r, conversion_id: conversionId }))
 
     // Save conversion to database if user is authenticated
-    if (supabase && userId !== 'anonymous') {
-      try {
-        await supabase.from('conversions').insert({
+    if (userId !== 'anonymous') {
+      if (supabase) {
+        try {
+          await supabase.from('conversions').insert({
+            id: conversionId,
+            user_id: req.userId,
+            input_text: input_text.slice(0, 500),
+            tone_mode,
+            created_at: new Date().toISOString()
+          })
+
+          for (const output of outputs) {
+            await supabase.from('outputs').insert({
+              id: output.id,
+              conversion_id: conversionId,
+              platform: output.platform,
+              content: output.content,
+              regeneration_count: 0
+            })
+          }
+          console.log('✅ Saved conversion to database')
+        } catch (dbErr) {
+          console.warn('Failed to save conversion:', dbErr.message)
+        }
+      } else {
+        // Save to in-memory mock database
+        conversionsDb.set(conversionId, {
           id: conversionId,
-          user_id: req.userId,
+          user_id: userId,
           input_text: input_text.slice(0, 500),
           tone_mode,
           created_at: new Date().toISOString()
         })
-
         for (const output of outputs) {
-          await supabase.from('outputs').insert({
+          outputsDb.set(output.id, {
             id: output.id,
             conversion_id: conversionId,
             platform: output.platform,
@@ -524,9 +626,7 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
             regeneration_count: 0
           })
         }
-        console.log('✅ Saved conversion to database')
-      } catch (dbErr) {
-        console.warn('Failed to save conversion:', dbErr.message)
+        console.log('✅ Saved conversion to mock database')
       }
     }
 
@@ -580,8 +680,18 @@ app.get('/api/conversions', requireAuth, async (req, res) => {
         has_more: (page * pageSize) < (count || 0)
       })
     } else {
-      // Mock response
-      res.json({ data: [], total: 0, page, page_size: pageSize, has_more: false })
+      // Mock response - sample data
+      const userConversions = Array.from(conversionsDb.values())
+        .filter(c => c.user_id === req.userId)
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice((page - 1) * pageSize, page * pageSize)
+      res.json({
+        data: userConversions,
+        total: userConversions.length,
+        page,
+        page_size: pageSize,
+        has_more: false
+      })
     }
   } catch (err) {
     console.error('Get conversions error:', err)
@@ -630,7 +740,10 @@ app.get('/api/conversions/:id/outputs', optionalAuth, async (req, res) => {
       if (error) throw error
       res.json(outputs || [])
     } else {
-      res.json([])
+      // Mock response - get from in-memory
+      const conversionOutputs = Array.from(outputsDb.values())
+        .filter(o => o.conversion_id === id)
+      res.json(conversionOutputs)
     }
   } catch (err) {
     console.error('Get outputs error:', err)
@@ -658,9 +771,16 @@ app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
         .eq('id', conversion_id)
         .single()
       
-      if (conversion) {
-        originalText = conversion.input_text
-        toneMode = conversion.tone_mode
+if (conversion) {
+        res.json(conversion)
+      } else {
+        // Check mock database
+        const mockConversion = conversionsDb.get(id)
+        if (mockConversion && mockConversion.user_id === req.userId) {
+          res.json(mockConversion)
+        } else {
+          res.status(404).json({ error: 'Conversion not found' })
+        }
       }
     }
 
@@ -1027,10 +1147,14 @@ app.get('/api/payments/verify/:reference', requireAuth, async (req, res) => {
 })
 
 // ── START ─────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n🚀  ContentSplit backend running at http://localhost:${PORT}`)
-  console.log(`🔐  DeepSeek API key: ${DEEPSEEK_API_KEY ? '✓ loaded' : '✗ MISSING'}`)
-  console.log(`⚡  Model: ${DEEPSEEK_MODEL}`)
-  console.log(`🗄️  Database: ${supabase ? 'Supabase' : 'Mock (in-memory)'}`)
-  console.log(`💳 Payments: ${flutterwave ? 'Flutterwave' : 'Not configured'}\n`)
-})
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`\n🚀  ContentSplit backend running at http://localhost:${PORT}`)
+    console.log(`🔐  DeepSeek API key: ${DEEPSEEK_API_KEY ? '✓ loaded' : '✗ MISSING'}`)
+    console.log(`⚡  Model: ${DEEPSEEK_MODEL}`)
+    console.log(`🗄️  Database: ${supabase ? 'Supabase' : 'Mock (in-memory)'}`)
+    console.log(`💳 Payments: ${flutterwave ? 'Flutterwave' : 'Not configured'}\n`)
+  })
+}
+
+export default app

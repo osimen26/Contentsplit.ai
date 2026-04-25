@@ -10,11 +10,6 @@ export const ProtectedRoute: React.FC = () => {
     return <LoadingOverlay variant="default" message="Verifying session..." />
   }
 
-  // In development mode, allow access with mock user
-  if (!user && import.meta.env.VITE_APP_ENV === 'development') {
-    return <Outlet />
-  }
-
   if (!user) {
     return <Navigate to="/login" replace />
   }
