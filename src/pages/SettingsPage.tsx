@@ -338,7 +338,7 @@ const SettingsPage: React.FC = () => {
     <div style={{
       display: 'flex', height: '100%', overflow: 'hidden',
       backgroundColor: 'var(--sys-color-neutral-100)',
-    }}>
+    }} className="settings-page">
 
       {/* Left Nav - Claude inspired sidebar */}
       <nav style={{
@@ -348,7 +348,7 @@ const SettingsPage: React.FC = () => {
         display: 'flex', flexDirection: 'column', gap: 2,
         overflowY: 'auto',
         backgroundColor: 'var(--sys-color-neutral-100)',
-      }}>
+      }} className="settings-nav">
         <h1 style={{ 
           fontSize: '1.1rem', 
           fontWeight: 600, 
@@ -399,11 +399,32 @@ const SettingsPage: React.FC = () => {
         padding: '32px 40px', 
         overflowY: 'auto', 
         maxWidth: 680,
-      }}>
+      }} className="settings-main">
         {active === 'account' && <AccountSection />}
         {active === 'appearance' && <AppearanceSection />}
         {active === 'billing' && <BillingSection />}
       </main>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .settings-page { flex-direction: column !important; }
+          .settings-nav { 
+            width: 100% !important; 
+            flex-direction: row !important;
+            overflow-x: auto;
+            padding: 12px !important;
+            border-right: none;
+            border-bottom: 1px solid var(--sys-color-border-tertiary);
+          }
+          .settings-main { 
+            padding: 20px 16px !important; 
+            max-width: 100% !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .settings-main { padding: 16px 12px !important; }
+        }
+      `}</style>
     </div>
   )
 }
@@ -449,12 +470,146 @@ const AppearanceSection: React.FC = () => {
   )
 }
 
-// Billing section placeholder  
-const BillingSection: React.FC = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-    <SectionDivider title="Billing" subtitle="Manage your subscription and credits." />
-    <p style={{ color: 'var(--sys-color-neutral-50)' }}>Billing settings coming soon.</p>
-  </div>
-)
+// Billing section
+const BillingSection: React.FC = () => {
+  const { data: user } = useCurrentUser()
+  const tier = user?.tier || 'free'
+  const tiers = [
+    { id: 'free', name: 'Free', price: 0, features: ['10 transformations/month', 'Basic tones'] },
+    { id: 'pro', name: 'Pro', price: 5000, features: ['100 transformations/month', 'All tones', 'Priority support'] },
+    { id: 'agency', name: 'Agency', price: 15000, features: ['Unlimited transformations', 'All tones', 'Team access'] },
+  ]
+  const currentPlan = tiers.find(t => t.id === tier) || tiers[0]
+  
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <SectionDivider title="Billing" subtitle="Manage your subscription and credits." />
+      
+      {/* Current Plan Card */}
+      <section style={{
+        padding: 24,
+        borderRadius: 14,
+        border: '1px solid var(--sys-color-border-tertiary)',
+        backgroundColor: 'var(--sys-color-neutral-98)',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+          <div>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Current Plan</p>
+            <h3 style={{ margin: '4px 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>{currentPlan.name}</h3>
+          </div>
+          <span style={{
+            padding: '4px 12px', borderRadius: 20,
+            fontSize: '0.75rem', fontWeight: 600,
+            backgroundColor: tier === 'free' ? 'var(--sys-color-neutral-90)' : 'var(--sys-color-primary-90)',
+            color: tier === 'free' ? 'var(--sys-color-neutral-40)' : 'var(--sys-color-primary-30)',
+          }}>
+            {tier === 'free' ? 'Free' : tier === 'pro' ? 'Active' : 'Active'}
+          </span>
+        </div>
+        
+        {tier !== 'free' && (
+          <div style={{ display: 'flex', gap: 24, paddingTop: 16, borderTop: '1px solid var(--sys-color-border-tertiary)' }}>
+            <div>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--sys-color-neutral-50)' }}>Amount</p>
+              <p style={{ margin: '4px 0 0', fontSize: '1.1rem', fontWeight: 600, color: 'var(--sys-color-neutral-10)' }}>₦{currentPlan.price.toLocaleString()}/mo</p>
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--sys-color-neutral-50)' }}>Next billing</p>
+              <p style={{ margin: '4px 0 0', fontSize: '1.1rem', fontWeight: 600, color: 'var(--sys-color-neutral-10)' }}>May 25, 2026</p>
+            </div>
+          </div>
+        )}
+        
+        {tier === 'free' && (
+          <div style={{ paddingTop: 16, borderTop: '1px solid var(--sys-color-border-tertiary)' }}>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', marginBottom: 12 }}>Your usage this month</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <div style={{ flex: 1, height: 8, borderRadius: 4, backgroundColor: 'var(--sys-color-neutral-80)', overflow: 'hidden' }}>
+                <div style={{ width: '10%', height: '100%', backgroundColor: 'var(--sys-color-primary-40)', borderRadius: 4 }} />
+              </div>
+              <span style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', whiteSpace: 'nowrap' }}>1 / 10</span>
+            </div>
+            <button
+              style={{
+                width: '100%', padding: '12px 0', borderRadius: 10,
+                backgroundColor: 'var(--sys-color-primary-40)',
+                color: 'white', border: 'none', fontWeight: 600, fontSize: '0.95rem',
+                cursor: 'pointer',
+              }}
+            >
+              Upgrade to Pro
+            </button>
+          </div>
+        )}
+      </section>
+      
+      {/* Payment Method */}
+      {tier !== 'free' && (
+        <section>
+          <SectionDivider title="Payment method" />
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 16,
+            padding: 16, borderRadius: 10,
+            border: '1px solid var(--sys-color-border-tertiary)',
+            backgroundColor: 'var(--sys-color-neutral-98)',
+          }}>
+            <div style={{
+              width: 40, height: 28, borderRadius: 4,
+              backgroundColor: 'var(--sys-color-neutral-70)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <CreditCard size={18} color="var(--sys-color-neutral-30)" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ margin: 0, fontWeight: 500, color: 'var(--sys-color-neutral-10)' }}>Visa ending in 4242</p>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Expires 12/27</p>
+            </div>
+            <button style={{
+              padding: '6px 12px', borderRadius: 6,
+              backgroundColor: 'transparent', color: 'var(--sys-color-primary-50)',
+              border: '1px solid var(--sys-color-primary-40)', fontSize: '0.85rem', fontWeight: 500,
+              cursor: 'pointer',
+            }}>
+              Update
+            </button>
+          </div>
+        </section>
+      )}
+      
+      {/* Usage Stats */}
+      <section>
+        <SectionDivider title="Usage" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={{
+            padding: 20, borderRadius: 12,
+            border: '1px solid var(--sys-color-border-tertiary)',
+            backgroundColor: 'var(--sys-color-neutral-98)',
+          }}>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Transformations</p>
+            <p style={{ margin: '8px 0 0', fontSize: '1.8rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>1</p>
+            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--sys-color-neutral-40)' }}>of 10 this month</p>
+          </div>
+          <div style={{
+            padding: 20, borderRadius: 12,
+            border: '1px solid var(--sys-color-border-tertiary)',
+            backgroundColor: 'var(--sys-color-neutral-98)',
+          }}>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)' }}>Saved content</p>
+            <p style={{ margin: '8px 0 0', fontSize: '1.8rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>0</p>
+            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--sys-color-neutral-40)' }}>items saved</p>
+          </div>
+        </div>
+      </section>
+      
+      {/* Billing History */}
+      {tier !== 'free' && (
+        <section>
+          <SectionDivider title="Billing history" />
+          <p style={{ fontSize: '0.9rem', color: 'var(--sys-color-neutral-50)' }}>No invoices yet.</p>
+        </section>
+      )}
+    </div>
+  )
+}
 
 export default SettingsPage
