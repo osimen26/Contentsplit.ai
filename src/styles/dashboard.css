@@ -110,7 +110,8 @@
     padding: 10px 12px !important;
   }
   
-  .platform-grid {
+  .platform-grid,
+  .quick-suggestions {
     display: none !important;
   }
   

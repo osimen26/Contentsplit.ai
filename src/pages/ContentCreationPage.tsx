@@ -234,7 +234,7 @@ const ContentCreationPage: React.FC = () => {
             gap: '16px',
             width: '100%',
             maxWidth: 680,
-          }}>
+          }} className="quick-suggestions">
             {SUGGESTIONS.map((s, idx) => (
               <button
                 key={idx}
