@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  Sparkles,
   Menu,
   X as XIcon,
   FileText,

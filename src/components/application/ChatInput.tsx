@@ -21,7 +21,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
   const hasContent = value.trim().length > 0
-  const isMultiLine = value.includes('\n')
 
   // Auto-resize textarea
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Sparkles, ArrowRight, ArrowLeft, Check, Briefcase, Users, Camera, Megaphone, Zap, Target, MessageCircle, Rocket } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Check, Briefcase, Users, Camera, Megaphone, Zap, Target, MessageCircle, Rocket } from 'lucide-react'
 import { apiClient } from '@/services/api-client'
 
 const PERSONAS = [
