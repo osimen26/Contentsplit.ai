@@ -959,16 +959,18 @@ app.post('/api/auth/recover', async (req, res) => {
     
     console.log(`📧 Password recovery email would be sent to: ${email}`)
     console.log(`   Recovery link: ${recoveryLink}`)
+    console.log(`   RESEND_API_KEY set: ${!!process.env.RESEND_API_KEY}`)
     
     if (process.env.RESEND_API_KEY) {
-      const { Resend } = await import('resend')
-      const resend = new Resend(process.env.RESEND_API_KEY)
-      
-      await resend.emails.send({
-        from: process.env.RESEND_FROM || 'ContentSplit <noreply@resend.dev>',
-        to: email,
-        subject: 'ContentSplit - Password Recovery',
-        html: `
+      try {
+        const { Resend } = await import('resend')
+        const resend = new Resend(process.env.RESEND_API_KEY)
+        
+        const result = await resend.emails.send({
+          from: process.env.RESEND_FROM || 'ContentSplit <noreply@resend.dev>',
+          to: email,
+          subject: 'ContentSplit - Password Recovery',
+          html: `
 <!DOCTYPE html>
 <html>
 <body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -981,10 +983,13 @@ app.post('/api/auth/recover', async (req, res) => {
   <p style="color: #666; font-size: 14px;">If you didn't request this, ignore this email.</p>
 </body>
 </html>
-        `.trim(),
-      })
-      
-      console.log(`📧 Recovery email sent via Resend to ${email}`)
+          `.trim(),
+        })
+        
+        console.log(`📧 Recovery email sent via Resend:`, result)
+      } catch (emailErr) {
+        console.error('Resend error:', emailErr)
+      }
     } else if (process.env.SMTP_HOST) {
       await sendRecoveryEmail(email, recoveryToken, process.env.RECOVERY_EMAIL_FROM || 'noreply@contentsplit.ai')
     }
