@@ -101,6 +101,33 @@
   color: #1e293b !important;
 }
 
+/* Mobile chat input full width */
+@media (max-width: 600px) {
+  .chat-input-pill-wrapper {
+    border-radius: 16px !important;
+    padding: 10px 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Mobile - hide platform/tone card borders for cleaner look */
+@media (max-width: 600px) {
+  .platform-card {
+    border-radius: 10px !important;
+    padding: 8px !important;
+  }
+  
+  .platform-grid {
+    gap: 6px !important;
+  }
+  
+  .tone-chip {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+  }
+}
+
 /* User Message Bubble */
 .user-msg-bubble {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)) !important;
