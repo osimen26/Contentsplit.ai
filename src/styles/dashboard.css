@@ -89,6 +89,8 @@
   border-radius: 32px !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(99, 102, 241, 0.05) !important;
   transition: all 0.3s ease;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .chat-input-pill-wrapper:focus-within {
@@ -101,13 +103,11 @@
   color: #1e293b !important;
 }
 
-/* Mobile chat input full width */
+/* Mobile chat input */
 @media (max-width: 600px) {
   .chat-input-pill-wrapper {
     border-radius: 16px !important;
     padding: 10px 12px !important;
-    width: 100% !important;
-    max-width: 100% !important;
   }
 }
 
