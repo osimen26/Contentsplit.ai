@@ -217,11 +217,14 @@ const ContentCreationPage: React.FC = () => {
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               letterSpacing: '-0.02em',
-              overflow: 'visible'
+              overflow: 'visible',
+              width: '100%',
+              padding: '0 16px',
+              boxSizing: 'border-box',
             }}>
               Ready to repurpose?
             </h1>
-            <p style={{ color: '#475569', maxWidth: 480, margin: '0 auto', lineHeight: 1.6, fontSize: '1.1rem' }}>
+            <p style={{ color: '#475569', width: '100%', padding: '0 16px', boxSizing: 'border-box', lineHeight: 1.6, fontSize: '1rem' }}>
                Paste your long-form content below to effortlessly adapt it for any platform.
             </p>
           </div>

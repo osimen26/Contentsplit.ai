@@ -113,6 +113,10 @@
   .platform-grid {
     display: none !important;
   }
+  
+  .glass-card {
+    padding: 14px 16px !important;
+  }
 }
 
 /* Mobile - hide platform/tone card borders for cleaner look */
