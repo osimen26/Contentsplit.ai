@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { useCurrentUser, useUpdateProfile } from '@/services/query-hooks'
 import { useTheme } from '@/contexts/ThemeContext'
-import { User, Palette, CreditCard } from 'lucide-react'
+import { User, Palette, Wallet, Sparkles } from 'lucide-react'
 
 type SettingsSection = 'account' | 'appearance' | 'billing'
 
 const NAV_ITEMS: { id: SettingsSection; label: string; icon: React.ReactNode }[] = [
   { id: 'account', label: 'Account', icon: <User size={18} /> },
   { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
-  { id: 'billing', label: 'Billing', icon: <CreditCard size={18} /> },
+  { id: 'billing', label: 'Billing', icon: <Wallet size={18} /> },
 ]
 
 const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = ({ checked, onChange }) => (
@@ -573,9 +573,9 @@ const BillingSection: React.FC = () => {
             border: '1px solid var(--sys-color-border-tertiary)',
             backgroundColor: 'var(--sys-color-neutral-98)',
           }}>
-            <CreditCard size={16} color="var(--sys-color-neutral-30)" />
+            <Wallet size={16} color="var(--sys-color-neutral-30)" />
             <div style={{ flex: 1 }}>
-              <p style={{ margin: 0, fontWeight: 500, color: 'var(--sys-color-neutral-10)', fontSize: '0.85rem' }}>Visa ending in 4242</p>
+              <p style={{ margin: 0, fontWeight: 500, color: 'var(--sys-color-neutral-10)', fontSize: '0.85rem' }}>Flutterwave / Debit Card</p>
             </div>
             <button style={{
               padding: '4px 10px', borderRadius: 4,
@@ -583,7 +583,7 @@ const BillingSection: React.FC = () => {
               border: '1px solid var(--sys-color-primary-40)', fontSize: '0.75rem', fontWeight: 500,
               cursor: 'pointer',
             }}>
-              Edit
+              Update
             </button>
           </div>
         </section>
