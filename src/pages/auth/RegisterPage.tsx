@@ -80,7 +80,17 @@ const RegisterPage: React.FC = () => {
 
       <form className="login-form" onSubmit={handleRegister}>
         {error && (
-          <div className="auth-error" style={{ color: 'var(--sys-color-roles-error-color-role-error-role)', fontSize: '0.875rem', marginBottom: '8px', textAlign: 'center', gridColumn: '1 / -1' }}>
+          <div style={{ 
+            padding: '12px', 
+            backgroundColor: '#fee2e2', 
+            color: '#b91c1c', 
+            borderRadius: '8px', 
+            fontSize: '0.9rem',
+            textAlign: 'center',
+            marginBottom: '4px',
+            fontWeight: 500,
+            gridColumn: '1 / -1'
+          }}>
             {error}
           </div>
         )}
@@ -118,23 +128,25 @@ const RegisterPage: React.FC = () => {
           </div>
           
           <div className="login-input-container registration-field-full">
-            <input 
-              type={showPassword ? "text" : "password"} 
-              className="login-input password-input" 
-              placeholder="Password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button 
-              type="button" 
-              className="password-toggle-btn"
-              onClick={() => setShowPassword(!showPassword)}
-              tabIndex={-1}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input 
+                type={showPassword ? "text" : "password"} 
+                className="login-input password-input" 
+                placeholder="Password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button 
+                type="button" 
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             {password.length > 0 && (
               <div className="password-strength">
                 <div className={`password-strength-fill ${strengthClass}`}></div>

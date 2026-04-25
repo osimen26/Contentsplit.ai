@@ -98,6 +98,9 @@ app.use(express.json({ limit: '1mb' }))
 
 // In-memory fallback if no database
 const usersDb = new Map()
+const conversionsDb = new Map()
+const outputsDb = new Map()
+const sessionsDb = new Map()
 const JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_KEY || 'contentsplit-secret-key'
 
 function getUserDb() {
@@ -210,8 +213,9 @@ function verifyPassword(password, hash) {
 
 function generateToken(userId) {
   const payload = Buffer.from(JSON.stringify({ 
-    userId, 
-    expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
+    userId: userId || 'recovery',
+    type: userId ? 'session' : 'recovery',
+    expiresAt: Date.now() + (userId ? (7 * 24 * 60 * 60 * 1000) : (60 * 60 * 1000)) // 7 days for session, 1 hour for recovery
   })).toString('base64')
   const signature = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('base64')
   return `${payload}.${signature}`
@@ -253,7 +257,19 @@ async function sendRecoveryEmail(toEmail, token, fromEmail) {
 </html>
   `.trim()
 
-  if (process.env.SMTP_HOST) {
+  if (process.env.RESEND_API_KEY) {
+    const { Resend } = await import('resend')
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    
+    await resend.emails.send({
+      from: process.env.RESEND_FROM || 'ContentSplit <noreply@resend.dev>',
+      to: toEmail,
+      subject: 'ContentSplit - Password Recovery',
+      html: emailHtml,
+    })
+    
+    console.log(`📧 Recovery email sent via Resend to ${toEmail}`)
+  } else if (process.env.SMTP_HOST) {
     // Production: send via SMTP
     const nodemailer = await import('nodemailer')
     const transporter = nodemailer.createTransport({
@@ -582,18 +598,41 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
     const outputs = results.map(r => ({ ...r, conversion_id: conversionId }))
 
     // Save conversion to database if user is authenticated
-    if (supabase && userId !== 'anonymous') {
-      try {
-        await supabase.from('conversions').insert({
+    if (userId !== 'anonymous') {
+      if (supabase) {
+        try {
+          await supabase.from('conversions').insert({
+            id: conversionId,
+            user_id: req.userId,
+            input_text: input_text.slice(0, 500),
+            tone_mode,
+            created_at: new Date().toISOString()
+          })
+
+          for (const output of outputs) {
+            await supabase.from('outputs').insert({
+              id: output.id,
+              conversion_id: conversionId,
+              platform: output.platform,
+              content: output.content,
+              regeneration_count: 0
+            })
+          }
+          console.log('✅ Saved conversion to database')
+        } catch (dbErr) {
+          console.warn('Failed to save conversion:', dbErr.message)
+        }
+      } else {
+        // Save to in-memory mock database
+        conversionsDb.set(conversionId, {
           id: conversionId,
-          user_id: req.userId,
+          user_id: userId,
           input_text: input_text.slice(0, 500),
           tone_mode,
           created_at: new Date().toISOString()
         })
-
         for (const output of outputs) {
-          await supabase.from('outputs').insert({
+          outputsDb.set(output.id, {
             id: output.id,
             conversion_id: conversionId,
             platform: output.platform,
@@ -601,9 +640,7 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
             regeneration_count: 0
           })
         }
-        console.log('✅ Saved conversion to database')
-      } catch (dbErr) {
-        console.warn('Failed to save conversion:', dbErr.message)
+        console.log('✅ Saved conversion to mock database')
       }
     }
 
@@ -657,8 +694,18 @@ app.get('/api/conversions', requireAuth, async (req, res) => {
         has_more: (page * pageSize) < (count || 0)
       })
     } else {
-      // Mock response
-      res.json({ data: [], total: 0, page, page_size: pageSize, has_more: false })
+      // Mock response - sample data
+      const userConversions = Array.from(conversionsDb.values())
+        .filter(c => c.user_id === req.userId)
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice((page - 1) * pageSize, page * pageSize)
+      res.json({
+        data: userConversions,
+        total: userConversions.length,
+        page,
+        page_size: pageSize,
+        has_more: false
+      })
     }
   } catch (err) {
     console.error('Get conversions error:', err)
@@ -707,7 +754,10 @@ app.get('/api/conversions/:id/outputs', optionalAuth, async (req, res) => {
       if (error) throw error
       res.json(outputs || [])
     } else {
-      res.json([])
+      // Mock response - get from in-memory
+      const conversionOutputs = Array.from(outputsDb.values())
+        .filter(o => o.conversion_id === id)
+      res.json(conversionOutputs)
     }
   } catch (err) {
     console.error('Get outputs error:', err)
@@ -735,9 +785,16 @@ app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
         .eq('id', conversion_id)
         .single()
       
-      if (conversion) {
-        originalText = conversion.input_text
-        toneMode = conversion.tone_mode
+if (conversion) {
+        res.json(conversion)
+      } else {
+        // Check mock database
+        const mockConversion = conversionsDb.get(id)
+        if (mockConversion && mockConversion.user_id === req.userId) {
+          res.json(mockConversion)
+        } else {
+          res.status(404).json({ error: 'Conversion not found' })
+        }
       }
     }
 
@@ -893,28 +950,43 @@ app.post('/api/auth/recover', async (req, res) => {
     const user = await userDb.findByEmail(email)
     
     if (!user) {
-      // Return success even if user not found (security)
       return res.json({ success: true, message: 'If an account exists, a recovery email has been sent.' })
     }
 
-    // Generate recovery token
-    const recoveryToken = generateToken()
-    const expiresAt = Date.now() + (60 * 60 * 1000) // 1 hour
-    
-    // Store recovery token (in production, use Redis or database)
-    sessionsDb.set(`recovery:${email}`, { token: recoveryToken, expiresAt })
-
-    // In production, send email via SMTP/Resend/SendGrid
-    const RECOVERY_EMAIL_FROM = process.env.RECOVERY_EMAIL_FROM || 'noreply@contentsplit.ai'
-    const APP_URL = process.env.APP_URL || 'http://localhost:3000'
+    const recoveryToken = generateToken(user.id)
+    const APP_URL = process.env.APP_URL || 'http://localhost:5173'
     const recoveryLink = `${APP_URL}/reset-password?token=${recoveryToken}&email=${encodeURIComponent(email)}`
     
     console.log(`📧 Password recovery email would be sent to: ${email}`)
     console.log(`   Recovery link: ${recoveryLink}`)
     
-    // If SMTP configured, send the email
-    if (process.env.SMTP_HOST) {
-      await sendRecoveryEmail(email, recoveryToken, RECOVERY_EMAIL_FROM)
+    if (process.env.RESEND_API_KEY) {
+      const { Resend } = await import('resend')
+      const resend = new Resend(process.env.RESEND_API_KEY)
+      
+      await resend.emails.send({
+        from: process.env.RESEND_FROM || 'ContentSplit <noreply@resend.dev>',
+        to: email,
+        subject: 'ContentSplit - Password Recovery',
+        html: `
+<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #1a1a1a;">ContentSplit - Password Recovery</h2>
+  <p>You requested to reset your password. Click the button below to create a new password:</p>
+  <a href="${recoveryLink}" style="display: inline-block; background: #1a1a1a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin: 20px 0;">
+    Reset Password
+  </a>
+  <p style="color: #666; font-size: 14px;">This link expires in 1 hour.</p>
+  <p style="color: #666; font-size: 14px;">If you didn't request this, ignore this email.</p>
+</body>
+</html>
+        `.trim(),
+      })
+      
+      console.log(`📧 Recovery email sent via Resend to ${email}`)
+    } else if (process.env.SMTP_HOST) {
+      await sendRecoveryEmail(email, recoveryToken, process.env.RECOVERY_EMAIL_FROM || 'noreply@contentsplit.ai')
     }
 
     res.json({ success: true, message: 'If an account exists, a recovery email has been sent.' })
@@ -937,9 +1009,8 @@ app.post('/api/auth/reset-password', async (req, res) => {
       return res.status(400).json({ error: 'Password must be at least 8 characters' })
     }
 
-    // Verify recovery token
-    const stored = sessionsDb.get(`recovery:${email}`)
-    if (!stored || stored.token !== token || stored.expiresAt < Date.now()) {
+    const session = verifyToken(token)
+    if (!session || session.type !== 'recovery') {
       return res.status(400).json({ error: 'Invalid or expired recovery token' })
     }
 
@@ -950,19 +1021,13 @@ app.post('/api/auth/reset-password', async (req, res) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    // Update password
+    if (session.userId !== user.id) {
+      return res.status(400).json({ error: 'Invalid recovery token' })
+    }
+
     await userDb.update(user.id, { password_hash: hashPassword(newPassword) })
     
-    // Delete recovery token
-    sessionsDb.delete(`recovery:${email}`)
-    
-    // Create new session
-    const newToken = generateToken()
-    sessionsDb.set(newToken, {
-      userId: user.id,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000)
-    })
+    const newToken = generateToken(user.id)
 
     const { password_hash, ...userWithoutPassword } = user
     res.json({ token: newToken, user: userWithoutPassword })

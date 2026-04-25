@@ -40,7 +40,16 @@ const LoginPage: React.FC = () => {
       
       <form className="login-form" onSubmit={handleLogin}>
         {error && (
-          <div className="auth-error" style={{ color: 'var(--sys-color-roles-error-color-role-error-role)', fontSize: '0.875rem', marginBottom: '8px', textAlign: 'center' }}>
+          <div style={{ 
+            padding: '12px', 
+            backgroundColor: '#fee2e2', 
+            color: '#b91c1c', 
+            borderRadius: '8px', 
+            fontSize: '0.9rem',
+            textAlign: 'center',
+            marginBottom: '4px',
+            fontWeight: 500
+          }}>
             {error}
           </div>
         )}
