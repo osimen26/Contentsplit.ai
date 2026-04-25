@@ -306,15 +306,9 @@
     .platform-grid {
         grid-template-columns: repeat(3, 1fr);
     }
-}
-    }
     
     .platform-description,
     .platform-limits {
         font-size: 9px;
-    }
-    
-    .platform-card-selected-indicator {
-        display: none;
     }
 }
