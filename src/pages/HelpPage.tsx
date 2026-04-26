@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { HelpCircle, MessageCircle, Mail, Zap, Send, Hash, Target, Sparkles, ChevronDown, Search, FileText, Clock, CreditCard, Shield, Sparkles as SparklesIcon, ArrowRight } from 'lucide-react'
+import { HelpCircle, MessageCircle, Mail, Zap, Send, Hash, Target, Sparkles, ChevronDown, Search, FileText, CreditCard, Sparkles as SparklesIcon } from 'lucide-react'
 
 const FAQ_TOPICS = [
   { id: 'general', label: 'General', icon: <HelpCircle size={18} />, questions: [
