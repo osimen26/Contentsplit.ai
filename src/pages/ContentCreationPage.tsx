@@ -189,14 +189,8 @@ const ContentCreationPage: React.FC = () => {
         }}>
           {/* Hero */}
           <div style={{ textAlign: 'center' }}>
-            <div style={{
-              width: 56, height: 56, borderRadius: 'var(--sys-radius-lg)',
-              background: 'linear-gradient(135deg, var(--sys-color-primary-80), var(--sys-color-primary-40))',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto var(--sys-spacing-lg)',
-              boxShadow: '0 4px 20px var(--sys-color-primary-90)',
-            }}>
-              <Sparkles size={26} color="white" />
+            <div style={{ margin: '0 auto var(--sys-spacing-lg)' }}>
+              <img src="/icon.svg" alt="ContentSplit" style={{ width: 56, height: 56 }} />
             </div>
             <h1 style={{
               fontFamily: 'var(--sys-typography-headline-large-font-family)',
@@ -270,10 +264,10 @@ const ContentCreationPage: React.FC = () => {
                 <div style={{
                   width: 32, height: 32, borderRadius: 8, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  backgroundColor: msg.role === 'user' ? 'var(--sys-color-primary-90)' : 'var(--sys-color-neutral-90)',
+                  backgroundColor: msg.role === 'user' ? 'var(--sys-color-primary-90)' : 'transparent',
                   color: msg.role === 'user' ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-50)',
                 }}>
-                  {msg.role === 'user' ? <User size={18} /> : <Sparkles size={18} />}
+                  {msg.role === 'user' ? <User size={18} /> : <img src="/icon.svg" alt="ContentSplit" style={{ width: 28, height: 28 }} />}
                 </div>
 
                 {/* Bubble */}

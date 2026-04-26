@@ -15,13 +15,13 @@ const LoginPage: React.FC = () => {
     try {
       await login({ email, password })
       navigate('/dashboard')
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error(err)
-      const errorMessage = err instanceof Error ? err.message : ''
-      if (errorMessage.includes('Invalid credentials')) {
+      const errorMessage = err.response?.data?.error || err.message || ''
+      if (errorMessage.includes('Invalid credentials') || errorMessage.includes('401')) {
         setError('Invalid email or password. Please check your credentials.')
       } else {
-        setError('Failed to login. Please try again.')
+        setError(errorMessage || 'Failed to login. Please try again.')
       }
     }
   }

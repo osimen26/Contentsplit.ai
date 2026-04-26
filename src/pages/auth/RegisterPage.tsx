@@ -35,15 +35,15 @@ const RegisterPage: React.FC = () => {
     try {
       await registerUser({ email, password, firstName, lastName })
       navigate('/onboarding')
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error('Registration error:', err)
-      const errorMessage = err instanceof Error ? err.message : ''
+      const errorMessage = err.response?.data?.error || err.message || ''
       if (errorMessage.includes('already registered') || errorMessage.includes('Email already')) {
         setError('An account with this email already exists. Please log in or use a different email.')
       } else if (errorMessage.includes('Password must be at least 8')) {
         setError('Password must be at least 8 characters.')
       } else {
-        setError('Registration failed. Please try again.')
+        setError(errorMessage || 'Registration failed. Please try again.')
       }
     }
   }
