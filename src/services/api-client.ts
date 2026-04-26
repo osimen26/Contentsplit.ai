@@ -53,7 +53,7 @@ export interface ContentGenerationResponse {
 
 export interface RegenerationRequest {
   conversion_id: string
-  platform: 'twitter' | 'linkedin' | 'instagram' | 'email'
+  platform: 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'email' | 'summary'
 }
 
 export interface RegenerationResponse {
@@ -167,6 +167,11 @@ class ApiClient {
 
   async getConversion(id: string): Promise<Conversion> {
     const response = await this.client.get(`/conversions/${id}`)
+    return response.data
+  }
+
+  async deleteConversion(id: string): Promise<{ success: boolean }> {
+    const response = await this.client.delete(`/conversions/${id}`)
     return response.data
   }
 

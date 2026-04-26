@@ -158,6 +158,16 @@ export const useOutputs = (conversionId: string) => {
   })
 }
 
+export const useDeleteConversion = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => apiClient.deleteConversion(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.conversions })
+    },
+  })
+}
+
 // User settings hooks
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient()

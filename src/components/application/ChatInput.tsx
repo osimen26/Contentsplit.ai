@@ -21,7 +21,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
   const hasContent = value.trim().length > 0
-  const isMultiLine = value.includes('\n')
 
   // Auto-resize textarea
   useEffect(() => {
@@ -42,19 +41,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <div
-      className={`chat-input-container ${className}`}
+      className={`chat-input-container chat-input-pill-wrapper ${className}`}
       style={{
         display: 'flex',
         alignItems: 'flex-end',
-        gap: '10px',
-        padding: '10px 12px',
-        backgroundColor: 'var(--sys-color-neutral-95)',
-        border: `1.5px solid ${isFocused ? 'var(--sys-color-primary-60)' : 'transparent'}`,
-        borderRadius: isMultiLine ? '18px' : '9999px',
-        boxShadow: isFocused
-          ? '0 0 0 3px var(--sys-color-primary-95), 0 4px 16px rgba(0,0,0,0.08)'
-          : '0 2px 8px rgba(0,0,0,0.06)',
-        transition: 'border-color 0.2s, box-shadow 0.2s, border-radius 0.2s',
+        gap: '12px',
+        padding: '12px 16px',
       }}
     >
       {/* Plus / Attach button */}
@@ -123,7 +115,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: hasContent
-            ? 'var(--sys-color-primary-40)'
+            ? 'var(--sys-color-primary)'
             : isFocused
               ? 'var(--sys-color-primary-80)'
               : 'var(--sys-color-neutral-70)',

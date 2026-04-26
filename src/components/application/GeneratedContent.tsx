@@ -43,12 +43,26 @@ const EmailIcon = ({ size = 18 }: { size?: number }) => (
   </svg>
 )
 
+const FacebookIcon = ({ size = 18 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="#1877F2">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.955 10.125 11.884v-8.385H7.078v-3.47h3.047V9.413c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.952H17.945c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.028 24 18.062 24 12.073z" />
+  </svg>
+)
+
+const NewsletterIcon = ({ size = 18 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="#6B61E7">
+    <path d="M21.75 4.5v13.5c0 1.24-.53 2.18-1.5 2.72-1 .54-1.92.6-2.99.6H6c-1.07 0-1.98-.06-2.99-.6-.97-.54-1.5-1.48-1.5-2.72V4.5c0-1.24.53-2.18 1.5-2.72 1-.54 1.92-.6 2.99-.6h11.25c1.07 0 1.98.06 2.99.6.97.54 1.5 1.48 1.5 2.72zm-12.75 3L4.5 9h15l-4.5-1.5v-3z"/>
+  </svg>
+)
+
 const getPlatformIcon = (platformId: string): React.ReactNode => {
   switch (platformId) {
     case 'twitter': return <TwitterIcon />
     case 'linkedin': return <LinkedInIcon />
     case 'instagram': return <InstagramIcon />
     case 'email': return <EmailIcon />
+    case 'facebook': return <FacebookIcon />
+    case 'newsletter': return <NewsletterIcon />
     default: return <EmailIcon />
   }
 }
@@ -166,8 +180,8 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
                 padding: '6px 10px',
                 borderRadius: 'var(--sys-radius-md)',
                 border: 'none',
-                backgroundColor: 'transparent',
-                color: 'var(--sys-color-neutral-50)',
+                backgroundColor: 'var(--sys-color-primary)',
+                color: 'white',
                 fontSize: '0.75rem', fontWeight: 500, cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
@@ -183,8 +197,8 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
               padding: '6px 14px',
               borderRadius: 'var(--sys-radius-md)',
               border: 'none',
-              backgroundColor: isCopied ? 'var(--sys-color-roles-success-color-role-success-role)' : 'var(--sys-color-roles-primary-color-role-primary-role)',
-              color: isCopied ? 'var(--sys-color-roles-success-color-role-on-success-role)' : 'var(--sys-color-roles-primary-color-role-on-primary-role)',
+              backgroundColor: isCopied ? 'var(--sys-color-success)' : 'var(--sys-color-primary)',
+              color: 'white',
               fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
               transition: 'all 0.2s',
             }}

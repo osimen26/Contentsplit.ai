@@ -98,7 +98,10 @@ app.use(express.json({ limit: '1mb' }))
 
 // In-memory fallback if no database
 const usersDb = new Map()
+const conversionsDb = new Map()
+const outputsDb = new Map()
 const sessionsDb = new Map()
+const JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_KEY || 'contentsplit-secret-key'
 
 function getUserDb() {
   return supabase ? {
@@ -129,6 +132,7 @@ async create(email, password, firstName, lastName) {
         email, 
         password_hash: hashPassword(password),
         tier: 'free',
+        display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
       }
       
       const { data, error } = await supabase
@@ -144,7 +148,12 @@ async create(email, password, firstName, lastName) {
           console.log('Detected missing column error, retrying without name fields...')
           const { data: retryData, error: retryError } = await supabase
             .from('users')
-            .insert({ email, password_hash: hashPassword(password), tier: 'free' })
+            .insert({ 
+              email, 
+              password_hash: hashPassword(password), 
+              tier: 'free',
+              display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
+            })
             .select()
             .single()
           if (retryError) {
@@ -208,8 +217,30 @@ function verifyPassword(password, hash) {
   return hashPassword(password) === hash
 }
 
-function generateToken() {
-  return crypto.randomBytes(32).toString('hex')
+function generateToken(userId) {
+  const payload = Buffer.from(JSON.stringify({ 
+    userId: userId || 'recovery',
+    type: userId ? 'session' : 'recovery',
+    expiresAt: Date.now() + (userId ? (7 * 24 * 60 * 60 * 1000) : (60 * 60 * 1000)) // 7 days for session, 1 hour for recovery
+  })).toString('base64')
+  const signature = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('base64')
+  return `${payload}.${signature}`
+}
+
+function verifyToken(token) {
+  try {
+    const [payload, signature] = token.split('.')
+    if (!payload || !signature) return null
+    const expectedSignature = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('base64')
+    if (signature !== expectedSignature) return null
+    
+    const data = JSON.parse(Buffer.from(payload, 'base64').toString('utf8'))
+    if (data.expiresAt < Date.now()) return null
+    
+    return data
+  } catch (err) {
+    return null
+  }
 }
 
 // Email sending (placeholder - use Resend/SendGrid/AWS SES in production)
@@ -232,7 +263,19 @@ async function sendRecoveryEmail(toEmail, token, fromEmail) {
 </html>
   `.trim()
 
-  if (process.env.SMTP_HOST) {
+  if (process.env.RESEND_API_KEY) {
+    const { Resend } = await import('resend')
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    
+    await resend.emails.send({
+      from: process.env.RESEND_FROM || 'ContentSplit <noreply@resend.dev>',
+      to: toEmail,
+      subject: 'ContentSplit - Password Recovery',
+      html: emailHtml,
+    })
+    
+    console.log(`📧 Recovery email sent via Resend to ${toEmail}`)
+  } else if (process.env.SMTP_HOST) {
     // Production: send via SMTP
     const nodemailer = await import('nodemailer')
     const transporter = nodemailer.createTransport({
@@ -267,16 +310,10 @@ function requireAuth(req, res, next) {
   }
   
   const token = auth.replace('Bearer ', '')
-  const session = sessionsDb.get(token)
+  const session = verifyToken(token)
   
   if (!session) {
     return res.status(401).json({ error: 'Invalid or expired token' })
-  }
-  
-  // Check token expiry
-  if (session.expiresAt && session.expiresAt < Date.now()) {
-    sessionsDb.delete(token)
-    return res.status(401).json({ error: 'Token expired' })
   }
   
   req.userId = session.userId
@@ -289,8 +326,8 @@ function optionalAuth(req, res, next) {
   const auth = req.headers.authorization
   if (auth && auth.startsWith('Bearer ')) {
     const token = auth.replace('Bearer ', '')
-    const session = sessionsDb.get(token)
-    if (session && (!session.expiresAt || session.expiresAt > Date.now())) {
+    const session = verifyToken(token)
+    if (session) {
       req.userId = session.userId
       req.session = session
     }
@@ -309,9 +346,11 @@ function buildPrompt(inputText, platform, tone) {
 
   const platformGuides = {
     twitter: `Create a Twitter/X thread (3-5 tweets). Each tweet max 280 chars. Use 1-2 relevant hashtags. Number each tweet (1/ 2/ etc). Tone: ${toneGuide}.`,
+    facebook: `Write a Facebook post (150-500 words). Start with an engaging hook that stops the scroll. Use conversational tone. Add line breaks for readability. Include an engagement question at the end. Tone: ${toneGuide}.`,
     linkedin: `Write a LinkedIn post (150-400 words). Start with a strong hook. Use short paragraphs. Add 3-5 relevant hashtags at the end. Tone: ${toneGuide}.`,
     instagram: `Write an Instagram caption (100-200 words). Start with a grabbing first line (shown before "more"). Use line breaks. Add 10-15 relevant hashtags at the end. Tone: ${toneGuide}.`,
     email: `Write an email newsletter intro (200-300 words). Include: subject line (Subject: ...), preview text (Preview: ...), then the body. Tone: ${toneGuide}.`,
+    summary: `Create a TL;DR summary with 3-5 bullet points. Keep each point brief and actionable. Tone: ${toneGuide}.`,
   }
 
   return `You are a professional content strategist specialising in social media and digital content.
@@ -369,12 +408,7 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     // Create session
-    const token = generateToken()
-    sessionsDb.set(token, {
-      userId: user.id,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
-    })
+    const token = generateToken(user.id)
 
     // Remove password hash from response
     const { password_hash, ...userWithoutPassword } = user
@@ -417,12 +451,7 @@ app.post('/api/auth/register', async (req, res) => {
     console.log('User created:', user.id)
 
     // Create session
-    const token = generateToken()
-    sessionsDb.set(token, {
-      userId: user.id,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000)
-    })
+    const token = generateToken(user.id)
 
     // Remove password hash from response
     const { password_hash, ...userWithoutPassword } = user
@@ -458,6 +487,7 @@ app.post('/api/auth/google', async (req, res) => {
     const email = payload.email
     const firstName = payload.given_name || ''
     const lastName = payload.family_name || ''
+    const displayName = payload.name || `${firstName} ${lastName}`.trim()
     
     if (!email) {
       return res.status(400).json({ error: 'No email provided by Google' })
@@ -467,18 +497,16 @@ app.post('/api/auth/google', async (req, res) => {
     let user = await userDb.findByEmail(email)
     
     if (!user) {
-      // Create user if they don't exist. We use a random UUID as the password hash
-      // because they authenticate via Google and will not use a password.
+      console.log(`Creating new Google user: ${email} (${displayName})`)
+      // Create user if they don't exist.
       user = await userDb.create(email, crypto.randomUUID(), firstName, lastName)
+      
+      // If the userDb.create didn't set display_name (e.g. in mock mode), we set it here if needed
+      // But we updated userDb.create already.
     }
 
     // Create session
-    const token = generateToken()
-    sessionsDb.set(token, {
-      userId: user.id,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
-    })
+    const token = generateToken(user.id)
 
     const { password_hash, ...userWithoutPassword } = user
 
@@ -488,7 +516,10 @@ app.post('/api/auth/google', async (req, res) => {
     })
   } catch (err) {
     console.error('Google auth error:', err)
-    res.status(500).json({ error: 'Google auth failed' })
+    res.status(500).json({ 
+      error: 'Google auth failed', 
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined 
+    })
   }
 })
 
@@ -512,9 +543,7 @@ app.get('/api/auth/me', requireAuth, async (req, res) => {
 
 // Logout
 app.post('/api/auth/logout', requireAuth, (req, res) => {
-  const auth = req.headers.authorization
-  const token = auth.replace('Bearer ', '')
-  sessionsDb.delete(token)
+  // With stateless tokens, the client handles logout by clearing localStorage
   res.json({ success: true })
 })
 
@@ -584,18 +613,41 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
     const outputs = results.map(r => ({ ...r, conversion_id: conversionId }))
 
     // Save conversion to database if user is authenticated
-    if (supabase && userId !== 'anonymous') {
-      try {
-        await supabase.from('conversions').insert({
+    if (userId !== 'anonymous') {
+      if (supabase) {
+        try {
+          await supabase.from('conversions').insert({
+            id: conversionId,
+            user_id: req.userId,
+            input_text: input_text.slice(0, 500),
+            tone_mode,
+            created_at: new Date().toISOString()
+          })
+
+          for (const output of outputs) {
+            await supabase.from('outputs').insert({
+              id: output.id,
+              conversion_id: conversionId,
+              platform: output.platform,
+              content: output.content,
+              regeneration_count: 0
+            })
+          }
+          console.log('✅ Saved conversion to database')
+        } catch (dbErr) {
+          console.warn('Failed to save conversion:', dbErr.message)
+        }
+      } else {
+        // Save to in-memory mock database
+        conversionsDb.set(conversionId, {
           id: conversionId,
-          user_id: req.userId,
+          user_id: userId,
           input_text: input_text.slice(0, 500),
           tone_mode,
           created_at: new Date().toISOString()
         })
-
         for (const output of outputs) {
-          await supabase.from('outputs').insert({
+          outputsDb.set(output.id, {
             id: output.id,
             conversion_id: conversionId,
             platform: output.platform,
@@ -603,9 +655,7 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
             regeneration_count: 0
           })
         }
-        console.log('✅ Saved conversion to database')
-      } catch (dbErr) {
-        console.warn('Failed to save conversion:', dbErr.message)
+        console.log('✅ Saved conversion to mock database')
       }
     }
 
@@ -659,8 +709,18 @@ app.get('/api/conversions', requireAuth, async (req, res) => {
         has_more: (page * pageSize) < (count || 0)
       })
     } else {
-      // Mock response
-      res.json({ data: [], total: 0, page, page_size: pageSize, has_more: false })
+      // Mock response - sample data
+      const userConversions = Array.from(conversionsDb.values())
+        .filter(c => c.user_id === req.userId)
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice((page - 1) * pageSize, page * pageSize)
+      res.json({
+        data: userConversions,
+        total: userConversions.length,
+        page,
+        page_size: pageSize,
+        has_more: false
+      })
     }
   } catch (err) {
     console.error('Get conversions error:', err)
@@ -695,6 +755,43 @@ app.get('/api/conversions/:id', requireAuth, async (req, res) => {
   }
 })
 
+// Delete a conversion
+app.delete('/api/conversions/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params
+
+    if (supabase) {
+      // Delete outputs first
+      const { error: outputsError } = await supabase
+        .from('outputs')
+        .delete()
+        .eq('conversion_id', id)
+
+      if (outputsError) throw outputsError
+
+      // Delete the conversion
+      const { error } = await supabase
+        .from('conversions')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', req.userId)
+
+      if (error) throw error
+    } else {
+      // Mock response - delete from in-memory
+      conversionsDb.delete(id)
+      outputsDb.forEach((output, key) => {
+        if (output.conversion_id === id) outputsDb.delete(key)
+      })
+    }
+
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Delete conversion error:', err)
+    res.status(500).json({ error: 'Failed to delete conversion' })
+  }
+})
+
 // Get outputs for a conversion
 app.get('/api/conversions/:id/outputs', optionalAuth, async (req, res) => {
   try {
@@ -709,7 +806,10 @@ app.get('/api/conversions/:id/outputs', optionalAuth, async (req, res) => {
       if (error) throw error
       res.json(outputs || [])
     } else {
-      res.json([])
+      // Mock response - get from in-memory
+      const conversionOutputs = Array.from(outputsDb.values())
+        .filter(o => o.conversion_id === id)
+      res.json(conversionOutputs)
     }
   } catch (err) {
     console.error('Get outputs error:', err)
@@ -737,9 +837,16 @@ app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
         .eq('id', conversion_id)
         .single()
       
-      if (conversion) {
-        originalText = conversion.input_text
-        toneMode = conversion.tone_mode
+if (conversion) {
+        res.json(conversion)
+      } else {
+        // Check mock database
+        const mockConversion = conversionsDb.get(id)
+        if (mockConversion && mockConversion.user_id === req.userId) {
+          res.json(mockConversion)
+        } else {
+          res.status(404).json({ error: 'Conversion not found' })
+        }
       }
     }
 
@@ -887,6 +994,9 @@ app.post('/api/users/subscription', requireAuth, async (req, res) => {
 app.post('/api/auth/recover', async (req, res) => {
   try {
     const { email } = req.body
+    console.log('📧 Recover endpoint hit with email:', email)
+    res.setHeader('Content-Type', 'application/json')
+    
     if (!email) {
       return res.status(400).json({ error: 'Email is required' })
     }
@@ -895,31 +1005,62 @@ app.post('/api/auth/recover', async (req, res) => {
     const user = await userDb.findByEmail(email)
     
     if (!user) {
-      // Return success even if user not found (security)
       return res.json({ success: true, message: 'If an account exists, a recovery email has been sent.' })
     }
 
-    // Generate recovery token
-    const recoveryToken = generateToken()
-    const expiresAt = Date.now() + (60 * 60 * 1000) // 1 hour
-    
-    // Store recovery token (in production, use Redis or database)
-    sessionsDb.set(`recovery:${email}`, { token: recoveryToken, expiresAt })
-
-    // In production, send email via SMTP/Resend/SendGrid
-    const RECOVERY_EMAIL_FROM = process.env.RECOVERY_EMAIL_FROM || 'noreply@contentsplit.ai'
-    const APP_URL = process.env.APP_URL || 'http://localhost:3000'
+    const recoveryToken = generateToken(user.id)
+    const APP_URL = process.env.APP_URL || 'http://localhost:5173'
     const recoveryLink = `${APP_URL}/reset-password?token=${recoveryToken}&email=${encodeURIComponent(email)}`
     
     console.log(`📧 Password recovery email would be sent to: ${email}`)
     console.log(`   Recovery link: ${recoveryLink}`)
+    console.log(`   RESEND_API_KEY set: ${!!process.env.RESEND_API_KEY}`)
     
-    // If SMTP configured, send the email
-    if (process.env.SMTP_HOST) {
-      await sendRecoveryEmail(email, recoveryToken, RECOVERY_EMAIL_FROM)
+    // Return debug info in response
+    const debugInfo = {
+      recoveryLink,
+      resendKeySet: !!process.env.RESEND_API_KEY,
+      appUrl: APP_URL
     }
-
-    res.json({ success: true, message: 'If an account exists, a recovery email has been sent.' })
+    
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const { Resend } = await import('resend')
+        const resend = new Resend(process.env.RESEND_API_KEY)
+        
+        const result = await resend.emails.send({
+          from: process.env.RESEND_FROM || 'ContentSplit <noreply@resend.dev>',
+          to: email,
+          subject: 'ContentSplit - Password Recovery',
+          html: `
+<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #1a1a1a;">ContentSplit - Password Recovery</h2>
+  <p>You requested to reset your password. Click the button below to create a new password:</p>
+  <a href="${recoveryLink}" style="display: inline-block; background: #1a1a1a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin: 20px 0;">
+    Reset Password
+  </a>
+  <p style="color: #666; font-size: 14px;">This link expires in 1 hour.</p>
+  <p style="color: #666; font-size: 14px;">If you didn't request this, ignore this email.</p>
+</body>
+</html>
+          `.trim(),
+        })
+        
+        console.log(`📧 Recovery email sent via Resend:`, result)
+        res.json({ success: true, message: 'Recovery email sent!', debug: debugInfo })
+      } catch (emailErr) {
+        console.error('Resend error:', emailErr)
+        res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: { ...debugInfo, error: String(emailErr) } })
+      }
+    } else if (process.env.SMTP_HOST) {
+      await sendRecoveryEmail(email, recoveryToken, process.env.RECOVERY_EMAIL_FROM || 'noreply@contentsplit.ai')
+      res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: debugInfo })
+    } else {
+      // No email service - return link in response for testing
+      res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: debugInfo })
+    }
   } catch (err) {
     console.error('Recovery error:', err)
     res.status(500).json({ error: 'Failed to process recovery request' })
@@ -939,9 +1080,8 @@ app.post('/api/auth/reset-password', async (req, res) => {
       return res.status(400).json({ error: 'Password must be at least 8 characters' })
     }
 
-    // Verify recovery token
-    const stored = sessionsDb.get(`recovery:${email}`)
-    if (!stored || stored.token !== token || stored.expiresAt < Date.now()) {
+    const session = verifyToken(token)
+    if (!session || session.type !== 'recovery') {
       return res.status(400).json({ error: 'Invalid or expired recovery token' })
     }
 
@@ -952,19 +1092,13 @@ app.post('/api/auth/reset-password', async (req, res) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    // Update password
+    if (session.userId !== user.id) {
+      return res.status(400).json({ error: 'Invalid recovery token' })
+    }
+
     await userDb.update(user.id, { password_hash: hashPassword(newPassword) })
     
-    // Delete recovery token
-    sessionsDb.delete(`recovery:${email}`)
-    
-    // Create new session
-    const newToken = generateToken()
-    sessionsDb.set(newToken, {
-      userId: user.id,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000)
-    })
+    const newToken = generateToken(user.id)
 
     const { password_hash, ...userWithoutPassword } = user
     res.json({ token: newToken, user: userWithoutPassword })
@@ -985,6 +1119,94 @@ app.get('/api/plans', (req, res) => {
       { id: 'agency', name: 'Agency', price: 15000, currency: 'NGN', features: ['Unlimited conversions', 'All tones', 'Team access', 'Priority support'] }
     ]
   })
+})
+
+// Landing page demo: Generate Twitter thread
+app.post('/api/generate-thread', async (req, res) => {
+  try {
+    const { content } = req.body
+    
+    if (!content || content.trim().length < 20) {
+      return res.status(400).json({ error: 'Please provide at least 20 characters of content' })
+    }
+
+    if (!DEEPSEEK_API_KEY) {
+      // Return mock data if no API key
+      const mockTweets = [
+        '🌟 Just discovered the secret to 10x your content creation',
+        'Most creators spend hours repurposing one piece of content. Here is the better way:',
+        '1. Write once 2. Auto-distribute 3. Never repeat yourself',
+        'Your time is worth more than editing AI outputs.',
+        'The future of content is one-click everywhere. 🚀'
+      ]
+      return res.json({ tweets: mockTweets })
+    }
+
+    const prompt = `Transform the following content into a 5-tweet Twitter thread. Each tweet should be engaging, have a hook, and end with a CTA or question. Return ONLY a JSON array of tweet strings, nothing else.
+
+Content:
+${content}`
+
+    const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: DEEPSEEK_MODEL,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 512,
+      }),
+    })
+
+    if (!response.ok) {
+      const err = await response.text()
+      console.error('DeepSeek API error:', err)
+      // Return mock on error
+      const mockTweets = [
+        '🌟 Just discovered the secret to 10x your content creation',
+        'Most creators spend hours repurposing one piece of content. Here is the better way:',
+        '1. Write once 2. Auto-distribute 3. Never repeat yourself',
+        'Your time is worth more than editing AI outputs.',
+        'The future of content is one-click everywhere. 🚀'
+      ]
+      return res.json({ tweets: mockTweets })
+    }
+
+    const data = await response.json()
+    let contentStr = data.choices?.[0]?.message?.content || ''
+
+    // Parse JSON from response
+    let tweets = []
+    try {
+      // Try to extract JSON array
+      const match = contentStr.match(/\[[\s\S]*\]/)
+      if (match) {
+        tweets = JSON.parse(match[0])
+      }
+    } catch (parseErr) {
+      // Split by numbered tweets if JSON parsing fails
+      tweets = contentStr.split(/\n\d+\./).filter(t => t.trim())
+    }
+
+    if (tweets.length === 0) {
+      tweets = [
+        '🌟 Just discovered the secret to 10x your content creation',
+        'Most creators spend hours repurposing one piece of content. Here is the better way:',
+        '1. Write once 2. Auto-distribute 3. Never repeat yourself',
+        'Your time is worth more than editing AI outputs.',
+        'The future of content is one-click everywhere. 🚀'
+      ]
+    }
+
+    res.json({ tweets: tweets.slice(0, 5) })
+    console.log('✅ Generated demo thread')
+  } catch (err) {
+    console.error('Demo generation error:', err.message)
+    res.status(500).json({ error: 'Generation failed' })
+  }
 })
 
 // Create payment link

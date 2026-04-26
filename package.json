@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "server": "node server/index.js",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest",
@@ -40,6 +41,7 @@
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.1",
+    "resend": "^6.12.2",
     "stripe": "^22.0.2",
     "zod": "^3.22.4",
     "zustand": "^5.0.12"

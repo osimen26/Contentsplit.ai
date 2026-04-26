@@ -2,10 +2,51 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLogin } from '@/services/query-hooks'
 import GoogleAuth from '@/components/auth/GoogleAuth'
+import { Eye, EyeOff } from 'lucide-react'
+import { Logo } from '@components/application'
+
+interface AuthLayoutProps {
+  children: React.ReactNode
+  title: string
+  subtitle: string
+  linkText: string
+  linkUrl: string
+  linkLabel: string
+}
+
+const AuthLayout: React.FC<AuthLayoutProps> = ({
+  children,
+  title,
+  subtitle,
+  linkText,
+  linkUrl,
+  linkLabel,
+}) => (
+  <div className="auth-split-container">
+    {/* Right side - Form only */}
+    <div className="auth-right">
+      <div className="auth-form-container">
+        <div className="auth-brand-header">
+          <div className="auth-brand-icon">
+            <Logo size={22} color="white" />
+          </div>
+          <span className="auth-brand-name">ContentSplit</span>
+        </div>
+        <h1 className="auth-title">{title}</h1>
+        <p className="auth-subtitle">{subtitle}</p>
+        {children}
+        <p className="auth-link-text">
+          {linkText} <Link to={linkUrl} className="auth-link">{linkLabel}</Link>
+        </p>
+      </div>
+    </div>
+  </div>
+)
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const { mutateAsync: login, isPending } = useLogin()
@@ -18,7 +59,6 @@ const LoginPage: React.FC = () => {
       navigate('/dashboard')
     } catch (err: unknown) {
       console.error(err)
-      // Axios wraps the real server message in err.response.data.error
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const serverMsg: string = (err as any)?.response?.data?.error || (err instanceof Error ? err.message : '')
       if (serverMsg.includes('Invalid credentials')) {
@@ -32,56 +72,74 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="login-card">
-      <h1 className="login-title">Welcome back</h1>
-      <p className="login-subtitle">Log in to ContentSplit to continue</p>
-      
-      <form className="login-form" onSubmit={handleLogin}>
+    <AuthLayout
+      title="Welcome back"
+      subtitle="Log in to ContentSplit to continue"
+      linkText="Don't have an account?"
+      linkUrl="/register"
+      linkLabel="Create account"
+    >
+      <form className="auth-form" onSubmit={handleLogin}>
         {error && (
-          <div className="auth-error" style={{ color: 'var(--sys-color-roles-error-color-role-error-role)', fontSize: '0.875rem', marginBottom: '8px', textAlign: 'center' }}>
+          <div style={{
+            padding: '12px',
+            backgroundColor: '#fee2e2',
+            color: '#b91c1c',
+            borderRadius: '8px',
+            fontSize: '0.9rem',
+            textAlign: 'center',
+            marginBottom: '4px',
+            fontWeight: 500
+          }}>
             {error}
           </div>
         )}
-        <div className="login-input-container">
-          <input 
-            type="email" 
-            className="login-input" 
-            placeholder="Email address" 
+        <div className="auth-input-container">
+          <input
+            type="email"
+            className="auth-input"
+            placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
-        
-        <div className="login-input-container">
-          <input 
-            type="password" 
-            className="login-input" 
-            placeholder="Password" 
+
+        <div className="auth-input-container">
+          <input
+            type={showPassword ? "text" : "password"}
+            className="auth-input auth-password-input"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <button
+            type="button"
+            className="auth-password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
+            tabIndex={-1}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
         </div>
 
-        <button type="submit" className="login-primary-action" disabled={isPending}>
+        <Link to="/recover" className="auth-forgot-link">Forgot password?</Link>
+
+        <button type="submit" className="auth-primary-btn" disabled={isPending}>
           {isPending ? 'Logging in...' : 'Log In'}
         </button>
-
-        <div className="login-secondary-actions">
-          <Link to="/register" className="login-link">Create account</Link>
-          <Link to="/recover" className="login-link">Forgot password?</Link>
-        </div>
       </form>
 
-      <div className="login-divider">
-        <span className="login-divider-text">OR CONTINUE WITH</span>
+      <div className="auth-divider">
+        <span className="auth-divider-text">OR CONTINUE WITH</span>
       </div>
 
-      <div className="social-auth-buttons">
+      <div className="auth-social-buttons">
         <GoogleAuth buttonText="Google" />
       </div>
-    </div>
+    </AuthLayout>
   )
 }
 

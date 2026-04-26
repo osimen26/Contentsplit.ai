@@ -24,9 +24,49 @@
   padding: 0 var(--sys-spacing-xl);
 }
 
+/* Large Desktop */
+@media (min-width: 1400px) {
+  .layout-fixed {
+    max-width: 1400px;
+    padding: 0 var(--sys-spacing-2xl);
+  }
+}
+
+/* Desktop & Laptop */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .layout-fixed {
+    max-width: 1200px;
+    padding: 0 32px;
+  }
+}
+
+/* Laptop */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .layout-fixed {
+    max-width: 1024px;
+    padding: 0 24px;
+  }
+}
+
 @media (max-width: 600px) {
   .layout-fixed {
-    padding: 0 var(--sys-spacing-lg);
+    padding: 0 var(--sys-spacing-md);
+  }
+}
+
+/* Tablet landscape */
+@media (min-width: 900px) and (max-width: 1023px) {
+  .layout-fixed {
+    max-width: 900px;
+    padding: 0 20px;
+  }
+}
+
+/* Tablet portrait */
+@media (min-width: 768px) and (max-width: 899px) {
+  .layout-fixed {
+    max-width: 768px;
+    padding: 0 16px;
   }
 }
 
@@ -44,7 +84,7 @@
 
 @media (max-width: 600px) {
   .layout-fluid {
-    padding: 0 var(--sys-spacing-lg);
+    padding: 0 var(--sys-spacing-md);
   }
 }
 
@@ -580,6 +620,154 @@
 .hide-xs {
   @media (max-width: 599px) {
     display: none !important;
+  }
+}
+
+/* Mobile: 375px frame with 16px padding = 343px content */
+@media (max-width: 375px) {
+  .claude-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 375px;
+    max-width: 375px;
+  }
+  
+  .claude-sidebar {
+    display: none !important;
+  }
+  
+  .claude-main {
+    width: 100% !important;
+    max-width: 375px !important;
+    padding: 12px !important;
+  }
+  
+  /* Mobile header */
+  .mobile-header {
+    display: flex !important;
+    padding: 12px 16px !important;
+    max-width: 375px !important;
+    width: 100% !important;
+  }
+  
+  /* Content containers - constrain to 343px */
+  .claude-main > * {
+    max-width: 343px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  
+  /* Chat container */
+  .chat-container {
+    max-width: 343px !important;
+    width: 100% !important;
+  }
+  
+  /* Messages */
+  .message-bubble {
+    max-width: 311px !important;
+    padding: 12px 14px !important;
+    font-size: 0.9375rem !important;
+  }
+  
+  /* Chat input */
+  .chat-input-pill-wrapper {
+    max-width: 343px !important;
+    width: 100% !important;
+    padding: 12px !important;
+    border-radius: 12px !important;
+  }
+  
+  .chat-input-pill-wrapper textarea {
+    font-size: 1rem !important;
+    min-height: 44px !important;
+  }
+  
+  /* Buttons - min 44px tap target */
+  .btn-gradient,
+  button[class*="btn"],
+  .sidebar-link {
+    min-height: 44px !important;
+    padding: 12px 16px !important;
+    font-size: 0.9375rem !important;
+  }
+  
+  /* Glass card */
+  .glass-card {
+    max-width: 343px !important;
+    width: 100% !important;
+    padding: 14px 16px !important;
+    border-radius: 12px !important;
+  }
+  
+  /* Platform cards */
+  .platform-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 8px !important;
+    -webkit-overflow-scrolling: touch;
+    max-width: 343px !important;
+  }
+  
+  .platform-card {
+    min-width: 72px !important;
+    flex-shrink: 0 !important;
+    padding: 8px 10px !important;
+    font-size: 0.8125rem !important;
+  }
+  
+  /* Tone chips */
+  .tone-chip {
+    padding: 8px 12px !important;
+    font-size: 0.8125rem !important;
+  }
+  
+  /* Generated content */
+  .generated-content-display {
+    max-width: 343px !important;
+    padding: 14px 16px !important;
+  }
+  
+  .generated-content-tabs {
+    max-width: 343px !important;
+    overflow-x: auto !important;
+  }
+  
+  /* Settings */
+  .settings-container,
+  .settings-section {
+    max-width: 343px !important;
+    padding: 12px !important;
+  }
+  
+  .settings-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 12px 0 !important;
+  }
+  
+  /* Help/FAQ */
+  .help-container {
+    max-width: 343px !important;
+    padding: 12px !important;
+  }
+  
+  .faq-item {
+    padding: 14px 16px !important;
+  }
+  
+  /* History */
+  .history-list {
+    gap: 8px !important;
+  }
+  
+  .history-item,
+  .conversion-item {
+    padding: 14px 16px !important;
+    max-width: 343px !important;
   }
 }
 

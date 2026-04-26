@@ -2,8 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/**",
-      "use": "@vercel/static"
+      "src": "package.json",
+      "use": "@vercel/static-build"
     },
     {
       "src": "server/index.js",
@@ -20,7 +20,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "dist/index.html"
+      "dest": "/index.html"
     }
   ]
 }
