@@ -3,7 +3,7 @@ import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '@contexts/AuthContext'
 import {
   ArrowRight, Mail, FileText, List,
-  Menu, X, Copy, Zap, ChevronDown, Star, Check
+  Menu, X, Copy, Zap, ChevronDown, Star, Check, Sparkle
 } from 'lucide-react'
 import { Logo } from '@components/application'
 import '../styles/landing.css'
@@ -402,19 +402,124 @@ useEffect(() => {
       .lp-input { transition: all 0.2s ease; }
       .lp-input:focus { border-color: var(--sys-color-primary); box-shadow: 0 0 0 3px rgba(107, 97, 231, 0.1); }
 
-      /* Mobile menu */
-      .lp-mobile-menu { animation: fadeIn 0.3s ease; }
+      /* Mobile menu animations */
+      .lp-mobile-menu-overlay { 
+        animation: fadeIn 0.3s ease forwards;
+        backdrop-filter: blur(8px);
+      }
+      .lp-mobile-menu-drawer {
+        animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      @keyframes slideInRight {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+      }
+      
+      .lp-body-lock { overflow: hidden !important; }
 
-      /* Responsive */
+      /* Hero background effect - Mesh Gradient */
+      .lp-hero-mesh {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .lp-hero-mesh::before {
+        content: '';
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        background: 
+          radial-gradient(circle at 20% 30%, rgba(107, 97, 231, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 80% 70%, rgba(11, 135, 193, 0.12) 0%, transparent 40%),
+          radial-gradient(circle at 50% 50%, rgba(107, 97, 231, 0.05) 0%, transparent 60%);
+        filter: blur(80px);
+        animation: meshMove 20s infinite alternate;
+      }
+      @keyframes meshMove {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        100% { transform: translate(-5%, -5%) rotate(5deg); }
+      }
+
+      /* Animated Blobs */
+      .lp-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        z-index: 0;
+        opacity: 0.6;
+        animation: blobFloat 15s infinite ease-in-out;
+      }
+      @keyframes blobFloat {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+      }
+
+      /* Hero text gradient */
+      .lp-hero-gradient {
+        background: linear-gradient(135deg, #6B61E7 0%, #a78bfa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+      }
+
+      /* Premium Card */
+      .lp-card-premium {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(107, 97, 231, 0.1);
+        box-shadow: 0 20px 50px rgba(107, 97, 231, 0.1);
+        border-radius: 24px;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .lp-card-premium:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 30px 60px rgba(107, 97, 231, 0.15);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 1024px) {
+        .lp-section { padding: 64px 20px; }
+      }
       @media (max-width: 768px) { 
         .lp-grid-2 { grid-template-columns: 1fr !important; } 
         .lp-grid-3 { grid-template-columns: 1fr !important; } 
         .lp-hero-mockup { animation: none; opacity: 1; }
+        .lp-nav-links, .lp-nav-right { display: none !important; }
+        .lp-mobile-toggle { display: flex !important; }
+        .lp-headline { font-size: 2.25rem !important; }
+        .lp-feature-row { grid-template-columns: 1fr !important; gap: 32px !important; text-align: center !important; }
+        .lp-feature-row > div { order: unset !important; }
+        .lp-feature-row p { margin-left: auto !important; margin-right: auto !important; }
       }
+      @media (max-width: 480px) {
+        .lp-headline { font-size: 1.75rem !important; }
+        .lp-subtext { font-size: 1rem !important; }
+        .lp-section { padding: 48px 16px; }
+        .lp-pricing-grid { gap: 16px !important; }
+      }
+      
+      .lp-wrapper { overflow-x: hidden; width: 100%; position: relative; }
     `
     document.head.appendChild(style)
     return () => { document.head.removeChild(style) }
   }, [])
+
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.classList.add('lp-body-lock')
+    } else {
+      document.body.classList.remove('lp-body-lock')
+    }
+    return () => document.body.classList.remove('lp-body-lock')
+  }, [mobileOpen])
 
   if (user && !isLoading) return <Navigate to="/dashboard" replace />
 
@@ -445,7 +550,25 @@ useEffect(() => {
     <div className="lp-wrapper" style={{ background: tokens.colorBg, minHeight: '100vh', fontFamily: '"Inter", sans-serif' }}>
       <a href="#main" className="skip-link" style={{ position: 'absolute', left: '-9999px' }}>Skip to content</a>
 
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 64, background: `${tokens.colorBg}cc`, backdropFilter: 'blur(12px)', borderBottom: `1px solid ${tokens.colorBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 48px', zIndex: 1000 }}>
+      <nav style={{ 
+        position: 'fixed', 
+        top: 20, 
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '90%',
+        maxWidth: 1100,
+        height: 64, 
+        background: 'rgba(255, 255, 255, 0.8)', 
+        backdropFilter: 'blur(12px)', 
+        border: '1px solid rgba(0,0,0,0.05)', 
+        borderRadius: 32,
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        padding: '0 24px', 
+        zIndex: 1000,
+        boxShadow: '0 10px 30px rgba(0,0,0,0.05)'
+      }}>
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
           <div style={{
             width: 32, height: 32, borderRadius: 8,
@@ -469,23 +592,94 @@ useEffect(() => {
       </nav>
 
       {mobileOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: `${tokens.colorBg}ee`, zIndex: 1001, padding: 24, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}><button onClick={() => setMobileOpen(false)} style={{ background: 'transparent', border: 'none', color: tokens.colorTextPrimary, cursor: 'pointer' }}><X size={24}/></button></div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 48 }}>
-            <a href="#features" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, padding: '12px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>Features</a>
-            <a href="#how-it-works" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, padding: '12px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>How it works</a>
-            <a href="#pricing" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, padding: '12px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>Pricing</a>
-            <Link to="/login" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextSecondary, fontSize: 16, padding: '12px 0' }}>Log in</Link>
-            <Link to="/register" onClick={() => setMobileOpen(false)} style={{ background: tokens.colorAccent, color: tokens.colorWhite, padding: 14, borderRadius: tokens.radiusMd, textAlign: 'center', fontWeight: 600 }} className="lp-btn">Start free →</Link>
+        <>
+          {/* Backdrop Overlay */}
+          <div 
+            className="lp-mobile-menu-overlay"
+            onClick={() => setMobileOpen(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1001 }} 
+          />
+          
+          {/* Slide-in Drawer */}
+          <div 
+            className="lp-mobile-menu-drawer"
+            style={{ 
+              position: 'fixed', 
+              top: 0, 
+              right: 0, 
+              bottom: 0, 
+              width: '85%', 
+              maxWidth: 360, 
+              background: tokens.colorWhite, 
+              zIndex: 1002, 
+              padding: '32px 24px', 
+              display: 'flex', 
+              flexDirection: 'column',
+              boxShadow: '-10px 0 30px rgba(0,0,0,0.1)'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--sys-color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Logo size={18} color="white" />
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 18, color: tokens.colorTextPrimary }}>ContentSplit</span>
+              </div>
+              <button onClick={() => setMobileOpen(false)} style={{ background: 'var(--sys-color-neutral-95)', border: 'none', color: tokens.colorTextPrimary, cursor: 'pointer', width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <X size={20}/>
+              </button>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {[
+                { label: 'Features', href: '#features' },
+                { label: 'How it works', href: '#how-it-works' },
+                { label: 'Pricing', href: '#pricing' },
+              ].map((item) => (
+                <a 
+                  key={item.label}
+                  href={item.href} 
+                  onClick={() => setMobileOpen(false)} 
+                  style={{ 
+                    color: tokens.colorTextPrimary, 
+                    fontSize: 16, 
+                    fontWeight: 600,
+                    padding: '16px 20px', 
+                    borderRadius: 12,
+                    textDecoration: 'none',
+                    background: 'transparent',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'var(--sys-color-neutral-95)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+            
+            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <Link to="/login" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 16, fontWeight: 600, padding: '16px 20px', textAlign: 'center', textDecoration: 'none', borderRadius: 12, border: `1px solid ${tokens.colorBorder}` }}>Log in</Link>
+              <Link to="/register" onClick={() => setMobileOpen(false)} style={{ background: tokens.colorAccent, color: tokens.colorWhite, padding: '16px 20px', borderRadius: 12, textAlign: 'center', fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 12px rgba(107, 97, 231, 0.2)' }} className="lp-btn">Start free now →</Link>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
-<section id="main" style={{ minHeight: '100vh', padding: '120px 24px 80px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
-        <div className="lp-hero-content" style={{ position: 'relative', zIndex: 1 }}>
-          <span className="lp-label" style={{ marginBottom: 20 }}>AI-Powered Content Repurposing</span>
-          <h1 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', color: tokens.colorTextPrimary, lineHeight: 1.1, maxWidth: 900, marginBottom: 24 }}>
-            Turn one blog post into a week&apos;s worth of <span className="lp-hero-gradient">content</span>
+<section id="main" style={{ minHeight: '100vh', padding: 'clamp(120px, 15vh, 180px) 20px 80px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div className="lp-hero-mesh" />
+        <div className="lp-blob" style={{ width: 400, height: 400, background: 'rgba(107, 97, 231, 0.08)', top: '10%', right: '-5%' }} />
+        <div className="lp-blob" style={{ width: 300, height: 300, background: 'rgba(11, 135, 193, 0.06)', bottom: '20%', left: '-5%', animationDelay: '-5s' }} />
+
+        <div className="lp-hero-content" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 1200 }}>
+          {/* Floating decorative icons */}
+          <div className="lp-float-icon" style={{ position: 'absolute', top: -60, left: '5%', color: tokens.colorAccent, opacity: 0.3 }}><Sparkle size={32} /></div>
+          <div className="lp-float-icon" style={{ position: 'absolute', top: 120, right: '2%', color: tokens.colorAccent, opacity: 0.25, animationDelay: '-2s' }}><Zap size={28} /></div>
+          <div className="lp-float-icon" style={{ position: 'absolute', bottom: 40, left: '2%', color: tokens.colorAccent, opacity: 0.2, animationDelay: '-4s' }}><FileText size={28} /></div>
+
+          <span className="lp-label" style={{ marginBottom: 24, display: 'inline-block' }}>AI-Powered Content Repurposing</span>
+          <h1 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: 'clamp(2.25rem, 8vw, 4.75rem)', color: tokens.colorTextPrimary, lineHeight: 1.05, maxWidth: 1000, marginBottom: 24, letterSpacing: '-0.03em' }}>
+            Turn one blog post into a week&apos;s worth of <span className="lp-hero-gradient">social content</span>
           </h1>
           <p style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', color: tokens.colorTextSecondary, maxWidth: 600, lineHeight: 1.6, margin: '0 auto 40px', textAlign: 'center' }}>
             Paste your article. ContentSplit transforms it into optimized posts for Twitter, Facebook, LinkedIn, Instagram, and newsletters — all in seconds.
@@ -500,37 +694,45 @@ useEffect(() => {
           <p style={{ fontSize: 12, color: tokens.colorTextMuted, marginBottom: 40 }}>No credit card required · 5 free repurposes per day</p>
         
           {/* Supported platforms - clean aligned row */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 56, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--sys-color-neutral-40)', letterSpacing: '0.05em', textTransform: 'uppercase', marginRight: 4 }}>We support</span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginBottom: 72, flexWrap: 'wrap', width: '100%' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--sys-color-neutral-40)', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: 8, opacity: 0.8 }}>WE OPTIMIZE FOR</span>
             {[
               { icon: landingIcons.Twitter, color: '#1DA1F2', name: 'Twitter' },
-              { icon: landingIcons.Facebook, color: '#1877F2', name: 'Facebook' },
               { icon: landingIcons.Linkedin, color: '#0A66C2', name: 'LinkedIn' },
               { icon: landingIcons.Instagram, color: '#E1306C', name: 'Instagram' },
               { icon: Mail, color: '#EA4335', name: 'Newsletter' },
+              { icon: landingIcons.Facebook, color: '#1877F2', name: 'Facebook' },
+              { icon: List, color: '#6B61E7', name: 'Summary' },
             ].map((social, i) => (
               <div 
                 key={social.name}
                 className="lp-social-bounce"
                 style={{
-                  animationDelay: `${i * 150}ms`,
+                  animationDelay: `${i * 100}ms`,
                   display: 'flex',
                   alignItems: 'center',
                   gap: 8,
-                  padding: '10px 16px',
-                  background: `${social.color}12`,
-                  borderRadius: 10,
-                  border: `1px solid ${social.color}30`,
+                  padding: '8px 14px',
+                  background: 'rgba(255, 255, 255, 0.6)',
+                  backdropFilter: 'blur(8px)',
+                  borderRadius: 12,
+                  border: '1px solid rgba(0,0,0,0.05)',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.02)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'default'
                 }}
               >
-                <social.icon size={20} color={social.color} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: social.color }}>{social.name}</span>
+                <social.icon size={18} color={social.color} />
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--sys-color-neutral-20)' }}>{social.name}</span>
               </div>
             ))}
           </div>
 
-          <div style={{ maxWidth: 900, width: '100%' }}>
-            <div className="lp-card" style={{ background: tokens.colorSurface, overflow: 'hidden', boxShadow: `0 0 80px ${tokens.colorAccent}15` }}>
+          <div style={{ maxWidth: 1000, width: '100%', margin: '0 auto', position: 'relative' }}>
+            {/* Background glow for mockup */}
+            <div style={{ position: 'absolute', inset: -20, background: 'var(--sys-color-primary)', opacity: 0.05, filter: 'blur(40px)', borderRadius: '50%' }} />
+            
+            <div className="lp-card-premium" style={{ overflow: 'hidden', padding: 0, position: 'relative' }}>
               {/* Platform tabs */}
               <div style={{ display: 'flex', borderBottom: `1px solid ${tokens.colorBorder}`, overflowX: 'auto', background: tokens.colorSurface2 }}>
                 {platformTabs.map(tab => (
@@ -541,7 +743,7 @@ useEffect(() => {
               </div>
               
               {/* Preview content */}
-              <div style={{ padding: 32 }}>
+              <div style={{ padding: 'clamp(16px, 4vw, 32px)' }}>
                 {activeTab === 'twitter' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {mockTweets.map((t, i) => (
@@ -586,8 +788,14 @@ useEffect(() => {
                   </div>
                 )}
                 {['newsletter', 'instagram', 'youtube'].includes(activeTab) && <div style={{ color: tokens.colorTextMuted, fontStyle: 'italic', padding: 24 }}>Preview for {activeTab}...</div>}
-              </div>
             </div>
+          </div>
+        </div>
+
+          {/* Scroll Indicator */}
+          <div style={{ marginTop: 64, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, opacity: 0.6 }}>
+            <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Scroll to explore</span>
+            <div style={{ width: 1, height: 40, background: 'linear-gradient(to bottom, var(--sys-color-primary), transparent)' }} />
           </div>
         </div>
       </section>
@@ -648,19 +856,19 @@ useEffect(() => {
           {/* Steps with connecting line and cards */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0, position: 'relative' }}>
             {/* Vertical connecting line */}
-            <div style={{ position: 'absolute', left: 32, top: 80, bottom: 80, width: 2, background: 'var(--sys-color-neutral-90)', zIndex: 0 }} />
+            <div style={{ position: 'absolute', left: 'clamp(24px, 8vw, 32px)', top: 80, bottom: 80, width: 2, background: 'var(--sys-color-neutral-90)', zIndex: 0 }} />
             
             {steps.map((s, i) => (
               <div key={s.step} style={{ display: 'flex', gap: 24, position: 'relative', zIndex: 1, paddingBottom: i < 2 ? 48 : 0 }}>
                 {/* Step number badge */}
-                <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--sys-color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 16px rgba(107, 97, 231, 0.3)' }}>
-                  <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: 24, color: 'var(--sys-color-neutral-100)' }}>{s.step}</span>
+                <div style={{ width: 'clamp(48px, 12vw, 64px)', height: 'clamp(48px, 12vw, 64px)', borderRadius: '50%', background: 'var(--sys-color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 16px rgba(107, 97, 231, 0.3)' }}>
+                  <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: 'clamp(18px, 5vw, 24px)', color: 'var(--sys-color-neutral-100)' }}>{s.step}</span>
                 </div>
                 
                 {/* Content card */}
-                <div style={{ flex: 1, background: tokens.colorSurface, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusLg, padding: 24, display: 'flex', alignItems: 'center', gap: 20 }}>
-                  <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--sys-color-neutral-95)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <s.icon size={28} color={tokens.colorAccent} />
+                <div style={{ flex: 1, background: tokens.colorSurface, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusLg, padding: 'clamp(16px, 4vw, 24px)', display: 'flex', alignItems: 'center', gap: 'clamp(12px, 3vw, 20px)' }}>
+                  <div style={{ width: 'clamp(40px, 10vw, 56px)', height: 'clamp(40px, 10vw, 56px)', borderRadius: 14, background: 'var(--sys-color-neutral-95)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <s.icon size={24} color={tokens.colorAccent} />
                   </div>
                   <div>
                     <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 600, fontSize: 18, color: tokens.colorTextPrimary, marginBottom: 6 }}>{s.title}</h3>
