@@ -506,14 +506,22 @@ useEffect(() => {
       </nav>
 
       {mobileOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: `${tokens.colorBg}ee`, zIndex: 1001, padding: 24, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}><button onClick={() => setMobileOpen(false)} style={{ background: 'transparent', border: 'none', color: tokens.colorTextPrimary, cursor: 'pointer' }}><X size={24}/></button></div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 48 }}>
-            <a href="#features" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, padding: '12px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>Features</a>
-            <a href="#how-it-works" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, padding: '12px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>How it works</a>
-            <a href="#pricing" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, padding: '12px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>Pricing</a>
-            <Link to="/login" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextSecondary, fontSize: 16, padding: '12px 0' }}>Log in</Link>
-            <Link to="/register" onClick={() => setMobileOpen(false)} style={{ background: tokens.colorAccent, color: tokens.colorWhite, padding: 14, borderRadius: tokens.radiusMd, textAlign: 'center', fontWeight: 600 }} className="lp-btn">Start free →</Link>
+        <div style={{ position: 'fixed', inset: 0, background: tokens.colorBg, zIndex: 1001, padding: 24, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: tokens.colorAccent, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Logo size={18} color="white" />
+              </div>
+              <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 18, color: tokens.colorTextPrimary }}>ContentSplit</span>
+            </div>
+            <button onClick={() => setMobileOpen(false)} style={{ background: 'transparent', border: 'none', color: tokens.colorTextPrimary, cursor: 'pointer', padding: 4 }}><X size={28}/></button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 40 }}>
+            <a href="#features" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, fontWeight: 600, textDecoration: 'none', padding: '16px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>Features</a>
+            <a href="#how-it-works" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, fontWeight: 600, textDecoration: 'none', padding: '16px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>How it works</a>
+            <a href="#pricing" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, fontWeight: 600, textDecoration: 'none', padding: '16px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>Pricing</a>
+            <Link to="/login" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextSecondary, fontSize: 16, fontWeight: 600, textDecoration: 'none', padding: '16px 0' }}>Log in</Link>
+            <Link to="/register" onClick={() => setMobileOpen(false)} style={{ background: tokens.colorAccent, color: tokens.colorWhite, padding: 16, borderRadius: tokens.radiusMd, textAlign: 'center', textDecoration: 'none', fontWeight: 700, fontSize: 16, marginTop: 8 }} className="lp-btn">Start free →</Link>
           </div>
         </div>
       )}
