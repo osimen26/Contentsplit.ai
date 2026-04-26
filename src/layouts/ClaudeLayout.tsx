@@ -446,7 +446,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
   const isActive = useCallback((path: string) => location.pathname === path || location.pathname.startsWith(path + '/'), [location])
 
   const handleNavigate = useCallback(() => {
-    navigate('/dashboard')
+    navigate('/dashboard?new=' + Date.now())
     setMobileOpen(false)
   }, [navigate])
 
@@ -549,7 +549,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         {/* Main Content */}
         <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 0 }} className="claude-main dashboard-main">
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
-            {children || <Outlet />}
+            {children || <Outlet key={location.pathname + location.search} />}
           </div>
         </main>
       </div>
