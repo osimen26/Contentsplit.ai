@@ -217,7 +217,42 @@
   color: #6366f1 !important;
 }
 
-/* Animations */
+
+@media (max-width: 768px) {
+  .chat-input-area-container {
+    padding: 12px 12px 20px !important;
+  }
+}
+  .chat-input-pill-wrapper {
+    width: calc(100% - 32px) !important;
+    margin: 0 auto;
+    padding: 8px 12px !important;
+  }
+
+  .chat-input-pill-wrapper textarea {
+    font-size: 0.95rem !important;
+  }
+
+  .glass-card {
+    padding: 16px !important;
+    border-radius: 16px;
+  }
+
+  /* Suggestions Grid - Switch to 1 column on mobile */
+  .quick-suggestions {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .suggestions-card {
+    padding: 16px !important;
+  }
+
+  .suggestions-card h1 {
+    font-size: 1.5rem !important;
+  }
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

@@ -207,11 +207,11 @@ const ContentCreationPage: React.FC = () => {
             }}>
               <Sparkles size={28} color="white" />
             </div>
-            <h1 style={{
-              fontSize: 'clamp(2rem, 4vw, 3rem)',
+            <h1 className="suggestions-card-title" style={{
+              fontSize: 'clamp(1.5rem, 5vw, 2.5rem)',
               fontWeight: 800,
               marginBottom: '16px',
-              lineHeight: 1.4,
+              lineHeight: 1.2,
               paddingBottom: '12px',
               color: 'var(--sys-color-neutral-10)',
               letterSpacing: '-0.02em',
@@ -239,7 +239,7 @@ const ContentCreationPage: React.FC = () => {
               <button
                 key={idx}
                 onClick={() => handleSuggestion(s.text)}
-                className="glass-card glass-card-hoverable"
+                className="glass-card glass-card-hoverable suggestions-card"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -425,13 +425,13 @@ const ContentCreationPage: React.FC = () => {
       )}
 
       {/* ── Input Area (persistently docked) ── */}
-      <div style={{
+      <div className="chat-input-area-container" style={{
         position: 'absolute', bottom: 0, left: 0, right: 0,
         padding: '24px 24px 32px',
         background: 'transparent',
         pointerEvents: 'none',
       }}>
-        <div style={{ maxWidth: 840, margin: '0 auto', pointerEvents: 'auto' }}>
+        <div style={{ width: '100%', maxWidth: 840, margin: '0 auto', pointerEvents: 'auto' }}>
           <ChatInput
             value={inputText}
             onChange={setInputText}

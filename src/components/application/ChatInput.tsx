@@ -115,7 +115,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: hasContent
-            ? 'var(--sys-color-primary-40)'
+            ? 'var(--sys-color-primary)'
             : isFocused
               ? 'var(--sys-color-primary-80)'
               : 'var(--sys-color-neutral-70)',
