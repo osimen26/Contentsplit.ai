@@ -126,9 +126,14 @@
     padding: 10px 12px !important;
   }
   
-  .platform-grid,
-  .quick-suggestions {
+  .platform-grid {
     display: none !important;
+  }
+  
+  /* Suggestions: single column at small screens, don't hide */
+  .quick-suggestions {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
   }
   
   .glass-card {
@@ -234,11 +239,13 @@
 
 @media (max-width: 768px) {
   .chat-input-area-container {
-    padding: 4px 4px 10px !important;
+    padding: 4px 8px 16px !important;
   }
 
   .welcome-content-container {
-    padding: 0 16px 80px !important;
+    padding: 16px 16px 120px !important;
+    justify-content: flex-start !important;
+    padding-top: 32px !important;
   }
 
   .chat-input-pill-wrapper {
@@ -262,15 +269,45 @@
   .quick-suggestions {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
-    padding: 0 8px !important;
+    padding: 0 !important;
   }
 
   .suggestions-card {
     padding: 16px !important;
   }
 
-  .suggestions-card h1 {
+  .suggestions-card-title {
     font-size: 1.5rem !important;
+  }
+
+  /* Generate button - full width on mobile */
+  .btn-gradient {
+    min-width: unset !important;
+    width: 100% !important;
+  }
+
+  /* Preferences card - reset conflicting glass-card padding */
+  .ai-msg-bubble {
+    padding: 20px !important;
+  }
+
+  /* Message bubble max-width fix on narrow screens */
+  .user-msg-bubble,
+  .ai-msg-bubble {
+    max-width: 100% !important;
+  }
+
+  /* Platform grid wraps on mobile */
+  .platform-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .platform-card {
+    min-width: 80px !important;
+    flex: 1 1 calc(33% - 8px) !important;
+    padding: 8px 10px !important;
   }
 }
 
@@ -440,4 +477,3 @@
     max-width: 343px !important;
   }
 }
-
