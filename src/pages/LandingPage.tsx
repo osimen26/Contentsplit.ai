@@ -506,7 +506,7 @@ useEffect(() => {
       </nav>
 
       {mobileOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: tokens.colorBg, zIndex: 1001, padding: 24, display: 'flex', flexDirection: 'column' }}>
+        <div className="lp-mobile-menu-overlay" style={{ position: 'fixed', inset: 0, background: tokens.colorBg, zIndex: 1001, padding: 24, display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: tokens.colorAccent, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
