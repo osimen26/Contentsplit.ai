@@ -294,3 +294,150 @@
   to { transform: translate(20px, 30px); }
 }
 
+/* Mobile: 375px frame with 16px padding = 343px content width */
+@media (max-width: 375px) {
+  /* Main container - constrain to 343px */
+  .app-layout,
+  .glass-card,
+  .chat-container,
+  .content-area {
+    max-width: 343px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  
+  /* App layout adjustments */
+  .app-layout {
+    padding: 12px !important;
+  }
+  
+  /* Sidebar - hide on mobile */
+  .app-sidebar {
+    display: none !important;
+  }
+  
+  /* Main content area */
+  .main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  /* Chat input area */
+  .chat-input-pill-wrapper {
+    width: 100% !important;
+    max-width: 343px !important;
+    padding: 12px !important;
+    border-radius: 12px !important;
+  }
+  
+  .chat-input-pill-wrapper textarea {
+    font-size: 1rem !important;
+    min-height: 44px !important;
+  }
+  
+  /* Messages */
+  .message-bubble {
+    max-width: 311px !important;
+    padding: 12px 14px !important;
+    font-size: 0.9375rem !important;
+    line-height: 1.5 !important;
+  }
+  
+  /* Platform tabs - horizontal scroll if needed */
+  .platform-tabs,
+  .generated-content-tabs {
+    max-width: 343px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Quick suggestions - single column */
+  .quick-suggestions {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  
+  .suggestions-card {
+    padding: 14px 16px !important;
+  }
+  
+  /* Button sizing - min 44px tap target */
+  .btn-gradient,
+  button[class*="btn"] {
+    min-height: 44px !important;
+    padding: 12px 16px !important;
+    font-size: 0.9375rem !important;
+  }
+  
+  /* Glass card components */
+  .glass-card {
+    padding: 14px 16px !important;
+    border-radius: 12px !important;
+  }
+  
+  /* Generated content display */
+  .generated-content-display {
+    padding: 14px 16px !important;
+    max-width: 343px !important;
+  }
+  
+  /* Platform cards - stack horizontally with scroll */
+  .platform-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 8px !important;
+    padding: 4px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .platform-card {
+    min-width: 80px !important;
+    flex-shrink: 0 !important;
+    padding: 8px 12px !important;
+  }
+  
+  /* Tone chips */
+  .tone-chip {
+    padding: 8px 12px !important;
+    font-size: 0.8125rem !important;
+  }
+  
+  /* Settings page */
+  .settings-container,
+  .settings-section {
+    max-width: 343px !important;
+    width: 100% !important;
+    padding: 12px !important;
+  }
+  
+  .settings-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 12px 0 !important;
+  }
+  
+  /* Help page */
+  .help-container {
+    max-width: 343px !important;
+    padding: 12px !important;
+  }
+  
+  .faq-item {
+    padding: 14px 16px !important;
+  }
+  
+  /* History page */
+  .history-list {
+    gap: 8px !important;
+  }
+  
+  .history-item,
+  .conversion-item {
+    padding: 14px 16px !important;
+    max-width: 343px !important;
+  }
+}
+

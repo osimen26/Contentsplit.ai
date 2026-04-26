@@ -972,6 +972,62 @@ useEffect(() => {
           .lp-mobile-toggle { display: flex !important; }
           .lp-container > div { grid-template-columns: 1fr !important; }
           .lp-pricing-grid { grid-template-columns: 1fr !important; }
+          
+          /* Hero mobile - 375px frame, 16px padding = 343px content */
+          #main {
+            padding: 100px 16px 48px !important;
+            width: 100%;
+            max-width: 100%;
+          }
+          #main > section,
+          #main > div {
+            max-width: 343px !important;
+            margin: 0 auto !important;
+          }
+          #main h1 {
+            font-size: clamp(1.625rem, 8vw, 2.25rem) !important;
+            max-width: 100% !important;
+            margin-bottom: 16px !important;
+          }
+          #main p {
+            font-size: 1rem !important;
+            line-height: 1.5 !important;
+            margin: 0 auto 24px !important;
+          }
+          #main > div:nth-child(1) {
+            gap: 16px !important;
+          }
+          #main > div:nth-child(1) > div {
+            gap: 12px !important;
+          }
+          #main > div:nth-child(1) > div > a,
+          #main > div:nth-child(1) > div > span {
+            padding: 12px 24px !important;
+            font-size: 0.95rem !important;
+          }
+          /* Platform pills - smaller on mobile */
+          #main > div:nth-child(4) {
+            gap: 8px !important;
+            margin-bottom: 32px !important;
+          }
+          #main > div:nth-child(4) > div {
+            padding: 8px 12px !important;
+            font-size: 0.75rem !important;
+          }
+          #main > div:nth-child(4) > div > span {
+            font-size: 0.7rem !important;
+          }
+          /* Mockup card - constrain to 343px */
+          .lp-card {
+            margin: 0 !important;
+            border-radius: 12px !important;
+            max-width: 343px !important;
+            width: 100% !important;
+          }
+          .lp-card > div:first-child {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+          }
         }
       `}</style>
     </div>

@@ -3,6 +3,44 @@ import { useSearchParams, Link } from 'react-router-dom'
 import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react'
 import { Toast } from '@components/ui'
 import { apiClient } from '@/services/api-client'
+import { Logo } from '@components/application'
+
+interface AuthLayoutProps {
+  children: React.ReactNode
+  title: string
+  subtitle: string
+  linkText: string
+  linkUrl: string
+  linkLabel: string
+}
+
+const AuthLayout: React.FC<AuthLayoutProps> = ({
+  children,
+  title,
+  subtitle,
+  linkText,
+  linkUrl,
+  linkLabel,
+}) => (
+  <div className="auth-split-container">
+    <div className="auth-right">
+      <div className="auth-form-container">
+        <div className="auth-brand-header">
+          <div className="auth-brand-icon">
+            <Logo size={22} color="white" />
+          </div>
+          <span className="auth-brand-name">ContentSplit</span>
+        </div>
+        <h1 className="auth-title">{title}</h1>
+        <p className="auth-subtitle">{subtitle}</p>
+        {children}
+        <p className="auth-link-text">
+          {linkText} <Link to={linkUrl} className="auth-link">{linkLabel}</Link>
+        </p>
+      </div>
+    </div>
+  </div>
+)
 
 const ResetPasswordPage: React.FC = () => {
   const [searchParams] = useSearchParams()
@@ -48,134 +86,102 @@ const ResetPasswordPage: React.FC = () => {
 
   if (!token || !email) {
     return (
-      <div className="login-container" style={{ padding: '0px' }}>
-        <div className="login-card" style={{ maxWidth: '400px' }}>
-          <h2 className="login-title" style={{ marginBottom: '16px' }}>Invalid Link</h2>
-          <p className="login-subtitle" style={{ marginBottom: '24px' }}>
+      <AuthLayout
+        title="Invalid Link"
+        subtitle="This password reset link is invalid or has expired"
+        linkText="Need a new link?"
+        linkUrl="/recover"
+        linkLabel="Request New Link"
+      >
+        <div style={{ textAlign: 'center', padding: '24px 0' }}>
+          <p className="auth-subtitle" style={{ marginBottom: '24px' }}>
             This password reset link is invalid or has expired.
           </p>
-          <Link to="/recover" style={{
-            display: 'inline-block',
-            width: '100%',
-            padding: '12px 24px',
-            backgroundColor: 'var(--sys-color-roles-primary-color-role-primary-role)',
-            color: 'var(--sys-color-roles-primary-color-role-on-primary-role)',
-            borderRadius: '20px',
-            textAlign: 'center',
-            textDecoration: 'none',
-            fontFamily: 'var(--sys-typography-label-small-font-family)',
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: 'var(--sys-typography-label-small-letter-spacing)',
-          }}>
+          <Link to="/recover" className="auth-primary-btn" style={{ width: '100%' }}>
             Request New Link
           </Link>
         </div>
-      </div>
+      </AuthLayout>
     )
   }
 
   if (isSuccess) {
     return (
-      <div className="login-container" style={{ padding: '0px' }}>
-        <div className="login-card" style={{ maxWidth: '400px' }}>
+      <AuthLayout
+        title="Password Reset"
+        subtitle="Your password has been reset successfully"
+        linkText="Ready to log in?"
+        linkUrl="/login"
+        linkLabel="Go to Login"
+      >
+        <div style={{ textAlign: 'center' }}>
           <CheckCircle 
             size={64} 
             color="var(--sys-color-roles-success-color-role-success-color-role)" 
             style={{ margin: '0 auto 24px' }} 
           />
-          <h2 className="login-title" style={{ marginBottom: '16px' }}>Password Reset</h2>
-          <p className="login-subtitle" style={{ marginBottom: '24px' }}>
+          <p className="auth-subtitle" style={{ marginBottom: '24px' }}>
             Your password has been successfully reset. You can now log in with your new password.
           </p>
-          <Link 
-            to="/login" 
-            style={{
-              display: 'inline-block',
-              width: '100%',
-              padding: '12px 24px',
-              backgroundColor: 'var(--sys-color-roles-primary-color-role-primary-role)',
-              color: 'var(--sys-color-roles-primary-color-role-on-primary-role)',
-              borderRadius: '20px',
-              textAlign: 'center',
-              textDecoration: 'none',
-              fontFamily: 'var(--sys-typography-label-small-font-family)',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: 'var(--sys-typography-label-small-letter-spacing)',
-            }}
-          >
+          <Link to="/login" className="auth-primary-btn" style={{ width: '100%' }}>
             Go to Login
           </Link>
         </div>
-      </div>
+      </AuthLayout>
     )
   }
 
   return (
-    <div className="login-container" style={{ padding: '0px' }}>
-      <div className="login-card" style={{ maxWidth: '400px' }}>
-        <Lock 
-          size={64} 
-          color="var(--sys-color-roles-primary-color-role-primary-role)" 
-          style={{ margin: '0 auto 24px', display: 'block' }} 
-        />
-        <h2 className="login-title" style={{ marginBottom: '8px' }}>Set New Password</h2>
-        <p className="login-subtitle" style={{ marginBottom: '32px' }}>
-          Enter your new password below.
-        </p>
-        
-        <form onSubmit={handleSubmit} className="login-form">
-          <div style={{ position: 'relative' }}>
-            <span className="login-label floating">New password</span>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="login-input"
-              required
-              minLength={6}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              style={{
-                position: 'absolute',
-                right: '12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: 'var(--sys-color-text-secondary)',
-                padding: '4px',
-              }}
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-
-          <div style={{ position: 'relative' }}>
-            <span className="login-label floating">Confirm password</span>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="login-input"
-              required
-              minLength={6}
-            />
-          </div>
-
-          <button type="submit" className="login-primary-action" disabled={isLoading}>
-            {isLoading ? 'Resetting...' : 'Reset Password'}
+    <AuthLayout
+      title="Set New Password"
+      subtitle="Enter your new password below"
+      linkText="Remember your password?"
+      linkUrl="/login"
+      linkLabel="Log in"
+    >
+      <Lock 
+        size={64} 
+        color="var(--sys-color-roles-primary-color-role-primary-role)" 
+        style={{ margin: '0 auto 24px', display: 'block' }} 
+      />
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="auth-input-container">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="auth-input"
+            placeholder="New password"
+            required
+            minLength={6}
+          />
+          <button
+            type="button"
+            className="auth-password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
+            tabIndex={-1}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
-        </form>
-        
-        <div style={{ textAlign: 'center', marginTop: '24px' }}>
-          <Link to="/login" className="login-link">Back to Login</Link>
         </div>
-      </div>
+
+        <div className="auth-input-container">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="auth-input"
+            placeholder="Confirm password"
+            required
+            minLength={6}
+          />
+        </div>
+
+        <button type="submit" className="auth-primary-btn" disabled={isLoading}>
+          {isLoading ? 'Resetting...' : 'Reset Password'}
+        </button>
+      </form>
 
       {toast && (
         <Toast 
@@ -185,7 +191,7 @@ const ResetPasswordPage: React.FC = () => {
           onClose={() => setToast(null)} 
         />
       )}
-    </div>
+    </AuthLayout>
   )
 }
 

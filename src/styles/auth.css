@@ -322,6 +322,42 @@
   .login-card {
     padding: 32px 24px;
   }
+  
+  /* Mobile consistent with AuthLayout */
+  .auth-split-container {
+    padding: 12px;
+  }
+  
+  .auth-right {
+    width: calc(100vw - 32px);
+    max-width: 343px;
+  }
+  
+  .auth-form-container {
+    padding: 0;
+  }
+  
+  .auth-title {
+    font-size: 1.35rem;
+  }
+  
+  .auth-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .auth-brand-header {
+    margin-bottom: 24px;
+  }
+  
+  .auth-primary-btn {
+    padding: 14px 20px;
+    font-size: 0.95rem;
+  }
+  
+  .auth-input {
+    padding: 14px 16px;
+    font-size: 0.95rem;
+  }
 }
 
 .registration-field-full {
@@ -773,6 +809,53 @@
   
   .auth-title {
     font-size: 1.5rem;
+  }
+}
+
+/* Mobile: 12px fixed margin, content width = screen - 32 */
+@media (max-width: 375px) {
+  .auth-split-container {
+    padding: 12px;
+  }
+  
+  .auth-right {
+    width: calc(100vw - 32px);
+    max-width: 343px;
+  }
+  
+  .auth-form-container {
+    padding: 0;
+  }
+  
+  .auth-title {
+    font-size: 1.35rem;
+  }
+  
+  .auth-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .auth-brand-header {
+    margin-bottom: 24px;
+  }
+  
+  .auth-brand-icon {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .auth-brand-name {
+    font-size: 1.35rem;
+  }
+  
+  .auth-primary-btn {
+    padding: 14px 20px;
+    font-size: 0.95rem;
+  }
+  
+  .auth-input {
+    padding: 14px 16px;
+    font-size: 0.95rem;
   }
 }
 
