@@ -511,13 +511,71 @@
   background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
 }
 
-.auth-left-content {
+/* Animated chat preview */
+.auth-chat-preview {
   position: relative;
   z-index: 1;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 24px;
+}
+
+.auth-chat-bubble {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 16px 20px;
+  max-width: 85%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.5s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.auth-chat-bubble.user {
+  margin-left: auto;
+  background: linear-gradient(135deg, var(--sys-color-primary-40), var(--sys-color-primary-60));
+  color: white;
+  animation-delay: 0.5s;
+}
+
+.auth-chat-bubble.ai {
+  animation-delay: 1s;
+}
+
+.auth-chat-bubble.platforms {
+  animation-delay: 1.5s;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.auth-platform-tag {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--sys-color-primary-50);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.auth-chat-bubble.response {
+  animation-delay: 2s;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-chat-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
 .auth-brand-title {
@@ -526,6 +584,7 @@
   color: white;
   margin: 0 0 16px;
   letter-spacing: -0.02em;
+  text-align: center;
 }
 
 .auth-brand-desc {

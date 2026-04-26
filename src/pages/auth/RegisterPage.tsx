@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useRegister } from '@/services/query-hooks'
 import { useAuth } from '@/contexts/AuthContext'
 import GoogleAuth from '@/components/auth/GoogleAuth'
-import { Eye, EyeOff, Sparkles } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -24,26 +24,34 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
 }) => (
   <div className="auth-split-container">
     <div className="auth-left">
-      <div className="auth-left-content">
-        <div style={{
-          width: 56, height: 56, borderRadius: 16,
-          background: 'linear-gradient(135deg, var(--sys-color-primary-40), var(--sys-color-primary-60))',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          marginBottom: 24,
-          boxShadow: '0 8px 32px rgba(99, 102, 241, 0.3)',
-        }}>
-          <Sparkles size={28} color="white" />
+      <div className="auth-chat-preview">
+        <div>
+          <div className="auth-chat-label">Demo Conversation</div>
+          <div className="auth-chat-bubble user">
+            Convert my blog post into Twitter, LinkedIn and Instagram versions
+          </div>
         </div>
-        <h1 className="auth-brand-title">ContentSplit</h1>
-        <p className="auth-brand-desc">Transform your content for every platform in seconds.</p>
         
-        <div className="auth-features">
-          {['Repurpose content instantly', 'Multi-platform optimization', 'AI-powered quality'].map((feat, i) => (
-            <div key={i} className="auth-feature-item">
-              <div className="auth-feature-check">✓</div>
-              <span>{feat}</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="auth-chat-bubble ai">
+            <div style={{ fontWeight: 600, marginBottom: 4, color: 'var(--sys-color-neutral-10)' }}>Select your platforms:</div>
+            <div className="auth-chat-bubble platforms">
+              <span className="auth-platform-tag">Twitter</span>
+              <span className="auth-platform-tag">LinkedIn</span>
+              <span className="auth-platform-tag">Instagram</span>
             </div>
-          ))}
+          </div>
+          
+          <div className="auth-chat-bubble user" style={{ animationDelay: '1s' }}>
+            Great! Generate the content
+          </div>
+          
+          <div className="auth-chat-bubble ai response" style={{ animationDelay: '1.5s' }}>
+            <div style={{ fontWeight: 600, marginBottom: 8, color: 'var(--sys-color-neutral-10)' }}>Your content is ready!</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--sys-color-neutral-50)', lineHeight: 1.5 }}>
+              "Stop writing the same content for every platform. With ContentSplit, you can..."
+            </div>
+          </div>
         </div>
       </div>
     </div>
