@@ -101,8 +101,10 @@ const OnboardingPage: React.FC = () => {
                     className={`onboarding-tile ${isSelected ? 'selected' : ''}`}
                   >
                     <Icon size={28} className="onboarding-tile-icon" />
-                    <div className="onboarding-tile-label">{p.label}</div>
-                    <div className="onboarding-tile-desc">{p.description}</div>
+                    <div className="onboarding-tile-content">
+                      <div className="onboarding-tile-label">{p.label}</div>
+                      <div className="onboarding-tile-desc">{p.description}</div>
+                    </div>
                     <div className="onboarding-tile-check">
                       <Check size={16} strokeWidth={3} />
                     </div>
@@ -140,8 +142,10 @@ const OnboardingPage: React.FC = () => {
                     className={`onboarding-tile ${isSelected ? 'selected' : ''}`}
                   >
                     <Icon size={28} className="onboarding-tile-icon" />
-                    <div className="onboarding-tile-label">{t.label}</div>
-                    <div className="onboarding-tile-desc">{t.description}</div>
+                    <div className="onboarding-tile-content">
+                      <div className="onboarding-tile-label">{t.label}</div>
+                      <div className="onboarding-tile-desc">{t.description}</div>
+                    </div>
                     <div className="onboarding-tile-check">
                       <Check size={16} strokeWidth={3} />
                     </div>
