@@ -74,7 +74,7 @@ export const FullLogo: React.FC<{ size?: number; className?: string }> = ({ size
         fontSize: `${size * 0.55}px`, 
         color: 'var(--sys-color-neutral-10)',
         letterSpacing: '-0.02em',
-        fontFamily: 'var(--sys-typography-title-large-font-family)'
+        fontFamily: 'var(--sys-typography-title-large-font-family, var(--sys-font-title-large-regular-font-family, "Plus Jakarta Sans", sans-serif))'
       }}>
         ContentSplit
       </span>

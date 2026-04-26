@@ -56,7 +56,8 @@ body {
   font-size: var(--sys-typography-body-text-font-size);
   line-height: var(--sys-typography-body-text-line-height);
   color: var(--sys-color-roles-neutral-color-role-on-neutral-container-role);
-  background-color: transparent;
+
+  background-color: var(--sys-color-neutral-95);
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;

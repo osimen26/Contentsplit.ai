@@ -45,9 +45,9 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider>
-          <Router>
+      <Router>
+        <AuthProvider>
+          <ThemeProvider>
             <PageViewTracker />
             <ErrorBoundary>
               <Suspense fallback={<LoadingOverlay variant="ai-processing" />}>
@@ -77,9 +77,9 @@ function App() {
                 </Routes>
               </Suspense>
             </ErrorBoundary>
-          </Router>
-        </ThemeProvider>
-      </AuthProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </Router>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   )
