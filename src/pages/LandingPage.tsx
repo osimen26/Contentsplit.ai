@@ -415,6 +415,7 @@ useEffect(() => {
       @media (max-width: 768px) { 
         .lp-grid-2 { grid-template-columns: 1fr !important; } 
         .lp-grid-3 { grid-template-columns: 1fr !important; } 
+        .lp-pricing-grid { grid-template-columns: 1fr !important; }
         .lp-formats-grid { 
           display: flex !important; 
           flex-direction: column !important; 
@@ -423,12 +424,17 @@ useEffect(() => {
         .lp-formats-grid > div {
           width: 100% !important;
         }
+        .lp-section { padding: 60px 20px !important; }
+        .lp-headline { font-size: 1.75rem !important; }
+        .lp-section-h2 { font-size: 1.6rem !important; }
+        .lp-cta-btn { width: 100% !important; justify-content: center !important; padding: 16px 24px !important; }
         .lp-hero-mockup { animation: none; opacity: 1; }
         .lp-nav-links, .lp-nav-right { display: none !important; }
         .lp-mobile-toggle { display: block !important; }
         .lp-nav-padding { padding: 0 20px !important; }
         .lp-hero-padding { padding: 100px 20px 60px !important; }
         .lp-mockup-content { padding: 20px !important; }
+        .lp-steps-line { display: none !important; }
       }
     `
     document.head.appendChild(style)
@@ -662,12 +668,12 @@ useEffect(() => {
       <section id="how-it-works" className="lp-section" style={{ background: tokens.colorBg }}>
         <div className="lp-container" style={{ maxWidth: 900 }}>
           <span className="lp-label" style={{ display: 'block', textAlign: 'center', marginBottom: 16 }}>HOW IT WORKS</span>
-          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(2rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 48 }}>Three steps. Zero friction.</h2>
+          <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(1.6rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 48 }}>Three steps. Zero friction.</h2>
           
           {/* Steps with connecting line and cards */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0, position: 'relative' }}>
             {/* Vertical connecting line */}
-            <div style={{ position: 'absolute', left: 32, top: 80, bottom: 80, width: 2, background: 'var(--sys-color-neutral-90)', zIndex: 0 }} />
+            <div className="lp-steps-line" style={{ position: 'absolute', left: 32, top: 80, bottom: 80, width: 2, background: 'var(--sys-color-neutral-90)', zIndex: 0 }} />
             
             {steps.map((s, i) => (
               <div key={s.step} style={{ display: 'flex', gap: 24, position: 'relative', zIndex: 1, paddingBottom: i < 2 ? 48 : 0 }}>
@@ -695,7 +701,7 @@ useEffect(() => {
       <section className="lp-section" style={{ background: tokens.colorSurface }}>
         <div className="lp-container" style={{ maxWidth: 900 }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(2rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 16 }}>See it work before you sign up.</h2>
+            <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(1.6rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 16 }}>See it work before you sign up.</h2>
             <p style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)', color: tokens.colorTextSecondary, textAlign: 'center', marginBottom: 48, maxWidth: 600, margin: '0 auto' }}>No account needed. Paste any blog excerpt and watch ContentSplit generate a Twitter thread in real time.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: tokens.colorBg, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusLg, overflow: 'hidden' }} className="lp-grid-2">
@@ -901,7 +907,7 @@ useEffect(() => {
       <section id="pricing" className="lp-section" style={{ background: tokens.colorSurface }}>
         <div className="lp-container" style={{ maxWidth: 1000 }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(2rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 12 }}>Simple, transparent pricing</h2>
+            <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(1.6rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 12 }}>Simple, transparent pricing</h2>
             <p style={{ fontSize: 16, color: tokens.colorTextSecondary, textAlign: 'center' }}>Start free, upgrade when you're ready.</p>
           </div>
           
@@ -946,9 +952,9 @@ useEffect(() => {
       </section>
 
       <section style={{ padding: '96px 24px', background: tokens.colorBg, textAlign: 'center' }}>
-        <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: 'clamp(2.5rem, 5vw, 4rem)', color: tokens.colorTextPrimary, marginBottom: 24, lineHeight: 1.1 }}>Your next blog post<br />should be everywhere.</h2>
+        <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: 'clamp(1.8rem, 5vw, 4rem)', color: tokens.colorTextPrimary, marginBottom: 24, lineHeight: 1.1 }}>Your next blog post<br />should be everywhere.</h2>
         <p style={{ fontSize: 16, color: tokens.colorTextSecondary, marginBottom: 40 }}>Start free. No credit card. No setup. Just paste and go.</p>
-        <Link to="/register" style={{ background: tokens.colorAccent, color: tokens.colorWhite, padding: '18px 40px', borderRadius: tokens.radiusPill, textDecoration: 'none', fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 600, fontSize: 18, display: 'inline-flex', alignItems: 'center', gap: 8 }} className="lp-btn">Start repurposing for free → <ArrowRight size={20} /></Link>
+        <Link to="/register" style={{ background: tokens.colorAccent, color: tokens.colorWhite, padding: '18px 40px', borderRadius: tokens.radiusPill, textDecoration: 'none', fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 600, fontSize: 18, display: 'inline-flex', alignItems: 'center', gap: 8 }} className="lp-btn lp-cta-btn">Start repurposing for free <ArrowRight size={20} /></Link>
         <p style={{ marginTop: 24, fontSize: 12, color: tokens.colorTextMuted }}>5 free repurposes daily · Cancel Pro anytime · Built by creators, for creators</p>
       </section>
 
