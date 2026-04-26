@@ -73,7 +73,7 @@ const SidebarContentComponent: React.FC<{
       }}>
         {(!collapsed || inDrawer) ? (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img src="/logo.png" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
+            <img src="/logowordmark.svg" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -395,7 +395,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         >
           <Menu size={22} color="var(--sys-color-neutral-30)" />
         </button>
-        <img src="/logo.png" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
+        <img src="/logowordmark.svg" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
       </header>
 
       {/* ── MOBILE DRAWER OVERLAY ── */}
