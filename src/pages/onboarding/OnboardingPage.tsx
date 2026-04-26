@@ -75,7 +75,7 @@ const OnboardingPage: React.FC = () => {
         {/* Header */}
         <div style={{ textAlign: 'center' }}>
           <div style={{ marginBottom: '24px' }}>
-            <img src="/icon_copy.svg" alt="ContentSplit" style={{ width: '96px', height: '96px' }} />
+            <img src="/icon.svg" alt="ContentSplit" style={{ width: '96px', height: '96px' }} />
           </div>
           <h1 style={{ 
             fontSize: '1.5rem', 
