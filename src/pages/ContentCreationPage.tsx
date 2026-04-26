@@ -190,7 +190,7 @@ const ContentCreationPage: React.FC = () => {
           {/* Hero */}
           <div style={{ textAlign: 'center' }}>
             <div style={{ margin: '0 auto var(--sys-spacing-lg)' }}>
-              <img src="/icon.svg" alt="ContentSplit" style={{ width: 56, height: 56 }} />
+              <img src="/icon_copy.svg" alt="ContentSplit" style={{ width: 160, height: 160 }} />
             </div>
             <h1 style={{
               fontFamily: 'var(--sys-typography-headline-large-font-family)',
@@ -267,7 +267,7 @@ const ContentCreationPage: React.FC = () => {
                   backgroundColor: msg.role === 'user' ? 'var(--sys-color-primary-90)' : 'transparent',
                   color: msg.role === 'user' ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-50)',
                 }}>
-                  {msg.role === 'user' ? <User size={18} /> : <img src="/icon.svg" alt="ContentSplit" style={{ width: 32, height: 32, borderRadius: 8 }} />}
+                  {msg.role === 'user' ? <User size={18} /> : <img src="/icon_copy.svg" alt="ContentSplit" style={{ width: 32, height: 32, borderRadius: 8 }} />}
                 </div>
 
                 {/* Bubble */}

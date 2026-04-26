@@ -74,17 +74,8 @@ const OnboardingPage: React.FC = () => {
 
         {/* Header */}
         <div style={{ textAlign: 'center' }}>
-          <div style={{ 
-            display: 'inline-flex', 
-            justifyContent: 'center', 
-            alignItems: 'center',
-            width: '56px', 
-            height: '56px',
-            borderRadius: '16px',
-            backgroundColor: 'var(--sys-color-primary-98)',
-            marginBottom: '16px'
-          }}>
-            <Sparkles size={28} color="var(--sys-color-primary-40)" strokeWidth={1.5} />
+          <div style={{ marginBottom: '24px' }}>
+            <img src="/icon_copy.svg" alt="ContentSplit" style={{ width: '96px', height: '96px' }} />
           </div>
           <h1 style={{ 
             fontSize: '1.5rem', 
