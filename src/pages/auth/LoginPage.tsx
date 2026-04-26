@@ -23,24 +23,20 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
 }) => (
   <div className="auth-split-container">
     <div className="auth-left">
-      <div className="auth-orb auth-orb-1"></div>
-      <div className="auth-orb auth-orb-2"></div>
-      <div className="auth-orb auth-orb-3"></div>
-      
       <div className="auth-chat-preview">
         <div>
           <h1 className="auth-brand-title">ContentSplit</h1>
           <p className="auth-brand-tagline">Transform content for every platform</p>
         </div>
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div className="auth-chat-label">Demo Conversation</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="auth-chat-label">Live Demo</div>
           <div className="auth-chat-bubble user">
-            Convert my blog post into Twitter, LinkedIn and Instagram versions
+            Turn my blog post into social media posts
           </div>
           
           <div className="auth-chat-bubble ai">
-            <div style={{ fontWeight: 600, marginBottom: 8, color: 'white' }}>Select your platforms:</div>
+            <div style={{ fontWeight: 600, marginBottom: 8, color: 'var(--sys-color-neutral-10)' }}>Platforms ready:</div>
             <div className="auth-chat-bubble platforms">
               <span className="auth-platform-tag">Twitter</span>
               <span className="auth-platform-tag">LinkedIn</span>
@@ -48,13 +44,13 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             </div>
           </div>
           
-          <div className="auth-chat-bubble user" style={{ animationDelay: '0.8s' }}>
-            Great! Generate the content
+          <div className="auth-chat-bubble user" style={{ animationDelay: '0.6s' }}>
+            Perfect! Generate them now
           </div>
           
-          <div className="auth-chat-bubble response" style={{ animationDelay: '1.3s' }}>
+          <div className="auth-chat-bubble response" style={{ animationDelay: '1s' }}>
             <p className="auth-chat-bubble response-text">
-              "Stop writing the same content for every platform. With ContentSplit, you can adapt one piece into perfectly formatted posts for each channel in seconds."
+              Your content is ready for all 3 platforms. Click any tab to copy!
             </p>
           </div>
         </div>
