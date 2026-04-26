@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { useConversions, useCurrentUser } from '@/services/query-hooks'
+import { useCurrentUser, useDeleteConversion } from '@/services/query-hooks'
+import { useConversions } from '@/services/query-hooks'
 import {
   Plus,
   Settings,
@@ -8,13 +9,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  Sparkles,
   Menu,
   X as XIcon,
   FileText,
   LogOut,
+  Trash2,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { Logo } from '@components/application'
 import '@/styles/dashboard.css'
 
 export interface ClaudeLayoutProps {
@@ -57,6 +59,8 @@ const SidebarContentComponent: React.FC<{
   const username = (currentUser?.email || 'user@example.com').split('@')[0]
   const avatarLetter = (currentUser?.email || 'U')[0].toUpperCase()
   const tier = currentUser?.tier === 'agency' ? 'Enterprise' : currentUser?.tier === 'pro' ? 'Pro' : 'Free'
+  const deleteMutation = useDeleteConversion()
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
@@ -74,7 +78,7 @@ const SidebarContentComponent: React.FC<{
               background: 'linear-gradient(135deg, var(--sys-color-primary-60), var(--sys-color-primary-30))',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
-              <Sparkles size={15} color="white" />
+              <Logo size={15} color="white" />
             </div>
             <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--sys-color-neutral-10)' }}>
               ContentSplit
@@ -127,13 +131,17 @@ const SidebarContentComponent: React.FC<{
       {/* ── SEARCH ── */}
       {(!collapsed || inDrawer) && (
         <div style={{ padding: '4px 10px 8px', flexShrink: 0 }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '6px 10px',
-            borderRadius: 8,
-            border: '1px solid rgba(0,0,0,0.05)',
-            backgroundColor: 'rgba(255,255,255,0.5)',
-          }}>
+          <div 
+            className="search-input-container"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '6px 10px',
+              borderRadius: 8,
+              border: '1px solid var(--sys-color-neutral-90)',
+              backgroundColor: 'var(--sys-color-neutral-99)',
+              transition: 'all 0.2s ease',
+            }}
+          >
             <Search size={14} color="var(--sys-color-neutral-50)" />
             <input
               type="text"
@@ -175,11 +183,8 @@ const SidebarContentComponent: React.FC<{
               const label = item.input_text.slice(0, 28) + (item.input_text.length > 28 ? '…' : '')
               
               return (
-                <Link
+                <div
                   key={item.id}
-                  to={`/dashboard/c/${item.id}`}
-                  onClick={onMobileClose}
-                  className="sidebar-link"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -187,27 +192,75 @@ const SidebarContentComponent: React.FC<{
                     padding: '8px 10px',
                     marginBottom: 2,
                     borderRadius: 8,
-                    textDecoration: 'none',
-                    fontSize: '0.88rem',
-                    fontWeight: active ? 600 : 500,
-                    color: active ? '#4f46e5' : '#475569',
-                    backgroundColor: active ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
+                    position: 'relative',
                   }}
-                  title={`${item.input_text}`}
+                  className="recent-item-wrapper"
                 >
-                  <span style={{ color: active ? '#6366f1' : '#94a3b8', flexShrink: 0 }}>
-                    <FileText size={14} />
-                  </span>
-                  <span style={{
-                    flex: 1,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}>
-                    {label}
-                  </span>
-                </Link>
+                  <Link
+                    to={`/dashboard/c/${item.id}`}
+                    onClick={onMobileClose}
+                    className="sidebar-link"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      flex: 1,
+                      padding: 0,
+                      marginBottom: 0,
+                      borderRadius: 0,
+                      textDecoration: 'none',
+                      fontSize: '0.88rem',
+                      fontWeight: active ? 600 : 500,
+                      color: active ? '#4f46e5' : '#475569',
+                      backgroundColor: 'transparent',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                    }}
+                    title={`${item.input_text}`}
+                  >
+                    <span style={{ color: active ? '#6366f1' : '#94a3b8', flexShrink: 0 }}>
+                      <FileText size={14} />
+                    </span>
+                    <span style={{
+                      flex: 1,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}>
+                      {label}
+                    </span>
+                  </Link>
+                  <button
+                    onClick={async (e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      if (confirm('Delete this conversion?')) {
+                        setDeletingId(item.id)
+                        await deleteMutation.mutateAsync(item.id)
+                        setDeletingId(null)
+                      }
+                    }}
+                    disabled={deletingId === item.id}
+                    style={{
+                      opacity: deletingId === item.id ? 0.5 : 0,
+                      transition: 'opacity 0.15s',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: deletingId === item.id ? 'wait' : 'pointer',
+                      padding: '2px 4px',
+                      borderRadius: 4,
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: 'var(--sys-color-tertiary)',
+                    }}
+                    title="Delete"
+                  >
+                    {deletingId === item.id ? (
+                      <span style={{ fontSize: '0.75rem' }}>...</span>
+                    ) : (
+                      <Trash2 size={12} />
+                    )}
+                  </button>
+                </div>
               )
             })}
           </>
@@ -232,10 +285,10 @@ const SidebarContentComponent: React.FC<{
           onClick={onMobileClose}
         />
         <FooterLink
-          to="/help"
+          to="/dashboard/help"
           icon={<HelpCircle size={16} />}
           label="Help & Support"
-          active={isActive('/help')}
+          active={isActive('/dashboard/help')}
           collapsed={collapsed && !inDrawer}
           onClick={onMobileClose}
         />
@@ -243,6 +296,7 @@ const SidebarContentComponent: React.FC<{
           icon={<LogOut size={16} />}
           label="Log out"
           collapsed={collapsed && !inDrawer}
+          isDanger={true}
           onClick={() => {
             onLogout()
             if (inDrawer) onMobileClose()
@@ -339,7 +393,8 @@ const FooterAction: React.FC<{
   label: string
   collapsed: boolean
   onClick: () => void
-}> = ({ icon, label, collapsed, onClick }) => (
+  isDanger?: boolean
+}> = ({ icon, label, collapsed, onClick, isDanger }) => (
   <button
     onClick={onClick}
     className="sidebar-link"
@@ -353,7 +408,7 @@ const FooterAction: React.FC<{
       cursor: 'pointer',
       fontSize: '0.88rem',
       fontWeight: 500,
-      color: '#475569',
+      color: isDanger ? '#ef4444' : '#475569',
       backgroundColor: 'transparent',
       justifyContent: collapsed ? 'center' : 'flex-start',
       width: '100%',
@@ -404,7 +459,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         display: 'none',
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
         height: 52,
-        backgroundColor: 'rgba(255,255,255,0.8)',
+        backgroundColor: 'rgba(255,255,255,0.9)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(0,0,0,0.05)',
         alignItems: 'center',
@@ -499,17 +554,36 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         </main>
       </div>
 
-      <style>{`
+<style>{`
+        /* Desktop & Laptop */
+        @media (min-width: 1200px) {
+          .claude-sidebar { width: 280px; }
+          .mobile-header { display: none !important; }
+        }
+
+        @media (min-width: 1024px) and (max-width: 1199px) {
+          .claude-sidebar { width: 260px; }
+          .mobile-header { display: none !important; }
+        }
+
+        @media (min-width: 769px) and (max-width: 1023px) {
+          .claude-sidebar { width: 240px; }
+          .mobile-header { display: none !important; }
+        }
+
+        /* Tablet & Mobile */
         @media (max-width: 768px) {
           .desktop-sidebar { display: none !important; }
           .mobile-header { display: flex !important; }
           .claude-layout { padding-top: 52px; }
           .mobile-drawer { display: flex !important; }
         }
-        @media (min-width: 769px) {
-          .mobile-header { display: none !important; }
-          .mobile-drawer { display: none !important; }
+
+        /* Very small phones */
+        @media (max-width: 380px) {
+          .mobile-drawer { width: 260px; }
         }
+
         * { scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.2) transparent; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }

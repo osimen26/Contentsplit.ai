@@ -139,7 +139,7 @@ export const RegenerationControls: React.FC<RegenerationControlsProps> = ({
           border: 'none',
           backgroundColor: regenerateDisabled 
             ? 'var(--sys-color-neutral-85)' 
-            : 'var(--sys-color-primary-50)',
+            : 'var(--sys-color-primary)',
           color: '#fff',
           fontSize: '0.9rem',
           fontWeight: 600,

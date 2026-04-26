@@ -1,4 +1,5 @@
 import React, { createContext, useContext, ReactNode, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useCurrentUser, useLogout, useLogin } from '@services/query-hooks'
 import { User } from '@services/api-client'
 
@@ -29,6 +30,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const navigate = useNavigate()
   const [tokenExists, setTokenExists] = useState(!!localStorage.getItem('auth_token'))
   
   // Listen for storage changes in case of multi-tab or manual token wipes
@@ -57,6 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     logoutMutation.mutate()
     setTokenExists(false)
+    navigate('/')
   }
 
   // Called after registration (token already set in localStorage by useRegister onSuccess)

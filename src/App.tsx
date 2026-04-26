@@ -26,6 +26,7 @@ const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage'))
 const AuthLayout = lazy(() => import('@/layouts/AuthLayout'))
 const OnboardingPage = lazy(() => import('./pages/onboarding/OnboardingPage'))
 const LandingPage = lazy(() => import('./pages/LandingPage'))
+const HelpPage = lazy(() => import('./pages/HelpPage'))
 import { ProtectedRoute } from '@components/auth/ProtectedRoute'
 
 // Contexts
@@ -44,9 +45,9 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider>
-          <Router>
+      <Router>
+        <AuthProvider>
+          <ThemeProvider>
             <PageViewTracker />
             <ErrorBoundary>
               <Suspense fallback={<LoadingOverlay variant="ai-processing" />}>
@@ -58,6 +59,7 @@ function App() {
                   <Route element={<ProtectedRoute />}>
                     <Route path="/dashboard" element={<ClaudeLayout />}>
                       <Route index element={<ContentCreationPage />} />
+                      <Route path="help" element={<HelpPage />} />
                       <Route path="create" element={<ContentCreationPage />} />
                       <Route path="c/:id" element={<ConversionDetailPage />} />
                       <Route path="settings" element={<SettingsPage />} />
@@ -75,9 +77,9 @@ function App() {
                 </Routes>
               </Suspense>
             </ErrorBoundary>
-          </Router>
-        </ThemeProvider>
-      </AuthProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </Router>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   )

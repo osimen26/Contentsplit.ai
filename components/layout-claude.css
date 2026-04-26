@@ -24,9 +24,49 @@
   padding: 0 var(--sys-spacing-xl);
 }
 
+/* Large Desktop */
+@media (min-width: 1400px) {
+  .layout-fixed {
+    max-width: 1400px;
+    padding: 0 var(--sys-spacing-2xl);
+  }
+}
+
+/* Desktop & Laptop */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .layout-fixed {
+    max-width: 1200px;
+    padding: 0 32px;
+  }
+}
+
+/* Laptop */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .layout-fixed {
+    max-width: 1024px;
+    padding: 0 24px;
+  }
+}
+
 @media (max-width: 600px) {
   .layout-fixed {
-    padding: 0 var(--sys-spacing-lg);
+    padding: 0 var(--sys-spacing-md);
+  }
+}
+
+/* Tablet landscape */
+@media (min-width: 900px) and (max-width: 1023px) {
+  .layout-fixed {
+    max-width: 900px;
+    padding: 0 20px;
+  }
+}
+
+/* Tablet portrait */
+@media (min-width: 768px) and (max-width: 899px) {
+  .layout-fixed {
+    max-width: 768px;
+    padding: 0 16px;
   }
 }
 
@@ -44,7 +84,7 @@
 
 @media (max-width: 600px) {
   .layout-fluid {
-    padding: 0 var(--sys-spacing-lg);
+    padding: 0 var(--sys-spacing-md);
   }
 }
 

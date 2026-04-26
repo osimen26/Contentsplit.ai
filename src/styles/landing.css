@@ -411,7 +411,7 @@
 }
 
 .bento-card-purple {
-  background: linear-gradient(135deg, #6d5dfc 0%, #4f46e5 100%);
+  background: var(--sys-color-primary-40);
   color: white;
 }
 
@@ -1099,8 +1099,8 @@
   }
 
   .star-rating svg {
-    fill: #fbbf24;
-    color: #fbbf24;
+    fill: var(--sys-color-accent-40);
+    color: var(--sys-color-accent-40);
   }
 
   /* Metric Pill Badge */

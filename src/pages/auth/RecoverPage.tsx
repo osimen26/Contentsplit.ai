@@ -16,11 +16,15 @@ const RecoverPage: React.FC = () => {
     
     setIsLoading(true)
     try {
-      await apiClient.request({
+      const response = await apiClient.request<{ debug?: unknown }>({
         url: '/auth/recover',
         method: 'POST',
         data: { email },
       })
+      console.log('Recovery response:', response)
+      if (response?.debug) {
+        alert('Debug info: ' + JSON.stringify(response.debug, null, 2))
+      }
       setIsSubmitted(true)
       setIsToastVisible(true)
     } catch (err) {

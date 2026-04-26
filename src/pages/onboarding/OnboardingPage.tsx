@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Sparkles, ArrowRight, ArrowLeft, Check, Briefcase, Users, Camera, Megaphone, Zap, Target, MessageCircle, Rocket } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Check, Briefcase, Users, Camera, Megaphone, Zap, Target, MessageCircle, Rocket } from 'lucide-react'
 import { apiClient } from '@/services/api-client'
+import { Logo } from '@components/application'
 import '@/styles/onboarding.css'
 
 const PERSONAS = [
@@ -61,7 +62,7 @@ const OnboardingPage: React.FC = () => {
         {/* Header */}
         <div className="onboarding-header">
           <div className="onboarding-icon-wrapper">
-            <Sparkles size={28} color="#6366f1" strokeWidth={1.5} />
+            <Logo size={28} color="#6366f1" />
           </div>
           <h1 className="onboarding-title">
             {step === 1 ? 'What is your role?' : 'Choose your tone'}

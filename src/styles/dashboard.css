@@ -56,6 +56,12 @@
   transform: translateX(2px);
 }
 
+/* Recent item delete button - show on hover */
+.recent-item-wrapper:hover .recent-item-wrapper button,
+.recent-item-wrapper:hover .sidebar-link + button {
+  opacity: 1 !important;
+}
+
 /* Main content area */
 .dashboard-main {
   z-index: 5;
@@ -65,12 +71,12 @@
 
 /* Glass Cards (Chat, Suggestions, Outputs) */
 .glass-card {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.7);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
 }
 
@@ -89,6 +95,8 @@
   border-radius: 32px !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(99, 102, 241, 0.05) !important;
   transition: all 0.3s ease;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .chat-input-pill-wrapper:focus-within {
@@ -96,9 +104,53 @@
   background: rgba(255, 255, 255, 0.95) !important;
 }
 
+/* Search Input Container */
+.search-input-container {
+  transition: all 0.2s ease;
+}
+
+.search-input-container:focus-within {
+  border-color: var(--sys-color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+}
+
 .chat-input-pill-wrapper textarea {
   background: transparent !important;
   color: #1e293b !important;
+}
+
+/* Mobile chat input */
+@media (max-width: 600px) {
+  .chat-input-pill-wrapper {
+    border-radius: 16px !important;
+    padding: 10px 12px !important;
+  }
+  
+  .platform-grid,
+  .quick-suggestions {
+    display: none !important;
+  }
+  
+  .glass-card {
+    padding: 14px 16px !important;
+  }
+}
+
+/* Mobile - hide platform/tone card borders for cleaner look */
+@media (max-width: 600px) {
+  .platform-card {
+    border-radius: 10px !important;
+    padding: 8px !important;
+  }
+  
+  .platform-grid {
+    gap: 6px !important;
+  }
+  
+  .tone-chip {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+  }
 }
 
 /* User Message Bubble */
@@ -119,22 +171,20 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
 }
 
-/* Gradient Buttons */
+/* Solid Primary Buttons */
 .btn-gradient {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
-  color: #ffffff !important;
-  border: none !important;
+  background: var(--sys-color-primary) !important;
+  color: white !important;
   border-radius: 12px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+}
+
+.btn-gradient:hover:not(:disabled) {
+  background: var(--sys-color-primary-30) !important;
 }
 
 .btn-gradient:hover:not(:disabled) {
   transform: translateY(-2px) !important;
   box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4) !important;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
 }
 
 .btn-gradient:disabled {
@@ -181,7 +231,49 @@
   color: #6366f1 !important;
 }
 
-/* Animations */
+
+@media (max-width: 768px) {
+  .chat-input-area-container {
+    padding: 4px 4px 10px !important;
+  }
+
+  .welcome-content-container {
+    padding: 0 16px 80px !important;
+  }
+
+  .chat-input-pill-wrapper {
+    width: 100% !important;
+    margin: 0 auto;
+    padding: 12px 14px !important;
+    border-radius: 12px !important; /* Squarer on mobile to fill more space */
+    background: #ffffff !important;
+  }
+
+  .chat-input-pill-wrapper textarea {
+    font-size: 1rem !important;
+  }
+
+  .glass-card {
+    padding: 16px !important;
+    border-radius: 16px;
+  }
+
+  /* Suggestions Grid - Switch to 1 column on mobile */
+  .quick-suggestions {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    padding: 0 8px !important;
+  }
+
+  .suggestions-card {
+    padding: 16px !important;
+  }
+
+  .suggestions-card h1 {
+    font-size: 1.5rem !important;
+  }
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

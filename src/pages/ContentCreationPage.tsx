@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { ChatInput, ChatLoadingBubble, PlatformSelector, ToneSelector, GeneratedContent, RegenerationControls } from '@components/application'
+import { ChatInput, ChatLoadingBubble, PlatformSelector, ToneSelector, GeneratedContent, RegenerationControls, Logo } from '@components/application'
 import { useGenerateContent, useRegenerateContent, useOutputs } from '@services/query-hooks'
 import { Target, Ruler, Palette, User, Sparkles, FileText, Zap, Globe } from 'lucide-react'
 import type { Output } from '@services/api-client'
@@ -7,9 +7,11 @@ import '@/styles/dashboard.css'
 
 const platformOptions = [
   { id: 'twitter', name: 'Twitter/X', description: '280 chars per tweet' },
+  { id: 'facebook', name: 'Facebook', description: 'Community posts' },
   { id: 'linkedin', name: 'LinkedIn', description: 'Professional posts' },
   { id: 'instagram', name: 'Instagram', description: 'Visual captions' },
   { id: 'email', name: 'Email', description: 'Newsletter style' },
+  { id: 'summary', name: 'Summary', description: 'TL;DR bullet points' },
 ]
 
 // Brand SVG icons for each platform
@@ -47,11 +49,27 @@ const EmailIcon = () => (
   </svg>
 )
 
+const FacebookIcon = () => (
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="#1877F2">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.955 10.125 11.884v-8.385H7.078v-3.47h3.047V9.413c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.952H17.945c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.028 24 18.062 24 12.073z" />
+  </svg>
+)
+
+const SummaryIcon = () => (
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 6h16" />
+    <path d="M4 12h16" />
+    <path d="M4 18h10" />
+  </svg>
+)
+
 const PLATFORM_ICONS: Record<string, React.ReactNode> = {
   twitter: <TwitterIcon />,
+  facebook: <FacebookIcon />,
   linkedin: <LinkedInIcon />,
   instagram: <InstagramIcon />,
   email: <EmailIcon />,
+  summary: <SummaryIcon />,
 }
 
 const toneOptions = [
@@ -158,7 +176,7 @@ const ContentCreationPage: React.FC = () => {
     setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', type: 'loading' }])
     regenerateMutation.mutate({
       conversion_id: currentConversionId,
-      platform: activeTab as 'twitter' | 'linkedin' | 'instagram' | 'email',
+      platform: activeTab as 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'email' | 'summary',
     }, {
       onSuccess: () => {
         setMessages(prev => prev.filter(m => m.type !== 'loading'))
@@ -187,42 +205,44 @@ const ContentCreationPage: React.FC = () => {
 
       {/* ── ZONE 1: Empty State / Welcome Screen ── */}
       {!hasMessages && (
-        <div style={{
+        <div className="welcome-content-container" style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           gap: 'var(--sys-spacing-2xl)',
-          padding: '40px var(--sys-spacing-xl) 80px',
+          padding: '40px var(--sys-spacing-xl) 100px',
           overflowY: 'auto',
           minHeight: 0,
+          width: '100%',
         }}>
-          <div style={{ textAlign: 'center', padding: '10px' }}>
+          <div style={{ textAlign: 'center', width: '100%', padding: 0 }}>
             <div style={{
               width: 56, height: 56, borderRadius: '16px',
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              background: 'var(--sys-color-primary)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 24px',
               boxShadow: '0 8px 32px rgba(99, 102, 241, 0.25)',
             }}>
-              <Sparkles size={28} color="white" />
+              <Logo size={28} color="white" />
             </div>
-            <h1 style={{
-              fontSize: 'clamp(2rem, 4vw, 3rem)',
+            <h1 className="suggestions-card-title" style={{
+              fontSize: 'clamp(1.5rem, 5vw, 2.5rem)',
               fontWeight: 800,
               marginBottom: '16px',
-              lineHeight: 1.4,
+              lineHeight: 1.2,
               paddingBottom: '12px',
-              background: 'linear-gradient(135deg, #1e1b4b, #4338ca)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              color: 'var(--sys-color-neutral-10)',
               letterSpacing: '-0.02em',
-              overflow: 'visible'
+              overflow: 'visible',
+              width: '100%',
+              padding: '0 16px',
+              boxSizing: 'border-box',
             }}>
               Ready to repurpose?
             </h1>
-            <p style={{ color: '#475569', maxWidth: 480, margin: '0 auto', lineHeight: 1.6, fontSize: '1.1rem' }}>
+            <p style={{ color: 'var(--sys-color-neutral-50)', width: '100%', padding: '0 16px', boxSizing: 'border-box', lineHeight: 1.6, fontSize: '1rem' }}>
                Paste your long-form content below to effortlessly adapt it for any platform.
             </p>
           </div>
@@ -234,18 +254,18 @@ const ContentCreationPage: React.FC = () => {
             gap: '16px',
             width: '100%',
             maxWidth: 680,
-          }}>
+          }} className="quick-suggestions">
             {SUGGESTIONS.map((s, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSuggestion(s.text)}
-                className="glass-card glass-card-hoverable"
+                className="glass-card glass-card-hoverable suggestions-card"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '16px',
                   padding: '20px 24px',
-                  color: '#1e293b',
+                  color: 'var(--sys-color-neutral-20)',
                   fontSize: '0.95rem',
                   fontWeight: 500,
                   textAlign: 'left',
@@ -269,10 +289,11 @@ const ContentCreationPage: React.FC = () => {
         </div>
       )}
 
-      {/* ── ZONE 2: AI Chat / Processing Stream ── */}
+{/* ── ZONE 2: AI Chat / Processing Stream ── */}
       {hasMessages && (
-        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingBottom: '60px' }}>
-          <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingBottom: '140px' }}>
+          <div style={{ flex: 1, overflowY: 'auto', paddingTop: 32 }}>
+            <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
 
             {messages.map(msg => (
               <div key={msg.id} style={{ display: 'flex', gap: '16px', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row' }}>
@@ -281,7 +302,7 @@ const ContentCreationPage: React.FC = () => {
                 <div style={{
                   width: 36, height: 36, borderRadius: 12, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: msg.role === 'user' ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'rgba(255,255,255,0.9)',
+                  background: msg.role === 'user' ? 'var(--sys-color-primary)' : 'rgba(255,255,255,0.6)',
                   color: msg.role === 'user' ? 'white' : '#6366f1',
                   boxShadow: msg.role === 'user' ? '0 4px 12px rgba(99, 102, 241, 0.3)' : '0 4px 12px rgba(0,0,0,0.05)',
                   border: msg.role === 'assistant' ? '1px solid rgba(99, 102, 241, 0.1)' : 'none'
@@ -346,13 +367,15 @@ const ContentCreationPage: React.FC = () => {
                               alignItems: 'center',
                               justifyContent: 'center',
                               gap: 10,
+                              color: 'white',
+                              borderRadius: '12px',
                             }}
                           >
                             <Sparkles size={18} className={generateMutation.isPending ? 'spin' : ''} />
                             {generateMutation.isPending ? 'Generating...' : 'Generate Content'}
                           </button>
                           {selectedPlatforms.length === 0 && (
-                            <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>
+                            <span style={{ fontSize: '0.85rem', color: 'var(--sys-color-tertiary)', fontWeight: 500 }}>
                               Select at least one platform
                             </span>
                           )}
@@ -420,23 +443,26 @@ const ContentCreationPage: React.FC = () => {
               </div>
             ))}
             <div ref={messagesEndRef} />
+            </div>
           </div>
         </div>
       )}
 
-      <div style={{
-        padding: '8px 24px 12px',
-        flexShrink: 0,
-        zIndex: 10,
+      {/* ── Input Area (persistently docked) ── */}
+      <div className="chat-input-area-container" style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0,
+        padding: '24px 24px 32px',
+        background: 'transparent',
+        pointerEvents: 'none',
       }}>
-        <div style={{ maxWidth: 840, margin: '0 auto' }}>
+        <div style={{ width: '100%', maxWidth: 840, margin: '0 auto', pointerEvents: 'auto' }}>
           <ChatInput
             value={inputText}
             onChange={setInputText}
             onSubmit={handleInputSubmit}
             placeholder="Paste your blog post or article here to convert…"
           />
-          <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.8rem', color: '#64748b', fontWeight: 500 }}>
+          <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.8rem', color: 'var(--sys-color-tertiary)', fontWeight: 500 }}>
             Press Enter to send · Shift+Enter for new line
           </p>
         </div>
