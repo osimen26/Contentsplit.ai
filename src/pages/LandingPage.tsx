@@ -405,11 +405,30 @@ useEffect(() => {
       /* Mobile menu */
       .lp-mobile-menu { animation: fadeIn 0.3s ease; }
 
+      .lp-formats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        width: 100%;
+      }
       /* Responsive */
       @media (max-width: 768px) { 
         .lp-grid-2 { grid-template-columns: 1fr !important; } 
         .lp-grid-3 { grid-template-columns: 1fr !important; } 
+        .lp-formats-grid { 
+          display: flex !important; 
+          flex-direction: column !important; 
+          width: 100% !important; 
+        }
+        .lp-formats-grid > div {
+          width: 100% !important;
+        }
         .lp-hero-mockup { animation: none; opacity: 1; }
+        .lp-nav-links, .lp-nav-right { display: none !important; }
+        .lp-mobile-toggle { display: block !important; }
+        .lp-nav-padding { padding: 0 20px !important; }
+        .lp-hero-padding { padding: 100px 20px 60px !important; }
+        .lp-mockup-content { padding: 20px !important; }
       }
     `
     document.head.appendChild(style)
@@ -445,7 +464,7 @@ useEffect(() => {
     <div className="lp-wrapper" style={{ background: tokens.colorBg, minHeight: '100vh', fontFamily: '"Inter", sans-serif' }}>
       <a href="#main" className="skip-link" style={{ position: 'absolute', left: '-9999px' }}>Skip to content</a>
 
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 64, background: `${tokens.colorBg}cc`, backdropFilter: 'blur(12px)', borderBottom: `1px solid ${tokens.colorBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 48px', zIndex: 1000 }}>
+      <nav className="lp-nav-padding" style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 64, background: `${tokens.colorBg}cc`, backdropFilter: 'blur(12px)', borderBottom: `1px solid ${tokens.colorBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 48px', zIndex: 1000 }}>
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
           <div style={{
             width: 32, height: 32, borderRadius: 8,
@@ -481,7 +500,7 @@ useEffect(() => {
         </div>
       )}
 
-<section id="main" style={{ minHeight: '100vh', padding: '120px 24px 80px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
+<section id="main" className="lp-hero-padding" style={{ minHeight: '100vh', padding: '120px 24px 80px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
         <div className="lp-hero-content" style={{ position: 'relative', zIndex: 1 }}>
           <span className="lp-label" style={{ marginBottom: 20 }}>AI-Powered Content Repurposing</span>
           <h1 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', color: tokens.colorTextPrimary, lineHeight: 1.1, maxWidth: 900, marginBottom: 24 }}>
@@ -541,7 +560,7 @@ useEffect(() => {
               </div>
               
               {/* Preview content */}
-              <div style={{ padding: 32 }}>
+              <div className="lp-mockup-content" style={{ padding: 32 }}>
                 {activeTab === 'twitter' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {mockTweets.map((t, i) => (
@@ -610,7 +629,7 @@ useEffect(() => {
           </div>
 
           {/* Grid layout - previous design */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
+          <div className="lp-formats-grid">
             {formats.map((f) => (
               <div key={f.id} className="lp-card" style={{ padding: 28, position: 'relative', overflow: 'hidden', background: `linear-gradient(135deg, ${f.color}08 0%, var(--sys-color-neutral-100) 100%)` }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', background: f.color }} />
