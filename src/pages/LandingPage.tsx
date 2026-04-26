@@ -425,9 +425,14 @@ useEffect(() => {
           width: 100% !important;
         }
         .lp-section { padding: 60px 20px !important; }
-        .lp-headline { font-size: 1.75rem !important; }
-        .lp-section-h2 { font-size: 1.6rem !important; }
+        .lp-headline { font-size: 1.75rem !important; line-height: 1.2 !important; }
+        .lp-section-h2 { font-size: 1.6rem !important; line-height: 1.2 !important; }
         .lp-cta-btn { width: 100% !important; justify-content: center !important; padding: 16px 24px !important; }
+        /* Hero buttons stack on mobile */
+        .lp-hero-btns { flex-direction: column !important; align-items: stretch !important; width: 100% !important; max-width: 320px !important; margin-left: auto !important; margin-right: auto !important; }
+        .lp-hero-btns a, .lp-hero-btns .lp-btn { justify-content: center !important; }
+        /* Social proof logos wrap tightly */
+        .lp-social-logos { gap: 12px !important; padding: 0 8px !important; }
         .lp-hero-mockup { animation: none; opacity: 1; }
         .lp-nav-links, .lp-nav-right { display: none !important; }
         .lp-mobile-toggle { display: block !important; }
@@ -435,6 +440,13 @@ useEffect(() => {
         .lp-hero-padding { padding: 100px 20px 60px !important; }
         .lp-mockup-content { padding: 20px !important; }
         .lp-steps-line { display: none !important; }
+        /* Step rows stack vertically on mobile */
+        .lp-step-row { flex-direction: column !important; align-items: stretch !important; }
+        .lp-step-badge { align-self: flex-start !important; width: 44px !important; height: 44px !important; }
+        .lp-step-badge span { font-size: 18px !important; }
+        .lp-step-card { padding: 16px !important; }
+        /* Demo panel: remove inner border when stacked */
+        .lp-demo-input-panel { border-right: none !important; border-bottom: 1px solid var(--sys-color-neutral-90) !important; }
       }
     `
     document.head.appendChild(style)
@@ -515,7 +527,7 @@ useEffect(() => {
           <p style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', color: tokens.colorTextSecondary, maxWidth: 600, lineHeight: 1.6, margin: '0 auto 40px', textAlign: 'center' }}>
             Paste your article. ContentSplit transforms it into optimized posts for Twitter, Facebook, LinkedIn, Instagram, and newsletters — all in seconds.
           </p>
-          <div style={{ display: 'flex', gap: 16, marginBottom: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div className="lp-hero-btns" style={{ display: 'flex', gap: 16, marginBottom: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
             <Link to="/register" style={{ background: tokens.colorAccent, color: tokens.colorWhite, padding: '16px 32px', borderRadius: tokens.radiusPill, textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }} className="lp-btn">
               <span className="lp-btn-ring" />
               Start for free <ArrowRight size={18} />
@@ -620,7 +632,7 @@ useEffect(() => {
       <section style={{ background: tokens.colorSurface, padding: '24px 0', borderTop: `1px solid ${tokens.colorBorder}`, borderBottom: `1px solid ${tokens.colorBorder}` }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
           <p style={{ fontSize: 14, color: tokens.colorTextMuted, marginBottom: 16 }}>Trusted by 2,000+ creators, marketers, and content teams</p>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24, flexWrap: 'wrap', opacity: 0.4 }}>
+          <div className="lp-social-logos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24, flexWrap: 'wrap', opacity: 0.4 }}>
             {socialLogos.map((logo, i) => (<React.Fragment key={logo}><span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: 12, color: tokens.colorTextMuted }}>{logo}</span>{i < socialLogos.length - 1 && <div style={{ width: 4, height: 4, borderRadius: '50%', background: tokens.colorTextMuted }} />}</React.Fragment>))}
           </div>
         </div>
@@ -676,14 +688,14 @@ useEffect(() => {
             <div className="lp-steps-line" style={{ position: 'absolute', left: 32, top: 80, bottom: 80, width: 2, background: 'var(--sys-color-neutral-90)', zIndex: 0 }} />
             
             {steps.map((s, i) => (
-              <div key={s.step} style={{ display: 'flex', gap: 24, position: 'relative', zIndex: 1, paddingBottom: i < 2 ? 48 : 0 }}>
+              <div key={s.step} className="lp-step-row" style={{ display: 'flex', gap: 20, position: 'relative', zIndex: 1, paddingBottom: i < 2 ? 48 : 0 }}>
                 {/* Step number badge */}
-                <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--sys-color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 16px rgba(107, 97, 231, 0.3)' }}>
+                <div className="lp-step-badge" style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--sys-color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 16px rgba(107, 97, 231, 0.3)' }}>
                   <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: 24, color: 'var(--sys-color-neutral-100)' }}>{s.step}</span>
                 </div>
                 
                 {/* Content card */}
-                <div style={{ flex: 1, background: tokens.colorSurface, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusLg, padding: 24, display: 'flex', alignItems: 'center', gap: 20 }}>
+                <div className="lp-step-card" style={{ flex: 1, background: tokens.colorSurface, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusLg, padding: 24, display: 'flex', alignItems: 'center', gap: 20 }}>
                   <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--sys-color-neutral-95)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <s.icon size={28} color={tokens.colorAccent} />
                   </div>
@@ -705,10 +717,10 @@ useEffect(() => {
             <p style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)', color: tokens.colorTextSecondary, textAlign: 'center', marginBottom: 48, maxWidth: 600, margin: '0 auto' }}>No account needed. Paste any blog excerpt and watch ContentSplit generate a Twitter thread in real time.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: tokens.colorBg, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusLg, overflow: 'hidden' }} className="lp-grid-2">
-            <div style={{ padding: 24, borderRight: `1px solid ${tokens.colorBorder}` }}>
+            <div className="lp-demo-input-panel" style={{ padding: 24, borderRight: `1px solid ${tokens.colorBorder}` }}>
               <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: tokens.colorTextMuted }}>Blog excerpt</span>
               <textarea value={demoInput} onChange={e => setDemoInput(e.target.value)} placeholder="Paste a paragraph from any blog post..." style={{ width: '100%', height: 200, background: tokens.colorSurface2, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusMd, padding: 16, fontFamily: '"Inter", sans-serif', fontSize: 15, color: tokens.colorTextSecondary, resize: 'none', outline: 'none', marginTop: 12 }} />
-              <button onClick={generateDemo} disabled={demoLoading || !demoInput.trim()} style={{ width: '100%', padding: 14, background: tokens.colorAccent, color: tokens.colorWhite, border: 'none', borderRadius: tokens.radiusMd, fontWeight: 600, cursor: demoLoading ? 'not-allowed' : 'pointer', marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>{demoLoading ? 'Generating...' : <>Generate Twitter Thread → <ArrowRight size={16} /></>}</button>
+              <button onClick={generateDemo} disabled={demoLoading || !demoInput.trim()} style={{ width: '100%', padding: 14, background: tokens.colorAccent, color: tokens.colorWhite, border: 'none', borderRadius: tokens.radiusMd, fontWeight: 600, cursor: demoLoading ? 'not-allowed' : 'pointer', marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>{demoLoading ? 'Generating...' : <>Generate Twitter Thread <ArrowRight size={16} /></>}</button>
             </div>
             <div style={{ padding: 24 }}>
               <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: tokens.colorTextMuted }}>Generated Twitter/X Thread</span>
