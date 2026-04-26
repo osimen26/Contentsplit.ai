@@ -183,7 +183,7 @@ const ContentCreationPage: React.FC = () => {
   const mappedTones = toneOptions.map(t => ({ id: t.id, label: t.name, description: t.description, color: 'casual' as any }))
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, position: 'relative', overflow: 'hidden' }}>
 
       {/* ── ZONE 1: Empty State / Welcome Screen ── */}
       {!hasMessages && (
@@ -193,9 +193,10 @@ const ContentCreationPage: React.FC = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          paddingBottom: '100px',
           gap: 'var(--sys-spacing-2xl)',
-          padding: '0 var(--sys-spacing-xl) 100px',
+          padding: '40px var(--sys-spacing-xl) 80px',
+          overflowY: 'auto',
+          minHeight: 0,
         }}>
           <div style={{ textAlign: 'center', padding: '10px' }}>
             <div style={{
@@ -270,7 +271,7 @@ const ContentCreationPage: React.FC = () => {
 
       {/* ── ZONE 2: AI Chat / Processing Stream ── */}
       {hasMessages && (
-        <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '140px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingBottom: '60px' }}>
           <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
 
             {messages.map(msg => (
@@ -423,14 +424,12 @@ const ContentCreationPage: React.FC = () => {
         </div>
       )}
 
-      {/* ── Input Area (persistently docked) ── */}
       <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        padding: '24px 24px 32px',
-        background: 'transparent',
-        pointerEvents: 'none',
+        padding: '8px 24px 12px',
+        flexShrink: 0,
+        zIndex: 10,
       }}>
-        <div style={{ maxWidth: 840, margin: '0 auto', pointerEvents: 'auto' }}>
+        <div style={{ maxWidth: 840, margin: '0 auto' }}>
           <ChatInput
             value={inputText}
             onChange={setInputText}
