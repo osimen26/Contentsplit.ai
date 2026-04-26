@@ -211,10 +211,10 @@ const ContentCreationPage: React.FC = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          paddingBottom: '100px',
+
           gap: 'var(--sys-spacing-2xl)',
-          padding: '0 var(--sys-spacing-xl) 100px',
-          width: '100%',
+          padding: '24px var(--sys-spacing-xl)',
+          width: '100%', overflowY: 'auto',
         }}>
           <div style={{ textAlign: 'center', width: '100%', padding: 0 }}>
             <div style={{
@@ -290,7 +290,7 @@ const ContentCreationPage: React.FC = () => {
 
 {/* ── ZONE 2: AI Chat / Processing Stream ── */}
       {hasMessages && (
-        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingBottom: '140px' }}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingBottom: '24px' }}>
           <div style={{ flex: 1, overflowY: 'auto', paddingTop: 32 }}>
             <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
 
@@ -449,7 +449,7 @@ const ContentCreationPage: React.FC = () => {
 
       {/* ── Input Area (persistently docked) ── */}
       <div className="chat-input-area-container" style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
+        flexShrink: 0, zIndex: 10,
         padding: '24px 24px 32px',
         background: 'transparent',
         pointerEvents: 'none',
@@ -461,7 +461,7 @@ const ContentCreationPage: React.FC = () => {
             onSubmit={handleInputSubmit}
             placeholder="Paste your blog post or article here to convert…"
           />
-          <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.8rem', color: 'var(--sys-color-tertiary)', fontWeight: 500 }}>
+          <p className="chat-input-helper-text" style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.8rem', color: 'var(--sys-color-tertiary)', fontWeight: 500 }}>
             Press Enter to send · Shift+Enter for new line
           </p>
         </div>

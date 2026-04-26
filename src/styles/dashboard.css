@@ -362,6 +362,10 @@
   }
   
   /* Chat input area */
+  .chat-input-area-container {
+    padding: 12px !important;
+  }
+  
   .chat-input-pill-wrapper {
     width: 100% !important;
     max-width: 343px !important;
@@ -372,6 +376,10 @@
   .chat-input-pill-wrapper textarea {
     font-size: 1rem !important;
     min-height: 44px !important;
+  }
+  
+  .chat-input-helper-text {
+    display: none !important;
   }
   
   /* Messages */
