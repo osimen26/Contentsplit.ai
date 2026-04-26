@@ -132,6 +132,7 @@ async create(email, password, firstName, lastName) {
         email, 
         password_hash: hashPassword(password),
         tier: 'free',
+        display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
       }
       
       const { data, error } = await supabase
@@ -147,7 +148,12 @@ async create(email, password, firstName, lastName) {
           console.log('Detected missing column error, retrying without name fields...')
           const { data: retryData, error: retryError } = await supabase
             .from('users')
-            .insert({ email, password_hash: hashPassword(password), tier: 'free' })
+            .insert({ 
+              email, 
+              password_hash: hashPassword(password), 
+              tier: 'free',
+              display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
+            })
             .select()
             .single()
           if (retryError) {
@@ -340,9 +346,11 @@ function buildPrompt(inputText, platform, tone) {
 
   const platformGuides = {
     twitter: `Create a Twitter/X thread (3-5 tweets). Each tweet max 280 chars. Use 1-2 relevant hashtags. Number each tweet (1/ 2/ etc). Tone: ${toneGuide}.`,
+    facebook: `Write a Facebook post (150-500 words). Start with an engaging hook that stops the scroll. Use conversational tone. Add line breaks for readability. Include an engagement question at the end. Tone: ${toneGuide}.`,
     linkedin: `Write a LinkedIn post (150-400 words). Start with a strong hook. Use short paragraphs. Add 3-5 relevant hashtags at the end. Tone: ${toneGuide}.`,
     instagram: `Write an Instagram caption (100-200 words). Start with a grabbing first line (shown before "more"). Use line breaks. Add 10-15 relevant hashtags at the end. Tone: ${toneGuide}.`,
     email: `Write an email newsletter intro (200-300 words). Include: subject line (Subject: ...), preview text (Preview: ...), then the body. Tone: ${toneGuide}.`,
+    summary: `Create a TL;DR summary with 3-5 bullet points. Keep each point brief and actionable. Tone: ${toneGuide}.`,
   }
 
   return `You are a professional content strategist specialising in social media and digital content.
@@ -479,6 +487,7 @@ app.post('/api/auth/google', async (req, res) => {
     const email = payload.email
     const firstName = payload.given_name || ''
     const lastName = payload.family_name || ''
+    const displayName = payload.name || `${firstName} ${lastName}`.trim()
     
     if (!email) {
       return res.status(400).json({ error: 'No email provided by Google' })
@@ -488,9 +497,12 @@ app.post('/api/auth/google', async (req, res) => {
     let user = await userDb.findByEmail(email)
     
     if (!user) {
-      // Create user if they don't exist. We use a random UUID as the password hash
-      // because they authenticate via Google and will not use a password.
+      console.log(`Creating new Google user: ${email} (${displayName})`)
+      // Create user if they don't exist.
       user = await userDb.create(email, crypto.randomUUID(), firstName, lastName)
+      
+      // If the userDb.create didn't set display_name (e.g. in mock mode), we set it here if needed
+      // But we updated userDb.create already.
     }
 
     // Create session
@@ -504,7 +516,10 @@ app.post('/api/auth/google', async (req, res) => {
     })
   } catch (err) {
     console.error('Google auth error:', err)
-    res.status(500).json({ error: 'Google auth failed' })
+    res.status(500).json({ 
+      error: 'Google auth failed', 
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined 
+    })
   }
 })
 
@@ -737,6 +752,43 @@ app.get('/api/conversions/:id', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('Get conversion error:', err)
     res.status(500).json({ error: 'Failed to get conversion' })
+  }
+})
+
+// Delete a conversion
+app.delete('/api/conversions/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params
+
+    if (supabase) {
+      // Delete outputs first
+      const { error: outputsError } = await supabase
+        .from('outputs')
+        .delete()
+        .eq('conversion_id', id)
+
+      if (outputsError) throw outputsError
+
+      // Delete the conversion
+      const { error } = await supabase
+        .from('conversions')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', req.userId)
+
+      if (error) throw error
+    } else {
+      // Mock response - delete from in-memory
+      conversionsDb.delete(id)
+      outputsDb.forEach((output, key) => {
+        if (output.conversion_id === id) outputsDb.delete(key)
+      })
+    }
+
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Delete conversion error:', err)
+    res.status(500).json({ error: 'Failed to delete conversion' })
   }
 })
 
@@ -1067,6 +1119,94 @@ app.get('/api/plans', (req, res) => {
       { id: 'agency', name: 'Agency', price: 15000, currency: 'NGN', features: ['Unlimited conversions', 'All tones', 'Team access', 'Priority support'] }
     ]
   })
+})
+
+// Landing page demo: Generate Twitter thread
+app.post('/api/generate-thread', async (req, res) => {
+  try {
+    const { content } = req.body
+    
+    if (!content || content.trim().length < 20) {
+      return res.status(400).json({ error: 'Please provide at least 20 characters of content' })
+    }
+
+    if (!DEEPSEEK_API_KEY) {
+      // Return mock data if no API key
+      const mockTweets = [
+        '🌟 Just discovered the secret to 10x your content creation',
+        'Most creators spend hours repurposing one piece of content. Here is the better way:',
+        '1. Write once 2. Auto-distribute 3. Never repeat yourself',
+        'Your time is worth more than editing AI outputs.',
+        'The future of content is one-click everywhere. 🚀'
+      ]
+      return res.json({ tweets: mockTweets })
+    }
+
+    const prompt = `Transform the following content into a 5-tweet Twitter thread. Each tweet should be engaging, have a hook, and end with a CTA or question. Return ONLY a JSON array of tweet strings, nothing else.
+
+Content:
+${content}`
+
+    const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: DEEPSEEK_MODEL,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 512,
+      }),
+    })
+
+    if (!response.ok) {
+      const err = await response.text()
+      console.error('DeepSeek API error:', err)
+      // Return mock on error
+      const mockTweets = [
+        '🌟 Just discovered the secret to 10x your content creation',
+        'Most creators spend hours repurposing one piece of content. Here is the better way:',
+        '1. Write once 2. Auto-distribute 3. Never repeat yourself',
+        'Your time is worth more than editing AI outputs.',
+        'The future of content is one-click everywhere. 🚀'
+      ]
+      return res.json({ tweets: mockTweets })
+    }
+
+    const data = await response.json()
+    let contentStr = data.choices?.[0]?.message?.content || ''
+
+    // Parse JSON from response
+    let tweets = []
+    try {
+      // Try to extract JSON array
+      const match = contentStr.match(/\[[\s\S]*\]/)
+      if (match) {
+        tweets = JSON.parse(match[0])
+      }
+    } catch (parseErr) {
+      // Split by numbered tweets if JSON parsing fails
+      tweets = contentStr.split(/\n\d+\./).filter(t => t.trim())
+    }
+
+    if (tweets.length === 0) {
+      tweets = [
+        '🌟 Just discovered the secret to 10x your content creation',
+        'Most creators spend hours repurposing one piece of content. Here is the better way:',
+        '1. Write once 2. Auto-distribute 3. Never repeat yourself',
+        'Your time is worth more than editing AI outputs.',
+        'The future of content is one-click everywhere. 🚀'
+      ]
+    }
+
+    res.json({ tweets: tweets.slice(0, 5) })
+    console.log('✅ Generated demo thread')
+  } catch (err) {
+    console.error('Demo generation error:', err.message)
+    res.status(500).json({ error: 'Generation failed' })
+  }
 })
 
 // Create payment link

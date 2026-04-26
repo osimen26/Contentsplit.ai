@@ -4,6 +4,7 @@ import { useRegister } from '@/services/query-hooks'
 import { useAuth } from '@/contexts/AuthContext'
 import GoogleAuth from '@/components/auth/GoogleAuth'
 import { Eye, EyeOff } from 'lucide-react'
+import { Logo } from '@components/application'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -25,9 +26,18 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
   <div className="auth-split-container">
     <div className="auth-left">
       <div className="auth-chat-preview">
-        <div>
-          <h1 className="auth-brand-title">ContentSplit</h1>
-          <p className="auth-brand-tagline">Transform content for every platform</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: 10,
+            background: 'linear-gradient(135deg, var(--sys-color-primary), var(--sys-color-secondary))',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <Logo size={22} color="white" />
+          </div>
+          <div>
+            <h1 className="auth-brand-title" style={{ marginBottom: 0 }}>ContentSplit</h1>
+            <p className="auth-brand-tagline">Transform content for every platform</p>
+          </div>
         </div>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

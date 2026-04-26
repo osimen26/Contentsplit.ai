@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useCurrentUser, useUpdateProfile } from '@/services/query-hooks'
 import { useTheme } from '@/contexts/ThemeContext'
-import { User, Palette, Wallet, Sparkles } from 'lucide-react'
+import { User, Palette, Wallet } from 'lucide-react'
 
 type SettingsSection = 'account' | 'appearance' | 'billing'
 

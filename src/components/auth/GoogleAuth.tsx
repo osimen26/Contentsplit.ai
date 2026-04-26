@@ -18,30 +18,29 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ buttonText = 'Continue with Goo
 
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
+      console.log('Google login success, token received:', tokenResponse.access_token.substring(0, 10) + '...')
       try {
         setIsLoading(true)
         setError(null)
-        // Note: we are passing the access token to backend which will verify it.
-        // Or if we need an id_token, we should use GoogleLogin component or Implicit Flow.
-        // Wait, useGoogleLogin by default returns an access_token. Let's send the access_token.
-        // Actually, the easiest way to get an id_token is using the credentialResponse from <GoogleLogin />.
-        // But for custom buttons, we can get the access token, and the backend can fetch user info.
         
+        console.log('Sending token to backend for verification...')
         await googleAuthMutation.mutateAsync({ access_token: tokenResponse.access_token })
+        console.log('Backend verification successful')
         
         setTokenExists(true)
         await refetch()
         navigate('/onboarding')
       } catch (err: unknown) {
-        console.error('Google auth error:', err)
-        const errorMessage = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+        console.error('Google backend auth error:', err)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const errorMessage = (err as any)?.response?.data?.details || (err as any)?.response?.data?.error;
         setError(errorMessage || 'Failed to authenticate with Google')
       } finally {
         setIsLoading(false)
       }
     },
     onError: (errorResponse) => {
-      console.error('Google login failed', errorResponse)
+      console.error('Google login failed or cancelled:', errorResponse)
       setError('Google Sign-In was cancelled or failed.')
     }
   })

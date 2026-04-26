@@ -56,6 +56,12 @@
   transform: translateX(2px);
 }
 
+/* Recent item delete button - show on hover */
+.recent-item-wrapper:hover .recent-item-wrapper button,
+.recent-item-wrapper:hover .sidebar-link + button {
+  opacity: 1 !important;
+}
+
 /* Main content area */
 .dashboard-main {
   z-index: 5;
@@ -65,12 +71,12 @@
 
 /* Glass Cards (Chat, Suggestions, Outputs) */
 .glass-card {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.7);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
 }
 
@@ -96,6 +102,16 @@
 .chat-input-pill-wrapper:focus-within {
   box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15), 0 0 0 2px rgba(99, 102, 241, 0.4) !important;
   background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Search Input Container */
+.search-input-container {
+  transition: all 0.2s ease;
+}
+
+.search-input-container:focus-within {
+  border-color: var(--sys-color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
 }
 
 .chat-input-pill-wrapper textarea {
@@ -155,22 +171,20 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
 }
 
-/* Gradient Buttons */
+/* Solid Primary Buttons */
 .btn-gradient {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
-  color: #ffffff !important;
-  border: none !important;
+  background: var(--sys-color-primary) !important;
+  color: white !important;
   border-radius: 12px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+}
+
+.btn-gradient:hover:not(:disabled) {
+  background: var(--sys-color-primary-30) !important;
 }
 
 .btn-gradient:hover:not(:disabled) {
   transform: translateY(-2px) !important;
   box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4) !important;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
 }
 
 .btn-gradient:disabled {

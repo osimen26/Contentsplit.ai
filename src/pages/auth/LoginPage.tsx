@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useLogin } from '@/services/query-hooks'
 import GoogleAuth from '@/components/auth/GoogleAuth'
 import { Eye, EyeOff } from 'lucide-react'
+import { Logo } from '@components/application'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -22,44 +23,15 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
   linkLabel,
 }) => (
   <div className="auth-split-container">
-    <div className="auth-left">
-      <div className="auth-chat-preview">
-        <div>
-          <h1 className="auth-brand-title">ContentSplit</h1>
-          <p className="auth-brand-tagline">Transform content for every platform</p>
-        </div>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="auth-chat-label">Live Demo</div>
-          <div className="auth-chat-bubble user">
-            Turn my blog post into social media posts
-          </div>
-          
-          <div className="auth-chat-bubble ai">
-            <div style={{ fontWeight: 600, marginBottom: 8, color: 'var(--sys-color-neutral-10)' }}>Platforms ready:</div>
-            <div className="auth-chat-bubble platforms">
-              <span className="auth-platform-tag">Twitter</span>
-              <span className="auth-platform-tag">LinkedIn</span>
-              <span className="auth-platform-tag">Instagram</span>
-            </div>
-          </div>
-          
-          <div className="auth-chat-bubble user" style={{ animationDelay: '0.6s' }}>
-            Perfect! Generate them now
-          </div>
-          
-          <div className="auth-chat-bubble response" style={{ animationDelay: '1s' }}>
-            <p className="auth-chat-bubble response-text">
-              Your content is ready for all 3 platforms. Click any tab to copy!
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Right side - Form */}
+    {/* Right side - Form only */}
     <div className="auth-right">
       <div className="auth-form-container">
+        <div className="auth-brand-header">
+          <div className="auth-brand-icon">
+            <Logo size={22} color="white" />
+          </div>
+          <span className="auth-brand-name">ContentSplit</span>
+        </div>
         <h1 className="auth-title">{title}</h1>
         <p className="auth-subtitle">{subtitle}</p>
         {children}
