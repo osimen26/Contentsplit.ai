@@ -53,7 +53,7 @@ const HelpPage: React.FC = () => {
         <h1 style={{ margin: '0 0 12px', fontSize: '2rem', fontWeight: 700, color: 'white' }}>
           How can we help?
         </h1>
-        <p style={{ margin: 0, fontSize: '1.1rem', color: 'rgba(255,255,255,0.8)', maxWidth: 500, margin: '0 auto' }}>
+        <p style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.8)', maxWidth: 500, margin: '0 auto' }}>
           Search for answers or browse topics below
         </p>
         
