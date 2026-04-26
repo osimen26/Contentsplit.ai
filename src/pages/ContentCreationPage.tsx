@@ -187,7 +187,7 @@ const ContentCreationPage: React.FC = () => {
 
       {/* ── ZONE 1: Empty State / Welcome Screen ── */}
       {!hasMessages && (
-        <div style={{
+        <div className="welcome-content-container" style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
@@ -196,8 +196,9 @@ const ContentCreationPage: React.FC = () => {
           paddingBottom: '100px',
           gap: 'var(--sys-spacing-2xl)',
           padding: '0 var(--sys-spacing-xl) 100px',
+          width: '100%',
         }}>
-          <div style={{ textAlign: 'center', padding: '10px' }}>
+          <div style={{ textAlign: 'center', width: '100%', padding: 0 }}>
             <div style={{
               width: 56, height: 56, borderRadius: '16px',
               background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',

@@ -223,6 +223,10 @@
     padding: 4px 4px 10px !important;
   }
 
+  .welcome-content-container {
+    padding: 0 16px 80px !important;
+  }
+
   .chat-input-pill-wrapper {
     width: 100% !important;
     margin: 0 auto;
