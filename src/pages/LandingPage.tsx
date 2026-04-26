@@ -112,9 +112,8 @@ const LandingPage: React.FC = () => {
     <div className="landing-wrapper">
       {/* Navigation App Bar */}
       <nav className="landing-navbar">
-        <Link to="/" className="landing-logo">
-          <Sparkles size={24} color="var(--sys-color-roles-primary-color-role-primary-role)" />
-          ContentSplit
+        <Link to="/" className="landing-logo" style={{ padding: 0 }}>
+          <img src="/logo.svg" alt="ContentSplit" style={{ height: '32px', width: 'auto' }} />
         </Link>
         <div className="landing-nav-links">
           <Link to="/login" className="nav-link">Log In</Link>
@@ -677,8 +676,8 @@ const LandingPage: React.FC = () => {
       {/* Footer */}
       <footer style={{ padding: '64px 5%', color: 'var(--sys-color-neutral-50)', background: 'var(--sys-color-surface-container-lowest)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '32px' }}>
         <div>
-          <div className="landing-logo" style={{ marginBottom: '16px', fontSize: '1.2rem' }}>
-            <Sparkles size={20} color="var(--sys-color-roles-primary-color-role-primary-role)" /> ContentSplit
+          <div className="landing-logo" style={{ marginBottom: '16px' }}>
+            <img src="/logo.svg" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
           </div>
           <p>© 2026 ContentSplit.ai. All rights reserved.</p>
         </div>

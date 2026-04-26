@@ -69,17 +69,8 @@ const SidebarContentComponent: React.FC<{
         flexShrink: 0,
       }}>
         {(!collapsed || inDrawer) && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{
-              width: 28, height: 28, borderRadius: 8,
-              background: 'linear-gradient(135deg, var(--sys-color-primary-60), var(--sys-color-primary-30))',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <Sparkles size={15} color="white" />
-            </div>
-            <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--sys-color-neutral-10)' }}>
-              ContentSplit
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src="/logo.svg" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
           </div>
         )}
         {!inDrawer && onToggleCollapse && (
@@ -397,7 +388,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         >
           <Menu size={22} color="var(--sys-color-neutral-30)" />
         </button>
-        <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--sys-color-neutral-10)' }}>ContentSplit</span>
+        <img src="/logo.svg" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
       </header>
 
       {/* ── MOBILE DRAWER OVERLAY ── */}
