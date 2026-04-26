@@ -398,14 +398,9 @@
     -webkit-overflow-scrolling: touch;
   }
   
-  /* Quick suggestions - single column */
+  /* Quick suggestions - hidden on mobile */
   .quick-suggestions {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
-  
-  .suggestions-card {
-    padding: 14px 16px !important;
+    display: none !important;
   }
   
   /* Button sizing - min 44px tap target */
