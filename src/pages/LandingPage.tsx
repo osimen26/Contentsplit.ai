@@ -543,26 +543,17 @@ const LandingPage: React.FC = () => {
               {[
                 {
                   name: 'X Threads',
-                  icon: <TwitterIcon size={16} color="#1DA1F2" />,
-                  bg: '#e8f4fd',
-                  status: 'Thread-Optimized',
-                },
-                {
-                  name: 'LinkedIn Posts',
+icon: <TwitterIcon size={16} color="#1DA1F2" />,
+                  bg: 'var(--sys-color-primary-95)',
+
                   icon: <LinkedinIcon size={16} color="#0077b5" />,
-                  bg: '#e8f0f9',
-                  status: 'Viral-Ready',
-                },
-                {
-                  name: 'Instagram Captions',
+                  bg: 'var(--sys-color-primary-95)',
+
                   icon: <InstagramIcon size={16} color="#E1306C" />,
-                  bg: '#fce4ec',
-                  status: 'High-Engagement',
-                },
-                {
-                  name: 'Email Intros',
+                  bg: 'var(--sys-color-tertiary-95)',
+
                   icon: <Mail size={16} color="#EA4335" />,
-                  bg: '#fce8e6',
+                  bg: 'var(--sys-color-error-95)',
                   status: 'Native Tone',
                 },
               ].map((p, i) => (
@@ -868,7 +859,7 @@ const LandingPage: React.FC = () => {
           <div className="testimonial-card">
             <div className="star-rating">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={18} fill="#fbbf24" color="#fbbf24" />
+                <Star key={i} size={18} fill="var(--sys-color-accent-40)" color="var(--sys-color-accent-40)" />
               ))}
             </div>
             <div className="badge-row">
@@ -911,7 +902,7 @@ const LandingPage: React.FC = () => {
           <div className="testimonial-card">
             <div className="star-rating">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={18} fill="#fbbf24" color="#fbbf24" />
+                <Star key={i} size={18} fill="var(--sys-color-accent-40)" color="var(--sys-color-accent-40)" />
               ))}
             </div>
             <div className="badge-row">
@@ -954,7 +945,7 @@ const LandingPage: React.FC = () => {
           <div className="testimonial-card">
             <div className="star-rating">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={18} fill="#fbbf24" color="#fbbf24" />
+                <Star key={i} size={18} fill="var(--sys-color-accent-40)" color="var(--sys-color-accent-40)" />
               ))}
             </div>
             <div className="badge-row">
