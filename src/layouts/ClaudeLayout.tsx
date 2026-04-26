@@ -63,14 +63,21 @@ const SidebarContentComponent: React.FC<{
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* ── TOP: Brand + Toggle ── */}
       <div style={{
-        display: 'flex', alignItems: 'center',
+        display: 'flex', 
+        flexDirection: (!collapsed || inDrawer) ? 'row' : 'column',
+        alignItems: 'center',
         justifyContent: (!collapsed || inDrawer) ? 'space-between' : 'center',
         padding: '16px 12px 8px',
+        gap: (!collapsed || inDrawer) ? 0 : 16,
         flexShrink: 0,
       }}>
-        {(!collapsed || inDrawer) && (
+        {(!collapsed || inDrawer) ? (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img src="/logo.svg" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
+            <img src="/logo.png" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src="/icon.svg" alt="ContentSplit" style={{ height: '32px', width: '32px' }} />
           </div>
         )}
         {!inDrawer && onToggleCollapse && (
@@ -388,7 +395,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         >
           <Menu size={22} color="var(--sys-color-neutral-30)" />
         </button>
-        <img src="/logo.svg" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
+        <img src="/logo.png" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
       </header>
 
       {/* ── MOBILE DRAWER OVERLAY ── */}
