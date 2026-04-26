@@ -267,7 +267,7 @@ const ContentCreationPage: React.FC = () => {
                   backgroundColor: msg.role === 'user' ? 'var(--sys-color-primary-90)' : 'transparent',
                   color: msg.role === 'user' ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-50)',
                 }}>
-                  {msg.role === 'user' ? <User size={18} /> : <img src="/icon.svg" alt="ContentSplit" style={{ width: 28, height: 28 }} />}
+                  {msg.role === 'user' ? <User size={18} /> : <img src="/icon.svg" alt="ContentSplit" style={{ width: 32, height: 32, borderRadius: 8 }} />}
                 </div>
 
                 {/* Bubble */}
