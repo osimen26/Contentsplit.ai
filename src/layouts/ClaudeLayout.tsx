@@ -14,8 +14,9 @@ import {
   FileText,
   LogOut,
 } from 'lucide-react'
-import { useAuth } from '@/contexts/AuthContext'
-import '@/styles/dashboard.css'
+import { useAuth } from '@contexts/AuthContext'
+
+
 
 export interface ClaudeLayoutProps {
   children?: React.ReactNode
@@ -59,26 +60,24 @@ const SidebarContentComponent: React.FC<{
   const tier = currentUser?.tier === 'agency' ? 'Enterprise' : currentUser?.tier === 'pro' ? 'Pro' : 'Free'
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* ── TOP: Brand + Toggle ── */}
       <div style={{
-        display: 'flex', alignItems: 'center',
+        display: 'flex', 
+        flexDirection: (!collapsed || inDrawer) ? 'row' : 'column',
+        alignItems: 'center',
         justifyContent: (!collapsed || inDrawer) ? 'space-between' : 'center',
         padding: '16px 12px 8px',
+        gap: (!collapsed || inDrawer) ? 0 : 16,
         flexShrink: 0,
       }}>
-        {(!collapsed || inDrawer) && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{
-              width: 28, height: 28, borderRadius: 8,
-              background: 'linear-gradient(135deg, var(--sys-color-primary-60), var(--sys-color-primary-30))',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <Sparkles size={15} color="white" />
-            </div>
-            <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--sys-color-neutral-10)' }}>
-              ContentSplit
-            </span>
+        {(!collapsed || inDrawer) ? (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src="/logowordmark.svg" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src="/icon.svg" alt="ContentSplit" style={{ height: '32px', width: '32px' }} />
           </div>
         )}
         {!inDrawer && onToggleCollapse && (
@@ -107,19 +106,21 @@ const SidebarContentComponent: React.FC<{
       <div style={{ padding: '8px 10px', flexShrink: 0 }}>
         <button
           onClick={onNavigate}
-          className="btn-gradient"
           style={{
             width: '100%',
             display: 'flex', alignItems: 'center',
             justifyContent: (collapsed && !inDrawer) ? 'center' : 'flex-start',
             gap: 8,
-            padding: (collapsed && !inDrawer) ? '8px' : '10px 12px',
-            borderRadius: 10,
-            fontSize: '0.95rem',
+            padding: (collapsed && !inDrawer) ? '8px' : '8px 12px',
+            borderRadius: 8,
+            border: '1px solid var(--sys-color-border-tertiary)',
+            backgroundColor: 'transparent',
+            color: 'var(--sys-color-neutral-20)',
+            fontWeight: 500, fontSize: '0.9rem',
             cursor: 'pointer',
           }}
         >
-          <Plus size={18} strokeWidth={2.5} />
+          <Plus size={16} strokeWidth={2.5} />
           {(!collapsed || inDrawer) && 'New Conversion'}
         </button>
       </div>
@@ -131,8 +132,8 @@ const SidebarContentComponent: React.FC<{
             display: 'flex', alignItems: 'center', gap: 6,
             padding: '6px 10px',
             borderRadius: 8,
-            border: '1px solid rgba(0,0,0,0.05)',
-            backgroundColor: 'rgba(255,255,255,0.5)',
+            border: '1px solid var(--sys-color-border-tertiary)',
+            backgroundColor: 'var(--sys-color-neutral-95)',
           }}>
             <Search size={14} color="var(--sys-color-neutral-50)" />
             <input
@@ -171,34 +172,33 @@ const SidebarContentComponent: React.FC<{
               </p>
             )}
             {recentItems.map(item => {
-              const active = location.pathname === `/dashboard/c/${item.id}`
+              const active = location.pathname === `/c/${item.id}`
               const label = item.input_text.slice(0, 28) + (item.input_text.length > 28 ? '…' : '')
               
               return (
                 <Link
                   key={item.id}
-                  to={`/dashboard/c/${item.id}`}
+                  to={`/c/${item.id}`}
                   onClick={onMobileClose}
-                  className="sidebar-link"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: 6,
-                    padding: '8px 10px',
-                    marginBottom: 2,
-                    borderRadius: 8,
+                    padding: '6px 10px',
+                    marginBottom: 1,
+                    borderRadius: 7,
                     textDecoration: 'none',
                     fontSize: '0.88rem',
-                    fontWeight: active ? 600 : 500,
-                    color: active ? '#4f46e5' : '#475569',
-                    backgroundColor: active ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
+                    fontWeight: active ? 500 : 400,
+                    color: active ? 'var(--sys-color-neutral-10)' : 'var(--sys-color-neutral-30)',
+                    backgroundColor: active ? 'var(--sys-color-neutral-90)' : 'transparent',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                   }}
                   title={`${item.input_text}`}
                 >
-                  <span style={{ color: active ? '#6366f1' : '#94a3b8', flexShrink: 0 }}>
-                    <FileText size={14} />
+                  <span style={{ color: 'var(--sys-color-primary-50)', flexShrink: 0 }}>
+                    <FileText size={12} />
                   </span>
                   <span style={{
                     flex: 1,
@@ -217,7 +217,7 @@ const SidebarContentComponent: React.FC<{
       {/* ── FOOTER: Settings + Profile ── */}
       <div style={{
         flexShrink: 0,
-        borderTop: '1px solid rgba(0,0,0,0.05)',
+        borderTop: '1px solid var(--sys-color-border-tertiary)',
         padding: '8px 6px',
         display: 'flex',
         flexDirection: 'column',
@@ -239,15 +239,28 @@ const SidebarContentComponent: React.FC<{
           collapsed={collapsed && !inDrawer}
           onClick={onMobileClose}
         />
-        <FooterAction
-          icon={<LogOut size={16} />}
-          label="Log out"
-          collapsed={collapsed && !inDrawer}
-          onClick={() => {
-            onLogout()
-            if (inDrawer) onMobileClose()
+        <button
+          onClick={() => { onLogout(); onMobileClose(); }}
+          style={{
+            display: 'flex', alignItems: 'center',
+            gap: 8,
+            padding: '7px 10px',
+            marginBottom: 1,
+            borderRadius: 7,
+            border: 'none',
+            fontSize: '0.88rem',
+            fontWeight: 400,
+            color: 'var(--sys-color-roles-error-color-role-error-role)',
+            backgroundColor: 'transparent',
+            justifyContent: (collapsed && !inDrawer) ? 'center' : 'flex-start',
+            cursor: 'pointer',
+            transition: 'background-color 0.15s',
           }}
-        />
+          title={(collapsed && !inDrawer) ? "Log Out" : undefined}
+        >
+          <LogOut size={16} />
+          {(!collapsed || inDrawer) && "Log Out"}
+        </button>
 
         {(!collapsed || inDrawer) && (
           <div style={{
@@ -258,18 +271,17 @@ const SidebarContentComponent: React.FC<{
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden', flex: 1 }}>
               <div style={{
                 width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
-                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                backgroundColor: 'var(--sys-color-primary-30)',
                 color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontWeight: 700, fontSize: '12px',
-                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)'
               }}>
                 {avatarLetter}
               </div>
               <div style={{ overflow: 'hidden' }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--sys-color-neutral-10)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {username}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 500 }}>
+                <div style={{ fontSize: '0.72rem', color: 'var(--sys-color-neutral-50)' }}>
                   {tier}
                 </div>
               </div>
@@ -282,9 +294,9 @@ const SidebarContentComponent: React.FC<{
                   flexShrink: 0,
                   padding: '4px 10px',
                   borderRadius: 20,
-                  border: '1px solid #cbd5e1',
-                  backgroundColor: 'rgba(255,255,255,0.5)',
-                  color: '#475569',
+                  border: '1px solid var(--sys-color-border-tertiary)',
+                  backgroundColor: 'transparent',
+                  color: 'var(--sys-color-neutral-20)',
                   fontSize: '0.78rem',
                   fontWeight: 600,
                   textDecoration: 'none',
@@ -312,7 +324,6 @@ const FooterLink: React.FC<{
   <Link
     to={to}
     onClick={onClick}
-    className="sidebar-link"
     style={{
       display: 'flex', alignItems: 'center',
       gap: 8,
@@ -321,10 +332,11 @@ const FooterLink: React.FC<{
       borderRadius: 7,
       textDecoration: 'none',
       fontSize: '0.88rem',
-      fontWeight: active ? 600 : 500,
-      color: active ? '#4f46e5' : '#475569',
-      backgroundColor: active ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
+      fontWeight: active ? 500 : 400,
+      color: active ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-40)',
+      backgroundColor: active ? 'var(--sys-color-primary-95)' : 'transparent',
       justifyContent: collapsed ? 'center' : 'flex-start',
+      transition: 'background-color 0.15s',
     }}
     title={collapsed ? label : undefined}
   >
@@ -333,48 +345,15 @@ const FooterLink: React.FC<{
   </Link>
 )
 
-// Action button for the footer (like logout)
-const FooterAction: React.FC<{
-  icon: React.ReactNode
-  label: string
-  collapsed: boolean
-  onClick: () => void
-}> = ({ icon, label, collapsed, onClick }) => (
-  <button
-    onClick={onClick}
-    className="sidebar-link"
-    style={{
-      display: 'flex', alignItems: 'center',
-      gap: 8,
-      padding: '7px 10px',
-      marginBottom: 1,
-      borderRadius: 7,
-      border: 'none',
-      cursor: 'pointer',
-      fontSize: '0.88rem',
-      fontWeight: 500,
-      color: '#475569',
-      backgroundColor: 'transparent',
-      justifyContent: collapsed ? 'center' : 'flex-start',
-      width: '100%',
-      fontFamily: 'inherit',
-    }}
-    title={collapsed ? label : undefined}
-  >
-    {icon}
-    {!collapsed && label}
-  </button>
-)
-
 const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [search, setSearch] = useState('')
   const location = useLocation()
   const navigate = useNavigate()
+  const { logout } = useAuth()
 
   const { data: currentUser } = useCurrentUser()
-  const { logout } = useAuth()
   const { data: conversionsData } = useConversions(1, 30)
   const conversionsList = useMemo(() => conversionsData?.data || [], [conversionsData])
 
@@ -391,22 +370,21 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
   const isActive = useCallback((path: string) => location.pathname === path || location.pathname.startsWith(path + '/'), [location])
 
   const handleNavigate = useCallback(() => {
-    navigate('/dashboard')
+    navigate('/')
     setMobileOpen(false)
   }, [navigate])
 
   const handleMobileClose = useCallback(() => setMobileOpen(false), [])
 
   return (
-    <div className="dashboard-layout-root">
+    <>
       {/* ── MOBILE HEADER ── */}
       <header style={{
         display: 'none',
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
         height: 52,
-        backgroundColor: 'rgba(255,255,255,0.8)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(0,0,0,0.05)',
+        backgroundColor: 'var(--sys-color-neutral-99)',
+        borderBottom: '1px solid var(--sys-color-border-tertiary)',
         alignItems: 'center',
         padding: '0 16px',
         gap: 12,
@@ -415,9 +393,9 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           onClick={() => setMobileOpen(true)}
           style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'flex' }}
         >
-          <Menu size={22} color="#1e293b" />
+          <Menu size={22} color="var(--sys-color-neutral-30)" />
         </button>
-        <span style={{ fontWeight: 700, fontSize: '1rem', color: '#1e293b' }}>ContentSplit</span>
+        <img src="/logowordmark.svg" alt="ContentSplit" style={{ height: '24px', width: 'auto' }} />
       </header>
 
       {/* ── MOBILE DRAWER OVERLAY ── */}
@@ -436,9 +414,8 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       <div style={{
         position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 400,
         width: 280,
-        backgroundColor: 'rgba(255,255,255,0.95)',
-        backdropFilter: 'blur(24px)',
-        borderRight: '1px solid rgba(0,0,0,0.05)',
+        backgroundColor: 'var(--sys-color-neutral-98)',
+        borderRight: '1px solid var(--sys-color-border-tertiary)',
         transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
         transition: 'transform 0.25s ease',
         display: 'flex', flexDirection: 'column',
@@ -461,19 +438,20 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       </div>
 
       {/* ── DESKTOP LAYOUT ── */}
-      <div className={`claude-layout ${collapsed ? 'sidebar-collapsed' : ''}`} style={{ display: 'flex', height: '100dvh', width: '100%', overflow: 'hidden' }}>
+      <div className={`claude-layout ${collapsed ? 'sidebar-collapsed' : ''}`} style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
         {/* Desktop Sidebar */}
         <aside style={{
           width: collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED,
           minWidth: collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED,
-          height: '100dvh',
+          height: '100vh',
+          backgroundColor: 'var(--sys-color-neutral-98)',
+          borderRight: '1px solid var(--sys-color-border-tertiary)',
           transition: 'width 0.22s ease, min-width 0.22s ease',
           overflow: 'hidden',
           flexShrink: 0,
           display: 'flex',
           flexDirection: 'column',
-          minHeight: 0,
-        }} className="claude-sidebar desktop-sidebar dashboard-sidebar">
+        }} className="claude-sidebar desktop-sidebar">
           <SidebarContentComponent
             collapsed={collapsed}
             inDrawer={false}
@@ -492,8 +470,8 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         </aside>
 
         {/* Main Content */}
-        <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 0 }} className="claude-main dashboard-main">
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+        <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }} className="claude-main">
+          <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
             {children || <Outlet />}
           </div>
         </main>
@@ -510,13 +488,12 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           .mobile-header { display: none !important; }
           .mobile-drawer { display: none !important; }
         }
-        * { scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.2) transparent; }
-        ::-webkit-scrollbar { width: 6px; }
+        * { scrollbar-width: thin; scrollbar-color: var(--sys-color-neutral-85) transparent; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background-color: rgba(99, 102, 241, 0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background-color: rgba(99, 102, 241, 0.4); }
+        ::-webkit-scrollbar-thumb { background-color: var(--sys-color-neutral-85); border-radius: 4px; }
       `}</style>
-    </div>
+    </>
   )
 }
 

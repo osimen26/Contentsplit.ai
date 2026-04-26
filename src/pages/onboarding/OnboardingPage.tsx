@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Sparkles, ArrowRight, ArrowLeft, Check, Briefcase, Users, Camera, Megaphone, Zap, Target, MessageCircle, Rocket } from 'lucide-react'
 import { apiClient } from '@/services/api-client'
-import '@/styles/onboarding.css'
 
 const PERSONAS = [
   { id: 'founder', label: 'Founder / CEO', description: 'Lead the vision with authority', icon: Rocket },
@@ -44,29 +43,49 @@ const OnboardingPage: React.FC = () => {
   }
 
   return (
-    <div className="onboarding-container">
-      <div className="onboarding-card">
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'var(--sys-color-surface-container-lowest)',
+      padding: '24px'
+    }}>
+      <div style={{ 
+        width: '100%', 
+        maxWidth: '480px', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: '32px' 
+      }}>
         
-        {/* Progress Dots */}
-        <div className="onboarding-progress">
+        {/* Progress */}
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
           {[1, 2].map(s => (
-            <div 
-              key={s} 
-              className={`onboarding-dot ${step >= s ? 'active' : 'inactive'}`} 
-              style={{ width: step === s ? '24px' : '8px' }}
-            />
+            <div key={s} style={{ 
+              width: step === s ? '24px' : '8px',
+              height: '8px',
+              borderRadius: '4px',
+              backgroundColor: step >= s ? 'var(--sys-color-primary-40)' : 'var(--sys-color-primary-90)',
+              transition: 'all 0.3s ease'
+            }} />
           ))}
         </div>
 
         {/* Header */}
-        <div className="onboarding-header">
-          <div className="onboarding-icon-wrapper">
-            <Sparkles size={28} color="#6366f1" strokeWidth={1.5} />
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '24px' }}>
+            <img src="/icon.svg" alt="ContentSplit" style={{ width: '96px', height: '96px' }} />
           </div>
-          <h1 className="onboarding-title">
+          <h1 style={{ 
+            fontSize: '1.5rem', 
+            fontWeight: 600, 
+            marginBottom: '8px', 
+            color: 'var(--sys-color-primary-20)' 
+          }}>
             {step === 1 ? 'What is your role?' : 'Choose your tone'}
           </h1>
-          <p className="onboarding-subtitle">
+          <p style={{ fontSize: '0.95rem', color: 'var(--sys-color-neutral-50)' }}>
             {step === 1 ? 'This helps us tailor your content experience.' : 'Your content will use this style.'}
           </p>
         </div>
@@ -76,11 +95,10 @@ const OnboardingPage: React.FC = () => {
           <div style={{
             padding: '12px 16px',
             borderRadius: '8px',
-            backgroundColor: '#fee2e2',
-            color: '#b91c1c',
-            fontSize: '0.9rem',
-            textAlign: 'center',
-            fontWeight: 500
+            backgroundColor: 'var(--sys-color-error-98)',
+            color: 'var(--sys-color-error-40)',
+            fontSize: '0.875rem',
+            textAlign: 'center'
           }}>
             {error}
           </div>
@@ -89,7 +107,7 @@ const OnboardingPage: React.FC = () => {
         {/* Step 1: Persona */}
         {step === 1 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div className="onboarding-grid">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
               {PERSONAS.map(p => {
                 const isSelected = persona === p.id
                 const Icon = p.icon
@@ -97,29 +115,75 @@ const OnboardingPage: React.FC = () => {
                   <button
                     key={p.id}
                     onClick={() => setPersona(p.id)}
-                    className={`onboarding-tile ${isSelected ? 'selected' : ''}`}
+                    style={{
+                      padding: '16px',
+                      border: isSelected ? '2px solid var(--sys-color-primary-40)' : '1px solid var(--sys-color-primary-80)',
+                      borderRadius: '12px',
+                      backgroundColor: isSelected ? 'var(--sys-color-primary-98)' : 'var(--sys-color-surface-container-high)',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '8px',
+                      position: 'relative'
+                    }}
                   >
-                    <Icon size={28} className="onboarding-tile-icon" />
-                    <div className="onboarding-tile-label">{p.label}</div>
-                    <div className="onboarding-tile-desc">{p.description}</div>
-                    <div className="onboarding-tile-check">
-                      <Check size={16} strokeWidth={3} />
+                    <Icon size={24} color={isSelected ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-40)'} />
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem', color: isSelected ? 'var(--sys-color-primary-40)' : 'var(--sys-color-primary-20)' }}>
+                      {p.label}
                     </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)' }}>
+                      {p.description}
+                    </div>
+                    {isSelected && (
+                      <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+                        <Check size={16} color="var(--sys-color-primary-40)" />
+                      </div>
+                    )}
                   </button>
                 )
               })}
             </div>
             
-            <div className="onboarding-actions">
-              <button onClick={handleSkip} className="onboarding-btn-secondary">
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                onClick={handleSkip}
+                style={{
+                  padding: '14px 20px',
+                  backgroundColor: 'transparent',
+                  border: '1px solid var(--sys-color-primary-80)',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  color: 'var(--sys-color-primary-40)',
+                  fontSize: '0.9rem'
+                }}
+              >
                 Skip
               </button>
               <button
                 onClick={() => persona && setStep(2)}
                 disabled={!persona}
-                className="onboarding-btn-primary"
+                style={{
+                  flex: 1,
+                  padding: '14px 20px',
+                  backgroundColor: !persona ? 'var(--sys-color-primary-90)' : 'var(--sys-color-primary-40)',
+                  color: !persona ? 'var(--sys-color-primary-30)' : 'white',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  fontSize: '0.9rem',
+                  border: 'none',
+                  cursor: !persona ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
               >
-                Continue <ArrowRight size={20} />
+                Continue <ArrowRight size={16} />
               </button>
             </div>
           </div>
@@ -128,7 +192,7 @@ const OnboardingPage: React.FC = () => {
         {/* Step 2: Tone */}
         {step === 2 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div className="onboarding-grid">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
               {TONES.map(t => {
                 const isSelected = tone === t.id
                 const Icon = t.icon
@@ -136,29 +200,74 @@ const OnboardingPage: React.FC = () => {
                   <button
                     key={t.id}
                     onClick={() => setTone(t.id)}
-                    className={`onboarding-tile ${isSelected ? 'selected' : ''}`}
+                    style={{
+                      padding: '16px',
+                      border: isSelected ? '2px solid var(--sys-color-primary-40)' : '1px solid var(--sys-color-primary-80)',
+                      borderRadius: '12px',
+                      backgroundColor: isSelected ? 'var(--sys-color-primary-98)' : 'var(--sys-color-surface-container-high)',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '8px',
+                      position: 'relative'
+                    }}
                   >
-                    <Icon size={28} className="onboarding-tile-icon" />
-                    <div className="onboarding-tile-label">{t.label}</div>
-                    <div className="onboarding-tile-desc">{t.description}</div>
-                    <div className="onboarding-tile-check">
-                      <Check size={16} strokeWidth={3} />
+                    <Icon size={24} color={isSelected ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-40)'} />
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem', color: isSelected ? 'var(--sys-color-primary-40)' : 'var(--sys-color-primary-20)' }}>
+                      {t.label}
                     </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)' }}>
+                      {t.description}
+                    </div>
+                    {isSelected && (
+                      <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+                        <Check size={16} color="var(--sys-color-primary-40)" />
+                      </div>
+                    )}
                   </button>
                 )
               })}
             </div>
             
-            <div className="onboarding-actions">
-              <button onClick={() => setStep(1)} className="onboarding-btn-secondary">
-                <ArrowLeft size={20} /> Back
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                onClick={() => setStep(1)}
+                style={{
+                  padding: '14px 20px',
+                  backgroundColor: 'transparent',
+                  border: '1px solid var(--sys-color-primary-80)',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  color: 'var(--sys-color-primary-40)',
+                  fontSize: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <ArrowLeft size={16} /> Back
               </button>
               <button
                 onClick={handleComplete}
-                disabled={isSaving || !tone}
-                className="onboarding-btn-primary"
+                disabled={isSaving}
+                style={{
+                  flex: 1,
+                  padding: '14px 20px',
+                  backgroundColor: isSaving ? 'var(--sys-color-primary-90)' : 'var(--sys-color-primary-40)',
+                  color: isSaving ? 'var(--sys-color-primary-30)' : 'white',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  fontSize: '0.9rem',
+                  border: 'none',
+                  cursor: isSaving ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s'
+                }}
               >
-                {isSaving ? 'Saving...' : 'Complete Setup'}
+                {isSaving ? 'Saving...' : 'Complete'}
               </button>
             </div>
           </div>
