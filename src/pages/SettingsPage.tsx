@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useCurrentUser, useUpdateProfile } from '@/services/query-hooks'
 import { useTheme } from '@/contexts/ThemeContext'
-import { User, Palette, Wallet, Lock, Trash2 } from 'lucide-react'
+import { User, Palette, Wallet, Lock, Trash2, Eye, EyeOff } from 'lucide-react'
 
 type SettingsSection = 'account' | 'password' | 'appearance' | 'billing' | 'delete'
 
@@ -52,13 +52,16 @@ const Field: React.FC<{ label: string; required?: boolean; children: React.React
 )
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '10px 14px',
-  border: '1px solid var(--sys-color-border-secondary)',
-  borderRadius: 8, outline: 'none',
-  fontSize: '0.9rem', color: 'var(--sys-color-neutral-10)',
-  backgroundColor: 'var(--sys-color-neutral-99)',
+  width: '100%',
+  padding: 'var(--sys-spacing-sm)',
+  border: '1.5px solid var(--sys-color-border-tertiary)',
+  borderRadius: 'var(--sys-radius-md)',
+  outline: 'none',
+  fontSize: 'var(--sys-font-body-text-regular-font-size)',
+  color: 'var(--sys-color-neutral-20)',
+  backgroundColor: 'var(--sys-color-neutral-98)',
   boxSizing: 'border-box',
-  transition: 'border-color 0.15s',
+  transition: 'border-color 0.2s, box-shadow 0.2s',
 }
 
 const SectionDivider: React.FC<{ title: string; subtitle?: string }> = ({ title, subtitle }) => (
@@ -336,43 +339,148 @@ const AccountSection: React.FC = () => {
 }
 
 const PasswordSection: React.FC = () => {
+  const [showNew, setShowNew] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [errors, setErrors] = useState<{current?: string; new?: string; confirm?: string}>({})
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+
+  const validate = async () => {
+    const newErrors: {current?: string; new?: string; confirm?: string} = {}
+    if (!currentPassword) newErrors.current = "password is required"
+    if (!newPassword) newErrors.new = "password is required"
+    else if (newPassword.length < 8) newErrors.new = "Password must be at least 8 characters"
+    if (!confirmPassword) newErrors.confirm = "Please confirm your password"
+    else if (newPassword !== confirmPassword) newErrors.confirm = "Passwords do not match"
+    setErrors(newErrors)
+    
+    if (Object.keys(newErrors).length === 0) {
+      setLoading(true)
+      await new Promise(r => setTimeout(r, 1500))
+      setLoading(false)
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 2000)
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+      setErrors({})
+    }
+  }
+
+  const buttonStyle: React.CSSProperties = {
+    padding: '12px 28px', 
+    fontWeight: 600, 
+    fontSize: 'var(--sys-font-body-text-medium-font-size)', 
+    alignSelf: 'flex-start',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    minWidth: 180,
+    justifyContent: 'center',
+    transition: 'all 0.2s ease',
+    backgroundColor: success ? 'var(--sys-color-success)' : undefined,
+    color: success ? 'white' : undefined,
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <SectionDivider title="Password" subtitle="Update your password to keep your account secure." />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 360 }}>
-        <Field label="Current password">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 400 }}>
+        <Field label="Current password" required>
           <input
             type="password"
             placeholder="Enter current password"
-            style={inputStyle}
-            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+            value={currentPassword}
+            onChange={e => { setCurrentPassword(e.target.value); if(errors.current) setErrors(prev => ({ ...prev, current: undefined })) }}
+            onKeyDown={e => { if (e.key === 'Enter') document.getElementById('new-password')?.focus() }}
+            style={{ ...inputStyle, borderColor: errors.current ? 'var(--sys-color-error-50)' : undefined }}
+            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary)', e.target.style.boxShadow = '0 0 0 3px var(--sys-color-primary-90)')}
+            onBlur={e => (e.target.style.borderColor = errors.current ? 'var(--sys-color-error)' : 'var(--sys-color-border)', e.target.style.boxShadow = 'none')}
           />
+          {errors.current && <p style={{ fontSize: 'var(--sys-font-body-small-text-regular-font-size)', color: 'var(--sys-color-error)', marginTop: 4 }}>{errors.current}</p>}
         </Field>
-        <Field label="New password">
-          <input
-            type="password"
-            placeholder="Enter new password"
-            style={inputStyle}
-            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
-          />
+        <Field label="New password" required>
+          <div style={{ position: 'relative' }}>
+            <input
+              id="new-password"
+              type={showNew ? "text" : "password"}
+              placeholder="Enter new password"
+              value={newPassword}
+              onChange={e => { setNewPassword(e.target.value); if(errors.new) setErrors(prev => ({ ...prev, new: undefined })) }}
+              onKeyDown={e => { if (e.key === 'Enter') document.getElementById('confirm-password')?.focus() }}
+              style={{ ...inputStyle, paddingRight: 44, borderColor: errors.new ? 'var(--sys-color-error-50)' : undefined }}
+onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.target.style.boxShadow = '0 0 0 3px var(--sys-color-primary-95)')}
+            onBlur={e => (e.target.style.borderColor = errors.new ? 'var(--sys-color-error-50)' : 'var(--sys-color-border-secondary)', e.target.style.boxShadow = 'none')}
+            />
+            <button
+              type="button"
+              onClick={() => setShowNew(!showNew)}
+              style={{
+                position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                background: 'none', border: 'none', cursor: 'pointer', padding: 4,
+                color: 'var(--sys-color-neutral-40)', display: 'flex',
+              }}
+              aria-label={showNew ? "Hide password" : "Show password"}
+            >
+              {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+          {errors.new && <p style={{ fontSize: 'var(--sys-font-body-small-text-regular-font-size)', color: 'var(--sys-color-error)', marginTop: 4 }}>{errors.new}</p>}
         </Field>
-        <Field label="Confirm new password">
-          <input
-            type="password"
-            placeholder="Confirm new password"
-            style={inputStyle}
-            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
-          />
+        <Field label="Confirm new password" required>
+          <div style={{ position: 'relative' }}>
+            <input
+              id="confirm-password"
+              type={showConfirm ? "text" : "password"}
+              placeholder="Confirm new password"
+              value={confirmPassword}
+              onChange={e => { setConfirmPassword(e.target.value); if(errors.confirm) setErrors(prev => ({ ...prev, confirm: undefined })) }}
+              onKeyDown={e => { if (e.key === 'Enter') validate() }}
+              style={{ ...inputStyle, paddingRight: 44, borderColor: errors.confirm ? 'var(--sys-color-error-50)' : undefined }}
+onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.target.style.boxShadow = '0 0 0 3px var(--sys-color-primary-95)')}
+            onBlur={e => (e.target.style.borderColor = errors.confirm ? 'var(--sys-color-error-50)' : 'var(--sys-color-border-secondary)', e.target.style.boxShadow = 'none')}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              style={{
+                position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                background: 'none', border: 'none', cursor: 'pointer', padding: 4,
+                color: 'var(--sys-color-neutral-40)', display: 'flex',
+              }}
+              aria-label={showConfirm ? "Hide password" : "Show password"}
+            >
+              {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+          {errors.confirm && <p style={{ fontSize: 'var(--sys-font-body-small-text-regular-font-size)', color: 'var(--sys-color-error)', marginTop: 4 }}>{errors.confirm}</p>}
         </Field>
         <button
           className="button button-filled"
-          style={{ padding: '10px 24px', fontWeight: 600, fontSize: '0.9rem', alignSelf: 'flex-start' }}
+          onClick={validate}
+          disabled={loading}
+          style={buttonStyle}
         >
-          Update password
+          {loading ? (
+            <>
+              <span style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              Updating...
+            </>
+          ) : success ? (
+            <>
+              <span>✓</span>
+              Password updated successfully
+            </>
+          ) : (
+            'Update password'
+          )}
         </button>
+        <style>{`
+          @keyframes spin { to { transform: rotate(360deg); } }
+        `}</style>
       </div>
     </div>
   )
@@ -482,14 +590,14 @@ const SettingsPage: React.FC = () => {
                 width: '100%',
                 textAlign: 'left',
                 padding: '10px 12px',
-                borderRadius: 8,
+                borderRadius: 10,
                 border: 'none',
-                backgroundColor: isActive ? 'var(--sys-color-neutral-90)' : 'transparent',
-                color: isActive ? 'var(--sys-color-neutral-10)' : 'var(--sys-color-neutral-40)',
+                backgroundColor: isActive ? 'var(--sys-color-primary-90)' : 'transparent',
+                color: isActive ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-40)',
                 fontSize: '0.9rem',
-                fontWeight: isActive ? 500 : 400,
+                fontWeight: isActive ? 600 : 400,
                 cursor: 'pointer',
-                transition: 'all 0.15s ease',
+                transition: 'all 0.2s ease',
               }}
             >
               <span style={{ 
