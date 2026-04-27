@@ -1,20 +1,23 @@
 import React, { useState } from 'react'
 import { useCurrentUser, useUpdateProfile } from '@/services/query-hooks'
 import { useTheme } from '@/contexts/ThemeContext'
-import { User, Palette, Wallet } from 'lucide-react'
+import { User, Palette, Wallet, Lock, Trash2 } from 'lucide-react'
 
-type SettingsSection = 'account' | 'appearance' | 'billing'
+type SettingsSection = 'account' | 'password' | 'appearance' | 'billing' | 'delete'
 
 const NAV_ITEMS: { id: SettingsSection; label: string; icon: React.ReactNode }[] = [
   { id: 'account', label: 'Account', icon: <User size={18} /> },
+  { id: 'password', label: 'Password', icon: <Lock size={18} /> },
   { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
   { id: 'billing', label: 'Billing', icon: <Wallet size={18} /> },
+  { id: 'delete', label: 'Delete Account', icon: <Trash2 size={18} /> },
 ]
 
 const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = ({ checked, onChange }) => (
   <button
     role="switch"
-    aria-checked={checked}
+    aria-checked={checked ? "true" : "false"}
+    aria-label={checked ? "Toggle off" : "Toggle on"}
     onClick={() => onChange(!checked)}
     style={{
       width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
@@ -226,8 +229,9 @@ const AccountSection: React.FC = () => {
             />
           </Field>
 
-          <Field label="What best describes your work?">
+          <Field label="What best describes your work?" htmlFor="work-function">
             <select
+              id="work-function"
               style={{ ...inputStyle, cursor: 'pointer', appearance: 'none', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 14px center' }}
               onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
               onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
@@ -331,6 +335,113 @@ const AccountSection: React.FC = () => {
   )
 }
 
+const PasswordSection: React.FC = () => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <SectionDivider title="Password" subtitle="Update your password to keep your account secure." />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 360 }}>
+        <Field label="Current password">
+          <input
+            type="password"
+            placeholder="Enter current password"
+            style={inputStyle}
+            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+          />
+        </Field>
+        <Field label="New password">
+          <input
+            type="password"
+            placeholder="Enter new password"
+            style={inputStyle}
+            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+          />
+        </Field>
+        <Field label="Confirm new password">
+          <input
+            type="password"
+            placeholder="Confirm new password"
+            style={inputStyle}
+            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+          />
+        </Field>
+        <button
+          className="button button-filled"
+          style={{ padding: '10px 24px', fontWeight: 600, fontSize: '0.9rem', alignSelf: 'flex-start' }}
+        >
+          Update password
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const DeleteSection: React.FC = () => {
+  const [confirm, setConfirm] = useState(false)
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <SectionDivider title="Delete Account" subtitle="Permanently delete your account and all data." />
+      <div style={{
+        padding: 20,
+        borderRadius: 12,
+        border: '1px solid var(--sys-color-error-90)',
+        backgroundColor: 'var(--sys-color-error-98)',
+      }}>
+        {!confirm ? (
+          <>
+            <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: 'var(--sys-color-neutral-20)', lineHeight: 1.5 }}>
+              Once you delete your account, there is no going back. All your data, conversions, and saved content will be permanently removed.
+            </p>
+            <button
+              className="button button-filled"
+              onClick={() => setConfirm(true)}
+              style={{ 
+                padding: '10px 24px', 
+                fontWeight: 600, 
+                fontSize: '0.9rem', 
+                backgroundColor: 'var(--sys-color-error-50)',
+                color: 'white',
+              }}
+            >
+              Delete my account
+            </button>
+          </>
+        ) : (
+          <>
+            <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: 'var(--sys-color-neutral-20)', fontWeight: 500 }}>
+              Are you sure you want to delete your account? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button
+                className="button button-filled"
+                style={{ 
+                  padding: '10px 24px', 
+                  fontWeight: 600, 
+                  fontSize: '0.9rem', 
+                  backgroundColor: 'var(--sys-color-error-50)',
+                  color: 'white',
+                }}
+              >
+                Yes, delete
+              </button>
+              <button
+                className="button button-outlined"
+                onClick={() => setConfirm(false)}
+                style={{ padding: '10px 24px', fontWeight: 500, fontSize: '0.9rem' }}
+              >
+                No, cancel
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<SettingsSection>('account')
 
@@ -401,8 +512,10 @@ const SettingsPage: React.FC = () => {
         maxWidth: 680,
       }} className="settings-main">
         {active === 'account' && <AccountSection />}
+        {active === 'password' && <PasswordSection />}
         {active === 'appearance' && <AppearanceSection />}
         {active === 'billing' && <BillingSection />}
+        {active === 'delete' && <DeleteSection />}
       </main>
 
       <style>{`
