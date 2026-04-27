@@ -517,17 +517,20 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
 
       {/* ── DESKTOP LAYOUT ── */}
       <div className={`claude-layout ${collapsed ? 'sidebar-collapsed' : ''}`} style={{ display: 'flex', height: '100dvh', width: '100%', overflow: 'hidden' }}>
-        {/* Desktop Sidebar */}
+        {/* Desktop Sidebar - fixed */}
         <aside style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          bottom: 0,
           width: collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED,
           minWidth: collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED,
-          height: '100dvh',
           transition: 'width 0.22s ease, min-width 0.22s ease',
           overflow: 'hidden',
-          flexShrink: 0,
           display: 'flex',
           flexDirection: 'column',
           minHeight: 0,
+          zIndex: 100,
         }} className="claude-sidebar desktop-sidebar dashboard-sidebar">
           <SidebarContentComponent
             collapsed={collapsed}
@@ -546,8 +549,8 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           />
         </aside>
 
-        {/* Main Content */}
-        <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 0 }} className="claude-main dashboard-main">
+        {/* Main Content - offset by fixed sidebar */}
+        <main style={{ marginLeft: collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED, flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 0, transition: 'margin-left 0.22s ease' }} className="claude-main dashboard-main">
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
             {children || <Outlet key={location.pathname + location.search} />}
           </div>
@@ -557,17 +560,15 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
 <style>{`
         /* Desktop & Laptop */
         @media (min-width: 1200px) {
-          .claude-sidebar { width: 280px; }
+          .claude-layout { padding-left: 0; }
           .mobile-header { display: none !important; }
         }
 
         @media (min-width: 1024px) and (max-width: 1199px) {
-          .claude-sidebar { width: 260px; }
           .mobile-header { display: none !important; }
         }
 
         @media (min-width: 769px) and (max-width: 1023px) {
-          .claude-sidebar { width: 240px; }
           .mobile-header { display: none !important; }
         }
 
@@ -577,6 +578,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           .mobile-header { display: flex !important; }
           .claude-layout { padding-top: 52px; }
           .mobile-drawer { display: flex !important; }
+          main[class*="claude-main"] { margin-left: 0 !important; }
         }
 
         /* Very small phones */

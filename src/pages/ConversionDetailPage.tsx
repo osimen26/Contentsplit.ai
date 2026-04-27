@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useConversion, useOutputs } from '@/services/query-hooks'
 import { GeneratedContent } from '@components/application'
@@ -60,7 +60,12 @@ const ConversionDetailPage: React.FC = () => {
     icon: PLATFORM_ICONS[p.id],
   }))
 
-  const activePlatform = outputs?.[0]?.platform || 'twitter'
+  const [activePlatform, setActivePlatform] = useState(outputs?.[0]?.platform || 'twitter')
+  React.useEffect(() => {
+    if (outputs?.[0]?.platform) {
+      setActivePlatform(outputs[0].platform)
+    }
+  }, [outputs])
   const content = outputs?.find(o => o.platform === activePlatform)?.content || ''
 
   if (isLoading) {
@@ -137,7 +142,7 @@ const ConversionDetailPage: React.FC = () => {
         <GeneratedContent
           platforms={platforms}
           activeTab={activePlatform}
-          onTabChange={() => {}}
+          onTabChange={setActivePlatform}
           content={content}
         />
       )}
