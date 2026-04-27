@@ -265,11 +265,9 @@
     border-radius: 16px;
   }
 
-  /* Suggestions Grid - Switch to 1 column on mobile */
+  /* Suggestions Grid - hidden on all mobile devices */
   .quick-suggestions {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-    padding: 0 !important;
+    display: none !important;
   }
 
   .suggestions-card {
