@@ -359,11 +359,27 @@ const PasswordSection: React.FC = () => {
       await new Promise(r => setTimeout(r, 1500))
       setLoading(false)
       setSuccess(true)
-      setTimeout(() => setSuccess(false), 3000)
+      setTimeout(() => setSuccess(false), 2000)
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
+      setErrors({})
     }
+  }
+
+  const buttonStyle: React.CSSProperties = {
+    padding: '12px 28px', 
+    fontWeight: 600, 
+    fontSize: '0.95rem', 
+    alignSelf: 'flex-start',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    minWidth: 180,
+    justifyContent: 'center',
+    transition: 'all 0.2s ease',
+    backgroundColor: success ? 'var(--sys-color-success-50)' : undefined,
+    color: success ? 'white' : undefined,
   }
 
   return (
@@ -443,17 +459,25 @@ onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.tar
           className="button button-filled"
           onClick={validate}
           disabled={loading}
-          style={{ 
-            padding: '12px 28px', 
-            fontWeight: 600, 
-            fontSize: '0.95rem', 
-            alignSelf: 'flex-start',
-            backgroundColor: success ? 'var(--sys-color-success-50)' : undefined,
-            opacity: loading ? 0.7 : 1,
-          }}
+          style={buttonStyle}
         >
-          {loading ? 'Updating...' : success ? 'Password updated!' : 'Update password'}
+          {loading ? (
+            <>
+              <span style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              Updating...
+            </>
+          ) : success ? (
+            <>
+              <span>✓</span>
+              Password updated successfully
+            </>
+          ) : (
+            'Update password'
+          )}
         </button>
+        <style>{`
+          @keyframes spin { to { transform: rotate(360deg); } }
+        `}</style>
       </div>
     </div>
   )
