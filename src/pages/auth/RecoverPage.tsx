@@ -61,7 +61,7 @@ const RecoverPage: React.FC = () => {
       })
       console.log('Recovery response:', response)
       if (response?.debug) {
-        alert('Debug info: ' + JSON.stringify(response.debug, null, 2))
+        console.log('Recovery link (dev mode):', response.debug);
       }
       setIsSubmitted(true)
       setIsToastVisible(true)
