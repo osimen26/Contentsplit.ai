@@ -496,7 +496,7 @@ useEffect(() => {
         <div style={{ display: 'flex', alignItems: 'center', gap: 32 }} className="lp-nav-links">
           <a href="#features" style={{ color: tokens.colorTextSecondary, textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>Features</a>
           <a href="#how-it-works" style={{ color: tokens.colorTextSecondary, textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>How it works</a>
-          <a href="#pricing" style={{ color: tokens.colorTextSecondary, textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>Pricing</a>
+          <a href="#pricing" style={{ color: tokens.colorTextSecondary, textDecoration: 'none', fontSize: 14, fontWeight: 500, display: import.meta.env.PROD ? 'none' : 'block' }}>Pricing</a>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }} className="lp-nav-right">
           <Link to="/login" style={{ color: tokens.colorTextSecondary, textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>Log in</Link>
@@ -519,7 +519,7 @@ useEffect(() => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 40 }}>
             <a href="#features" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, fontWeight: 600, textDecoration: 'none', padding: '16px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>Features</a>
             <a href="#how-it-works" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, fontWeight: 600, textDecoration: 'none', padding: '16px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>How it works</a>
-            <a href="#pricing" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, fontWeight: 600, textDecoration: 'none', padding: '16px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>Pricing</a>
+            <a href="#pricing" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextPrimary, fontSize: 18, fontWeight: 600, textDecoration: 'none', padding: '16px 0', borderBottom: `1px solid ${tokens.colorBorder}`, display: import.meta.env.PROD ? 'none' : 'block' }}>Pricing</a>
             <Link to="/login" onClick={() => setMobileOpen(false)} style={{ color: tokens.colorTextSecondary, fontSize: 16, fontWeight: 600, textDecoration: 'none', padding: '16px 0' }}>Log in</Link>
             <Link to="/register" onClick={() => setMobileOpen(false)} style={{ background: tokens.colorAccent, color: tokens.colorWhite, padding: 16, borderRadius: tokens.radiusMd, textAlign: 'center', textDecoration: 'none', fontWeight: 700, fontSize: 16, marginTop: 8 }} className="lp-btn">Start free →</Link>
           </div>
@@ -924,7 +924,7 @@ useEffect(() => {
         </div>
       </section>
 
-      <section id="pricing" className="lp-section" style={{ background: tokens.colorSurface }}>
+      <section id="pricing" className="lp-section" style={{ background: tokens.colorSurface, display: import.meta.env.PROD ? 'none' : 'block' }}>
         <div className="lp-container" style={{ maxWidth: 1000 }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(1.6rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 12 }}>Simple, transparent pricing</h2>
