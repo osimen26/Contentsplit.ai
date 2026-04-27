@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { useCurrentUser, useUpdateProfile } from '@/services/query-hooks'
 import { useTheme } from '@/contexts/ThemeContext'
-import { User, Palette, Wallet } from 'lucide-react'
+import { User, Palette, Wallet, Lock } from 'lucide-react'
 
-type SettingsSection = 'account' | 'appearance' | 'billing'
+type SettingsSection = 'account' | 'appearance' | 'billing' | 'password'
 
 const NAV_ITEMS: { id: SettingsSection; label: string; icon: React.ReactNode }[] = [
   { id: 'account', label: 'Account', icon: <User size={18} /> },
+  { id: 'password', label: 'Password', icon: <Lock size={18} /> },
   { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
   { id: 'billing', label: 'Billing', icon: <Wallet size={18} /> },
 ]
@@ -329,48 +330,49 @@ const AccountSection: React.FC = () => {
           <ThemeModeSelector />
         </div>
       </section>
+    </div>
+  )
+}
 
-      <hr style={{ border: 'none', borderTop: '1px solid var(--sys-color-border-tertiary)', margin: 0 }} />
-
-      {/* Password */}
-      <section>
-        <SectionDivider title="Password" subtitle="Update your password to keep your account secure." />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 360 }}>
-          <Field label="Current password">
-            <input
-              type="password"
-              placeholder="Enter current password"
-              style={inputStyle}
-              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-              onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
-            />
-          </Field>
-          <Field label="New password">
-            <input
-              type="password"
-              placeholder="Enter new password"
-              style={inputStyle}
-              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-              onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
-            />
-          </Field>
-          <Field label="Confirm new password">
-            <input
-              type="password"
-              placeholder="Confirm new password"
-              style={inputStyle}
-              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-              onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
-            />
-          </Field>
-          <button
-            className="button button-filled"
-            style={{ padding: '10px 24px', fontWeight: 600, fontSize: '0.9rem', alignSelf: 'flex-start' }}
-          >
-            Update password
-          </button>
-        </div>
-      </section>
+const PasswordSection: React.FC = () => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <SectionDivider title="Password" subtitle="Update your password to keep your account secure." />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 360 }}>
+        <Field label="Current password">
+          <input
+            type="password"
+            placeholder="Enter current password"
+            style={inputStyle}
+            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+          />
+        </Field>
+        <Field label="New password">
+          <input
+            type="password"
+            placeholder="Enter new password"
+            style={inputStyle}
+            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+          />
+        </Field>
+        <Field label="Confirm new password">
+          <input
+            type="password"
+            placeholder="Confirm new password"
+            style={inputStyle}
+            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+          />
+        </Field>
+        <button
+          className="button button-filled"
+          style={{ padding: '10px 24px', fontWeight: 600, fontSize: '0.9rem', alignSelf: 'flex-start' }}
+        >
+          Update password
+        </button>
+      </div>
     </div>
   )
 }
@@ -445,6 +447,7 @@ const SettingsPage: React.FC = () => {
         maxWidth: 680,
       }} className="settings-main">
         {active === 'account' && <AccountSection />}
+        {active === 'password' && <PasswordSection />}
         {active === 'appearance' && <AppearanceSection />}
         {active === 'billing' && <BillingSection />}
       </main>
