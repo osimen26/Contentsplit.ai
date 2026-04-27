@@ -379,6 +379,8 @@ const PasswordSection: React.FC = () => {
 }
 
 const DeleteSection: React.FC = () => {
+  const [confirm, setConfirm] = useState(false)
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <SectionDivider title="Delete Account" subtitle="Permanently delete your account and all data." />
@@ -388,21 +390,53 @@ const DeleteSection: React.FC = () => {
         border: '1px solid var(--sys-color-error-90)',
         backgroundColor: 'var(--sys-color-error-98)',
       }}>
-        <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: 'var(--sys-color-neutral-20)', lineHeight: 1.5 }}>
-          Once you delete your account, there is no going back. All your data, conversions, and saved content will be permanently removed.
-        </p>
-        <button
-          className="button button-filled"
-          style={{ 
-            padding: '10px 24px', 
-            fontWeight: 600, 
-            fontSize: '0.9rem', 
-            backgroundColor: 'var(--sys-color-error-50)',
-            color: 'white',
-          }}
-        >
-          Delete my account
-        </button>
+        {!confirm ? (
+          <>
+            <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: 'var(--sys-color-neutral-20)', lineHeight: 1.5 }}>
+              Once you delete your account, there is no going back. All your data, conversions, and saved content will be permanently removed.
+            </p>
+            <button
+              className="button button-filled"
+              onClick={() => setConfirm(true)}
+              style={{ 
+                padding: '10px 24px', 
+                fontWeight: 600, 
+                fontSize: '0.9rem', 
+                backgroundColor: 'var(--sys-color-error-50)',
+                color: 'white',
+              }}
+            >
+              Delete my account
+            </button>
+          </>
+        ) : (
+          <>
+            <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: 'var(--sys-color-neutral-20)', fontWeight: 500 }}>
+              Are you sure you want to delete your account? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button
+                className="button button-filled"
+                style={{ 
+                  padding: '10px 24px', 
+                  fontWeight: 600, 
+                  fontSize: '0.9rem', 
+                  backgroundColor: 'var(--sys-color-error-50)',
+                  color: 'white',
+                }}
+              >
+                Yes, delete
+              </button>
+              <button
+                className="button button-outlined"
+                onClick={() => setConfirm(false)}
+                style={{ padding: '10px 24px', fontWeight: 500, fontSize: '0.9rem' }}
+              >
+                No, cancel
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
