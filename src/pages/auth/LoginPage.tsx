@@ -26,12 +26,12 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
     {/* Right side - Form only */}
     <div className="auth-right">
       <div className="auth-form-container">
-        <div className="auth-brand-header">
+        <Link to="/" className="auth-brand-header" style={{ textDecoration: 'none' }}>
           <div className="auth-brand-icon">
             <Logo size={22} color="white" />
           </div>
           <span className="auth-brand-name">ContentSplit</span>
-        </div>
+        </Link>
         <h1 className="auth-title">{title}</h1>
         <p className="auth-subtitle">{subtitle}</p>
         {children}
