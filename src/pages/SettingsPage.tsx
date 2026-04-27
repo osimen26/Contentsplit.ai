@@ -52,11 +52,14 @@ const Field: React.FC<{ label: string; required?: boolean; children: React.React
 )
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '12px 14px',
-  border: '1.5px solid var(--sys-color-border-secondary)',
-  borderRadius: 10, outline: 'none',
-  fontSize: '0.95rem', color: 'var(--sys-color-neutral-10)',
-  backgroundColor: 'var(--sys-color-neutral-99)',
+  width: '100%',
+  padding: 'var(--sys-spacing-sm)',
+  border: '1.5px solid var(--sys-color-border-tertiary)',
+  borderRadius: 'var(--sys-radius-md)',
+  outline: 'none',
+  fontSize: 'var(--sys-font-body-text-regular-font-size)',
+  color: 'var(--sys-color-neutral-20)',
+  backgroundColor: 'var(--sys-color-neutral-98)',
   boxSizing: 'border-box',
   transition: 'border-color 0.2s, box-shadow 0.2s',
 }
@@ -370,7 +373,7 @@ const PasswordSection: React.FC = () => {
   const buttonStyle: React.CSSProperties = {
     padding: '12px 28px', 
     fontWeight: 600, 
-    fontSize: '0.95rem', 
+    fontSize: 'var(--sys-font-body-text-medium-font-size)', 
     alignSelf: 'flex-start',
     display: 'flex',
     alignItems: 'center',
@@ -378,7 +381,7 @@ const PasswordSection: React.FC = () => {
     minWidth: 180,
     justifyContent: 'center',
     transition: 'all 0.2s ease',
-    backgroundColor: success ? 'var(--sys-color-success-50)' : undefined,
+    backgroundColor: success ? 'var(--sys-color-success)' : undefined,
     color: success ? 'white' : undefined,
   }
 
@@ -394,10 +397,10 @@ const PasswordSection: React.FC = () => {
             onChange={e => { setCurrentPassword(e.target.value); if(errors.current) setErrors(prev => ({ ...prev, current: undefined })) }}
             onKeyDown={e => { if (e.key === 'Enter') document.getElementById('new-password')?.focus() }}
             style={{ ...inputStyle, borderColor: errors.current ? 'var(--sys-color-error-50)' : undefined }}
-            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.target.style.boxShadow = '0 0 0 3px var(--sys-color-primary-95)')}
-            onBlur={e => (e.target.style.borderColor = errors.current ? 'var(--sys-color-error-50)' : 'var(--sys-color-border-secondary)', e.target.style.boxShadow = 'none')}
+            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary)', e.target.style.boxShadow = '0 0 0 3px var(--sys-color-primary-90)')}
+            onBlur={e => (e.target.style.borderColor = errors.current ? 'var(--sys-color-error)' : 'var(--sys-color-border)', e.target.style.boxShadow = 'none')}
           />
-          {errors.current && <p style={{ fontSize: '0.78rem', color: 'var(--sys-color-error-50)', marginTop: 4 }}>{errors.current}</p>}
+          {errors.current && <p style={{ fontSize: 'var(--sys-font-body-small-text-regular-font-size)', color: 'var(--sys-color-error)', marginTop: 4 }}>{errors.current}</p>}
         </Field>
         <Field label="New password" required>
           <div style={{ position: 'relative' }}>
@@ -425,7 +428,7 @@ onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.tar
               {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          {errors.new && <p style={{ fontSize: '0.78rem', color: 'var(--sys-color-error-50)', marginTop: 4 }}>{errors.new}</p>}
+          {errors.new && <p style={{ fontSize: 'var(--sys-font-body-small-text-regular-font-size)', color: 'var(--sys-color-error)', marginTop: 4 }}>{errors.new}</p>}
         </Field>
         <Field label="Confirm new password" required>
           <div style={{ position: 'relative' }}>
@@ -453,7 +456,7 @@ onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.tar
               {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          {errors.confirm && <p style={{ fontSize: '0.78rem', color: 'var(--sys-color-error-50)', marginTop: 4 }}>{errors.confirm}</p>}
+          {errors.confirm && <p style={{ fontSize: 'var(--sys-font-body-small-text-regular-font-size)', color: 'var(--sys-color-error)', marginTop: 4 }}>{errors.confirm}</p>}
         </Field>
         <button
           className="button button-filled"
