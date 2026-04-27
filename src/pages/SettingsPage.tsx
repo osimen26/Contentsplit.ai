@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useCurrentUser, useUpdateProfile } from '@/services/query-hooks'
 import { useTheme } from '@/contexts/ThemeContext'
-import { User, Palette, Wallet, Lock, Trash2 } from 'lucide-react'
+import { User, Palette, Wallet, Lock, Trash2, Eye, EyeOff } from 'lucide-react'
 
 type SettingsSection = 'account' | 'password' | 'appearance' | 'billing' | 'delete'
 
@@ -336,40 +336,86 @@ const AccountSection: React.FC = () => {
 }
 
 const PasswordSection: React.FC = () => {
+  const [showCurrent, setShowCurrent] = useState(false)
+  const [showNew, setShowNew] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <SectionDivider title="Password" subtitle="Update your password to keep your account secure." />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 360 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 400 }}>
         <Field label="Current password">
-          <input
-            type="password"
-            placeholder="Enter current password"
-            style={inputStyle}
-            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showCurrent ? "text" : "password"}
+              placeholder="Enter current password"
+              style={{ ...inputStyle, paddingRight: 44 }}
+              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+              onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+            />
+            <button
+              type="button"
+              onClick={() => setShowCurrent(!showCurrent)}
+              style={{
+                position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                background: 'none', border: 'none', cursor: 'pointer', padding: 4,
+                color: 'var(--sys-color-neutral-40)', display: 'flex',
+              }}
+              aria-label={showCurrent ? "Hide password" : "Show password"}
+            >
+              {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </Field>
         <Field label="New password">
-          <input
-            type="password"
-            placeholder="Enter new password"
-            style={inputStyle}
-            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showNew ? "text" : "password"}
+              placeholder="Enter new password"
+              style={{ ...inputStyle, paddingRight: 44 }}
+              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+              onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+            />
+            <button
+              type="button"
+              onClick={() => setShowNew(!showNew)}
+              style={{
+                position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                background: 'none', border: 'none', cursor: 'pointer', padding: 4,
+                color: 'var(--sys-color-neutral-40)', display: 'flex',
+              }}
+              aria-label={showNew ? "Hide password" : "Show password"}
+            >
+              {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </Field>
         <Field label="Confirm new password">
-          <input
-            type="password"
-            placeholder="Confirm new password"
-            style={inputStyle}
-            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-            onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showConfirm ? "text" : "password"}
+              placeholder="Confirm new password"
+              style={{ ...inputStyle, paddingRight: 44 }}
+              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+              onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              style={{
+                position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                background: 'none', border: 'none', cursor: 'pointer', padding: 4,
+                color: 'var(--sys-color-neutral-40)', display: 'flex',
+              }}
+              aria-label={showConfirm ? "Hide password" : "Show password"}
+            >
+              {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </Field>
         <button
           className="button button-filled"
-          style={{ padding: '10px 24px', fontWeight: 600, fontSize: '0.9rem', alignSelf: 'flex-start' }}
+          style={{ padding: '12px 28px', fontWeight: 600, fontSize: '0.95rem', alignSelf: 'flex-start' }}
         >
           Update password
         </button>
