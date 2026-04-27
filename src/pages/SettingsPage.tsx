@@ -52,13 +52,13 @@ const Field: React.FC<{ label: string; required?: boolean; children: React.React
 )
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '10px 14px',
-  border: '1px solid var(--sys-color-border-secondary)',
-  borderRadius: 8, outline: 'none',
-  fontSize: '0.9rem', color: 'var(--sys-color-neutral-10)',
+  width: '100%', padding: '12px 14px',
+  border: '1.5px solid var(--sys-color-border-secondary)',
+  borderRadius: 10, outline: 'none',
+  fontSize: '0.95rem', color: 'var(--sys-color-neutral-10)',
   backgroundColor: 'var(--sys-color-neutral-99)',
   boxSizing: 'border-box',
-  transition: 'border-color 0.15s',
+  transition: 'border-color 0.2s, box-shadow 0.2s',
 }
 
 const SectionDivider: React.FC<{ title: string; subtitle?: string }> = ({ title, subtitle }) => (
@@ -366,8 +366,8 @@ const PasswordSection: React.FC = () => {
             onChange={e => { setCurrentPassword(e.target.value); if(errors.current) setErrors(prev => ({ ...prev, current: undefined })) }}
             onKeyDown={e => { if (e.key === 'Enter') document.getElementById('new-password')?.focus() }}
             style={{ ...inputStyle, borderColor: errors.current ? 'var(--sys-color-error-50)' : undefined }}
-            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-            onBlur={e => (e.target.style.borderColor = errors.current ? 'var(--sys-color-error-50)' : 'var(--sys-color-border-secondary)')}
+            onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.target.style.boxShadow = '0 0 0 3px var(--sys-color-primary-95)')}
+            onBlur={e => (e.target.style.borderColor = errors.current ? 'var(--sys-color-error-50)' : 'var(--sys-color-border-secondary)', e.target.style.boxShadow = 'none')}
           />
           {errors.current && <p style={{ fontSize: '0.78rem', color: 'var(--sys-color-error-50)', marginTop: 4 }}>{errors.current}</p>}
         </Field>
@@ -381,8 +381,8 @@ const PasswordSection: React.FC = () => {
               onChange={e => { setNewPassword(e.target.value); if(errors.new) setErrors(prev => ({ ...prev, new: undefined })) }}
               onKeyDown={e => { if (e.key === 'Enter') document.getElementById('confirm-password')?.focus() }}
               style={{ ...inputStyle, paddingRight: 44, borderColor: errors.new ? 'var(--sys-color-error-50)' : undefined }}
-              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-              onBlur={e => (e.target.style.borderColor = errors.new ? 'var(--sys-color-error-50)' : 'var(--sys-color-border-secondary)')}
+onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.target.style.boxShadow = '0 0 0 3px var(--sys-color-primary-95)')}
+            onBlur={e => (e.target.style.borderColor = errors.new ? 'var(--sys-color-error-50)' : 'var(--sys-color-border-secondary)', e.target.style.boxShadow = 'none')}
             />
             <button
               type="button"
@@ -409,8 +409,8 @@ const PasswordSection: React.FC = () => {
               onChange={e => { setConfirmPassword(e.target.value); if(errors.confirm) setErrors(prev => ({ ...prev, confirm: undefined })) }}
               onKeyDown={e => { if (e.key === 'Enter') validate() }}
               style={{ ...inputStyle, paddingRight: 44, borderColor: errors.confirm ? 'var(--sys-color-error-50)' : undefined }}
-              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
-              onBlur={e => (e.target.style.borderColor = errors.confirm ? 'var(--sys-color-error-50)' : 'var(--sys-color-border-secondary)')}
+onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.target.style.boxShadow = '0 0 0 3px var(--sys-color-primary-95)')}
+            onBlur={e => (e.target.style.borderColor = errors.confirm ? 'var(--sys-color-error-50)' : 'var(--sys-color-border-secondary)', e.target.style.boxShadow = 'none')}
             />
             <button
               type="button"
