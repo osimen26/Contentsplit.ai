@@ -345,8 +345,8 @@ const PasswordSection: React.FC = () => {
 
   const validate = () => {
     const newErrors: {current?: string; new?: string; confirm?: string} = {}
-    if (!currentPassword) newErrors.current = "Current password is required"
-    if (!newPassword) newErrors.new = "New password is required"
+    if (!currentPassword) newErrors.current = "password is required"
+    if (!newPassword) newErrors.new = "password is required"
     else if (newPassword.length < 8) newErrors.new = "Password must be at least 8 characters"
     if (!confirmPassword) newErrors.confirm = "Please confirm your password"
     else if (newPassword !== confirmPassword) newErrors.confirm = "Passwords do not match"
