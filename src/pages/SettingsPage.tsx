@@ -327,6 +327,48 @@ const AccountSection: React.FC = () => {
           <ThemeModeSelector />
         </div>
       </section>
+
+      <hr style={{ border: 'none', borderTop: '1px solid var(--sys-color-border-tertiary)', margin: 0 }} />
+
+      {/* Password */}
+      <section>
+        <SectionDivider title="Password" subtitle="Update your password to keep your account secure." />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 360 }}>
+          <Field label="Current password">
+            <input
+              type="password"
+              placeholder="Enter current password"
+              style={inputStyle}
+              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+              onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+            />
+          </Field>
+          <Field label="New password">
+            <input
+              type="password"
+              placeholder="Enter new password"
+              style={inputStyle}
+              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+              onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+            />
+          </Field>
+          <Field label="Confirm new password">
+            <input
+              type="password"
+              placeholder="Confirm new password"
+              style={inputStyle}
+              onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-60)')}
+              onBlur={e => (e.target.style.borderColor = 'var(--sys-color-border-secondary)')}
+            />
+          </Field>
+          <button
+            className="button button-filled"
+            style={{ padding: '10px 24px', fontWeight: 600, fontSize: '0.9rem', alignSelf: 'flex-start' }}
+          >
+            Update password
+          </button>
+        </div>
+      </section>
     </div>
   )
 }
