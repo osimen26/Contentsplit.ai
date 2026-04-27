@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
 import { useCurrentUser, useUpdateProfile } from '@/services/query-hooks'
 import { useTheme } from '@/contexts/ThemeContext'
-import { User, Palette, Wallet, Lock } from 'lucide-react'
+import { User, Palette, Wallet, Lock, Trash2 } from 'lucide-react'
 
-type SettingsSection = 'account' | 'appearance' | 'billing' | 'password'
+type SettingsSection = 'account' | 'password' | 'appearance' | 'billing' | 'delete'
 
 const NAV_ITEMS: { id: SettingsSection; label: string; icon: React.ReactNode }[] = [
   { id: 'account', label: 'Account', icon: <User size={18} /> },
   { id: 'password', label: 'Password', icon: <Lock size={18} /> },
   { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
   { id: 'billing', label: 'Billing', icon: <Wallet size={18} /> },
+  { id: 'delete', label: 'Delete Account', icon: <Trash2 size={18} /> },
 ]
 
 const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = ({ checked, onChange }) => (
@@ -377,6 +378,36 @@ const PasswordSection: React.FC = () => {
   )
 }
 
+const DeleteSection: React.FC = () => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <SectionDivider title="Delete Account" subtitle="Permanently delete your account and all data." />
+      <div style={{
+        padding: 20,
+        borderRadius: 12,
+        border: '1px solid var(--sys-color-error-90)',
+        backgroundColor: 'var(--sys-color-error-98)',
+      }}>
+        <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: 'var(--sys-color-neutral-20)', lineHeight: 1.5 }}>
+          Once you delete your account, there is no going back. All your data, conversions, and saved content will be permanently removed.
+        </p>
+        <button
+          className="button button-filled"
+          style={{ 
+            padding: '10px 24px', 
+            fontWeight: 600, 
+            fontSize: '0.9rem', 
+            backgroundColor: 'var(--sys-color-error-50)',
+            color: 'white',
+          }}
+        >
+          Delete my account
+        </button>
+      </div>
+    </div>
+  )
+}
+
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<SettingsSection>('account')
 
@@ -450,6 +481,7 @@ const SettingsPage: React.FC = () => {
         {active === 'password' && <PasswordSection />}
         {active === 'appearance' && <AppearanceSection />}
         {active === 'billing' && <BillingSection />}
+        {active === 'delete' && <DeleteSection />}
       </main>
 
       <style>{`
