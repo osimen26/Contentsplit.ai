@@ -543,14 +543,14 @@ const SettingsPage: React.FC = () => {
                 width: '100%',
                 textAlign: 'left',
                 padding: '10px 12px',
-                borderRadius: 8,
+                borderRadius: 10,
                 border: 'none',
-                backgroundColor: isActive ? 'var(--sys-color-neutral-90)' : 'transparent',
-                color: isActive ? 'var(--sys-color-neutral-10)' : 'var(--sys-color-neutral-40)',
+                backgroundColor: isActive ? 'var(--sys-color-primary-90)' : 'transparent',
+                color: isActive ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-40)',
                 fontSize: '0.9rem',
-                fontWeight: isActive ? 500 : 400,
+                fontWeight: isActive ? 600 : 400,
                 cursor: 'pointer',
-                transition: 'all 0.15s ease',
+                transition: 'all 0.2s ease',
               }}
             >
               <span style={{ 
