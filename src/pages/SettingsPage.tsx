@@ -342,8 +342,10 @@ const PasswordSection: React.FC = () => {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [errors, setErrors] = useState<{current?: string; new?: string; confirm?: string}>({})
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
-  const validate = () => {
+  const validate = async () => {
     const newErrors: {current?: string; new?: string; confirm?: string} = {}
     if (!currentPassword) newErrors.current = "password is required"
     if (!newPassword) newErrors.new = "password is required"
@@ -351,7 +353,17 @@ const PasswordSection: React.FC = () => {
     if (!confirmPassword) newErrors.confirm = "Please confirm your password"
     else if (newPassword !== confirmPassword) newErrors.confirm = "Passwords do not match"
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    
+    if (Object.keys(newErrors).length === 0) {
+      setLoading(true)
+      await new Promise(r => setTimeout(r, 1500))
+      setLoading(false)
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 3000)
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    }
   }
 
   return (
@@ -430,9 +442,17 @@ onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.tar
         <button
           className="button button-filled"
           onClick={validate}
-          style={{ padding: '12px 28px', fontWeight: 600, fontSize: '0.95rem', alignSelf: 'flex-start' }}
+          disabled={loading}
+          style={{ 
+            padding: '12px 28px', 
+            fontWeight: 600, 
+            fontSize: '0.95rem', 
+            alignSelf: 'flex-start',
+            backgroundColor: success ? 'var(--sys-color-success-50)' : undefined,
+            opacity: loading ? 0.7 : 1,
+          }}
         >
-          Update password
+          {loading ? 'Updating...' : success ? 'Password updated!' : 'Update password'}
         </button>
       </div>
     </div>
