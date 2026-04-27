@@ -948,7 +948,7 @@ useEffect(() => {
               </div>
             ))}
           </div>
-          <p style={{ textAlign: 'center', marginTop: 32, fontSize: 13, color: tokens.colorTextMuted }}>No contracts. Cancel anytime. Secure payment.</p>
+          <p style={{ textAlign: 'center', marginTop: 32, fontSize: 13, color: tokens.colorTextMuted }}>No contracts. Cancel anytime.</p>
         </div>
       </section>
 

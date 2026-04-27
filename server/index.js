@@ -1298,43 +1298,13 @@ app.post('/api/payments/webhook', async (req, res) => {
   }
 })
 
-// Verify payment (for callback)
-app.get('/api/payments/verify/:reference', requireAuth, async (req, res) => {
-  if (!flutterwave) {
-    return res.status(503).json({ error: 'Payment not configured' })
-  }
-
-  try {
-    const { reference } = req.params
-    const response = await flutterwave.Transaction.verify({ id: reference })
-
-    if (response.data.status === 'successful') {
-      const amount = response.data.amount
-      let tier = 'free'
-      if (amount >= 15000) tier = 'agency'
-      else if (amount >= 5000) tier = 'pro'
-
-      const userDb = getUserDb()
-      await userDb.update(req.userId, { tier })
-
-      res.json({ success: true, tier })
-    } else {
-      res.json({ success: false })
-    }
-  } catch (err) {
-    console.error('Verify error:', err)
-    res.status(500).json({ error: 'Verification failed' })
-  }
-})
-
-// ── START ─────────────────────────────────────────────────────────────────────
+// ── START ─────────────────────────────────────────────────────────────
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`\n🚀  ContentSplit backend running at http://localhost:${PORT}`)
     console.log(`🔐  DeepSeek API key: ${DEEPSEEK_API_KEY ? '✓ loaded' : '✗ MISSING'}`)
     console.log(`⚡  Model: ${DEEPSEEK_MODEL}`)
-    console.log(`🗄️  Database: ${supabase ? 'Supabase' : 'Mock (in-memory)'}`)
-    console.log(`💳 Payments: ${flutterwave ? 'Flutterwave' : 'Not configured'}\n`)
+    console.log(`🗄️  Database: ${supabase ? 'Supabase' : 'Mock (in-memory)'}\n`)
   })
 }
 
