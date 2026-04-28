@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Plus, ArrowUp, Sparkles, User } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Plus, ArrowUp, Sparkles } from 'lucide-react'
 import { Logo } from '@components/application'
 
 const TwitterIcon = () => (
@@ -68,7 +68,59 @@ export const ProductPreview: React.FC = () => {
     )
   }
 
+  useEffect(() => {
+    const demoText = "How to build a consistent coding habit in 30 days — practical tips for developers..."
+    let currentText = ""
+    let typingInterval: ReturnType<typeof setInterval>
+    let timeouts: ReturnType<typeof setTimeout>[] = []
+
+    const startSequence = () => {
+      setInput('')
+      setShowPrefs(false)
+      setHasResult(false)
+      currentText = ""
+
+      timeouts.push(setTimeout(() => {
+        let i = 0
+        typingInterval = setInterval(() => {
+          if (i < demoText.length) {
+            currentText += demoText[i]
+            setInput(currentText)
+            i++
+          } else {
+            clearInterval(typingInterval)
+            timeouts.push(setTimeout(() => {
+              setShowPrefs(true)
+              timeouts.push(setTimeout(() => {
+                setShowPrefs(false)
+                setHasResult(true)
+                timeouts.push(setTimeout(() => {
+                  startSequence()
+                }, 6000))
+              }, 2000))
+            }, 800))
+          }
+        }, 40)
+      }, 1000))
+    }
+
+    startSequence()
+
+    return () => {
+      clearInterval(typingInterval)
+      timeouts.forEach(clearTimeout)
+    }
+  }, [])
+
+
   return (
+    <>
+    <style>{`
+      @keyframes chatSlideUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    `}</style>
     <div style={{
       display: 'flex',
       flexDirection: 'column',
@@ -132,7 +184,7 @@ export const ProductPreview: React.FC = () => {
 
         {/* User Message */}
         {(showPrefs || hasResult) && (
-          <div style={{ display: 'flex', gap: 12, flexDirection: 'row-reverse' }}>
+          <div style={{ display: 'flex', gap: 12, flexDirection: 'row-reverse', animation: 'chatSlideUp 0.4s ease-out forwards' }}>
             <div style={{
               width: 32, height: 32, borderRadius: 12,
               background: '#6366f1', display: 'flex',
@@ -149,14 +201,14 @@ export const ProductPreview: React.FC = () => {
               lineHeight: 1.6,
               maxWidth: '85%',
             }}>
-              How to build a consistent coding habit in 30 days — practical tips for developers...
+              {input || "How to build a consistent coding habit in 30 days — practical tips for developers..."}
             </div>
           </div>
         )}
 
         {/* Preferences Panel */}
         {showPrefs && (
-          <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 12, animation: 'chatSlideUp 0.4s ease-out forwards', animationDelay: '0.1s', opacity: 0 }}>
             <div style={{
               width: 32, height: 32, borderRadius: 12,
               background: 'rgba(255,255,255,0.8)',
@@ -241,7 +293,7 @@ export const ProductPreview: React.FC = () => {
 
         {/* Generated Result */}
         {hasResult && (
-          <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 12, animation: 'chatSlideUp 0.5s ease-out forwards', animationDelay: '0.1s', opacity: 0 }}>
             <div style={{
               width: 32, height: 32, borderRadius: 12,
               background: 'rgba(255,255,255,0.8)',
@@ -279,7 +331,7 @@ export const ProductPreview: React.FC = () => {
                 fontSize: 14, lineHeight: 1.6, color: '#1e293b',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
-                  <Twitter size={16} color="#1DA1F2" />
+                  <TwitterIcon />
                   <span style={{ fontWeight: 600, fontSize: 13, color: '#1DA1F2' }}>Twitter/X</span>
                 </div>
                 <p style={{ margin: '0 0 12px', fontSize: 14, lineHeight: 1.6 }}>
@@ -363,5 +415,6 @@ export const ProductPreview: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }

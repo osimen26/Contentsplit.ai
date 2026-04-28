@@ -5,7 +5,7 @@ import {
   ArrowRight, Mail, FileText, List,
   Menu, X, Copy, Zap, ChevronDown, Star, Check
 } from 'lucide-react'
-import { Logo } from '@components/application'
+import { Logo, ProductPreview } from '@components/application'
 import '../styles/landing.css'
 
 const tokens = {
@@ -572,8 +572,10 @@ useEffect(() => {
           </div>
 
           <div style={{ maxWidth: 900, width: '100%' }}>
-            <div className="lp-card" style={{ background: tokens.colorSurface, overflow: 'hidden', boxShadow: `0 0 80px ${tokens.colorAccent}15` }}>
-              {/* Platform tabs */}
+            <div className="lp-card" style={{ height: 600, overflow: 'hidden', boxShadow: `0 0 80px ${tokens.colorAccent}15` }}>
+              <ProductPreview />
+
+              {/*
               <div style={{ display: 'flex', borderBottom: `1px solid ${tokens.colorBorder}`, overflowX: 'auto', background: tokens.colorSurface2 }}>
                 {platformTabs.map(tab => (
                   <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '16px 20px', background: 'transparent', border: 'none', borderBottom: activeTab === tab.id ? `3px solid ${tokens.colorAccent}` : '3px solid transparent', color: activeTab === tab.id ? tokens.colorAccent : tokens.colorTextMuted, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', cursor: 'pointer', transition: 'all 0.2s' }}>
@@ -582,7 +584,7 @@ useEffect(() => {
                 ))}
               </div>
               
-              {/* Preview content */}
+
               <div className="lp-mockup-content" style={{ padding: 32 }}>
                 {activeTab === 'twitter' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -628,7 +630,8 @@ useEffect(() => {
                   </div>
                 )}
                 {['newsletter', 'instagram', 'youtube'].includes(activeTab) && <div style={{ color: tokens.colorTextMuted, fontStyle: 'italic', padding: 24 }}>Preview for {activeTab}...</div>}
-              </div>
+              */}
+
             </div>
           </div>
         </div>
