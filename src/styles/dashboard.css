@@ -119,6 +119,94 @@
   color: #1e293b !important;
 }
 
+/* User Message Bubble */
+.user-msg-bubble {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)) !important;
+  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  border-radius: 20px 20px 4px 20px !important;
+  color: #1e1b4b !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.05) !important;
+}
+
+/* AI Message Bubble */
+.ai-msg-bubble {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border-radius: 20px 20px 20px 4px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Solid Primary Buttons */
+.btn-gradient {
+  background: var(--sys-color-primary) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  border: none !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3) !important;
+}
+
+.btn-gradient:hover:not(:disabled) {
+  background: var(--sys-color-primary-30) !important;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+.btn-gradient:active:not(:disabled) {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3) !important;
+}
+
+.btn-gradient:disabled {
+  background: #cbd5e1 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  color: var(--sys-color-neutral-60) !important;
+}
+
+/* Premium Overrides for Application Components */
+.platform-card.selected,
+.tone-chip.selected {
+  border-color: #6366f1 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15) !important;
+  color: #6366f1 !important;
+}
+
+.platform-card, .tone-chip {
+  transition: all 0.3s ease !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.platform-card:hover:not(.selected), .tone-chip:hover:not(.selected) {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+/* Generated Content Tab Overrides */
+.generated-content-tabs {
+  background: rgba(255,255,255,0.4) !important;
+  border-radius: 12px !important;
+  padding: 4px !important;
+}
+
+.generated-content-tab {
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.generated-content-tab.active {
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+  color: #6366f1 !important;
+}
+
 /* Mobile chat input */
 @media (max-width: 768px) {
   .chat-input-area-container {
@@ -140,7 +228,7 @@
     width: 100% !important;
     margin: 0 auto;
     padding: 10px 14px !important;
-    border-radius: 16px !important; /* Squarer on mobile to fill more space */
+    border-radius: 16px !important;
     background: #ffffff !important;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
   }
@@ -158,7 +246,7 @@
     border-radius: 16px;
   }
 
-  /* Suggestions Grid - show on mobile with better layout */
+  /* Suggestions Grid */
   .quick-suggestions {
     grid-template-columns: 1fr !important;
     gap: 10px !important;
@@ -175,12 +263,16 @@
     text-align: center;
   }
 
-  /* Generate button - full width on mobile */
+  /* Enhanced Primary Button Styling */
   .btn-gradient {
     min-width: unset !important;
     width: 100% !important;
     min-height: 48px !important;
     font-size: 1rem !important;
+  }
+
+  .btn-gradient:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
   }
 
   /* Preferences card */
@@ -313,3 +405,30 @@
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
   }
 }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes brightGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  from { transform: translate(0, 0); }
+  to { transform: translate(20px, 30px); }
+}
+
+/* Scrollbar styling */
+* { scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.2) transparent; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background-color: rgba(99, 102, 241, 0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(99, 102, 241, 0.4); }

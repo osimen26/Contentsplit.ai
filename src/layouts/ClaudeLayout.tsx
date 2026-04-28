@@ -117,10 +117,27 @@ const SidebarContentComponent: React.FC<{
             display: 'flex', alignItems: 'center',
             justifyContent: (collapsed && !inDrawer) ? 'center' : 'flex-start',
             gap: 8,
-            padding: (collapsed && !inDrawer) ? '8px' : '10px 12px',
+            padding: (collapsed && !inDrawer) ? '10px' : '10px 14px',
             borderRadius: 10,
             fontSize: '0.95rem',
+            fontWeight: 600,
             cursor: 'pointer',
+            minHeight: 44,
+            border: 'none',
+            background: 'var(--sys-color-primary)',
+            color: 'white',
+            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'var(--sys-color-primary-30)'
+            e.currentTarget.style.boxShadow = '0 4px 16px rgba(99, 102, 241, 0.4)'
+            e.currentTarget.style.transform = 'translateY(-1px)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'var(--sys-color-primary)'
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(99, 102, 241, 0.3)'
+            e.currentTarget.style.transform = 'translateY(0)'
           }}
         >
           <Plus size={18} strokeWidth={2.5} />

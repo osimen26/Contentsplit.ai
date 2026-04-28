@@ -152,6 +152,24 @@ export const RegenerationControls: React.FC<RegenerationControlsProps> = ({
           cursor: regenerateDisabled ? 'not-allowed' : 'pointer',
           transition: 'all 0.2s ease',
           minHeight: 48,
+          letterSpacing: '0.01em',
+          boxShadow: regenerateDisabled 
+            ? 'none' 
+            : '0 4px 12px rgba(99, 102, 241, 0.3)',
+        }}
+        onMouseEnter={e => {
+          if (!regenerateDisabled && !isLoading) {
+            e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-30)'
+            e.currentTarget.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)'
+            e.currentTarget.style.transform = 'translateY(-2px)'
+          }
+        }}
+        onMouseLeave={e => {
+          if (!regenerateDisabled) {
+            e.currentTarget.style.backgroundColor = 'var(--sys-color-primary)'
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)'
+            e.currentTarget.style.transform = 'translateY(0)'
+          }
         }}
       >
         <RefreshCw size={16} className={isLoading ? 'spin' : ''} />

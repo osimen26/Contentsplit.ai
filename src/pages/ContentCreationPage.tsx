@@ -360,35 +360,54 @@ const ContentCreationPage: React.FC = () => {
                           variant="default" selectionMode="single" showPreview={false}
                           title="2. Voice & Tone" subtitle="How should it sound?" required
                         />
-                        <div style={{
-                          paddingTop: '20px',
-                          borderTop: '1px solid rgba(0,0,0,0.05)',
-                          marginTop: '8px',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '12px',
-                          alignItems: 'stretch',
-                        }}>
-                          <button
-                            className="btn-gradient"
-                            onClick={handleGenerate}
-                            disabled={selectedPlatforms.length === 0 || generateMutation.isPending}
-                            style={{
-                              padding: '14px 32px',
-                              minHeight: 48,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              gap: 10,
-                              color: 'white',
-                              borderRadius: '12px',
-                              width: '100%',
-                              fontSize: '0.95rem',
-                            }}
-                          >
-                            <Sparkles size={18} className={generateMutation.isPending ? 'spin' : ''} />
-                            {generateMutation.isPending ? 'Generating...' : 'Generate Content'}
-                          </button>
+                          <div style={{
+                            paddingTop: '20px',
+                            borderTop: '1px solid rgba(0,0,0,0.05)',
+                            marginTop: '8px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px',
+                            alignItems: 'stretch',
+                          }}>
+                            <button
+                              className="btn-gradient"
+                              onClick={handleGenerate}
+                              disabled={selectedPlatforms.length === 0 || generateMutation.isPending}
+                              style={{
+                                padding: '14px 32px',
+                                minHeight: 48,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 10,
+                                color: 'white',
+                                borderRadius: '12px',
+                                width: '100%',
+                                fontSize: '0.95rem',
+                                fontWeight: 600,
+                                letterSpacing: '0.01em',
+                                border: 'none',
+                                background: 'var(--sys-color-primary)',
+                                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+                                transition: 'all 0.2s ease',
+                                cursor: selectedPlatforms.length === 0 || generateMutation.isPending ? 'not-allowed' : 'pointer',
+                              }}
+                              onMouseEnter={e => {
+                                if (!generateMutation.isPending && selectedPlatforms.length > 0) {
+                                  e.currentTarget.style.background = 'var(--sys-color-primary-30)'
+                                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)'
+                                  e.currentTarget.style.transform = 'translateY(-2px)'
+                                }
+                              }}
+                              onMouseLeave={e => {
+                                e.currentTarget.style.background = 'var(--sys-color-primary)'
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)'
+                                e.currentTarget.style.transform = 'translateY(0)'
+                              }}
+                            >
+                              <Sparkles size={18} className={generateMutation.isPending ? 'spin' : ''} />
+                              {generateMutation.isPending ? 'Generating...' : 'Generate Content'}
+                            </button>
                           {selectedPlatforms.length === 0 && (
                             <span style={{ fontSize: '0.85rem', color: 'var(--sys-color-tertiary)', fontWeight: 500, textAlign: 'center' }}>
                               Select at least one platform
