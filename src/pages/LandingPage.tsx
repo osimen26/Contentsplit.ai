@@ -5,7 +5,7 @@ import {
   ArrowRight, Mail, FileText, List,
   Menu, X, Copy, Zap, ChevronDown, Star, Check
 } from 'lucide-react'
-import { Logo } from '@components/application'
+import { Logo, ProductPreview } from '@components/application'
 import '../styles/landing.css'
 
 const tokens = {
@@ -111,10 +111,6 @@ const LandingPage: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('twitter')
   const [openFaq, setOpenFaq] = useState<number | null>(null)
-  const [demoInput, setDemoInput] = useState('')
-  const [demoOutput, setDemoOutput] = useState<string[]>([])
-  const [demoLoading, setDemoLoading] = useState(false)
-const [demoCopied, setDemoCopied] = useState(false)
 
 const ToneAwarenessIcon = ({ size, color }: { size?: number; color?: string }) => <svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill={color}><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
 const BatchModeIcon = ({ size, color }: { size?: number; color?: string }) => <svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill={color}><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg>
@@ -722,34 +718,14 @@ useEffect(() => {
         </div>
       </section>
 
-      <section className="lp-section" style={{ background: tokens.colorSurface }}>
+      <section style={{ background: tokens.colorSurface, padding: '24px 0' }}>
         <div className="lp-container" style={{ maxWidth: 900 }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(1.6rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 16 }}>See it work before you sign up.</h2>
-            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)', color: tokens.colorTextSecondary, textAlign: 'center', marginBottom: 48, maxWidth: 600, margin: '0 auto' }}>No account needed. Paste any blog excerpt and watch ContentSplit generate a Twitter thread in real time.</p>
+            <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(1.6rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 16 }}>See the actual product in action.</h2>
+            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)', color: tokens.colorTextSecondary, textAlign: 'center', marginBottom: 48, maxWidth: 600, margin: '0 auto', lineHeight: 1.6 }}>This is the exact interface you'll use. Paste content, pick platforms, choose a tone — done.</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: tokens.colorBg, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusLg, overflow: 'hidden' }} className="lp-grid-2">
-            <div className="lp-demo-input-panel" style={{ padding: 24, borderRight: `1px solid ${tokens.colorBorder}` }}>
-              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: tokens.colorTextMuted }}>Blog excerpt</span>
-              <textarea value={demoInput} onChange={e => setDemoInput(e.target.value)} placeholder="Paste a paragraph from any blog post..." style={{ width: '100%', height: 200, background: tokens.colorSurface2, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusMd, padding: 16, fontFamily: '"Inter", sans-serif', fontSize: 15, color: tokens.colorTextSecondary, resize: 'none', outline: 'none', marginTop: 12 }} />
-              <button onClick={generateDemo} disabled={demoLoading || !demoInput.trim()} style={{ width: '100%', padding: 14, background: tokens.colorAccent, color: tokens.colorWhite, border: 'none', borderRadius: tokens.radiusMd, fontWeight: 600, cursor: demoLoading ? 'not-allowed' : 'pointer', marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>{demoLoading ? 'Generating...' : <>Generate Twitter Thread <ArrowRight size={16} /></>}</button>
-            </div>
-            <div style={{ padding: 24 }}>
-              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: tokens.colorTextMuted }}>Generated Twitter/X Thread</span>
-              {demoOutput.length > 0 ? (
-                <div style={{ marginTop: 12 }}>
-                  {demoOutput.map((t, i) => (
-                    <div key={i} style={{ padding: '12px 16px', background: tokens.colorSurface2, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusMd, marginBottom: 12, fontSize: 14, color: tokens.colorTextPrimary }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: tokens.colorAccent, color: tokens.colorWhite, fontSize: 11, fontWeight: 600, marginRight: 8 }}>{i+1}</span>
-                      {t}
-                    </div>
-                  ))}
-                  <button onClick={copyDemo} style={{ background: 'transparent', border: 'none', color: demoCopied ? tokens.colorAccent : tokens.colorTextSecondary, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>{demoCopied ? <><Check size={14} />Copied!</> : <><Copy size={14} />Copy all</>}</button>
-                </div>
-              ) : (
-                <div style={{ marginTop: 24, color: tokens.colorTextMuted, fontStyle: 'italic', textAlign: 'center' }}>Generated output will appear here...</div>
-              )}
-            </div>
+          <div style={{ height: 640, borderRadius: tokens.radiusLg, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.08)' }}>
+            <ProductPreview />
           </div>
         </div>
       </section>
