@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { ChatInput, ChatLoadingBubble, PlatformSelector, ToneSelector, GeneratedContent, RegenerationControls, Logo } from '@components/application'
-import { useGenerateContent, useRegenerateContent, useOutputs } from '@services/query-hooks'
+import { ChatInput, ChatLoadingBubble, PlatformSelector, ToneSelector, GeneratedContent, RegenerationControls, Logo, LimitReachedBubble, UpgradeModal } from '@components/application'
+import { useGenerateContent, useRegenerateContent, useOutputs, useCurrentUser, useUsageStats } from '@services/query-hooks'
 import { Target, Ruler, Palette, User, Sparkles, FileText, Zap, Globe } from 'lucide-react'
 import type { Output } from '@services/api-client'
 import '@/styles/dashboard.css'
@@ -87,27 +87,28 @@ const SUGGESTIONS = [
   { icon: <Sparkles size={18} />, text: 'Create captions for my latest Instagram post' },
 ]
 
-type MessageType = 'text' | 'preferences' | 'loading' | 'result' | 'error'
-interface ChatMessage {
-  id: string
-  role: 'user' | 'assistant'
-  type: MessageType
-  text?: string
-}
+  type MessageType = 'text' | 'preferences' | 'loading' | 'result' | 'error' | 'limit_reached'
+  interface ChatMessage {
+    id: string
+    role: 'user' | 'assistant'
+    type: MessageType
+    text?: string
+  }
 
 const ContentCreationPage: React.FC = () => {
   const [inputText, setInputText] = useState('')
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter'])
   const [selectedTone, setSelectedTone] = useState('casual')
-  const [currentConversionId, setCurrentConversionId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState('twitter')
-  const [selectedRegenerationOption, setSelectedRegenerationOption] = useState('shorter')
-
-  const generateMutation = useGenerateContent()
-  const regenerateMutation = useRegenerateContent()
-  const conversionId = currentConversionId || ''
-  const { data: outputs, isLoading: outputsLoading } = useOutputs(conversionId)
+  const [currentConversionId, setCurrentConversionId] = useState<string | null>(null)
+  const [selectedRegenerationOption, setSelectedRegenerationOption] = useState<string | null>(null)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  
+  const { data: user } = useCurrentUser()
+  const { data: usageStats } = useUsageStats()
+  const isFreeTier = user?.tier === 'free' || !user?.tier
+  
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const hasMessages = messages.length > 0
 
@@ -142,6 +143,20 @@ const ContentCreationPage: React.FC = () => {
   const handleGenerate = () => {
     const userMsg = [...messages].reverse().find(m => m.role === 'user' && m.type === 'text')
     if (!userMsg?.text || selectedPlatforms.length === 0) return
+
+    // Check daily limit before generating
+    const dailyLimit = usageStats?.daily_limit || 5
+    const dailyUsage = usageStats?.daily_usage || 0
+    
+    if (dailyUsage >= dailyLimit) {
+      setShowUpgradeModal(true)
+      setMessages(prev => [
+        ...prev.filter(m => m.type !== 'loading' && m.type !== 'preferences'),
+        { id: crypto.randomUUID(), role: 'assistant', type: 'limit_reached' }
+      ])
+      return
+    }
+
     setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', type: 'loading' }])
     generateMutation.mutate(
       {
@@ -162,10 +177,20 @@ const ContentCreationPage: React.FC = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (err: any) => {
           const errorMsg = err?.response?.data?.error || err?.message || 'Failed to generate content'
-          setMessages(prev => [
-            ...prev.filter(m => m.type !== 'loading'),
-            { id: crypto.randomUUID(), role: 'assistant', type: 'error', text: errorMsg }
-          ])
+          
+          // Check if it's a limit reached error
+          if (err?.response?.data?.limit_reached) {
+            setShowUpgradeModal(true)
+            setMessages(prev => [
+              ...prev.filter(m => m.type !== 'loading'),
+              { id: crypto.randomUUID(), role: 'assistant', type: 'limit_reached' }
+            ])
+          } else {
+            setMessages(prev => [
+              ...prev.filter(m => m.type !== 'loading'),
+              { id: crypto.randomUUID(), role: 'assistant', type: 'error', text: errorMsg }
+            ])
+          }
         },
       }
     )
@@ -436,6 +461,20 @@ const ContentCreationPage: React.FC = () => {
                     </div>
                   )}
 
+                  {/* ── Limit Reached State ── */}
+                  {msg.type === 'limit_reached' && (
+                    <LimitReachedBubble
+                      dailyUsage={usageStats?.daily_usage || 0}
+                      dailyLimit={usageStats?.daily_limit || 5}
+                      onUpgrade={() => {
+                        // Scroll to top and show upgrade options
+                        const upgradeEvent = new CustomEvent('show-upgrade')
+                        window.dispatchEvent(upgradeEvent)
+                      }}
+                      isFreeTier={isFreeTier}
+                    />
+                  )}
+
                   {/* ── ZONE 3: Output Tabs (GeneratedContent + Regeneration) ── */}
                   {msg.type === 'result' && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
@@ -502,6 +541,19 @@ const ContentCreationPage: React.FC = () => {
         </div>
       </div>
 
+      {/* ── Upgrade Modal ── */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        onUpgrade={(tier) => {
+          setShowUpgradeModal(false)
+          // Redirect to payment
+          window.location.href = `/api/payments/initiate?plan=${tier}`
+        }}
+        dailyUsage={usageStats?.daily_usage || 0}
+        dailyLimit={usageStats?.daily_limit || 5}
+        isFreeTier={isFreeTier}
+      />
     </div>
   )
 }
