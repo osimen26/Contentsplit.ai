@@ -180,6 +180,13 @@ const ContentCreationPage: React.FC = () => {
     }, {
       onSuccess: () => {
         setMessages(prev => prev.filter(m => m.type !== 'loading'))
+      },
+      onError: (err: any) => {
+        const errorMsg = err?.response?.data?.error || err?.message || 'Failed to regenerate content'
+        setMessages(prev => [
+          ...prev.filter(m => m.type !== 'loading'),
+          { id: crypto.randomUUID(), role: 'assistant', type: 'error', text: errorMsg }
+        ])
       }
     })
   }

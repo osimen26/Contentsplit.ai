@@ -830,28 +830,37 @@ app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
     let originalText = ''
     let toneMode = 'casual'
     
+    let conversion = null
+    
     if (supabase) {
-      const { data: conversion } = await supabase
+      const { data, error } = await supabase
         .from('conversions')
         .select('input_text, tone_mode')
         .eq('id', conversion_id)
         .single()
       
-if (conversion) {
-        res.json(conversion)
-      } else {
-        // Check mock database
-        const mockConversion = conversionsDb.get(id)
-        if (mockConversion && mockConversion.user_id === req.userId) {
-          res.json(mockConversion)
-        } else {
-          res.status(404).json({ error: 'Conversion not found' })
-        }
+      if (data && !error) {
+        conversion = data
       }
     }
-
+    
+    if (!conversion) {
+      // Check mock database
+      const mockConversion = conversionsDb.get(conversion_id)
+      if (mockConversion && mockConversion.user_id === req.userId) {
+        conversion = mockConversion
+      }
+    }
+    
+    if (!conversion) {
+      return res.status(404).json({ error: 'Conversion not found' })
+    }
+    
+    originalText = conversion.input_text || ''
+    toneMode = conversion.tone_mode || 'casual'
+    
     // Build prompt and call DeepSeek
-    let prompt = buildPrompt(originalText, platform, toneMode)
+    const prompt = buildPrompt(originalText, platform, toneMode)
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
