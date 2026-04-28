@@ -336,7 +336,7 @@ function optionalAuth(req, res, next) {
 }
 
 // ── PLATFORM PROMPTS ─────────────────────────────────────────────────────────
-function buildPrompt(inputText, platform, tone) {
+function buildPrompt(inputText, platform, tone, regenerationOption = null) {
   const toneGuide = {
     professional: 'formal, authoritative, and polished',
     casual: 'relaxed, conversational, and friendly',
@@ -860,7 +860,7 @@ app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
     toneMode = conversion.tone_mode || 'casual'
     
     // Build prompt and call DeepSeek
-    const prompt = buildPrompt(originalText, platform, toneMode)
+    const prompt = buildPrompt(originalText, platform, toneMode, option)
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {

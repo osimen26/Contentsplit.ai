@@ -54,6 +54,7 @@ export interface ContentGenerationResponse {
 export interface RegenerationRequest {
   conversion_id: string
   platform: 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'email' | 'summary'
+  option?: 'clarity' | 'shorter' | 'emotion'
 }
 
 export interface RegenerationResponse {

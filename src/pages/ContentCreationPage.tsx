@@ -177,6 +177,7 @@ const ContentCreationPage: React.FC = () => {
     regenerateMutation.mutate({
       conversion_id: currentConversionId,
       platform: activeTab as 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'email' | 'summary',
+      option: selectedRegenerationOption as 'clarity' | 'shorter' | 'emotion',
     }, {
       onSuccess: () => {
         setMessages(prev => prev.filter(m => m.type !== 'loading'))
