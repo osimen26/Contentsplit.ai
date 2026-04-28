@@ -165,28 +165,29 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
 
   return (
     <Card variant="elevated" className={`generated-content claude-style ${className}`} data-testid="generated-content-card">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sys-spacing-lg)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sys-spacing-md)', flexWrap: 'wrap', gap: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sys-spacing-sm)' }}>
-          <span style={{ color: 'var(--sys-color-neutral-60)' }}>{currentIcon}</span>
-          <h4 style={{ margin: 0, fontSize: 'var(--sys-typography-title-large-font-size)', fontWeight: 600, color: 'var(--sys-color-neutral-20)' }}>{activePlatform?.name || title}</h4>
+          <span style={{ color: 'var(--sys-color-neutral-60)', flexShrink: 0 }}>{currentIcon}</span>
+          <h4 style={{ margin: 0, fontSize: 'var(--sys-typography-title-small-font-size)', fontWeight: 600, color: 'var(--sys-color-neutral-20)', lineHeight: 1.3 }}>{activePlatform?.name || title}</h4>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sys-spacing-sm)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sys-spacing-xs)' }}>
           {onRegenerate && !isLoading && (
             <button
               onClick={onRegenerate}
               disabled={isStreaming}
               style={{
                 display: 'flex', alignItems: 'center', gap: '4px',
-                padding: '6px 10px',
+                padding: '8px 12px',
                 borderRadius: 'var(--sys-radius-md)',
                 border: 'none',
                 backgroundColor: 'var(--sys-color-primary)',
                 color: 'white',
                 fontSize: '0.75rem', fontWeight: 500, cursor: 'pointer',
                 transition: 'all 0.2s',
+                minHeight: 36,
               }}
             >
-              <RefreshCw size={12} /> Regenerate
+              <RefreshCw size={14} /> Regenerate
             </button>
           )}
           <button
@@ -194,22 +195,23 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
             disabled={isStreaming}
             style={{
               display: 'flex', alignItems: 'center', gap: '4px',
-              padding: '6px 14px',
+              padding: '8px 12px',
               borderRadius: 'var(--sys-radius-md)',
               border: 'none',
               backgroundColor: isCopied ? 'var(--sys-color-success)' : 'var(--sys-color-primary)',
               color: 'white',
               fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
               transition: 'all 0.2s',
+              minHeight: 36,
             }}
           >
-            {isCopied ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
+            {isCopied ? <><Check size={14} /> Copied</> : <><Copy size={14} /> Copy</>}
           </button>
         </div>
       </div>
 
       {platforms.length > 1 && (
-        <div style={{ display: 'flex', gap: 'var(--sys-spacing-xs)', marginBottom: 'var(--sys-spacing-lg)', borderBottom: '1px solid var(--sys-color-neutral-95)', paddingBottom: 'var(--sys-spacing-xs)' }}>
+        <div style={{ display: 'flex', gap: 'var(--sys-spacing-xs)', marginBottom: 'var(--sys-spacing-md)', borderBottom: '1px solid var(--sys-color-neutral-95)', paddingBottom: 'var(--sys-spacing-xs)', overflowX: 'auto', WebkitOverflowScrolling: 'touch', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
           {platforms.map(platform => {
             const icon = platform.icon || getPlatformIcon(platform.id)
             return (
@@ -218,13 +220,15 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
                 onClick={() => { onTabChange(platform.id); setIsEditing(false) }}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '4px',
-                  padding: '6px 12px',
+                  padding: '8px 12px',
                   borderRadius: 'var(--sys-radius-md)',
                   border: 'none',
                   backgroundColor: activeTab === platform.id ? 'var(--sys-color-primary-95)' : 'transparent',
                   color: activeTab === platform.id ? 'var(--sys-color-primary-50)' : 'var(--sys-color-neutral-60)',
                   fontSize: '0.8rem', fontWeight: 500, cursor: 'pointer',
                   transition: 'all 0.2s',
+                  whiteSpace: 'nowrap',
+                  minHeight: 36,
                 }}
               >
                 {icon}
@@ -245,9 +249,12 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
         <div style={{
           backgroundColor: 'var(--sys-color-neutral-98)',
           border: '1px solid var(--sys-color-neutral-90)',
-          borderRadius: 'var(--sys-radius-lg)',
-          padding: 'var(--sys-spacing-lg)',
+          borderRadius: 'var(--sys-radius-md)',
+          padding: 'var(--sys-spacing-md)',
           minHeight: '80px',
+          maxHeight: '400px',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
         }}>
           {isEditing ? (
             <textarea
@@ -267,6 +274,7 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
                 outline: 'none',
                 backgroundColor: 'transparent',
                 color: 'var(--sys-color-neutral-30)',
+                minHeight: '80px',
               }}
             />
           ) : (
@@ -278,6 +286,7 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
                 lineHeight: 1.6,
                 color: 'var(--sys-color-neutral-30)',
                 whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
               }}
               onClick={() => setIsEditing(true)}
             >

@@ -59,6 +59,8 @@ export const RegenerationControls: React.FC<RegenerationControlsProps> = ({
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: 'var(--sys-spacing-md)',
+        flexWrap: 'wrap',
+        gap: '8px',
       }}>
         <h4 style={{
           margin: 0,
@@ -76,8 +78,9 @@ export const RegenerationControls: React.FC<RegenerationControlsProps> = ({
           fontSize: '0.75rem',
           color: 'var(--sys-color-neutral-50)',
           backgroundColor: 'var(--sys-color-neutral-92)',
-          padding: '4px 8px',
+          padding: '4px 10px',
           borderRadius: '12px',
+          whiteSpace: 'nowrap',
         }}>
           {remainingUses} left
         </span>
@@ -86,8 +89,9 @@ export const RegenerationControls: React.FC<RegenerationControlsProps> = ({
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 'var(--sys-spacing-sm)',
+        gap: '8px',
         marginBottom: 'var(--sys-spacing-md)',
+        flexWrap: 'wrap',
       }}>
         {options.map((option) => {
           const isSelected = selectedOptionId ? option.id === selectedOptionId : option.selected
@@ -100,7 +104,7 @@ export const RegenerationControls: React.FC<RegenerationControlsProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                padding: '8px 14px',
+                padding: '10px 16px',
                 borderRadius: '20px',
                 border: '1.5px solid',
                 borderColor: isSelected 
@@ -112,10 +116,12 @@ export const RegenerationControls: React.FC<RegenerationControlsProps> = ({
                 color: isSelected 
                   ? 'var(--sys-color-primary-50)' 
                   : 'var(--sys-color-neutral-60)',
-                fontSize: '0.8rem',
+                fontSize: '0.85rem',
                 fontWeight: 500,
                 cursor: isLoading ? 'not-allowed' : 'pointer',
                 transition: 'all 0.15s ease',
+                minHeight: 40,
+                whiteSpace: 'nowrap',
               }}
             >
               {option.icon}
@@ -134,17 +140,18 @@ export const RegenerationControls: React.FC<RegenerationControlsProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           gap: '8px',
-          padding: '12px 20px',
+          padding: '14px 20px',
           borderRadius: 'var(--sys-radius-md)',
           border: 'none',
           backgroundColor: regenerateDisabled 
             ? 'var(--sys-color-neutral-85)' 
             : 'var(--sys-color-primary)',
           color: '#fff',
-          fontSize: '0.9rem',
+          fontSize: '0.95rem',
           fontWeight: 600,
           cursor: regenerateDisabled ? 'not-allowed' : 'pointer',
           transition: 'all 0.2s ease',
+          minHeight: 48,
         }}
       >
         <RefreshCw size={16} className={isLoading ? 'spin' : ''} />

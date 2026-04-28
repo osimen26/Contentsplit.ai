@@ -457,22 +457,26 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       {/* ── MOBILE HEADER ── */}
       <header style={{
         display: 'none',
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
-        height: 52,
-        backgroundColor: 'rgba(255,255,255,0.9)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(0,0,0,0.05)',
+        position: 'fixed', top:0, left: 0, right: 0, zIndex: 200,
+        height: 56,
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(0,0,0,0.06)',
         alignItems: 'center',
         padding: '0 16px',
         gap: 12,
+        boxShadow: '0 1px 8px rgba(0,0,0,0.04)',
       }} className="mobile-header">
         <button
           onClick={() => setMobileOpen(true)}
-          style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'flex' }}
+          style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 6, display: 'flex', borderRadius: 8, transition: 'background-color 0.15s' }}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.05)'}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
         >
           <Menu size={22} color="#1e293b" />
         </button>
-        <span style={{ fontWeight: 700, fontSize: '1rem', color: '#1e293b' }}>ContentSplit</span>
+        <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1e293b', letterSpacing: '-0.01em' }}>ContentSplit</span>
       </header>
 
       {/* ── MOBILE DRAWER OVERLAY ── */}
@@ -481,8 +485,11 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           onClick={() => setMobileOpen(false)}
           style={{
             position: 'fixed', inset: 0, zIndex: 300,
-            backgroundColor: 'rgba(0,0,0,0.4)',
-            backdropFilter: 'blur(2px)',
+            backgroundColor: 'rgba(0,0,0,0.3)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            opacity: 1,
+            transition: 'opacity 0.3s ease',
           }}
         />
       )}
@@ -491,12 +498,14 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       <div style={{
         position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 400,
         width: 280,
-        backgroundColor: 'rgba(255,255,255,0.95)',
+        backgroundColor: 'rgba(255,255,255,0.98)',
         backdropFilter: 'blur(24px)',
-        borderRight: '1px solid rgba(0,0,0,0.05)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderRight: '1px solid rgba(0,0,0,0.06)',
         transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
-        transition: 'transform 0.25s ease',
+        transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         display: 'flex', flexDirection: 'column',
+        boxShadow: mobileOpen ? '4px 0 24px rgba(0,0,0,0.08)' : 'none',
       }} className="mobile-drawer">
         <SidebarContentComponent
           collapsed={collapsed}
@@ -576,7 +585,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         @media (max-width: 768px) {
           .desktop-sidebar { display: none !important; }
           .mobile-header { display: flex !important; }
-          .claude-layout { padding-top: 52px; }
+          .claude-layout { padding-top: 56px; }
           .mobile-drawer { display: flex !important; }
           main[class*="claude-main"] { margin-left: 0 !important; }
         }
@@ -584,6 +593,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         /* Very small phones */
         @media (max-width: 380px) {
           .mobile-drawer { width: 260px; }
+          .mobile-header { height: 52px; }
         }
 
         * { scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.2) transparent; }

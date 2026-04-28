@@ -219,10 +219,11 @@ const ContentCreationPage: React.FC = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-
           gap: 'var(--sys-spacing-2xl)',
-          padding: '24px var(--sys-spacing-xl)',
-          width: '100%', overflowY: 'auto',
+          padding: '24px 16px',
+          width: '100%',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
         }}>
           <div style={{ textAlign: 'center', width: '100%', padding: 0 }}>
             <div style={{
@@ -257,8 +258,8 @@ const ContentCreationPage: React.FC = () => {
           {/* Quick-start suggestions */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '16px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '12px',
             width: '100%',
             maxWidth: 680,
           }} className="quick-suggestions">
@@ -271,25 +272,27 @@ const ContentCreationPage: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '16px',
-                  padding: '20px 24px',
+                  padding: '16px 20px',
                   color: 'var(--sys-color-neutral-20)',
                   fontSize: '0.95rem',
                   fontWeight: 500,
                   textAlign: 'left',
                   cursor: 'pointer',
                   lineHeight: 1.4,
-                  border: 'none'
+                  border: 'none',
+                  minHeight: '60px',
+                  width: '100%',
                 }}
               >
                 <div style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  width: 36, height: 36, borderRadius: 10,
+                  width: 40, height: 40, borderRadius: 10,
                   backgroundColor: 'rgba(99, 102, 241, 0.1)',
                   color: '#6366f1', flexShrink: 0
                 }}>
                   {s.icon}
                 </div>
-                {s.text}
+                <span style={{ flex: 1 }}>{s.text}</span>
               </button>
             ))}
           </div>
@@ -298,12 +301,12 @@ const ContentCreationPage: React.FC = () => {
 
 {/* ── ZONE 2: AI Chat / Processing Stream ── */}
       {hasMessages && (
-        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingBottom: '24px' }}>
-          <div style={{ flex: 1, overflowY: 'auto', paddingTop: 32 }}>
-            <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingBottom: '16px' }}>
+          <div style={{ flex: 1, overflowY: 'auto', paddingTop: 24, WebkitOverflowScrolling: 'touch' }}>
+            <div style={{ maxWidth: 800, margin: '0 auto', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
             {messages.map(msg => (
-              <div key={msg.id} style={{ display: 'flex', gap: '16px', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row' }}>
+              <div key={msg.id} style={{ display: 'flex', gap: '12px', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row', alignItems: 'flex-start' }}>
 
                 {/* Avatar */}
                 <div style={{
@@ -312,13 +315,14 @@ const ContentCreationPage: React.FC = () => {
                   background: msg.role === 'user' ? 'var(--sys-color-primary)' : 'rgba(255,255,255,0.6)',
                   color: msg.role === 'user' ? 'white' : '#6366f1',
                   boxShadow: msg.role === 'user' ? '0 4px 12px rgba(99, 102, 241, 0.3)' : '0 4px 12px rgba(0,0,0,0.05)',
-                  border: msg.role === 'assistant' ? '1px solid rgba(99, 102, 241, 0.1)' : 'none'
+                  border: msg.role === 'assistant' ? '1px solid rgba(99, 102, 241, 0.1)' : 'none',
+                  marginTop: '4px',
                 }}>
                   {msg.role === 'user' ? <User size={20} /> : <Sparkles size={20} />}
                 </div>
 
                 {/* Bubble */}
-                <div style={{ flex: 1, maxWidth: '90%' }}>
+                <div style={{ flex: 1, maxWidth: msg.role === 'user' ? '85%' : '90%', minWidth: 0 }}>
 
                   {/* ── Input Area message (user bubble) ── */}
                   {msg.type === 'text' && (
@@ -335,12 +339,13 @@ const ContentCreationPage: React.FC = () => {
                   {/* ── Preferences (Platform + Tone selectors) ── */}
                   {msg.type === 'preferences' && (
                     <div className="glass-card ai-msg-bubble" style={{
-                      padding: '28px',
+                      padding: '20px 16px',
+                      width: '100%',
                     }}>
-                      <p style={{ marginBottom: '24px', color: '#334155', fontSize: '1.05rem', fontWeight: 500, lineHeight: 1.5 }}>
+                      <p style={{ marginBottom: '20px', color: '#334155', fontSize: '1rem', fontWeight: 500, lineHeight: 1.5, padding: '0 4px' }}>
                         Great! I've received your content. Now let's configure the output — choose your target platforms and tone.
                       </p>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                         <PlatformSelector
                           platforms={mappedPlatforms}
                           selected={selectedPlatforms}
@@ -356,12 +361,13 @@ const ContentCreationPage: React.FC = () => {
                           title="2. Voice & Tone" subtitle="How should it sound?" required
                         />
                         <div style={{
-                          paddingTop: '24px',
+                          paddingTop: '20px',
                           borderTop: '1px solid rgba(0,0,0,0.05)',
                           marginTop: '8px',
                           display: 'flex',
-                          alignItems: 'center',
-                          gap: '16px',
+                          flexDirection: 'column',
+                          gap: '12px',
+                          alignItems: 'stretch',
                         }}>
                           <button
                             className="btn-gradient"
@@ -369,20 +375,22 @@ const ContentCreationPage: React.FC = () => {
                             disabled={selectedPlatforms.length === 0 || generateMutation.isPending}
                             style={{
                               padding: '14px 32px',
-                              minWidth: 200,
+                              minHeight: 48,
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
                               gap: 10,
                               color: 'white',
                               borderRadius: '12px',
+                              width: '100%',
+                              fontSize: '0.95rem',
                             }}
                           >
                             <Sparkles size={18} className={generateMutation.isPending ? 'spin' : ''} />
                             {generateMutation.isPending ? 'Generating...' : 'Generate Content'}
                           </button>
                           {selectedPlatforms.length === 0 && (
-                            <span style={{ fontSize: '0.85rem', color: 'var(--sys-color-tertiary)', fontWeight: 500 }}>
+                            <span style={{ fontSize: '0.85rem', color: 'var(--sys-color-tertiary)', fontWeight: 500, textAlign: 'center' }}>
                               Select at least one platform
                             </span>
                           )}
@@ -411,7 +419,7 @@ const ContentCreationPage: React.FC = () => {
 
                   {/* ── ZONE 3: Output Tabs (GeneratedContent + Regeneration) ── */}
                   {msg.type === 'result' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
                       <div className="glass-card" style={{ padding: '0', overflow: 'hidden' }}>
                         <GeneratedContent
                           platforms={platformOptions
@@ -428,16 +436,16 @@ const ContentCreationPage: React.FC = () => {
                           onRegenerate={handleRegenerate}
                         />
                       </div>
-                      <div className="glass-card" style={{ padding: '24px' }}>
+                      <div className="glass-card" style={{ padding: '16px' }}>
                         <RegenerationControls
                           onRegenerate={handleRegenerate}
                           isLoading={regenerateMutation.isPending || generateMutation.isPending}
                           regenerateDisabled={!currentConversionId || !activeTab}
                           remainingUses={15}
                           options={[
-                            { id: 'clarity', label: 'Improve Clarity', icon: <Target width={20} height={20} />, selected: selectedRegenerationOption === 'clarity', disabled: false },
-                            { id: 'shorter', label: 'Make Shorter', icon: <Ruler width={20} height={20} />, selected: selectedRegenerationOption === 'shorter', disabled: false },
-                            { id: 'emotion', label: 'Add Emotion', icon: <Palette width={20} height={20} />, selected: selectedRegenerationOption === 'emotion', disabled: false },
+                            { id: 'clarity', label: 'Improve Clarity', icon: <Target width={18} height={18} />, selected: selectedRegenerationOption === 'clarity', disabled: false },
+                            { id: 'shorter', label: 'Make Shorter', icon: <Ruler width={18} height={18} />, selected: selectedRegenerationOption === 'shorter', disabled: false },
+                            { id: 'emotion', label: 'Add Emotion', icon: <Palette width={18} height={18} />, selected: selectedRegenerationOption === 'emotion', disabled: false },
                           ]}
                           selectedOptionId={selectedRegenerationOption}
                           onOptionSelect={setSelectedRegenerationOption}
@@ -458,7 +466,7 @@ const ContentCreationPage: React.FC = () => {
       {/* ── Input Area (persistently docked) ── */}
       <div className="chat-input-area-container" style={{
         flexShrink: 0, zIndex: 10,
-        padding: '24px 24px 32px',
+        padding: '16px 16px 24px',
         background: 'transparent',
         pointerEvents: 'none',
       }}>
@@ -469,7 +477,7 @@ const ContentCreationPage: React.FC = () => {
             onSubmit={handleInputSubmit}
             placeholder="Paste your blog post or article here to convert…"
           />
-          <p className="chat-input-helper-text" style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.8rem', color: 'var(--sys-color-tertiary)', fontWeight: 500 }}>
+          <p className="chat-input-helper-text" style={{ textAlign: 'center', marginTop: '8px', fontSize: '0.75rem', color: 'var(--sys-color-tertiary)', fontWeight: 500, display: 'block' }}>
             Press Enter to send · Shift+Enter for new line
           </p>
         </div>

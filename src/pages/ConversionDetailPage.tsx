@@ -142,7 +142,7 @@ const ConversionDetailPage: React.FC = () => {
         <GeneratedContent
           platforms={platforms}
           activeTab={activePlatform}
-          onTabChange={setActivePlatform}
+          onTabChange={setActivePlatform as (platformId: string) => void}
           content={content}
         />
       )}
