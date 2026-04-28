@@ -39,11 +39,11 @@ const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = (
 )
 
 // Labelled form field
-const Field: React.FC<{ label: string; required?: boolean; children: React.ReactNode; hint?: string }> = ({
-  label, required, children, hint
+const Field: React.FC<{ label: string; required?: boolean; children: React.ReactNode; hint?: string; htmlFor?: string }> = ({
+  label, required, children, hint, htmlFor
 }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-    <label style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--sys-color-neutral-20)' }}>
+    <label htmlFor={htmlFor} style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--sys-color-neutral-20)' }}>
       {label}{required && <span style={{ color: 'var(--sys-color-error-50)', marginLeft: 2 }}>*</span>}
     </label>
     {children}

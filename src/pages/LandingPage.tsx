@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '@contexts/AuthContext'
 import {
-  ArrowRight, Mail, FileText, List,
+  ArrowRight, Mail, FileText,
   Menu, X, Copy, Zap, ChevronDown, Star, Check
 } from 'lucide-react'
 import { Logo, ProductPreview } from '@components/application'
@@ -52,21 +52,21 @@ const landingIcons = {
   ),
 }
 
-const platformTabs = [
+/* const platformTabs = [
   { id: 'twitter', label: 'Twitter/X', icon: landingIcons.Twitter, active: true },
   { id: 'linkedin', label: 'LinkedIn', icon: landingIcons.Linkedin },
   { id: 'instagram', label: 'Instagram', icon: landingIcons.Instagram },
   { id: 'newsletter', label: 'Newsletter', icon: Mail },
   { id: 'summary', label: 'Summary', icon: List },
-]
+] */
 
-const mockTweets = [
+/* const mockTweets = [
   '🌟 Just discovered the secret to 10x content creation',
   'Most creators spend hours repurposing one piece of content. Here is the better way:',
   '1. Write once 2. Auto-distribute 3. Never repeat yourself',
   'Your time is worth more than editing AI outputs.',
   'The future of content is one-click everywhere. 🚀',
-]
+] */
 
 const formats = [
   { id: 'twitter', icon: landingIcons.Twitter, label: 'Twitter/X', color: '#1DA1F2', format: 'Thread', description: 'Engaging thread with hooks and CTAs', stats: '280 chars · 5-10 tweets' },
@@ -100,10 +100,179 @@ const faqs = [
 
 const socialLogos = ['Indie Hackers', 'Product Hunt', 'Growth.design', 'Beehiiv', 'Substack']
 
+const ComparisonVisual = () => {
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    let timeouts: ReturnType<typeof setTimeout>[] = []
+    
+    const startSequence = () => {
+      setStep(0)
+      timeouts.push(setTimeout(() => setStep(1), 800))
+      timeouts.push(setTimeout(() => setStep(2), 2000))
+      timeouts.push(setTimeout(() => startSequence(), 5000))
+    }
+    
+    startSequence()
+    
+    return () => timeouts.forEach(clearTimeout)
+  }, [])
+
+  return (
+    <>
+      <style>{`
+        @keyframes featureSlideUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: step >= 1 ? '#1DA1F215' : 'var(--sys-color-neutral-95)', borderRadius: 8, transition: 'all 0.4s ease' }}>
+          <landingIcons.Twitter size={16} color={step >= 1 ? "#1DA1F2" : "var(--sys-color-neutral-50)"} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: step >= 1 ? '#1DA1F2' : "var(--sys-color-neutral-50)", transition: 'color 0.4s ease' }}>Twitter</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: step >= 2 ? '#1877F215' : 'var(--sys-color-neutral-95)', borderRadius: 8, transition: 'all 0.4s ease' }}>
+          <landingIcons.Facebook size={16} color={step >= 2 ? "#1877F2" : "var(--sys-color-neutral-50)"} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: step >= 2 ? '#1877F2' : "var(--sys-color-neutral-50)", transition: 'color 0.4s ease' }}>Facebook</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'var(--sys-color-neutral-95)', borderRadius: 8, opacity: 0.6 }}>
+          <landingIcons.Linkedin size={16} color="var(--sys-color-neutral-50)" />
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--sys-color-neutral-50)' }}>LinkedIn</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'var(--sys-color-neutral-95)', borderRadius: 8, opacity: 0.6 }}>
+          <landingIcons.Instagram size={16} color="var(--sys-color-neutral-50)" />
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--sys-color-neutral-50)' }}>Instagram</span>
+        </div>
+      </div>
+      
+      {step >= 1 && (
+        <div style={{ padding: 16, background: 'var(--sys-color-neutral-95)', borderRadius: 12, border: '1px solid var(--sys-color-neutral-90)', marginBottom: 12, animation: 'featureSlideUp 0.4s ease-out forwards' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1DA1F2' }} />
+            <span style={{ fontSize: 11, color: 'var(--sys-color-neutral-50)', letterSpacing: '0.05em' }}>TWITTER</span>
+          </div>
+          <p style={{ fontSize: 13, color: 'var(--sys-color-neutral-10)', lineHeight: 1.5 }}>🚀 Just discovered the secret to 10x content creation. Here is the framework that changed everything...</p>
+        </div>
+      )}
+      
+      {step >= 2 && (
+        <div style={{ padding: 16, background: 'var(--sys-color-neutral-95)', borderRadius: 12, border: '1px solid var(--sys-color-neutral-90)', animation: 'featureSlideUp 0.4s ease-out forwards' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1877F2' }} />
+            <span style={{ fontSize: 11, color: 'var(--sys-color-neutral-50)', letterSpacing: '0.05em' }}>FACEBOOK</span>
+          </div>
+          <p style={{ fontSize: 13, color: 'var(--sys-color-neutral-10)', lineHeight: 1.5 }}>I am excited to share a framework that has transformed my content creation workflow. After months of experimentation...</p>
+        </div>
+      )}
+    </>
+  )
+}
+
+const QueueVisual = () => {
+  const [activeQueue, setActiveQueue] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveQueue(prev => (prev + 1) % 4)
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const items = [
+    { title: 'SEO framework blog post...', icon: '#0B87C1' },
+    { title: 'Announcing new feature...', icon: '#E1306C' },
+    { title: 'Weekly newsletter #42...', icon: '#22C35D' }
+  ]
+
+  return (
+    <>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--sys-color-neutral-30)' }}>Content Queue</span>
+        <span style={{ fontSize: 11, fontWeight: 600, color: '#0B87C1', padding: '4px 10px', background: '#0B87C115', borderRadius: 6 }}>
+          {activeQueue < 3 ? `${3 - activeQueue} processing` : 'All done!'}
+        </span>
+      </div>
+      {items.map((item, n) => {
+        const isDone = activeQueue > n
+        const isActive = activeQueue === n
+        const isWaiting = activeQueue < n
+        return (
+          <div key={n} style={{ padding: 14, background: isActive ? '#0B87C115' : 'var(--sys-color-neutral-95)', borderRadius: 12, border: `1px solid ${isActive ? '#0B87C130' : 'var(--sys-color-neutral-90)'}`, display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10, transition: 'all 0.4s ease', opacity: isDone ? 0.5 : 1 }}>
+            <div style={{ width: 10, height: 10, borderRadius: '50%', background: isWaiting ? 'var(--sys-color-neutral-40)' : (isDone ? '#22C35D' : item.icon), transition: 'all 0.4s ease' }} />
+            <span style={{ fontSize: 13, color: 'var(--sys-color-neutral-10)', flex: 1, textDecoration: isDone ? 'line-through' : 'none' }}>{item.title}</span>
+            {isActive && <Zap size={14} color={item.icon} />}
+            {isDone && <Check size={14} color="#22C35D" />}
+          </div>
+        )
+      })}
+    </>
+  )
+}
+
+const EditorVisual = () => {
+  const [text, setText] = useState("🚀 Just discovered the secret to 10x your content creation.")
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    const demoAddText = " Here is the framework that changed everything:"
+    let typingInterval: ReturnType<typeof setInterval>
+    let timeouts: ReturnType<typeof setTimeout>[] = []
+    
+    const startSequence = () => {
+      setText("🚀 Just discovered the secret to 10x your content creation.")
+      setSaved(true)
+      
+      timeouts.push(setTimeout(() => {
+        setSaved(false)
+        let i = 0
+        typingInterval = setInterval(() => {
+          if (i < demoAddText.length) {
+            setText(prev => prev + demoAddText[i])
+            i++
+          } else {
+            clearInterval(typingInterval)
+            timeouts.push(setTimeout(() => setSaved(true), 800))
+            timeouts.push(setTimeout(() => startSequence(), 4000))
+          }
+        }, 50)
+      }, 1500))
+    }
+    
+    startSequence()
+    
+    return () => {
+      clearInterval(typingInterval)
+      timeouts.forEach(clearTimeout)
+    }
+  }, [])
+
+  return (
+    <>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--sys-color-neutral-50)' }}>Tweet #1</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: saved ? '#22C35D' : 'var(--sys-color-neutral-40)', transition: 'color 0.3s ease' }}>
+          {saved ? <Check size={12} /> : <div style={{width: 12, height: 12, borderRadius: '50%', border: '2px solid var(--sys-color-neutral-40)', borderTopColor: 'transparent', animation: 'spin 1s linear infinite'}} />} 
+          {saved ? 'Auto-saved' : 'Saving...'}
+        </span>
+      </div>
+      <div style={{ padding: 16, background: 'var(--sys-color-neutral-95)', borderRadius: 14, border: `2px solid ${saved ? '#22C35D' : 'var(--sys-color-neutral-80)'}`, transition: 'border-color 0.3s ease' }}>
+        <textarea value={text} readOnly style={{ width: '100%', background: 'transparent', border: 'none', fontSize: 14, color: 'var(--sys-color-neutral-10)', lineHeight: 1.6, resize: 'none', outline: 'none', minHeight: 100, fontFamily: '"Inter", sans-serif' }} />
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, fontSize: 12, color: 'var(--sys-color-neutral-50)' }}>
+        <span style={{ width: 6, height: 6, borderRadius: '50%', background: saved ? '#22C35D' : 'var(--sys-color-neutral-40)', transition: 'background-color 0.3s ease' }} />
+        Changes are saved automatically
+      </div>
+      <style>{`
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+      `}</style>
+    </>
+  )
+}
+
 const LandingPage: React.FC = () => {
   const { user, isLoading } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState('twitter')
+
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [demoInput, setDemoInput] = useState('')
   const [demoOutput, setDemoOutput] = useState<string[]>([])
@@ -782,7 +951,8 @@ useEffect(() => {
 
               {/* Visual side */}
               <div className="lp-card" style={{ padding: 28, minHeight: 300, order: i % 2 === 0 ? 2 : 1, background: 'var(--sys-color-neutral-100)' }}>
-                {f.visual === 'comparison' && (
+                {f.visual === 'comparison' && <ComparisonVisual />}
+                {false && (
                   <>
                     <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: '#1DA1F215', borderRadius: 8 }}>
@@ -818,7 +988,8 @@ useEffect(() => {
                     </div>
                   </>
                 )}
-                {f.visual === 'queue' && (
+                {f.visual === 'queue' && <QueueVisual />}
+                {false && (
                   <>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                       <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--sys-color-neutral-30)' }}>Content Queue</span>
@@ -833,7 +1004,8 @@ useEffect(() => {
                     ))}
                   </>
                 )}
-                {f.visual === 'editor' && (
+                {f.visual === 'editor' && <EditorVisual />}
+                {false && (
                   <>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                       <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--sys-color-neutral-50)' }}>Tweet #1</span>

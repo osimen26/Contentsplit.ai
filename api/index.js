@@ -21,6 +21,6 @@ app.use(express.json());
 import { default as serverApp } from './server/index.js';
 
 // Copy middleware/routes from server
-app.use('/api', serverApp);
+app.use('/', serverApp);
 
 export default app;
