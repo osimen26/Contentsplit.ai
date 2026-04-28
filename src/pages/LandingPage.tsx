@@ -98,12 +98,6 @@ const faqs = [
   { question: 'What happens to my content after I paste it?', answer: 'Your content is used only to generate the outputs in your session. We do not train on user data, and nothing is stored after your session ends.' },
 ]
 
-const plans = [
-  { name: 'Free', price: '$0', period: '/month', subtitle: 'For creators just getting started', features: ['5 repurposes per day', 'Twitter, Facebook, LinkedIn, Instagram', 'Copy-to-clipboard export', 'Basic editor'], cta: 'Get started free', popular: false },
-  { name: 'Pro', price: '$12', period: '/month', subtitle: 'For creators ready to scale', features: ['Unlimited repurposes', 'All 6 output formats', 'Batch mode (up to 10 posts)', 'Inline editor + version history', 'Priority AI generation', 'Early access to new formats'], cta: 'Start Pro free', popular: true },
-  { name: 'Agency', price: '$49', period: '/month', subtitle: 'For teams and content agencies', features: ['Unlimited team members', 'Custom brand templates', 'API access', 'Dedicated support', 'Advanced analytics', 'White-label reports'], cta: 'Contact sales', popular: false },
-]
-
 const socialLogos = ['Indie Hackers', 'Product Hunt', 'Growth.design', 'Beehiiv', 'Substack']
 
 const LandingPage: React.FC = () => {
@@ -498,7 +492,6 @@ useEffect(() => {
           <a href="#how-it-works" style={{ color: tokens.colorTextSecondary, textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>How it works</a>
           <a href="#testimonials" style={{ color: tokens.colorTextSecondary, textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>Testimonials</a>
           <a href="#faq" style={{ color: tokens.colorTextSecondary, textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>FAQ</a>
-          <a href="#pricing" style={{ color: tokens.colorTextSecondary, textDecoration: 'none', fontSize: 14, fontWeight: 500, display: import.meta.env.PROD ? 'none' : 'block' }}>Pricing</a>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }} className="lp-nav-right">
           <Link to="/login" style={{ color: tokens.colorTextSecondary, textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>Log in</Link>
@@ -928,35 +921,7 @@ useEffect(() => {
         </div>
       </section>
 
-      <section id="pricing" className="lp-section" style={{ background: tokens.colorSurface, display: import.meta.env.PROD ? 'none' : 'block' }}>
-        <div className="lp-container" style={{ maxWidth: 1000 }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(1.6rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 12 }}>Simple, transparent pricing</h2>
-            <p style={{ fontSize: 16, color: tokens.colorTextSecondary, textAlign: 'center' }}>Start free, upgrade when you're ready.</p>
-          </div>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="lp-pricing-grid">
-            {plans.map((plan) => (
-              <div key={plan.name} className="lp-card" style={{ background: tokens.colorBg, padding: '32px 28px', borderRadius: 16, textAlign: 'center', position: 'relative', ...(plan.popular ? { border: `2px solid ${tokens.colorAccent}` } : { border: `1px solid ${tokens.colorBorder}` }) }}>
-                {plan.popular && <span style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', background: tokens.colorAccent, color: tokens.colorWhite, padding: '6px 16px', borderRadius: 20, fontSize: 11, fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Most popular</span>}
-                <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 600, fontSize: 20, color: tokens.colorTextMuted, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{plan.name}</h3>
-                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2, marginBottom: 8 }}>
-                  <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 48, color: tokens.colorTextPrimary, lineHeight: 1 }}>{plan.price}</span>
-                  <span style={{ fontSize: 16, color: tokens.colorTextMuted, marginTop: 8 }}>{plan.period}</span>
-                </div>
-                <p style={{ fontSize: 13, color: tokens.colorTextSecondary, marginBottom: 24, minHeight: 36 }}>{plan.subtitle}</p>
-                <ul style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 32, textAlign: 'left' }}>
-                  {plan.features.map((f, j) => (<li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, fontSize: 14, color: tokens.colorTextSecondary, lineHeight: 1.4 }}><Check size={16} color={tokens.colorAccent} style={{ flexShrink: 0, marginTop: 2 }} />{f}</li>))}
-                </ul>
-                <Link to="/register" style={{ width: '100%', padding: '14px 24px', borderRadius: 12, textDecoration: 'none', fontWeight: 600, textAlign: 'center', display: 'block', ...(plan.popular ? { background: tokens.colorAccent, color: tokens.colorWhite } : { background: tokens.colorSurface2, color: tokens.colorTextPrimary, border: `1px solid ${tokens.colorBorder}` }) }} className="lp-btn">{plan.cta}</Link>
-              </div>
-            ))}
-          </div>
-          <p style={{ textAlign: 'center', marginTop: 32, fontSize: 13, color: tokens.colorTextMuted }}>No contracts. Cancel anytime.</p>
-        </div>
-      </section>
-
-      <section id="faq" className="lp-section" style={{ background: tokens.colorSurface }}>
+      <section id="testimonials" className="lp-section" style={{ background: 'var(--sys-color-neutral-99)' }}>
         <div className="lp-container" style={{ maxWidth: 680 }}>
           <h2 className="lp-headline" style={{ textAlign: 'center', marginBottom: 48 }}>Questions worth answering.</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
