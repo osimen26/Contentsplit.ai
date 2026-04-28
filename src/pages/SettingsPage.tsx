@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import { useCurrentUser, useUpdateProfile } from '@/services/query-hooks'
 import { useTheme } from '@/contexts/ThemeContext'
-import { User, Palette, Wallet, Lock, Trash2, Eye, EyeOff } from 'lucide-react'
+import { User, Palette, Lock, Trash2, Eye, EyeOff } from 'lucide-react'
 
-type SettingsSection = 'account' | 'password' | 'appearance' | 'billing' | 'delete'
+type SettingsSection = 'account' | 'password' | 'appearance' | 'delete'
 
 const NAV_ITEMS: { id: SettingsSection; label: string; icon: React.ReactNode }[] = [
   { id: 'account', label: 'Account', icon: <User size={18} /> },
   { id: 'password', label: 'Password', icon: <Lock size={18} /> },
   { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
-  { id: 'billing', label: 'Billing', icon: <Wallet size={18} /> },
   { id: 'delete', label: 'Delete Account', icon: <Trash2 size={18} /> },
 ]
 
@@ -143,7 +142,7 @@ const AccountSection: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
 
-      {/* ── Profile Avatar Card ── */}
+      {/* â”€â”€ Profile Avatar Card â”€â”€ */}
       <section>
         <SectionDivider title="Profile" subtitle="Manage your personal information and how ContentSplit identifies you." />
 
@@ -174,7 +173,7 @@ const AccountSection: React.FC = () => {
               color: 'white', border: '2px solid var(--sys-color-neutral-99)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', fontSize: '11px',
-            }} aria-label="Change avatar">✎</button>
+            }} aria-label="Change avatar">âœŽ</button>
           </div>
 
           {/* Name + meta */}
@@ -471,7 +470,7 @@ onFocus={e => (e.target.style.borderColor = 'var(--sys-color-primary-40)', e.tar
             </>
           ) : success ? (
             <>
-              <span>✓</span>
+              <span>âœ“</span>
               Password updated successfully
             </>
           ) : (
@@ -622,7 +621,6 @@ const SettingsPage: React.FC = () => {
         {active === 'account' && <AccountSection />}
         {active === 'password' && <PasswordSection />}
         {active === 'appearance' && <AppearanceSection />}
-        {active === 'billing' && <BillingSection />}
         {active === 'delete' && <DeleteSection />}
       </main>
 
@@ -699,118 +697,5 @@ const AppearanceSection: React.FC = () => {
   )
 }
 
-// Billing section
-const BillingSection: React.FC = () => {
-  const { data: user } = useCurrentUser()
-  const tier = user?.tier || 'free'
-  const tiers = [
-    { id: 'free', name: 'Free', price: 0, features: ['10 transformations/month', 'Basic tones'] },
-    { id: 'pro', name: 'Pro', price: 5000, features: ['100 transformations/month', 'All tones', 'Priority support'] },
-    { id: 'agency', name: 'Agency', price: 15000, features: ['Unlimited transformations', 'All tones', 'Team access'] },
-  ]
-  const currentPlan = tiers.find(t => t.id === tier) || tiers[0]
-  
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <SectionDivider title="Billing" subtitle="Manage your subscription and credits." />
-      
-      {/* Current Plan Card */}
-      <section style={{
-        padding: 16,
-        borderRadius: 12,
-        border: '1px solid var(--sys-color-border-tertiary)',
-        backgroundColor: 'var(--sys-color-neutral-98)',
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-          <div>
-            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Current Plan</p>
-            <h3 style={{ margin: '4px 0 0', fontSize: '1.2rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>{currentPlan.name}</h3>
-          </div>
-          <span style={{
-            padding: '4px 10px', borderRadius: 20,
-            fontSize: '0.7rem', fontWeight: 600,
-            backgroundColor: tier === 'free' ? 'var(--sys-color-neutral-90)' : 'var(--sys-color-primary-90)',
-            color: tier === 'free' ? 'var(--sys-color-neutral-40)' : 'var(--sys-color-primary-30)',
-          }}>
-            {tier === 'free' ? 'Free' : 'Active'}
-          </span>
-        </div>
-        
-        {tier === 'free' && (
-          <div style={{ paddingTop: 12, borderTop: '1px solid var(--sys-color-border-tertiary)' }}>
-            <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--sys-color-neutral-50)', marginBottom: 10 }}>Your usage this month</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <div style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: 'var(--sys-color-neutral-80)', overflow: 'hidden' }}>
-                <div style={{ width: '10%', height: '100%', backgroundColor: 'var(--sys-color-primary-40)', borderRadius: 3 }} />
-              </div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)', whiteSpace: 'nowrap' }}>1/10</span>
-            </div>
-            <button
-              style={{
-                width: '100%', padding: '10px 0', borderRadius: 8,
-                backgroundColor: 'var(--sys-color-primary-40)',
-                color: 'white', border: 'none', fontWeight: 600, fontSize: '0.85rem',
-                cursor: 'pointer',
-              }}
-            >
-              Upgrade to Pro
-            </button>
-          </div>
-        )}
-      </section>
-      
-      {/* Usage Stats */}
-      <section>
-        <SectionDivider title="Usage" />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-          <div style={{
-            padding: 14, borderRadius: 10,
-            border: '1px solid var(--sys-color-border-tertiary)',
-            backgroundColor: 'var(--sys-color-neutral-98)',
-          }}>
-            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)' }}>Transformations</p>
-            <p style={{ margin: '6px 0 0', fontSize: '1.4rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>1</p>
-            <p style={{ margin: '2px 0 0', fontSize: '0.7rem', color: 'var(--sys-color-neutral-40)' }}>of 10 this month</p>
-          </div>
-          <div style={{
-            padding: 14, borderRadius: 10,
-            border: '1px solid var(--sys-color-border-tertiary)',
-            backgroundColor: 'var(--sys-color-neutral-98)',
-          }}>
-            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--sys-color-neutral-50)' }}>Saved</p>
-            <p style={{ margin: '6px 0 0', fontSize: '1.4rem', fontWeight: 700, color: 'var(--sys-color-neutral-10)' }}>0</p>
-            <p style={{ margin: '2px 0 0', fontSize: '0.7rem', color: 'var(--sys-color-neutral-40)' }}>items saved</p>
-          </div>
-        </div>
-      </section>
-      
-      {/* Payment Method */}
-      {tier !== 'free' && (
-        <section>
-          <SectionDivider title="Payment method" />
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 12,
-            padding: 12, borderRadius: 8,
-            border: '1px solid var(--sys-color-border-tertiary)',
-            backgroundColor: 'var(--sys-color-neutral-98)',
-          }}>
-            <Wallet size={16} color="var(--sys-color-neutral-30)" />
-            <div style={{ flex: 1 }}>
-              <p style={{ margin: 0, fontWeight: 500, color: 'var(--sys-color-neutral-10)', fontSize: '0.85rem' }}>Flutterwave / Debit Card</p>
-            </div>
-            <button style={{
-              padding: '4px 10px', borderRadius: 4,
-              backgroundColor: 'transparent', color: 'var(--sys-color-primary-50)',
-              border: '1px solid var(--sys-color-primary-40)', fontSize: '0.75rem', fontWeight: 500,
-              cursor: 'pointer',
-            }}>
-              Update
-            </button>
-          </div>
-        </section>
-      )}
-    </div>
-  )
-}
 
 export default SettingsPage
