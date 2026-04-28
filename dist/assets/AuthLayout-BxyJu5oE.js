@@ -1,2 +1,0 @@
-import{n as e,t}from"./jsx-runtime-DWSWI4JT.js";import{i as n}from"./chunk-OE4NN4TA-CIduvQjy.js";/* empty css             */e();var r=t(),i=()=>(0,r.jsx)(`div`,{className:`login-container`,children:(0,r.jsx)(n,{})});export{i as default};
-//# sourceMappingURL=AuthLayout-BxyJu5oE.js.map
