@@ -353,11 +353,26 @@ function buildPrompt(inputText, platform, tone, regenerationOption = null) {
     summary: `Create a TL;DR summary with 3-5 bullet points. Keep each point brief and actionable. Tone: ${toneGuide}.`,
   }
 
+  let regenerationInstruction = ''
+  if (regenerationOption) {
+    switch (regenerationOption) {
+      case 'clarity':
+        regenerationInstruction = '\n\nIMPORTANT: Rewrite this content to IMPROVE CLARITY. Use simpler language, clearer structure, and remove any ambiguity while keeping the same core message.'
+        break
+      case 'shorter':
+        regenerationInstruction = '\n\nIMPORTANT: Rewrite this content to be SHORTER. Condense the message, remove fluff, and keep only the most essential points while maintaining impact.'
+        break
+      case 'emotion':
+        regenerationInstruction = '\n\nIMPORTANT: Rewrite this content to ADD MORE EMOTION. Use more expressive language, power words, emotional hooks, and compelling storytelling to make it more engaging.'
+        break
+    }
+  }
+
   return `You are a professional content strategist specialising in social media and digital content.
 
 Convert the following blog content into platform-optimised content for ${platform.toUpperCase()}.
 
-${platformGuides[platform] || `Adapt this content appropriately for ${platform}. Tone: ${toneGuide}.`}
+${platformGuides[platform] || `Adapt this content appropriately for ${platform}. Tone: ${toneGuide}.`}${regenerationInstruction}
 
 IMPORTANT: Output ONLY the final content with no preamble, explanation, or meta-commentary.
 
@@ -612,9 +627,8 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
     const conversionId = crypto.randomUUID()
     const outputs = results.map(r => ({ ...r, conversion_id: conversionId }))
 
-    // Save conversion to database if user is authenticated
-    if (userId !== 'anonymous') {
-      if (supabase) {
+    // Save conversion to Supabase if user is authenticated
+    if (userId !== 'anonymous' && supabase) {
         try {
           await supabase.from('conversions').insert({
             id: conversionId,
@@ -657,7 +671,6 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
         }
         console.log('✅ Saved conversion to mock database')
       }
-    }
 
     res.json({
       conversion: {
@@ -820,7 +833,7 @@ app.get('/api/conversions/:id/outputs', optionalAuth, async (req, res) => {
 // Regeneration
 app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
   try {
-    const { conversion_id, platform } = req.body
+    const { conversion_id, platform, option } = req.body
     
     if (!conversion_id || !platform) {
       return res.status(400).json({ error: 'conversion_id and platform are required' })
