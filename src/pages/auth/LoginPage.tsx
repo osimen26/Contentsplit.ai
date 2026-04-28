@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useLogin } from '@/services/query-hooks'
+import { useAuth } from '@/contexts/AuthContext'
 import GoogleAuth from '@/components/auth/GoogleAuth'
 import { Eye, EyeOff } from 'lucide-react'
 import { Logo } from '@components/application'
@@ -49,13 +49,15 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
-  const { mutateAsync: login, isPending } = useLogin()
+  const { login: authLogin } = useAuth()
+  const [isPending, setIsPending] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setIsPending(true)
     try {
-      await login({ email, password })
+      await authLogin(email, password)
       navigate('/dashboard')
     } catch (err: unknown) {
       console.error(err)
@@ -68,6 +70,8 @@ const LoginPage: React.FC = () => {
       } else {
         setError(serverMsg || 'Failed to login. Please try again.')
       }
+    } finally {
+      setIsPending(false)
     }
   }
 
