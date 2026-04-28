@@ -613,18 +613,6 @@ useEffect(() => {
         </div>
       </section>
 
-      <section style={{ background: tokens.colorSurface, padding: '24px 0' }}>
-        <div className="lp-container" style={{ maxWidth: 900 }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(1.6rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 16 }}>See the actual product in action.</h2>
-            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)', color: tokens.colorTextSecondary, textAlign: 'center', marginBottom: 48, maxWidth: 600, margin: '0 auto', lineHeight: 1.6 }}>This is the exact interface you'll use. Paste content, pick platforms, choose a tone — done.</p>
-          </div>
-          <div style={{ height: 640, borderRadius: tokens.radiusLg, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.08)' }}>
-            <ProductPreview />
-          </div>
-        </div>
-      </section>
-
       <section id="features" className="lp-section" style={{ background: 'var(--sys-color-neutral-99)' }}>
         <div className="lp-container" style={{ maxWidth: 1100 }}>
           {/* Section header */}
