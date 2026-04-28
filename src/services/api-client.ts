@@ -102,8 +102,10 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response?.status === 401) {
-          // Handle unauthorized
+        // Don't redirect on login/register endpoints - let them handle their own errors
+        if (error.response?.status === 401 && 
+            !error.config?.url?.includes('/auth/login') &&
+            !error.config?.url?.includes('/auth/register')) {
           localStorage.removeItem('auth_token')
           window.location.href = '/login'
         }
