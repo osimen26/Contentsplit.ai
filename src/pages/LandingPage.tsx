@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '@contexts/AuthContext'
-import { ArrowRight, Menu, X } from 'lucide-react'
-import { Logo, ProductPreview } from '@components/application'
+import {
+  ArrowRight, Mail, FileText, List,
+  Menu, X, Copy, Zap, ChevronDown, Star, Check
+} from 'lucide-react'
+import { Logo } from '@components/application'
 import '../styles/landing.css'
 
 const tokens = {
@@ -106,9 +109,16 @@ const socialLogos = ['Indie Hackers', 'Product Hunt', 'Growth.design', 'Beehiiv'
 const LandingPage: React.FC = () => {
   const { user, isLoading } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState('twitter')
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [demoInput, setDemoInput] = useState('')
+  const [demoOutput, setDemoOutput] = useState<string[]>([])
+  const [demoLoading, setDemoLoading] = useState(false)
+const [demoCopied, setDemoCopied] = useState(false)
 
-
+const ToneAwarenessIcon = ({ size, color }: { size?: number; color?: string }) => <svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill={color}><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+const BatchModeIcon = ({ size, color }: { size?: number; color?: string }) => <svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill={color}><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg>
+const EditBeforeExportIcon = ({ size, color }: { size?: number; color?: string }) => <svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill={color}><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
 
 const FEATURES = [
   { title: 'Tone Awareness', icon: ToneAwarenessIcon, iconColor: '#6B61E7', headline: 'It writes like you, not like a robot.', description: 'ContentSplit preserves your unique voice across every platform.', stats: '5 platform tones', visual: 'comparison' },
@@ -520,14 +530,113 @@ useEffect(() => {
         </div>
       )}
 
-      <section style={{ background: tokens.colorSurface, padding: '24px 0', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-        <div className="lp-container" style={{ maxWidth: 900 }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(1.6rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 16 }}>See the actual product in action.</h2>
-            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)', color: tokens.colorTextSecondary, textAlign: 'center', marginBottom: 48, maxWidth: 600, margin: '0 auto', lineHeight: 1.6 }}>This is the exact interface you'll use. Paste content, pick platforms, choose a tone — done.</p>
+<section id="main" className="lp-hero-padding" style={{ minHeight: '100vh', padding: '120px 24px 80px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
+        <div className="lp-hero-content" style={{ position: 'relative', zIndex: 1 }}>
+          <span className="lp-label" style={{ marginBottom: 20 }}>AI-Powered Content Repurposing</span>
+          <h1 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', color: tokens.colorTextPrimary, lineHeight: 1.1, maxWidth: 900, marginBottom: 24 }}>
+            Turn one blog post into a week&apos;s worth of <span className="lp-hero-gradient">content</span>
+          </h1>
+          <p style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', color: tokens.colorTextSecondary, maxWidth: 600, lineHeight: 1.6, margin: '0 auto 40px', textAlign: 'center' }}>
+            Paste your article. ContentSplit transforms it into optimized posts for Twitter, Facebook, LinkedIn, Instagram, and newsletters — all in seconds.
+          </p>
+          <div className="lp-hero-btns" style={{ display: 'flex', gap: 16, marginBottom: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Link to="/register" style={{ background: tokens.colorAccent, color: tokens.colorWhite, padding: '16px 32px', borderRadius: tokens.radiusPill, textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }} className="lp-btn">
+              <span className="lp-btn-ring" />
+              Start for free <ArrowRight size={18} />
+            </Link>
+            <a href="#how-it-works" style={{ border: `1px solid ${tokens.colorBorder}`, color: tokens.colorTextSecondary, padding: '16px 32px', borderRadius: tokens.radiusPill, textDecoration: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>See how it works</a>
           </div>
-          <div style={{ height: 640, borderRadius: tokens.radiusLg, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.08)' }}>
-            <ProductPreview />
+          <p style={{ fontSize: 12, color: tokens.colorTextMuted, marginBottom: 40 }}>No credit card required · 5 free repurposes per day</p>
+        
+          {/* Supported platforms - clean aligned row */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 56, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--sys-color-neutral-40)', letterSpacing: '0.05em', textTransform: 'uppercase', marginRight: 4 }}>We support</span>
+            {[
+              { icon: landingIcons.Twitter, color: '#1DA1F2', name: 'Twitter' },
+              { icon: landingIcons.Facebook, color: '#1877F2', name: 'Facebook' },
+              { icon: landingIcons.Linkedin, color: '#0A66C2', name: 'LinkedIn' },
+              { icon: landingIcons.Instagram, color: '#E1306C', name: 'Instagram' },
+              { icon: Mail, color: '#EA4335', name: 'Newsletter' },
+            ].map((social, i) => (
+              <div 
+                key={social.name}
+                className="lp-social-bounce"
+                style={{
+                  animationDelay: `${i * 150}ms`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '10px 16px',
+                  background: `${social.color}12`,
+                  borderRadius: 10,
+                  border: `1px solid ${social.color}30`,
+                }}
+              >
+                <social.icon size={20} color={social.color} />
+                <span style={{ fontSize: 13, fontWeight: 600, color: social.color }}>{social.name}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ maxWidth: 900, width: '100%' }}>
+            <div className="lp-card" style={{ background: tokens.colorSurface, overflow: 'hidden', boxShadow: `0 0 80px ${tokens.colorAccent}15` }}>
+              {/* Platform tabs */}
+              <div style={{ display: 'flex', borderBottom: `1px solid ${tokens.colorBorder}`, overflowX: 'auto', background: tokens.colorSurface2 }}>
+                {platformTabs.map(tab => (
+                  <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '16px 20px', background: 'transparent', border: 'none', borderBottom: activeTab === tab.id ? `3px solid ${tokens.colorAccent}` : '3px solid transparent', color: activeTab === tab.id ? tokens.colorAccent : tokens.colorTextMuted, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', cursor: 'pointer', transition: 'all 0.2s' }}>
+                    <tab.icon size={16} /> {tab.label}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Preview content */}
+              <div className="lp-mockup-content" style={{ padding: 32 }}>
+                {activeTab === 'twitter' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {mockTweets.map((t, i) => (
+                      <div key={i} style={{ padding: '16px 20px', background: tokens.colorSurface2, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusMd, fontSize: 14, color: tokens.colorTextPrimary, lineHeight: 1.5 }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: '50%', background: tokens.colorAccent, color: tokens.colorWhite, fontSize: 12, fontWeight: 700, marginRight: 12 }}>{i+1}</span>
+                        {t}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {activeTab === 'linkedin' && (
+                  <div style={{ padding: 24, background: tokens.colorSurface2, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusMd }}>
+                    <div style={{ fontSize: 14, color: tokens.colorTextPrimary, fontWeight: 600, marginBottom: 8 }}>Marcus T.</div>
+                    <div style={{ fontSize: 14, color: tokens.colorTextSecondary, lineHeight: 1.6 }}>{mockTweets[0]} {mockTweets.slice(1).join(' ')}</div>
+                  </div>
+                )}
+                {activeTab === 'instagram' && (
+                  <div style={{ padding: 24, background: tokens.colorSurface2, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusMd }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--sys-color-primary)' }} />
+                      <div style={{ fontSize: 14, fontWeight: 600, color: tokens.colorTextPrimary }}>Your Account</div>
+                    </div>
+                    <div style={{ fontSize: 14, color: tokens.colorTextSecondary, lineHeight: 1.6 }}>{mockTweets[0].replace('🌟 ', '')}</div>
+                    <div style={{ marginTop: 12, fontSize: 12, color: tokens.colorTextMuted }}>#content creation #AI #productivity</div>
+                  </div>
+                )}
+                {activeTab === 'newsletter' && (
+                  <div style={{ padding: 24, background: tokens.colorSurface2, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusMd }}>
+                    <div style={{ fontSize: 12, color: tokens.colorTextMuted, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Subject</div>
+                    <div style={{ fontSize: 16, fontWeight: 600, color: tokens.colorTextPrimary, marginBottom: 16 }}>The secret to 10x your content creation</div>
+                    <div style={{ fontSize: 14, color: tokens.colorTextSecondary, lineHeight: 1.6 }}>{mockTweets[0]} {mockTweets.slice(1).join(' ')}</div>
+                  </div>
+                )}
+                {activeTab === 'summary' && (
+                  <div style={{ padding: 24, background: tokens.colorSurface2, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusMd }}>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: tokens.colorTextPrimary, marginBottom: 16 }}>📝 Content Summary</div>
+                    <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                      <li style={{ fontSize: 14, color: tokens.colorTextSecondary, padding: '8px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>• Key Insight: One article → multiple platforms</li>
+                      <li style={{ fontSize: 14, color: tokens.colorTextSecondary, padding: '8px 0', borderBottom: `1px solid ${tokens.colorBorder}` }}>• Framework: Write once, adapt everywhere</li>
+                      <li style={{ fontSize: 14, color: tokens.colorTextSecondary, padding: '8px 0' }}>• Benefit: 10x your output</li>
+                    </ul>
+                  </div>
+                )}
+                {['newsletter', 'instagram', 'youtube'].includes(activeTab) && <div style={{ color: tokens.colorTextMuted, fontStyle: 'italic', padding: 24 }}>Preview for {activeTab}...</div>}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -609,6 +718,38 @@ useEffect(() => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="lp-section" style={{ background: tokens.colorSurface }}>
+        <div className="lp-container" style={{ maxWidth: 900 }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <h2 className="lp-section-h2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 'clamp(1.6rem, 5vw, 3rem)', color: tokens.colorTextPrimary, textAlign: 'center', marginBottom: 16 }}>See it work before you sign up.</h2>
+            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)', color: tokens.colorTextSecondary, textAlign: 'center', marginBottom: 48, maxWidth: 600, margin: '0 auto' }}>No account needed. Paste any blog excerpt and watch ContentSplit generate a Twitter thread in real time.</p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: tokens.colorBg, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusLg, overflow: 'hidden' }} className="lp-grid-2">
+            <div className="lp-demo-input-panel" style={{ padding: 24, borderRight: `1px solid ${tokens.colorBorder}` }}>
+              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: tokens.colorTextMuted }}>Blog excerpt</span>
+              <textarea value={demoInput} onChange={e => setDemoInput(e.target.value)} placeholder="Paste a paragraph from any blog post..." style={{ width: '100%', height: 200, background: tokens.colorSurface2, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusMd, padding: 16, fontFamily: '"Inter", sans-serif', fontSize: 15, color: tokens.colorTextSecondary, resize: 'none', outline: 'none', marginTop: 12 }} />
+              <button onClick={generateDemo} disabled={demoLoading || !demoInput.trim()} style={{ width: '100%', padding: 14, background: tokens.colorAccent, color: tokens.colorWhite, border: 'none', borderRadius: tokens.radiusMd, fontWeight: 600, cursor: demoLoading ? 'not-allowed' : 'pointer', marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>{demoLoading ? 'Generating...' : <>Generate Twitter Thread <ArrowRight size={16} /></>}</button>
+            </div>
+            <div style={{ padding: 24 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: tokens.colorTextMuted }}>Generated Twitter/X Thread</span>
+              {demoOutput.length > 0 ? (
+                <div style={{ marginTop: 12 }}>
+                  {demoOutput.map((t, i) => (
+                    <div key={i} style={{ padding: '12px 16px', background: tokens.colorSurface2, border: `1px solid ${tokens.colorBorder}`, borderRadius: tokens.radiusMd, marginBottom: 12, fontSize: 14, color: tokens.colorTextPrimary }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: tokens.colorAccent, color: tokens.colorWhite, fontSize: 11, fontWeight: 600, marginRight: 8 }}>{i+1}</span>
+                      {t}
+                    </div>
+                  ))}
+                  <button onClick={copyDemo} style={{ background: 'transparent', border: 'none', color: demoCopied ? tokens.colorAccent : tokens.colorTextSecondary, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>{demoCopied ? <><Check size={14} />Copied!</> : <><Copy size={14} />Copy all</>}</button>
+                </div>
+              ) : (
+                <div style={{ marginTop: 24, color: tokens.colorTextMuted, fontStyle: 'italic', textAlign: 'center' }}>Generated output will appear here...</div>
+              )}
+            </div>
           </div>
         </div>
       </section>
