@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 // Import and mount routes from server/index.js
-import { default as serverApp } from './server/index.js';
+import { default as serverApp } from '../server/index.js';
 
 // Copy middleware/routes from server
 app.use('/', serverApp);
