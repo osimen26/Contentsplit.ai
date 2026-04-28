@@ -959,9 +959,9 @@ useEffect(() => {
             </Link>
             <p style={{ fontSize: 14, color: tokens.colorTextMuted, lineHeight: 1.6, marginBottom: 16 }}>Turn your blog into everywhere.</p>
             <div style={{ display: 'flex', gap: 12 }}>
-              <a href="https://twitter.com" target="_blank" rel="noopener" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${tokens.colorBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tokens.colorTextMuted }}><landingIcons.Twitter size={16} /></a>
+              <a href="https://x.com/contentsplithq/status/2048703142351573506?s=46" target="_blank" rel="noopener" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${tokens.colorBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tokens.colorTextMuted }}><landingIcons.Twitter size={16} /></a>
               <a href="https://facebook.com" target="_blank" rel="noopener" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${tokens.colorBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tokens.colorTextMuted }}><landingIcons.Facebook size={16} /></a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${tokens.colorBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tokens.colorTextMuted }}><landingIcons.Linkedin size={16} /></a>
+              <a href="https://www.linkedin.com/in/content-split-27a986406" target="_blank" rel="noopener" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${tokens.colorBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tokens.colorTextMuted }}><landingIcons.Linkedin size={16} /></a>
               <a href="https://instagram.com" target="_blank" rel="noopener" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${tokens.colorBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tokens.colorTextMuted }}><landingIcons.Instagram size={16} /></a>
             </div>
           </div>
