@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
-import { useCurrentUser, useUpdateProfile } from '@/services/query-hooks'
-import { useTheme } from '@/contexts/ThemeContext'
-import { User, Palette, Lock, Trash2, Eye, EyeOff } from 'lucide-react'
+import { useCurrentUser, useUpdateProfile, useUsageStats } from '@/services/query-hooks'
+import { useTheme } from '@contexts/ThemeContext'
+import { TierUsagePanel } from '@components/application'
+import { User, Palette, Lock, Trash2, Eye, EyeOff, CreditCard } from 'lucide-react'
+import type { TierType } from '@services/api-client'
 
-type SettingsSection = 'account' | 'password' | 'appearance' | 'delete'
+type SettingsSection = 'account' | 'password' | 'appearance' | 'subscription' | 'delete'
 
 const NAV_ITEMS: { id: SettingsSection; label: string; icon: React.ReactNode }[] = [
   { id: 'account', label: 'Account', icon: <User size={18} /> },
   { id: 'password', label: 'Password', icon: <Lock size={18} /> },
   { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
+  { id: 'subscription', label: 'Subscription', icon: <CreditCard size={18} /> },
   { id: 'delete', label: 'Delete Account', icon: <Trash2 size={18} /> },
 ]
 
@@ -551,6 +554,7 @@ const DeleteSection: React.FC = () => {
 
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<SettingsSection>('account')
+  const { data: usageStats } = useUsageStats()
 
   return (
     <div style={{
@@ -621,6 +625,7 @@ const SettingsPage: React.FC = () => {
         {active === 'account' && <AccountSection />}
         {active === 'password' && <PasswordSection />}
         {active === 'appearance' && <AppearanceSection />}
+        {active === 'subscription' && <SubscriptionSection usageStats={usageStats} />}
         {active === 'delete' && <DeleteSection />}
       </main>
 
@@ -654,6 +659,63 @@ const SettingsPage: React.FC = () => {
     </div>
   )
 }
+
+// Subscription section component
+const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
+  const { data: user } = useCurrentUser()
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleUpgrade = async (tier: string) => {
+    setIsLoading(true)
+    try {
+      const data = await apiClient.initiatePayment(tier)
+      if (data.link) {
+        window.location.href = data.link
+      }
+    } catch (err) {
+      console.error('Payment initiation failed:', err)
+      alert('Failed to initiate payment. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <SectionDivider 
+        title="Subscription" 
+        subtitle="Manage your plan and view usage statistics." 
+      />
+
+      <TierUsagePanel
+        currentTier={user?.tier || 'free'}
+        dailyUsage={usageStats?.daily_usage || 0}
+        dailyLimit={usageStats?.daily_limit || 5}
+        onUpgrade={(tier) => handleUpgrade(tier)}
+        isLoading={isLoading}
+      />
+
+      <section style={{ marginTop: 8 }}>
+        <h3 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--sys-color-neutral-20)', marginBottom: 12 }}>
+          Billing History
+        </h3>
+        <div style={{
+          padding: '24px',
+          borderRadius: 12,
+          border: '1px solid var(--sys-color-border-secondary)',
+          backgroundColor: 'var(--sys-color-neutral-99)',
+          textAlign: 'center',
+        }}>
+          <p style={{ fontSize: '0.9rem', color: 'var(--sys-color-neutral-50)', margin: 0 }}>
+            No billing history available yet.
+          </p>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+import { apiClient } from '@/services/api-client'
 
 // Appearance section component
 const AppearanceSection: React.FC = () => {

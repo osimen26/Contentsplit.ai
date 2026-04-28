@@ -581,6 +581,38 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
     const { input_text, tone_mode, platforms, persona } = parsedData
     const userId = req.userId || 'anonymous'
 
+    // Check daily limit before generating (skip for anonymous users)
+    if (userId !== 'anonymous' && supabase) {
+      const userDb = getUserDb()
+      const user = await userDb.findById(userId)
+      const tierLimits = {
+        free: 5,        // 5 per day
+        pro: 100,      // 100 per day
+        agency: 999999  // unlimited
+      }
+      const limit = tierLimits[user?.tier || 'free']
+
+      const startOfDay = new Date()
+      startOfDay.setHours(0, 0, 0, 0)
+
+      const { count } = await supabase
+        .from('conversions')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .gte('created_at', startOfDay.toISOString())
+
+      const conversionsToday = count || 0
+
+      if (conversionsToday >= limit) {
+        return res.status(429).json({
+          error: `Daily limit reached. You've used ${conversionsToday}/${limit} conversions today. Upgrade your plan for more.`,
+          limit_reached: true,
+          daily_usage: conversionsToday,
+          daily_limit: limit
+        })
+      }
+    }
+
     console.log(`⚡ Generating for platforms: ${platforms.join(', ')} | tone: ${tone_mode} | persona: ${persona || 'none'}`)
 
     // Generate content for all selected platforms IN PARALLEL
@@ -930,31 +962,30 @@ app.get('/api/users/usage', requireAuth, async (req, res) => {
     const user = await userDb.findById(req.userId)
     
     const tierLimits = {
-      free: 10,
-      pro: 100,
-      agency: 999999
+      free: 5,        // 5 per day
+      pro: 100,      // 100 per day  
+      agency: 999999  // unlimited
     }
 
-    let conversionsThisMonth = 0
+    let conversionsToday = 0
     
     if (supabase) {
-      const startOfMonth = new Date()
-      startOfMonth.setDate(1)
-      startOfMonth.setHours(0, 0, 0, 0)
-
+      const startOfDay = new Date()
+      startOfDay.setHours(0, 0, 0, 0)
+      
       const { count } = await supabase
         .from('conversions')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', req.userId)
-        .gte('created_at', startOfMonth.toISOString())
+        .gte('created_at', startOfDay.toISOString())
 
-      conversionsThisMonth = count || 0
+      conversionsToday = count || 0
     }
 
     res.json({
-      monthly_usage: conversionsThisMonth,
-      tier_limit: tierLimits[user?.tier || 'free'] || 10,
-      conversions_this_month: conversionsThisMonth
+      daily_usage: conversionsToday,
+      daily_limit: tierLimits[user?.tier || 'free'] || 5,
+      conversions_today: conversionsToday
     })
   } catch (err) {
     console.error('Usage error:', err)

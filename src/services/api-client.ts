@@ -194,11 +194,27 @@ class ApiClient {
 
   // Usage Stats
   async getUsageStats(): Promise<{
-    monthly_usage: number
-    tier_limit: number
-    conversions_this_month: number
+    daily_usage: number
+    daily_limit: number
+    conversions_today: number
   }> {
     const response = await this.client.get('/users/usage')
+    return response.data
+  }
+
+  // Plans & Payments
+  async getPlans(): Promise<{ plans: Plan[] }> {
+    const response = await this.client.get('/plans')
+    return response.data
+  }
+
+  async initatePayment(planId: string): Promise<{ link: string; reference: string }> {
+    const response = await this.client.post('/payments/initiate', { plan: planId })
+    return response.data
+  }
+
+  async verifyPayment(reference: string): Promise<{ status: string; tier: string; message: string }> {
+    const response = await this.client.get(`/payments/verify/${reference}`)
     return response.data
   }
 
