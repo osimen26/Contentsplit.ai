@@ -294,7 +294,7 @@ const SidebarContentComponent: React.FC<{
         gap: 2,
       }}>
         <FooterLink
-          to="/settings"
+          to="/dashboard/settings"
           icon={<Settings size={16} />}
           label="Settings"
           active={isActive('/settings')}
@@ -302,10 +302,10 @@ const SidebarContentComponent: React.FC<{
           onClick={onMobileClose}
         />
         <FooterLink
-          to="/dashboard/help"
+          to="/help"
           icon={<HelpCircle size={16} />}
           label="Help & Support"
-          active={isActive('/dashboard/help')}
+          active={isActive('/help')}
           collapsed={collapsed && !inDrawer}
           onClick={onMobileClose}
         />
@@ -336,11 +336,11 @@ const SidebarContentComponent: React.FC<{
               }}>
                 {avatarLetter}
               </div>
-              <div style={{ overflow: 'hidden' }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, overflow: 'hidden' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1 }}>
                   {username}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 500 }}>
+                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 500, lineHeight: 1 }}>
                   {tier}
                 </div>
               </div>
@@ -348,7 +348,7 @@ const SidebarContentComponent: React.FC<{
 
             {isFree && (
               <Link
-                to="/settings"
+                to="/upgrade"
                 style={{
                   flexShrink: 0,
                   padding: '4px 10px',

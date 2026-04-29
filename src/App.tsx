@@ -27,6 +27,7 @@ const AuthLayout = lazy(() => import('@/layouts/AuthLayout'))
 const OnboardingPage = lazy(() => import('./pages/onboarding/OnboardingPage'))
 const LandingPage = lazy(() => import('./pages/LandingPage'))
 const HelpPage = lazy(() => import('./pages/HelpPage'))
+const UpgradePage = lazy(() => import('./pages/UpgradePage'))
 import { ProtectedRoute } from '@components/auth/ProtectedRoute'
 
 // Contexts
@@ -57,12 +58,14 @@ function App() {
 
                   {/* Protected Routes */}
                   <Route element={<ProtectedRoute />}>
-                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/help" element={<HelpPage />} />
+                    <Route path="/upgrade" element={<UpgradePage />} />
                     <Route path="/dashboard" element={<ClaudeLayout />}>
                       <Route index element={<ContentCreationPage />} />
-                      <Route path="help" element={<HelpPage />} />
+
                       <Route path="create" element={<ContentCreationPage />} />
                       <Route path="c/:id" element={<ConversionDetailPage />} />
+                      <Route path="settings" element={<SettingsPage />} />
                     </Route>
                     <Route path="/onboarding" element={<OnboardingPage />} />
                   </Route>

@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
 import { useCurrentUser, useUpdateProfile, useUsageStats } from '@/services/query-hooks'
 import { useTheme } from '@contexts/ThemeContext'
-import { TierUsagePanel } from '@components/application'
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
-import { apiClient } from '@/services/api-client'
+import { Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 type SettingsSection = 'account' | 'password' | 'appearance' | 'subscription' | 'delete'
@@ -24,7 +22,7 @@ const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = (
     onClick={() => onChange(!checked)}
     style={{
       width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
-      backgroundColor: checked ? 'var(--sys-color-primary)' : 'var(--sys-color-neutral-80)',
+      backgroundColor: checked ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-80)',
       position: 'relative', transition: 'background-color 0.2s', flexShrink: 0,
       padding: 0,
     }}
@@ -239,7 +237,7 @@ const AccountSection: React.FC = () => {
                 padding: '8px 16px', 
                 fontWeight: 500, 
                 fontSize: '0.9rem',
-                backgroundColor: 'var(--sys-color-primary)',
+                backgroundColor: 'var(--sys-color-primary-40)',
                 color: 'white',
                 border: 'none',
                 borderRadius: 6,
@@ -380,7 +378,7 @@ const PasswordSection: React.FC = () => {
                 padding: '8px 16px', 
                 fontWeight: 500, 
                 fontSize: '0.9rem',
-                backgroundColor: success ? '#10b981' : 'var(--sys-color-primary)',
+                backgroundColor: success ? '#10b981' : 'var(--sys-color-primary-40)',
                 color: 'white',
                 border: 'none',
                 borderRadius: 6,
@@ -433,59 +431,119 @@ const AppearanceSection: React.FC = () => {
 
 const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
   const { data: user } = useCurrentUser()
+  const navigate = useNavigate()
 
-  const handleUpgrade = async (tier: string) => {
-    try {
-      const data = await apiClient.initiatePayment(tier)
-      if (data.paymentLink) {
-        window.location.href = data.paymentLink
-      }
-    } catch (err) {
-      console.error('Payment initiation failed:', err)
-      alert('Failed to initiate payment. Please try again.')
-    }
-  }
+  const isFree = !user?.tier || user.tier === 'free'
+  const isPro = user?.tier === 'pro'
+  const isAgency = user?.tier === 'agency'
+
+  const planName = isAgency ? 'Agency Plan' : isPro ? 'Pro Plan' : 'Free plan'
+  const planTagline = isAgency ? 'Higher limits, team access' : isPro ? 'Create content at scale' : 'Start repurposing content'
+
+  const features = isFree
+    ? ['5 conversions per day', 'All supported platforms', 'Basic tone options', 'Copy to clipboard']
+    : isPro
+    ? ['Unlimited daily conversions', 'All supported platforms', 'Advanced tone matching', 'Priority AI processing', 'Early access to new platforms', 'Content history (30 days)']
+    : ['Everything in Pro', 'Up to 5 team members', 'Unlimited content history', 'Custom tone presets', 'Priority support']
+
+  const dailyUsed = usageStats?.daily_usage || 0
+  const dailyLimit = usageStats?.daily_limit || 5
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
       <section>
         <SectionHeader title="Billing & Subscription" />
-        <div style={{ paddingTop: 16 }}>
-          <TierUsagePanel
-            currentPlan={{
-              title: user?.tier === 'pro' ? 'Pro Plan' : user?.tier === 'agency' ? 'Agency Plan' : 'Free Plan',
-              badge: user?.tier && user.tier !== 'free' ? 'Active' : undefined,
-              description: user?.tier === 'pro' ? 'You have access to all premium features.' : 'You are currently on the free tier.',
-              features: [
-                { id: '1', text: user?.tier === 'pro' ? 'Unlimited conversions' : '5 conversions per day' },
-                { id: '2', text: 'All target platforms' },
-              ]
-            }}
-            usageStats={[
-              {
-                id: 'daily',
-                title: 'Daily Usage',
-                value: `${usageStats?.daily_usage || 0} / ${usageStats?.daily_limit || 5}`,
-                label: 'Conversions today',
-                progress: ((usageStats?.daily_usage || 0) / (usageStats?.daily_limit || 5)) * 100,
-                progressVariant: (usageStats?.daily_usage || 0) >= (usageStats?.daily_limit || 5) ? 'error' : 'default'
-              }
-            ]}
-            upgradeOptions={user?.tier === 'pro' ? [] : [
-              {
-                id: 'pro',
-                title: 'Pro Plan',
-                price: '$15',
-                period: 'month',
-                features: [
-                  { id: '1', text: 'Unlimited daily conversions' },
-                  { id: '2', text: 'Advanced tone matching' }
-                ],
-                recommended: true
-              }
-            ]}
-            onUpgrade={(planId) => handleUpgrade(planId)}
-          />
+        <div style={{ paddingTop: 8 }}>
+
+          {/* Current Plan Row */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 24,
+            padding: '20px 0',
+            borderBottom: '1px solid rgba(0,0,0,0.05)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              {/* Plan Icon */}
+              <div style={{
+                width: 44, height: 44,
+                borderRadius: 10,
+                border: '1px solid rgba(0,0,0,0.1)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#555',
+                flexShrink: 0,
+              }}>
+                <svg width="22" height="22" viewBox="0 0 36 36" fill="none">
+                  {isPro || isAgency ? (
+                    <path d="M18 4l2.5 8h8.5l-7 5 2.5 8-7-5-7 5 2.5-8-7-5h8.5z" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
+                  ) : (
+                    <>
+                      <circle cx="18" cy="10" r="4" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                      <path d="M10 26c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                    </>
+                  )}
+                </svg>
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#111' }}>{planName}</p>
+                <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#888' }}>{planTagline}</p>
+              </div>
+            </div>
+
+            {isFree && (
+              <button
+                onClick={() => navigate('/upgrade')}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#111',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  transition: 'opacity 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+              >
+                Upgrade plan
+              </button>
+            )}
+          </div>
+
+          {/* Features List */}
+          <div style={{ padding: '16px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+            {features.map(f => (
+              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span style={{ fontSize: '0.875rem', color: '#555' }}>{f}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Usage */}
+          {isFree && (
+            <div style={{ padding: '20px 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: '0.85rem', color: '#555', fontWeight: 500 }}>Daily conversions</span>
+                <span style={{ fontSize: '0.85rem', color: '#888' }}>{dailyUsed} / {dailyLimit}</span>
+              </div>
+              <div style={{ height: 4, backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: 2, overflow: 'hidden' }}>
+                <div style={{
+                  height: '100%',
+                  width: `${Math.min((dailyUsed / dailyLimit) * 100, 100)}%`,
+                  backgroundColor: dailyUsed >= dailyLimit ? '#ef4444' : 'var(--sys-color-primary-40, #6366f1)',
+                  borderRadius: 2,
+                  transition: 'width 0.3s',
+                }} />
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
@@ -569,46 +627,18 @@ const DeleteSection: React.FC = () => {
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<SettingsSection>('account')
   const { data: usageStats } = useUsageStats()
-  const navigate = useNavigate()
+
 
   return (
     <div style={{
       display: 'flex', 
       flexDirection: 'column',
-      minHeight: '100dvh', 
+      height: '100%', 
       backgroundColor: '#fbfbfb',
       fontFamily: 'Inter, system-ui, sans-serif'
     }}>
       
-      {/* Top Header with Back Button */}
-      <header style={{
-        padding: '24px 32px',
-        display: 'flex',
-        alignItems: 'center',
-        flexShrink: 0
-      }}>
-        <button
-          onClick={() => navigate('/dashboard')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            background: 'transparent',
-            border: 'none',
-            color: '#666',
-            fontSize: '0.9rem',
-            fontWeight: 500,
-            cursor: 'pointer',
-            padding: '8px 0',
-            transition: 'color 0.2s'
-          }}
-          onMouseEnter={e => e.currentTarget.style.color = '#111'}
-          onMouseLeave={e => e.currentTarget.style.color = '#666'}
-        >
-          <ArrowLeft size={18} />
-          Back to Dashboard
-        </button>
-      </header>
+
 
       {/* Main Settings Container */}
       <div style={{
@@ -617,8 +647,9 @@ const SettingsPage: React.FC = () => {
         maxWidth: 1024,
         margin: '0 auto',
         width: '100%',
-        padding: '0 32px 64px 32px',
-        gap: 64
+        padding: '48px 32px 64px 32px',
+        gap: 64,
+        overflow: 'hidden'
       }}>
 
         {/* Left Nav */}
@@ -671,11 +702,12 @@ const SettingsPage: React.FC = () => {
           })}
         </aside>
 
-        {/* Main Content */}
         <main style={{ 
           flex: 1, 
           maxWidth: 680,
-          paddingTop: 48
+          paddingTop: 0,
+          overflowY: 'auto',
+          paddingRight: 16
         }}>
           {active === 'account' && <AccountSection />}
           {active === 'password' && <PasswordSection />}

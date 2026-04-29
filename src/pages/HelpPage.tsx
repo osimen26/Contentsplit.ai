@@ -1,338 +1,504 @@
 import React, { useState } from 'react'
-import { HelpCircle, MessageCircle, Mail, Zap, Send, Hash, Target, Sparkles, ChevronDown, Search, FileText, CreditCard, Sparkles as SparklesIcon } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { ArrowLeft, Search, ChevronDown, ChevronRight, BookOpen, CreditCard, Zap, Settings, MessageCircle, Mail } from 'lucide-react'
 
-const FAQ_TOPICS = [
-  { id: 'general', label: 'General', icon: <HelpCircle size={18} />, questions: [
-    { q: 'How does ContentSplit work?', a: 'Paste your blog post, article, or long-form content into the input. Select your target platforms (Twitter, LinkedIn, Facebook, Instagram, Newsletter) and choose a tone. Click Generate to instantly repurpose your content for each platform.' },
-    { q: 'What platforms are supported?', a: 'We support Twitter/X threads, Facebook posts, LinkedIn articles, Instagram captions, Newsletter intros, and blog summaries. More platforms are coming soon!' },
-    { q: 'Is my content secure?', a: 'Absolutely. We don\'t store your content longer than necessary for generation. Your data is encrypted and never shared with third parties.' },
-  ]},
-  { id: 'billing', label: 'Billing', icon: <CreditCard size={18} />, questions: [
-    { q: 'How many conversions do I get?', a: 'Free tier: 10/month. Pro tier: 100/month. Agency tier: Unlimited.' },
-    { q: 'Can I upgrade anytime?', a: 'Yes! Click Upgrade in the header to change your plan. Changes take effect immediately.' },
-    { q: 'How do I cancel?', a: 'Go to Settings > Billing > Cancel Plan. Your access continues until the end of your billing period.' },
-  ]},
-  { id: 'content', label: 'Content', icon: <FileText size={18} />, questions: [
-    { q: 'Can I edit generated content?', a: 'Yes! Click directly on any generated content to edit before copying. Your edits are auto-saved.' },
-    { q: 'How do I change the tone?', a: 'After pasting your content, select your desired tone from Casual, Professional, Witty, or Educational.' },
-    { q: 'What counts as a conversion?', a: 'Each time you generate content for a platform counts as one conversion. Editing doesn\'t use conversions.' },
-  ]},
+// ─── Data ────────────────────────────────────────────────────────────────────
+
+const COLLECTIONS = [
+  {
+    id: 'getting-started',
+    title: 'Getting Started',
+    description: 'Learn how to use ContentSplit to repurpose your content.',
+    icon: <BookOpen size={24} />,
+    color: '#6366f1',
+    articleCount: 5,
+    articles: [
+      {
+        id: 'gs-1',
+        title: 'How does ContentSplit work?',
+        body: 'Paste your blog post, article, or long-form content into the input field on the dashboard. Select your target platforms (Twitter/X, LinkedIn, Facebook, Instagram, Newsletter) and choose a tone that suits your brand. Click Generate and ContentSplit will instantly repurpose your content for each selected platform using AI.',
+      },
+      {
+        id: 'gs-2',
+        title: 'What platforms are supported?',
+        body: 'ContentSplit currently supports: Twitter/X threads, LinkedIn articles & posts, Facebook posts, Instagram captions (with hashtag suggestions), Newsletter intros, and Blog summaries. We are continuously adding more platforms — stay tuned!',
+      },
+      {
+        id: 'gs-3',
+        title: 'How do I choose a tone?',
+        body: 'After pasting your content and selecting your platforms, you will see a Tone selector. Choose from Casual (friendly, conversational), Professional (business-ready), Witty (playful with personality), or Educational (clear and informative). The AI will adapt the generated output to match your chosen tone.',
+      },
+      {
+        id: 'gs-4',
+        title: 'Can I edit the generated content?',
+        body: 'Yes! Every generated output is fully editable. Simply click on the text inside any generated output card and start typing. Your edits are reflected live and do not consume any additional conversions.',
+      },
+      {
+        id: 'gs-5',
+        title: 'Is my content secure?',
+        body: 'Your privacy is important to us. ContentSplit processes your content to generate outputs but does not store it long-term. All data is encrypted in transit and at rest, and we never sell or share your content with third parties.',
+      },
+    ],
+  },
+  {
+    id: 'billing',
+    title: 'Billing & Plans',
+    description: 'Understand your plan, limits, and manage your subscription.',
+    icon: <CreditCard size={24} />,
+    color: '#10b981',
+    articleCount: 4,
+    articles: [
+      {
+        id: 'b-1',
+        title: 'What is included in the Free plan?',
+        body: 'The Free plan gives you 5 content conversions per day. You have access to all supported platforms and tone options. It is a great way to get started and experience the power of ContentSplit before upgrading.',
+      },
+      {
+        id: 'b-2',
+        title: 'What does the Pro plan include?',
+        body: 'The Pro plan ($15/month) includes unlimited daily conversions, priority AI processing, advanced tone matching, and early access to new platform integrations. It is perfect for content creators and marketing professionals who publish daily.',
+      },
+      {
+        id: 'b-3',
+        title: 'How do I upgrade my plan?',
+        body: 'Click the "Upgrade" button in the bottom-left sidebar, or navigate to Settings > Billing. You will be taken to our secure payment page where you can enter your card details. Upgrades take effect immediately after payment.',
+      },
+      {
+        id: 'b-4',
+        title: 'How do I cancel my subscription?',
+        body: 'You can cancel anytime by going to Settings > Billing and clicking "Cancel Plan". Your Pro access will continue until the end of your current billing period. We do not offer refunds for partial months, but you will never be charged again after cancellation.',
+      },
+    ],
+  },
+  {
+    id: 'platform-tips',
+    title: 'Platform Best Practices',
+    description: 'Tips and tricks to get the best results on each platform.',
+    icon: <Zap size={24} />,
+    color: '#f59e0b',
+    articleCount: 5,
+    articles: [
+      {
+        id: 'pt-1',
+        title: 'Tips for Twitter/X',
+        body: 'Twitter/X has a 280-character limit per tweet. ContentSplit automatically formats long content into threads. For best engagement: ask a question in the first tweet, use 1–2 relevant hashtags (not more), keep each tweet as a standalone thought, and always include a clear call-to-action in the final tweet.',
+      },
+      {
+        id: 'pt-2',
+        title: 'Tips for LinkedIn',
+        body: 'LinkedIn favors long-form, professional content. Use line breaks to make posts scannable, start with a strong hook in the first line (it appears before the "see more" cutoff), and share personal stories or lessons learned. Posts between 1,500–2,000 characters tend to perform best.',
+      },
+      {
+        id: 'pt-3',
+        title: 'Tips for Instagram',
+        body: 'Instagram captions work best when they are short and punchy, with the most important text in the first two lines. ContentSplit will suggest up to 30 hashtags — mixing high-volume and niche hashtags gives the best reach. Always end with a clear CTA like "Link in bio".',
+      },
+      {
+        id: 'pt-4',
+        title: 'Tips for Facebook',
+        body: 'Facebook rewards content that sparks conversation. Keep your posts conversational and end with an open question. Emojis can improve readability but do not overdo it. Facebook posts with 40–80 characters get 86% higher engagement, so keep it concise even though the limit is much higher.',
+      },
+      {
+        id: 'pt-5',
+        title: 'Tips for Newsletters',
+        body: 'A great newsletter intro hooks the reader in the first sentence. ContentSplit generates a compelling opening paragraph designed to keep subscribers reading. Make sure your subject line (written separately) matches the tone of your intro. Always include one primary CTA per newsletter.',
+      },
+    ],
+  },
+  {
+    id: 'account',
+    title: 'Your Account',
+    description: 'Manage your profile, password, and preferences.',
+    icon: <Settings size={24} />,
+    color: '#8b5cf6',
+    articleCount: 3,
+    articles: [
+      {
+        id: 'acc-1',
+        title: 'How do I update my profile?',
+        body: 'Go to Settings > General to update your display name, nickname, and personal content preferences. These preferences help ContentSplit tailor the AI outputs to better reflect your style. Click "Save changes" when done.',
+      },
+      {
+        id: 'acc-2',
+        title: 'How do I change my password?',
+        body: 'Go to Settings > Password. Enter your current password, then your new password (minimum 8 characters), and confirm it. Click "Update password" to save. If you have forgotten your current password, use the "Forgot password" link on the login page to reset it via email.',
+      },
+      {
+        id: 'acc-3',
+        title: 'How do I delete my account?',
+        body: 'Account deletion is permanent and cannot be undone. To delete your account, go to Settings > Danger Zone and click "Delete account". You will be asked to confirm before anything is removed. All your content, conversions, and data will be permanently erased.',
+      },
+    ],
+  },
 ]
 
-const PLATFORM_TIPS = [
-  { id: 'twitter', title: 'Twitter/X', color: '#1DA1F2', icon: <Hash size={20} />, tips: ['Keep it under 280 characters', 'Use threads for longer content', 'Add clear CTAs', 'Include 1-2 relevant hashtags', 'Ask questions to drive engagement'] },
-  { id: 'linkedin', title: 'LinkedIn', color: '#0A66C2', icon: <Target size={20} />, tips: ['Professional tone works best', 'Use line breaks for readability', 'Add a call-to-action', '3000 character limit', 'Share personal stories'] },
-  { id: 'facebook', title: 'Facebook', color: '#1877F2', icon: <MessageCircle size={20} />, tips: ['Keep it conversational', 'Use emojis sparingly', 'Ask engagement questions', '63,206 character limit', 'Add photos when possible'] },
-  { id: 'instagram', title: 'Instagram', color: '#E4405F', icon: <Sparkles size={20} />, tips: ['Use all 30 hashtags', 'Keep captions short', 'First line is crucial', 'Add CTAs at end', 'Mix with stories'] },
-  { id: 'newsletter', title: 'Newsletter', color: '#6B61E7', icon: <Send size={20} />, tips: ['Hook readers immediately', 'Keep it scannable', 'One CTA max', 'Personal tone works', 'Write a great subject line'] },
-]
+// ─── Components ───────────────────────────────────────────────────────────────
 
-const QUICK_HELP = [
-  { id: 'faq', title: 'FAQs', desc: 'Find answers to common questions', icon: <HelpCircle size={24} />, color: '#6B61E7' },
-  { id: 'tips', title: 'Platform Tips', desc: 'Best practices for each platform', icon: <Zap size={24} />, color: '#0B87C1' },
-  { id: 'contact', title: 'Contact Us', desc: 'Get help from our team', icon: <Mail size={24} />, color: '#22C35D' },
-]
+const Accordion: React.FC<{ article: { id: string; title: string; body: string } }> = ({ article }) => {
+  const [open, setOpen] = useState(false)
+  return (
+    <div style={{
+      borderBottom: '1px solid rgba(0,0,0,0.06)',
+    }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '18px 0',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          textAlign: 'left',
+          gap: 16,
+        }}
+      >
+        <span style={{ fontSize: '0.95rem', fontWeight: 500, color: '#111', lineHeight: 1.4 }}>
+          {article.title}
+        </span>
+        <ChevronDown
+          size={18}
+          style={{
+            flexShrink: 0,
+            color: '#888',
+            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s',
+          }}
+        />
+      </button>
+      {open && (
+        <div style={{
+          paddingBottom: 20,
+          fontSize: '0.9rem',
+          color: '#555',
+          lineHeight: 1.7,
+        }}>
+          {article.body}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
 
 const HelpPage: React.FC = () => {
-  const [activeTopic, setActiveTopic] = useState('general')
-  const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
+  const [activeCollection, setActiveCollection] = useState<string | null>(null)
 
-  const filteredQuestions = searchQuery 
-    ? FAQ_TOPICS.flatMap(t => t.questions.filter(q => q.q.toLowerCase().includes(searchQuery.toLowerCase()) || q.a.toLowerCase().includes(searchQuery.toLowerCase())).map(q => ({ ...q, topic: t.id })))
+  const activeCol = COLLECTIONS.find(c => c.id === activeCollection)
+
+  const searchResults = searchQuery
+    ? COLLECTIONS.flatMap(col =>
+        col.articles
+          .filter(a =>
+            a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            a.body.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+          .map(a => ({ ...a, collectionTitle: col.title, collectionId: col.id }))
+      )
     : []
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--sys-color-neutral-99)' }}>
-      {/* Hero Section */}
-      <div style={{ 
-        background: 'var(--sys-color-primary)', 
-        padding: '48px 24px 64px',
-        textAlign: 'center',
-      }}>
-        <h1 style={{ margin: '0 0 12px', fontSize: '2rem', fontWeight: 700, color: 'white' }}>
-          How can we help?
-        </h1>
-        <p style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.8)', maxWidth: 500, margin: '0 auto' }}>
-          Search for answers or browse topics below
-        </p>
-        
-        {/* Search Box */}
-        <div style={{ 
-          maxWidth: 560, 
-          margin: '24px auto 0', 
-          position: 'relative',
-        }}>
-          <Search size={20} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--sys-color-neutral-50)' }} />
-          <input
-            type="text"
-            placeholder="Search for help..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '16px 16px 16px 48px',
-              fontSize: '1rem',
-              borderRadius: 12,
-              border: 'none',
-              outline: 'none',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-            }}
-          />
-        </div>
-      </div>
+    <div style={{
+      minHeight: '100dvh',
+      backgroundColor: '#f9f9f9',
+      fontFamily: 'Inter, system-ui, sans-serif',
+    }}>
 
-      {/* Search Results */}
-      {searchQuery && (
-        <div style={{ maxWidth: 700, margin: '-24px auto 32px', padding: '0 24px' }}>
-          <div style={{ background: 'white', borderRadius: 16, padding: 24, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-            <h3 style={{ margin: '0 0 16px', fontSize: '1rem', fontWeight: 600 }}>
-              {filteredQuestions.length} result{filteredQuestions.length !== 1 ? 's' : ''} found
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {filteredQuestions.map((faq, i) => (
-                <div key={i} style={{ padding: 16, background: 'var(--sys-color-neutral-98)', borderRadius: 12 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 8 }}>{faq.q}</div>
-                  <div style={{ fontSize: '0.9rem', color: 'var(--sys-color-neutral-50)' }}>{faq.a}</div>
-                </div>
+      {/* Top nav */}
+      <header style={{
+        padding: '20px 40px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: '1px solid rgba(0,0,0,0.06)',
+        backgroundColor: 'white',
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+      }}>
+        <button
+          onClick={() => activeCollection ? setActiveCollection(null) : navigate('/dashboard')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            background: 'transparent',
+            border: 'none',
+            color: '#555',
+            fontSize: '0.9rem',
+            fontWeight: 500,
+            cursor: 'pointer',
+            padding: 0,
+            transition: 'color 0.15s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = '#111'}
+          onMouseLeave={e => e.currentTarget.style.color = '#555'}
+        >
+          <ArrowLeft size={18} />
+          {activeCollection ? 'All Collections' : 'Back to Dashboard'}
+        </button>
+
+        <span style={{ fontWeight: 700, fontSize: '1rem', color: '#111', letterSpacing: '-0.01em' }}>
+          ContentSplit Help Center
+        </span>
+
+        <div style={{ width: 140 }} /> {/* spacer */}
+      </header>
+
+      {/* Hero */}
+      {!activeCollection && (
+        <div style={{
+          padding: '64px 40px 48px',
+          textAlign: 'center',
+          borderBottom: '1px solid rgba(0,0,0,0.06)',
+          backgroundColor: 'white',
+        }}>
+          <p style={{ fontSize: '0.85rem', color: '#888', fontWeight: 500, marginBottom: 12, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            Help Center
+          </p>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: 700, color: '#111', margin: '0 0 12px', letterSpacing: '-0.02em' }}>
+            How can we help?
+          </h1>
+          <p style={{ fontSize: '1.05rem', color: '#666', marginBottom: 32 }}>
+            Advice and answers from the ContentSplit team
+          </p>
+
+          {/* Search */}
+          <div style={{ maxWidth: 520, margin: '0 auto', position: 'relative' }}>
+            <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#aaa' }} />
+            <input
+              type="text"
+              placeholder="Search for articles..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '14px 16px 14px 44px',
+                fontSize: '0.95rem',
+                border: '1px solid rgba(0,0,0,0.12)',
+                borderRadius: 10,
+                outline: 'none',
+                backgroundColor: '#fafafa',
+                boxSizing: 'border-box',
+                transition: 'border-color 0.2s, box-shadow 0.2s',
+              }}
+              onFocus={e => {
+                e.target.style.borderColor = 'var(--sys-color-primary-40, #6366f1)'
+                e.target.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.1)'
+              }}
+              onBlur={e => {
+                e.target.style.borderColor = 'rgba(0,0,0,0.12)'
+                e.target.style.boxShadow = 'none'
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 40px 80px' }}>
+
+        {/* Search Results */}
+        {searchQuery && (
+          <div>
+            <p style={{ fontSize: '0.9rem', color: '#888', marginBottom: 24 }}>
+              {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} for "<strong style={{ color: '#111' }}>{searchQuery}</strong>"
+            </p>
+            {searchResults.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px 0', color: '#888' }}>
+                <p style={{ fontSize: '1rem' }}>No articles found. Try a different search term.</p>
+              </div>
+            ) : (
+              <div style={{ backgroundColor: 'white', borderRadius: 12, border: '1px solid rgba(0,0,0,0.07)', overflow: 'hidden' }}>
+                {searchResults.map((article, i) => (
+                  <button
+                    key={article.id}
+                    onClick={() => { setSearchQuery(''); setActiveCollection(article.collectionId) }}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '16px 24px',
+                      borderBottom: i < searchResults.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'background-color 0.15s',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#f9f9f9')}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                  >
+                    <div>
+                      <p style={{ margin: 0, fontSize: '0.95rem', fontWeight: 500, color: '#111' }}>{article.title}</p>
+                      <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: '#888' }}>{article.collectionTitle}</p>
+                    </div>
+                    <ChevronRight size={16} style={{ color: '#ccc', flexShrink: 0 }} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Collections Grid */}
+        {!searchQuery && !activeCollection && (
+          <div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+              gap: 16,
+            }}>
+              {COLLECTIONS.map(col => (
+                <button
+                  key={col.id}
+                  onClick={() => setActiveCollection(col.id)}
+                  style={{
+                    textAlign: 'left',
+                    padding: '28px 24px',
+                    backgroundColor: 'white',
+                    border: '1px solid rgba(0,0,0,0.07)',
+                    borderRadius: 12,
+                    cursor: 'pointer',
+                    transition: 'box-shadow 0.2s, transform 0.2s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 12,
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.boxShadow = 'none'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  <div style={{
+                    width: 48, height: 48,
+                    borderRadius: 12,
+                    backgroundColor: `${col.color}15`,
+                    color: col.color,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {col.icon}
+                  </div>
+                  <div>
+                    <p style={{ margin: '0 0 4px', fontSize: '1rem', fontWeight: 600, color: '#111' }}>{col.title}</p>
+                    <p style={{ margin: '0 0 8px', fontSize: '0.85rem', color: '#666', lineHeight: 1.5 }}>{col.description}</p>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: '#aaa', fontWeight: 500 }}>
+                      {col.articleCount} article{col.articleCount !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Contact Section */}
+            <div style={{
+              marginTop: 48,
+              padding: '36px',
+              backgroundColor: 'white',
+              border: '1px solid rgba(0,0,0,0.07)',
+              borderRadius: 12,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 24,
+              flexWrap: 'wrap',
+            }}>
+              <div>
+                <h2 style={{ margin: '0 0 6px', fontSize: '1.1rem', fontWeight: 600, color: '#111' }}>
+                  Still need help?
+                </h2>
+                <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>
+                  Our team is here to help you get the most out of ContentSplit.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                <a
+                  href="mailto:support@contentsplit.ai"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 8,
+                    padding: '10px 20px',
+                    backgroundColor: 'var(--sys-color-primary-40, #6366f1)',
+                    color: 'white',
+                    borderRadius: 8,
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: 500,
+                  }}
+                >
+                  <Mail size={16} />
+                  Email Support
+                </a>
+                <a
+                  href="https://discord.gg/contentsplit"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 8,
+                    padding: '10px 20px',
+                    backgroundColor: '#f4f4f5',
+                    color: '#333',
+                    borderRadius: 8,
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: 500,
+                  }}
+                >
+                  <MessageCircle size={16} />
+                  Join Discord
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Collection Detail View */}
+        {!searchQuery && activeCollection && activeCol && (
+          <div>
+            {/* Collection Header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 36 }}>
+              <div style={{
+                width: 52, height: 52,
+                borderRadius: 14,
+                backgroundColor: `${activeCol.color}15`,
+                color: activeCol.color,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                {activeCol.icon}
+              </div>
+              <div>
+                <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#111' }}>
+                  {activeCol.title}
+                </h1>
+                <p style={{ margin: '4px 0 0', fontSize: '0.9rem', color: '#666' }}>
+                  {activeCol.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Articles Accordion */}
+            <div style={{
+              backgroundColor: 'white',
+              border: '1px solid rgba(0,0,0,0.07)',
+              borderRadius: 12,
+              padding: '0 24px',
+            }}>
+              {activeCol.articles.map(article => (
+                <Accordion key={article.id} article={article} />
               ))}
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Quick Links - Only show when not searching */}
-      {!searchQuery && (
-        <div style={{ maxWidth: 900, margin: '-24px auto 32px', padding: '0 24px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {QUICK_HELP.map(item => (
-              <div 
-                key={item.id}
-                className="quick-help-card"
-                style={{ 
-                  background: 'white', 
-                  borderRadius: 20, 
-                  padding: 28, 
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-                  transition: 'all 0.2s',
-                }}
-                onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                <div style={{ 
-                  width: 56, height: 56, borderRadius: 16, 
-                  background: `${item.color}15`, 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  margin: '0 auto 16px',
-                  color: item.color,
-                }}>
-                  {item.icon}
-                </div>
-                <h3 style={{ margin: '0 0 4px', fontSize: '1.1rem', fontWeight: 600 }}>{item.title}</h3>
-                <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--sys-color-neutral-50)' }}>{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* FAQs Section */}
-      {!searchQuery && (
-        <section id="faq" style={{ maxWidth: 800, margin: '0 auto 48px', padding: '0 24px' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 24, textAlign: 'center' }}>Frequently Asked Questions</h2>
-          
-          {/* Topic Tabs */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
-            {FAQ_TOPICS.map(topic => (
-              <button
-                key={topic.id}
-                onClick={() => setActiveTopic(topic.id)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  padding: '12px 20px',
-                  borderRadius: 12,
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  background: activeTopic === topic.id ? 'var(--sys-color-primary)' : 'white',
-                  color: activeTopic === topic.id ? 'white' : 'var(--sys-color-neutral-60)',
-                  transition: 'all 0.2s',
-                }}
-              >
-                {topic.icon}
-                {topic.label}
-              </button>
-            ))}
-          </div>
-
-          {/* FAQ List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {FAQ_TOPICS.find(t => t.id === activeTopic)?.questions.map((faq, i) => (
-              <div 
-                key={i}
-                style={{
-                  background: 'white',
-                  borderRadius: 16,
-                  overflow: 'hidden',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
-                }}
-              >
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  style={{
-                    width: '100%',
-                    padding: '20px 24px',
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    border: 'none',
-                    background: 'transparent',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    color: 'var(--sys-color-neutral-20)',
-                  }}
-                >
-                  {faq.q}
-                  <ChevronDown 
-                    size={20} 
-                    style={{ 
-                      transform: openFaq === i ? 'rotate(180deg)' : 'rotate(0deg)', 
-                      transition: 'transform 0.2s',
-                      color: 'var(--sys-color-neutral-40)',
-                      flexShrink: 0,
-                    }} 
-                  />
-                </button>
-                {openFaq === i && (
-                  <div style={{ padding: '0 24px 20px', fontSize: '0.95rem', color: 'var(--sys-color-neutral-50)', lineHeight: 1.6 }}>
-                    {faq.a}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Platform Tips Section */}
-      {!searchQuery && (
-        <section id="tips" style={{ maxWidth: 1000, margin: '0 auto 48px', padding: '0 24px' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 8, textAlign: 'center' }}>Platform-Specific Tips</h2>
-          <p style={{ fontSize: '1rem', color: 'var(--sys-color-neutral-50)', textAlign: 'center', marginBottom: 32 }}>
-            Get the most out of your content on each platform
-          </p>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
-            {PLATFORM_TIPS.map(platform => (
-              <div 
-                key={platform.id}
-                style={{
-                  background: 'white',
-                  borderRadius: 20,
-                  padding: 24,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
-                  <div style={{ 
-                    width: 48, height: 48, borderRadius: 14, 
-                    background: platform.color, 
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'white',
-                  }}>
-                    {platform.icon}
-                  </div>
-                  <span style={{ fontWeight: 600, fontSize: '1.1rem' }}>{platform.title}</span>
-                </div>
-                <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                  {platform.tips.map((tip, j) => (
-                    <li 
-                      key={j} 
-                      style={{ 
-                        padding: '8px 0', 
-                        fontSize: '0.9rem', 
-                        color: 'var(--sys-color-neutral-60)',
-                        borderBottom: j < platform.tips.length - 1 ? '1px solid var(--sys-color-neutral-90)' : 'none',
-                        display: 'flex', alignItems: 'flex-start', gap: 10,
-                      }}
-                    >
-                      <span style={{ color: platform.color, fontSize: '0.75rem', marginTop: 2 }}>•</span>
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Contact Section */}
-      {!searchQuery && (
-        <section id="contact" style={{ maxWidth: 800, margin: '0 auto 64px', padding: '0 24px' }}>
-          <div style={{ 
-            background: 'linear-gradient(135deg, var(--sys-color-primary) 0%, #8B5CF6 100%)', 
-            borderRadius: 24, 
-            padding: 48, 
-            textAlign: 'center',
-            color: 'white',
-          }}>
-            <SparklesIcon size={40} style={{ marginBottom: 16 }} />
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 12 }}>Still need help?</h2>
-            <p style={{ fontSize: '1rem', marginBottom: 24, opacity: 0.9 }}>
-              Our support team is here to assist you
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-              <a 
-                href="mailto:support@contentsplit.ai"
-                style={{ 
-                  display: 'inline-flex', alignItems: 'center', gap: 8,
-                  padding: '14px 28px', 
-                  background: 'white', 
-                  color: 'var(--sys-color-primary)', 
-                  borderRadius: 12, 
-                  textDecoration: 'none', 
-                  fontWeight: 600,
-                  transition: 'transform 0.2s',
-                }}
-              >
-                <Mail size={18} />
-                Email Support
-              </a>
-              <a 
-                href="https://discord.gg/contentsplit"
-                target="_blank"
-                rel="noopener"
-                style={{ 
-                  display: 'inline-flex', alignItems: 'center', gap: 8,
-                  padding: '14px 28px', 
-                  background: 'rgba(255,255,255,0.2)', 
-                  color: 'white', 
-                  borderRadius: 12, 
-                  textDecoration: 'none', 
-                  fontWeight: 600,
-                  transition: 'transform 0.2s',
-                }}
-              >
-                <MessageCircle size={18} />
-                Join Discord
-              </a>
-            </div>
-          </div>
-        </section>
-      )}
-
-      <style>{`
-        .quick-help-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 8px 30px rgba(0,0,0,0.1) !important;
-        }
-        .quick-help-card:active {
-          transform: translateY(-2px);
-        }
-      `}</style>
+        )}
+      </div>
     </div>
   )
 }
