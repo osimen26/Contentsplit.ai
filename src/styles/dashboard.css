@@ -222,14 +222,14 @@
     padding: 10px 12px max(20px, env(safe-area-inset-bottom)) !important;
     position: sticky;
     bottom: 0;
-    background: linear-gradient(to top, rgba(249,249,249,0.98) 70%, transparent) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(to top, rgba(249,249,249,1) 20%, rgba(249,249,249,0.9) 50%, transparent) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   /* Welcome screen */
   .welcome-content-container {
-    padding: 32px 16px 120px !important;
+    padding: 32px 16px 140px !important;
     justify-content: flex-start !important;
     gap: 20px !important;
   }

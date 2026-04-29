@@ -210,7 +210,7 @@ const HelpPage: React.FC = () => {
     }}>
 
       {/* Top nav */}
-      <header style={{
+      <header className="help-header" style={{
         padding: '20px 40px',
         display: 'flex',
         alignItems: 'center',
@@ -243,16 +243,16 @@ const HelpPage: React.FC = () => {
           {activeCollection ? 'All Collections' : 'Back to Dashboard'}
         </button>
 
-        <span style={{ fontWeight: 700, fontSize: '1rem', color: '#111', letterSpacing: '-0.01em' }}>
+        <span className="help-header-title" style={{ fontWeight: 700, fontSize: '1rem', color: '#111', letterSpacing: '-0.01em' }}>
           ContentSplit Help Center
         </span>
 
-        <div style={{ width: 140 }} /> {/* spacer */}
+        <div className="help-header-spacer" style={{ width: 140 }} /> {/* spacer */}
       </header>
 
       {/* Hero */}
       {!activeCollection && (
-        <div style={{
+        <div className="help-hero" style={{
           padding: '64px 40px 48px',
           textAlign: 'center',
           borderBottom: '1px solid rgba(0,0,0,0.06)',
@@ -300,7 +300,7 @@ const HelpPage: React.FC = () => {
         </div>
       )}
 
-      <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 40px 80px' }}>
+      <div className="help-content-container" style={{ maxWidth: 860, margin: '0 auto', padding: '48px 40px 80px' }}>
 
         {/* Search Results */}
         {searchQuery && (
@@ -499,6 +499,16 @@ const HelpPage: React.FC = () => {
           </div>
         )}
       </div>
+      <style>{`
+        @media (max-width: 768px) {
+          .help-header { padding: 12px 16px !important; }
+          .help-header-title { fontSize: 0.9rem !important; text-align: right !important; }
+          .help-header-spacer { display: none !important; }
+          .help-hero { padding: 40px 20px 32px !important; }
+          .help-content-container { padding: 24px 20px 60px !important; }
+          .help-hero h1 { fontSize: 1.75rem !important; }
+        }
+      `}</style>
     </div>
   )
 }

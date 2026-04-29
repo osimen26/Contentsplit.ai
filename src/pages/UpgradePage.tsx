@@ -93,7 +93,7 @@ const UpgradePage: React.FC = () => {
       fontFamily: 'Inter, system-ui, sans-serif',
     }}>
       {/* Back button */}
-      <div style={{ padding: '24px 40px' }}>
+      <div className="upgrade-header-nav" style={{ padding: '24px 40px' }}>
         <button
           onClick={() => navigate('/dashboard')}
           style={{
@@ -111,11 +111,11 @@ const UpgradePage: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 40px 80px' }}>
+      <div className="upgrade-content-container" style={{ maxWidth: 960, margin: '0 auto', padding: '0 40px 80px' }}>
 
         {/* Heading */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <h1 style={{
+          <h1 className="upgrade-title" style={{
             fontSize: '2rem', fontWeight: 700, color: '#111',
             margin: '0 0 32px', letterSpacing: '-0.02em',
           }}>
@@ -181,7 +181,7 @@ const UpgradePage: React.FC = () => {
         </div>
 
         {/* Plan Cards */}
-        <div style={{
+        <div className="upgrade-grid" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: 16,
@@ -243,7 +243,7 @@ const UpgradePage: React.FC = () => {
             position: 'relative',
           }}>
             {/* Monthly/Yearly pill on card */}
-            <div style={{
+            <div className="pro-card-pill" style={{
               position: 'absolute',
               top: 16,
               right: 16,
@@ -297,14 +297,24 @@ const UpgradePage: React.FC = () => {
                 padding: '11px 0',
                 borderRadius: 8,
                 border: 'none',
-                backgroundColor: '#111',
+                backgroundColor: 'var(--sys-color-primary-40, #6366f1)',
                 color: 'white',
                 fontSize: '0.9rem',
                 fontWeight: 600,
                 cursor: currentTier === 'pro' ? 'default' : 'pointer',
                 marginBottom: 28,
                 opacity: loading === 'pro' ? 0.7 : 1,
-                transition: 'opacity 0.15s',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => {
+                if (currentTier !== 'pro' && !loading) {
+                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-30, #4f46e5)'
+                }
+              }}
+              onMouseLeave={e => {
+                if (currentTier !== 'pro' && !loading) {
+                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-40, #6366f1)'
+                }
               }}
             >
               {loading === 'pro' ? 'Redirecting...' : currentTier === 'pro' ? 'Current plan' : 'Get Pro plan'}
@@ -348,15 +358,25 @@ const UpgradePage: React.FC = () => {
               style={{
                 padding: '11px 0',
                 borderRadius: 8,
-                border: '1px solid rgba(0,0,0,0.15)',
-                backgroundColor: 'white',
-                color: '#333',
+                border: 'none',
+                backgroundColor: 'var(--sys-color-primary-40, #6366f1)',
+                color: 'white',
                 fontSize: '0.9rem',
                 fontWeight: 600,
                 cursor: currentTier === 'agency' ? 'default' : 'pointer',
                 marginBottom: 4,
                 opacity: loading === 'agency' ? 0.7 : 1,
-                transition: 'opacity 0.15s',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => {
+                if (currentTier !== 'agency' && !loading) {
+                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-30, #4f46e5)'
+                }
+              }}
+              onMouseLeave={e => {
+                if (currentTier !== 'agency' && !loading) {
+                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-40, #6366f1)'
+                }
               }}
             >
               {loading === 'agency' ? 'Redirecting...' : currentTier === 'agency' ? 'Current plan' : 'Get Agency plan'}
@@ -389,7 +409,18 @@ const UpgradePage: React.FC = () => {
 
       <style>{`
         @media (max-width: 768px) {
-          .upgrade-grid { grid-template-columns: 1fr !important; }
+          .upgrade-header-nav { padding: 16px 20px !important; }
+          .upgrade-content-container { padding: 0 20px 60px !important; }
+          .upgrade-title { fontSize: 1.75rem !important; marginBottom: 24px !important; }
+          .upgrade-grid { 
+            grid-template-columns: 1fr !important; 
+            gap: 20px !important;
+          }
+          .pro-card-pill {
+            position: static !important;
+            margin-bottom: 20px !important;
+            justify-content: center !important;
+          }
         }
       `}</style>
     </div>
