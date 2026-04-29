@@ -4,7 +4,6 @@ import { useTheme } from '@contexts/ThemeContext'
 import { TierUsagePanel } from '@components/application'
 import { User, Palette, Lock, Trash2, Eye, EyeOff, CreditCard } from 'lucide-react'
 import { apiClient } from '@/services/api-client'
-import type { TierType } from '@services/api-client'
 
 type SettingsSection = 'account' | 'password' | 'appearance' | 'subscription' | 'delete'
 
@@ -664,21 +663,20 @@ const SettingsPage: React.FC = () => {
 // Subscription section component
 const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
   const { data: user } = useCurrentUser()
-  const [isLoading, setIsLoading] = useState(false)
+
 
   const handleUpgrade = async (tier: string) => {
-    setIsLoading(true)
+
     try {
       const data = await apiClient.initiatePayment(tier)
-      if (data.link) {
-        window.location.href = data.link
+      if (data.paymentLink) {
+        window.location.href = data.paymentLink
       }
     } catch (err) {
       console.error('Payment initiation failed:', err)
       alert('Failed to initiate payment. Please try again.')
-    } finally {
-      setIsLoading(false)
     }
+
   }
 
   return (
