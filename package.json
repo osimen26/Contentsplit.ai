@@ -26,9 +26,8 @@
     "url": "https://github.com/osimen26/Contentsplit.ai/issues"
   },
   "homepage": "https://github.com/osimen26/Contentsplit.ai#readme",
-  "dependencies": {
+   "dependencies": {
     "@react-oauth/google": "^0.13.5",
-    "@stripe/stripe-js": "^9.2.0",
     "@supabase/supabase-js": "^2.103.3",
     "@tanstack/react-query": "^5.99.0",
     "@tanstack/react-query-devtools": "^5.99.0",
@@ -42,7 +41,6 @@
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.1",
     "resend": "^6.12.2",
-    "stripe": "^22.0.2",
     "zod": "^3.22.4",
     "zustand": "^5.0.12"
   },

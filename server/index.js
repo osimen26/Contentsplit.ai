@@ -31,33 +31,23 @@ try {
 const app = express()
 const PORT = process.env.PORT || 3001
 
-// ── STRIPE CONFIG ─────────────────────────────────────────────────────────
-let stripe = null
-if (process.env.STRIPE_SECRET_KEY) {
-  const Stripe = await import('stripe')
-  stripe = new Stripe.default(process.env.STRIPE_SECRET_KEY)
-  console.log('✅ Stripe initialized')
-} else {
-  console.log('⚠️  Stripe not configured - payments disabled')
-}
-
-// Stripe price IDs (create these in Stripe Dashboard)
-const STRIPE_PRICES = {
-  pro: process.env.STRIPE_PRO_PRICE_ID || 'price_pro_monthly',
-  agency: process.env.STRIPE_AGENCY_PRICE_ID || 'price_agency_monthly'
-}
-
 // ── FLUTTERWAVE CONFIG ─────────────────────────────────────────────────────────
 let flutterwave = null
-if (process.env.FLUTTERWAVE_SECRET_KEY) {
-  const Flutterwave = await import('flutterwave-node-v3')
-  flutterwave = new Flutterwave.default(
-    process.env.FLUTTERWAVE_PUBLIC_KEY,
-    process.env.FLUTTERWAVE_SECRET_KEY
-  )
-  console.log('✅ Flutterwave initialized')
-} else {
-  console.log('⚠️  Flutterwave not configured')
+
+async function getFlutterwave() {
+  if (!flutterwave && process.env.FLUTTERWAVE_SECRET_KEY) {
+    try {
+      const Flutterwave = await import('flutterwave-node-v3')
+      flutterwave = new Flutterwave.default(
+        process.env.FLUTTERWAVE_PUBLIC_KEY,
+        process.env.FLUTTERWAVE_SECRET_KEY
+      )
+      console.log('✅ Flutterwave initialized')
+    } catch (e) {
+      console.warn('⚠️  Flutterwave import failed:', e.message)
+    }
+  }
+  return flutterwave
 }
 
 // Flutterwave pricing (in Naira - 5000 NGN = ~$3/month)
@@ -73,8 +63,8 @@ const DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
 const DEEPSEEK_MODEL = 'deepseek-chat'
 
 if (!DEEPSEEK_API_KEY) {
-  console.error('❌  DEEPSEEK_API_KEY is not set in server/.env')
-  process.exit(1)
+  console.warn('⚠️  DEEPSEEK_API_KEY is not set - AI generation will be disabled')
+  // Don't exit - allow server to run in mock mode
 }
 
 // ── SUPABASE CONFIG ─────────────────────────────────────────────────────────
@@ -1311,22 +1301,44 @@ app.post('/api/payments/webhook', async (req, res) => {
   }
 
   try {
-    const secretHash = process.env.FLUTTERWAVE_SECRET_HASH
+    const secretHash = process.env.FLUTTERWAVE_WEBHOOK_SECRET || process.env.FLUTTERWAVE_SECRET_HASH
     const signature = req.headers['flutterwave-webhook-signature']
 
     // Verify signature if configured
-    if (secretHash && signature !== secretHash) {
-      // In production, verify properly
-      // For now, accept webhooks
+    if (secretHash && signature) {
+      const crypto = await import('node:crypto')
+      const expectedSignature = crypto
+        .createHmac('sha256', secretHash)
+        .update(JSON.stringify(req.body))
+        .digest('hex')
+
+      if (signature !== expectedSignature) {
+        console.warn('Invalid webhook signature')
+        return res.status(401).json({ error: 'Invalid signature' })
+      }
     }
 
     const event = req.body
-    console.log('Flutterwave webhook:', event.event)
+    console.log('Flutterwave webhook:', event.event, event.data?.status)
 
     if (event.event === 'charge.completed') {
       const data = event.data
       const txRef = data.tx_ref
       const amount = data.amount
+      const status = data.status
+
+      // Handle failed/cancelled transactions
+      if (status === 'failed' || status === 'cancelled') {
+        console.log(`❌ Payment ${status} for tx_ref: ${txRef}`)
+        // Log failed payment - could also update user status or send notification
+        return res.json({ received: true, status: 'failed' })
+      }
+
+      // Only process successful transactions
+      if (status !== 'successful') {
+        console.log(`⚠️ Unhandled payment status: ${status} for tx_ref: ${txRef}`)
+        return res.json({ received: true, status: 'unhandled' })
+      }
 
       // Extract user ID from tx_ref (format: CS_timestamp_userId)
       const parts = txRef.split('_')
