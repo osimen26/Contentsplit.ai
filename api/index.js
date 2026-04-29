@@ -1,7 +1,6 @@
-// Vercel serverless function - just re-export the server app
-// This avoids top-level await issues in Vercel's Node.js runtime
+// Vercel serverless function - wraps Express app
+// Lazy-load server/index.js to avoid top-level await issues in Vercel
 
-// Dynamic import to avoid top-level await
 let cachedApp = null;
 
 export default async function handler(req, res) {

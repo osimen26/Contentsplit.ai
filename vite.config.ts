@@ -30,6 +30,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    cssMinify: false,
   },
   test: {
     environment: 'jsdom',
