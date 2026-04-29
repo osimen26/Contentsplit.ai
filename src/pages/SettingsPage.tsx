@@ -3,6 +3,7 @@ import { useCurrentUser, useUpdateProfile, useUsageStats } from '@/services/quer
 import { useTheme } from '@contexts/ThemeContext'
 import { TierUsagePanel } from '@components/application'
 import { User, Palette, Lock, Trash2, Eye, EyeOff, CreditCard } from 'lucide-react'
+import { apiClient } from '@/services/api-client'
 import type { TierType } from '@services/api-client'
 
 type SettingsSection = 'account' | 'password' | 'appearance' | 'subscription' | 'delete'
@@ -688,11 +689,39 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
       />
 
       <TierUsagePanel
-        currentTier={user?.tier || 'free'}
-        dailyUsage={usageStats?.daily_usage || 0}
-        dailyLimit={usageStats?.daily_limit || 5}
-        onUpgrade={(tier) => handleUpgrade(tier)}
-        isLoading={isLoading}
+        currentPlan={{
+          title: user?.tier === 'pro' ? 'Pro Plan' : user?.tier === 'agency' ? 'Agency Plan' : 'Free Plan',
+          badge: user?.tier && user.tier !== 'free' ? 'Active' : undefined,
+          description: user?.tier === 'pro' ? 'You have access to all premium features.' : 'You are currently on the free tier.',
+          features: [
+            { id: '1', text: user?.tier === 'pro' ? 'Unlimited conversions' : '5 conversions per day' },
+            { id: '2', text: 'All target platforms' },
+          ]
+        }}
+        usageStats={[
+          {
+            id: 'daily',
+            title: 'Daily Usage',
+            value: `${usageStats?.daily_usage || 0} / ${usageStats?.daily_limit || 5}`,
+            label: 'Conversions today',
+            progress: ((usageStats?.daily_usage || 0) / (usageStats?.daily_limit || 5)) * 100,
+            progressVariant: (usageStats?.daily_usage || 0) >= (usageStats?.daily_limit || 5) ? 'error' : 'default'
+          }
+        ]}
+        upgradeOptions={user?.tier === 'pro' ? [] : [
+          {
+            id: 'pro',
+            title: 'Pro Plan',
+            price: '$15',
+            period: 'month',
+            features: [
+              { id: '1', text: 'Unlimited daily conversions' },
+              { id: '2', text: 'Advanced tone matching' }
+            ],
+            recommended: true
+          }
+        ]}
+        onUpgrade={(planId) => handleUpgrade(planId)}
       />
 
       <section style={{ marginTop: 8 }}>
@@ -715,7 +744,7 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
   )
 }
 
-import { apiClient } from '@/services/api-client'
+
 
 // Appearance section component
 const AppearanceSection: React.FC = () => {
