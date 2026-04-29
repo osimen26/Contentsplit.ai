@@ -12,6 +12,7 @@ interface AuthContextType {
   notifyLoggedIn: () => void
   setTokenExists: (exists: boolean) => void
   refetch: () => Promise<unknown>
+  isError: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -42,7 +43,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
-  const { data: user, isLoading: isUserLoading, refetch } = useCurrentUser({
+  const { data: user, isLoading: isUserLoading, isError, refetch } = useCurrentUser({
     queryKey: ['user'],
     enabled: tokenExists,
   })
@@ -73,10 +74,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   // Set isLoading to true if token exists but user data hasn't loaded yet.
-  const isLoading = tokenExists && isUserLoading
+  // We use (!user && !isError) to catch the transition state where tokenExists is true
+  // but React Query hasn't populated the user data or started the fetch yet.
+  const isLoading = tokenExists && (isUserLoading || (!user && !isError))
 
   return (
-    <AuthContext.Provider value={{ user: user || null, isLoading, login, logout, updateUser, notifyLoggedIn, setTokenExists, refetch }}>
+    <AuthContext.Provider value={{ user: user || null, isLoading, login, logout, updateUser, notifyLoggedIn, setTokenExists, refetch, isError }}>
       {children}
     </AuthContext.Provider>
   )
