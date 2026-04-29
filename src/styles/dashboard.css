@@ -209,123 +209,150 @@
 
 /* Mobile chat input */
 @media (max-width: 768px) {
+
+  /* Smaller chat avatars on mobile */
+  .chat-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 8px !important;
+  }
+
+
   .chat-input-area-container {
-    padding: 8px 12px 20px !important;
+    padding: 10px 12px max(20px, env(safe-area-inset-bottom)) !important;
     position: sticky;
     bottom: 0;
-    background: linear-gradient(to top, rgba(255,255,255,0.95) 60%, transparent) !important;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: linear-gradient(to top, rgba(249,249,249,0.98) 70%, transparent) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
+  /* Welcome screen */
   .welcome-content-container {
-    padding: 24px 16px 100px !important;
+    padding: 32px 16px 120px !important;
     justify-content: flex-start !important;
-    gap: 24px !important;
+    gap: 20px !important;
   }
 
+  /* Chat input pill */
   .chat-input-pill-wrapper {
     width: 100% !important;
     margin: 0 auto;
     padding: 10px 14px !important;
-    border-radius: 16px !important;
+    border-radius: 18px !important;
     background: #ffffff !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10) !important;
+    border: 1.5px solid rgba(99,102,241,0.15) !important;
   }
 
   .chat-input-pill-wrapper textarea {
-    font-size: 16px !important; /* Prevents zoom on iOS */
+    font-size: 16px !important;
+    line-height: 1.5 !important;
   }
 
   .chat-input-helper-text {
     display: none !important;
   }
 
+  /* Glass cards */
   .glass-card {
-    padding: 16px !important;
-    border-radius: 16px;
+    border-radius: 16px !important;
   }
 
-  /* Suggestions Grid */
+  /* Suggestions */
   .quick-suggestions {
     grid-template-columns: 1fr !important;
     gap: 10px !important;
-    padding: 0 8px;
+    padding: 0 !important;
+    width: 100% !important;
   }
 
   .suggestions-card {
     padding: 14px 16px !important;
-    min-height: 60px !important;
+    min-height: 56px !important;
+    font-size: 0.9rem !important;
+    border-radius: 14px !important;
   }
 
   .suggestions-card-title {
-    font-size: 1.5rem !important;
+    font-size: 1.6rem !important;
     text-align: center;
   }
 
-  /* Enhanced Primary Button Styling */
+  /* Primary button */
   .btn-gradient {
     min-width: unset !important;
     width: 100% !important;
-    min-height: 48px !important;
+    min-height: 50px !important;
     font-size: 1rem !important;
+    border-radius: 14px !important;
   }
 
-  .btn-gradient:hover:not(:disabled) {
-    transform: translateY(-2px) !important;
-  }
-
-  /* Preferences card */
+  /* AI message bubble */
   .ai-msg-bubble {
-    padding: 16px !important;
+    padding: 16px 14px !important;
   }
 
-  /* Message bubble max-width fix on narrow screens */
+  /* Message bubbles full width on mobile */
   .user-msg-bubble,
   .ai-msg-bubble {
     max-width: 100% !important;
+    font-size: 0.9rem !important;
   }
 
-  /* Platform grid wraps on mobile */
+  /* Platform grid — 3 columns */
   .platform-grid {
-    display: flex !important;
-    flex-wrap: wrap !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
     gap: 8px !important;
   }
 
   .platform-card {
-    min-width: 80px !important;
-    flex: 1 1 calc(33% - 8px) !important;
-    padding: 8px 10px !important;
+    padding: 10px 8px !important;
+    min-height: 64px !important;
+    font-size: 0.78rem !important;
+    border-radius: 12px !important;
   }
 
   /* Tone chips */
   .tone-chip {
-    padding: 8px 12px !important;
-    font-size: 0.8rem !important;
-    min-height: 36px !important;
+    padding: 9px 12px !important;
+    font-size: 0.82rem !important;
+    min-height: 38px !important;
+    border-radius: 10px !important;
   }
 
-  /* Generated content mobile */
+  /* Generated content tabs — horizontal scroll */
   .generated-content-tabs {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
-    padding-bottom: 4px !important;
+    flex-wrap: nowrap !important;
+    padding-bottom: 2px !important;
+  }
+
+  .generated-content-tabs::-webkit-scrollbar {
+    display: none !important;
   }
 
   .generated-content-tab {
     white-space: nowrap !important;
     min-height: 36px !important;
-    padding: 8px 12px !important;
+    padding: 8px 14px !important;
+    font-size: 0.82rem !important;
+    flex-shrink: 0 !important;
   }
 
+  /* Generated content — taller on mobile */
   .generated-content-display {
-    padding: 12px !important;
-    max-height: 300px !important;
+    padding: 14px !important;
+    min-height: 200px !important;
+    max-height: 50vh !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
   }
 
   /* Regeneration options */
@@ -335,59 +362,64 @@
   }
 
   .regeneration-option {
-    min-height: 40px !important;
-    padding: 8px 14px !important;
+    min-height: 42px !important;
+    padding: 9px 14px !important;
+    font-size: 0.82rem !important;
+    flex: 1 1 calc(33% - 8px) !important;
+    justify-content: center !important;
   }
 }
 
-/* Very small phones - 375px and below */
+/* Very small phones — 375px and below */
 @media (max-width: 375px) {
   .chat-input-pill-wrapper {
     padding: 8px 10px !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
   }
 
   .chat-input-area-container {
-    padding: 8px 8px 16px !important;
+    padding: 8px 10px max(16px, env(safe-area-inset-bottom)) !important;
   }
 
   .welcome-content-container {
-    padding: 16px 12px 100px !important;
+    padding: 16px 12px 120px !important;
   }
 
   .glass-card {
-    padding: 12px !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
   }
 
-  .ai-msg-bubble {
-    padding: 12px !important;
+  .platform-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
   }
 
   .platform-card {
-    flex: 1 1 calc(50% - 8px) !important;
-    min-width: 70px !important;
+    min-height: 58px !important;
+    font-size: 0.72rem !important;
   }
 
   .suggestions-card-title {
-    font-size: 1.25rem !important;
+    font-size: 1.35rem !important;
   }
 
   .quick-suggestions {
-    padding: 0 4px;
+    padding: 0 !important;
   }
 
-  /* Buttons minimum 44px touch target */
-  button, 
+  /* 44px minimum touch target */
+  button,
   .btn-gradient,
   [class*="btn"] {
     min-height: 44px !important;
   }
 
-  /* Generated content */
   .generated-content-display {
     padding: 10px !important;
-    font-size: 0.9rem !important;
+    font-size: 0.88rem !important;
+  }
+
+  .regeneration-option {
+    flex: 1 1 calc(50% - 8px) !important;
   }
 }
 

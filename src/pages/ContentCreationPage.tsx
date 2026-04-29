@@ -331,15 +331,15 @@ const ContentCreationPage: React.FC = () => {
 {/* ── ZONE 2: AI Chat / Processing Stream ── */}
       {hasMessages && (
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingBottom: '16px' }}>
-          <div style={{ flex: 1, overflowY: 'auto', paddingTop: 24, WebkitOverflowScrolling: 'touch' }}>
-            <div style={{ maxWidth: 800, margin: '0 auto', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ flex: 1, overflowY: 'auto', paddingTop: 8, WebkitOverflowScrolling: 'touch' }}>
+            <div style={{ maxWidth: 800, margin: '0 auto', padding: '16px 12px 16px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
             {messages.map(msg => (
               <div key={msg.id} style={{ display: 'flex', gap: '12px', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row', alignItems: 'flex-start' }}>
 
                 {/* Avatar */}
-                <div style={{
-                  width: 36, height: 36, borderRadius: 12, flexShrink: 0,
+                <div className="chat-avatar" style={{
+                  width: 32, height: 32, borderRadius: 10, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   background: msg.role === 'user' ? 'var(--sys-color-primary)' : 'rgba(255,255,255,0.6)',
                   color: msg.role === 'user' ? 'white' : '#6366f1',
