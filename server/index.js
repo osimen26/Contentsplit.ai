@@ -1306,7 +1306,6 @@ app.post('/api/payments/webhook', async (req, res) => {
 
     // Verify signature if configured
     if (secretHash && signature) {
-      const crypto = await import('node:crypto')
       const expectedSignature = crypto
         .createHmac('sha256', secretHash)
         .update(JSON.stringify(req.body))
