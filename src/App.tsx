@@ -57,12 +57,12 @@ function App() {
 
                   {/* Protected Routes */}
                   <Route element={<ProtectedRoute />}>
+                    <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/dashboard" element={<ClaudeLayout />}>
                       <Route index element={<ContentCreationPage />} />
                       <Route path="help" element={<HelpPage />} />
                       <Route path="create" element={<ContentCreationPage />} />
                       <Route path="c/:id" element={<ConversionDetailPage />} />
-                      <Route path="settings" element={<SettingsPage />} />
                     </Route>
                     <Route path="/onboarding" element={<OnboardingPage />} />
                   </Route>

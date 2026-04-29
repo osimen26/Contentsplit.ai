@@ -294,7 +294,7 @@ const SidebarContentComponent: React.FC<{
         gap: 2,
       }}>
         <FooterLink
-          to="/dashboard/settings"
+          to="/settings"
           icon={<Settings size={16} />}
           label="Settings"
           active={isActive('/settings')}
@@ -348,7 +348,7 @@ const SidebarContentComponent: React.FC<{
 
             {isFree && (
               <Link
-                to="/dashboard/settings"
+                to="/settings"
                 style={{
                   flexShrink: 0,
                   padding: '4px 10px',
