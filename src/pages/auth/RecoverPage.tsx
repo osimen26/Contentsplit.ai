@@ -18,18 +18,12 @@ const RecoverPage: React.FC = () => {
     setIsLoading(true)
     setError('')
     try {
-      const response = await apiClient.request<{ debug?: unknown }>({
-        url: '/auth/recover',
-        method: 'POST',
-        data: { email },
-      })
-      if (response?.debug) {
-        console.log('Recovery link (dev mode):', response.debug)
-      }
+      await apiClient.recoverPassword(email)
       setIsSubmitted(true)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Recovery error:', err)
-      setError('Something went wrong. Please try again.')
+      const message = err?.response?.data?.message || err?.response?.data?.error || 'Something went wrong. Please try again.'
+      setError(message)
     } finally {
       setIsLoading(false)
     }

@@ -496,7 +496,7 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
                 onClick={() => navigate('/upgrade')}
                 style={{
                   padding: '10px 20px',
-                  backgroundColor: '#111',
+                  backgroundColor: 'var(--sys-color-primary-40)',
                   color: 'white',
                   border: 'none',
                   borderRadius: 8,
