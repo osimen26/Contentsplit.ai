@@ -102,7 +102,7 @@ const ContentCreationPage: React.FC = () => {
   const [selectedTone, setSelectedTone] = useState('casual')
   const [activeTab, setActiveTab] = useState('twitter')
   const [currentConversionId, setCurrentConversionId] = useState<string | null>(null)
-  const [selectedRegenerationOption, setSelectedRegenerationOption] = useState<string | null>(null)
+  const [selectedRegenerationOption, setSelectedRegenerationOption] = useState<string | undefined>(undefined)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   
   const { data: user } = useCurrentUser()
