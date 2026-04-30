@@ -1,12 +1,25 @@
-// Vercel serverless function - wraps Express app
-// Lazy-load server/index.js to avoid top-level await issues in Vercel
+// Vercel serverless function - wraps Express app using serverless-http
+import serverless from 'serverless-http';
 
-let cachedApp = null;
+let cachedHandler = null;
 
 export default async function handler(req, res) {
-  if (!cachedApp) {
-    const { default: app } = await import('../server/index.js');
-    cachedApp = app;
+  if (!cachedHandler) {
+    try {
+      const { default: app } = await import('../server/index.js');
+      cachedHandler = serverless(app, {
+        binary: ['*/*']
+      });
+    } catch (e) {
+      console.error('Failed to load server:', e.message, e.stack);
+      return res.status(500).json({ error: 'Server initialization failed', details: e.message });
+    }
   }
-  return cachedApp(req, res);
+
+  try {
+    return cachedHandler(req, res);
+  } catch (e) {
+    console.error('Request error:', e.message, e.stack);
+    return res.status(500).json({ error: 'Request failed', details: e.message });
+  }
 }
