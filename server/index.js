@@ -233,7 +233,10 @@ async create(email, password, firstName, lastName) {
       if (error) throw error
       return data
     }
-  } : {
+  }
+}
+
+  return {
     findByEmail(email) {
       return Array.from(usersDb.values()).find(u => u.email.toLowerCase() === email.toLowerCase()) || null
     },
