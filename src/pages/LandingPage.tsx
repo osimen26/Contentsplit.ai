@@ -23,6 +23,38 @@ const LandingPage: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [isMobile, setIsMobile] = useState(false);
 
+  const DEMO_FULL_TEXT = "Repurposing content isn't just about reaching more people; it's about respecting your audience's platform of choice. A 2,000-word deep dive might be perfect for a Sunday morning newsletter, but on Twitter, your audience wants the punchy, high-level takeaways in under 60 seconds.";
+  const [demoText, setDemoText] = useState("");
+  const [demoState, setDemoState] = useState<'idle' | 'typing' | 'done'>('idle');
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setDemoState(prev => prev === 'idle' ? 'typing' : prev);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    const demoSection = document.getElementById('demo');
+    if (demoSection) observer.observe(demoSection);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (demoState !== 'typing') return;
+    let i = 0;
+    const interval = setInterval(() => {
+      setDemoText(DEMO_FULL_TEXT.substring(0, i));
+      i++;
+      if (i > DEMO_FULL_TEXT.length) {
+        clearInterval(interval);
+        setDemoState('done');
+      }
+    }, 15);
+    return () => clearInterval(interval);
+  }, [demoState]);
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
@@ -267,7 +299,9 @@ const LandingPage: React.FC = () => {
               <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1px', color: COLORS.textMuted, textTransform: 'uppercase' }}>BLOG EXCERPT</div>
             </div>
             <textarea 
-              defaultValue="Repurposing content isn't just about reaching more people; it's about respecting your audience's platform of choice. A 2,000-word deep dive might be perfect for a Sunday morning newsletter, but on Twitter, your audience wants the punchy, high-level takeaways in under 60 seconds."
+              value={demoText}
+              readOnly
+              placeholder="Waiting for input..."
               style={{ width: '100%', height: isMobile ? '200px' : '240px', backgroundColor: '#F3F4F6', border: 'none', borderRadius: '12px', padding: '16px', fontSize: '14px', color: COLORS.textMain, resize: 'none', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6 }}
             ></textarea>
           </div>
@@ -278,10 +312,12 @@ const LandingPage: React.FC = () => {
               <TwitterIcon size={16} />
             </div>
             <div style={{ width: '100%', height: isMobile ? '200px' : '240px', backgroundColor: '#F9FAFB', border: `1px solid ${COLORS.border}`, borderRadius: '12px', padding: '16px', overflowY: 'auto' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div className="demo-generated-line" style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5, animationDelay: '1s' }}>1/ Content repurposing is NOT just copy-pasting. It’s about platform-native storytelling. 🧵</div>
-                <div className="demo-generated-line" style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5, animationDelay: '2.5s' }}>2/ Respect the channel. Twitter users want punchy takeaways, not 2000 words.</div>
-              </div>
+              {demoState === 'done' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div className="demo-generated-line" style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5, animationDelay: '0.2s' }}>1/ Content repurposing is NOT just copy-pasting. It’s about platform-native storytelling. 🧵</div>
+                  <div className="demo-generated-line" style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5, animationDelay: '1.2s' }}>2/ Respect the channel. Twitter users want punchy takeaways, not 2000 words.</div>
+                </div>
+              )}
             </div>
           </div>
         </div>
