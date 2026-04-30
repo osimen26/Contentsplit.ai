@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from '@components/application';
 import { TwitterIcon, LinkedInIcon, InstagramIcon, FacebookIcon, NewsletterIcon } from '@components/ui/SocialIcons';
+import GoogleAuth from '@/components/auth/GoogleAuth';
 
 // Exact colors from image
 const COLORS = {
@@ -154,23 +155,18 @@ const LandingPage: React.FC = () => {
           Paste your article. ContentSplit transforms it into optimized posts for Twitter, Facebook, LinkedIn, Instagram, and newsletters — all in seconds.
         </p>
         
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '12px', width: isMobile ? '100%' : 'auto', marginBottom: '16px' }}>
-          <Link to="/register" style={{ 
-            backgroundColor: COLORS.primary, 
-            color: COLORS.white, 
-            padding: isMobile ? '14px 24px' : '16px 32px', 
-            borderRadius: '100px', 
-            fontSize: '16px', 
-            fontWeight: 500, 
-            textDecoration: 'none', 
-            textAlign: 'center',
-            boxShadow: isMobile ? `0 0 40px ${COLORS.primary}20` : 'none' 
-          }}>
-            Start for free &rarr;
-          </Link>
-          <a href="#how-it-works" style={{ backgroundColor: COLORS.white, color: COLORS.textMain, padding: isMobile ? '14px 24px' : '16px 32px', borderRadius: '100px', fontSize: '16px', fontWeight: 500, border: `1px solid ${COLORS.border}`, textDecoration: 'none', textAlign: 'center' }}>
-            See how it works
-          </a>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: isMobile ? '100%' : 'auto', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '12px', width: '100%' }}>
+            <Link to="/register" className="btn-primary" style={{ flex: 1, padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px' }}>
+              Start for free &rarr;
+            </Link>
+            <a href="#how-it-works" className="btn-secondary" style={{ flex: 1, padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px' }}>
+              See how it works
+            </a>
+          </div>
+          <div style={{ width: isMobile ? '100%' : '280px' }}>
+            <GoogleAuth buttonText="Sign up with Google" />
+          </div>
         </div>
         
         <p style={{ fontSize: '12px', color: COLORS.textMuted, marginBottom: isMobile ? '40px' : '64px' }}>
@@ -796,10 +792,10 @@ const LandingPage: React.FC = () => {
       {/* FOOTER */}
       {/* FOOTER */}
       <footer style={{ backgroundColor: '#0F172A', paddingTop: '80px', paddingBottom: '48px', paddingLeft: isMobile ? '20px' : '48px', paddingRight: isMobile ? '20px' : '48px', display: 'flex', justifyContent: 'center', color: '#94A3B8' }}>
-        <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: isMobile ? '48px' : '80px', alignItems: isMobile ? 'center' : 'stretch' }}>
+        <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: isMobile ? '48px' : '80px', alignItems: 'flex-start' }}>
           
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: '48px', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '320px', alignItems: isMobile ? 'center' : 'flex-start' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: '48px', alignItems: 'flex-start', textAlign: 'left' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '320px', alignItems: 'flex-start' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 700, fontSize: '20px', color: COLORS.white }}>
                 <div style={{ width: '28px', height: '28px', backgroundColor: COLORS.primary, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Logo size={16} color="white" />
@@ -818,7 +814,7 @@ const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, auto)', gap: isMobile ? '40px' : '64px', textAlign: isMobile ? 'center' : 'left' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, auto)', gap: isMobile ? '40px' : '64px', textAlign: 'left' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <h4 style={{ fontSize: '11px', fontWeight: 700, color: COLORS.white, textTransform: 'uppercase' }}>Product</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' }}>
@@ -843,7 +839,7 @@ const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', width: '100%', paddingTop: '32px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', gap: '20px', textAlign: 'center' }}>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', width: '100%', paddingTop: '32px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: '20px', textAlign: isMobile ? 'left' : 'center' }}>
             <div style={{ fontSize: '13px', color: '#64748B' }}>
               © {new Date().getFullYear()} ContentSplit.ai
             </div>
@@ -957,8 +953,9 @@ const LandingPage: React.FC = () => {
           border-radius: 100px;
           font-weight: 600;
           text-decoration: none;
-          display: inline-flex;
+          display: flex;
           align-items: center;
+          justify-content: center;
           gap: 8px;
           transition: all 0.2s ease;
           border: none;
@@ -977,8 +974,9 @@ const LandingPage: React.FC = () => {
           border-radius: 100px;
           font-weight: 600;
           text-decoration: none;
-          display: inline-flex;
+          display: flex;
           align-items: center;
+          justify-content: center;
           gap: 8px;
           transition: all 0.2s ease;
           border: 1px solid ${COLORS.border};

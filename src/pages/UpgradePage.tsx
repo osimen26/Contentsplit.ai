@@ -69,13 +69,16 @@ const UpgradePage: React.FC = () => {
   const currentTier = user?.tier || 'free'
 
   const PAYMENT_LINKS: Record<string, string> = {
-    pro: 'https://flutterwave.com/pay/kaiatbkk5efs',
-    agency: 'https://flutterwave.com/pay/ellrx9v3v56p',
+    'pro-monthly': 'https://flutterwave.com/pay/kaiatbkk5efs',
+    'pro-yearly': 'https://flutterwave.com/pay/p5lme1qqkne7',
+    'agency-monthly': 'https://flutterwave.com/pay/ellrx9v3v56p',
+    'agency-yearly': 'https://flutterwave.com/pay/qyooicoaepeg',
   }
 
-  const handleUpgrade = (planId: string) => {
+  const handleUpgrade = (planId: string, billingType?: 'monthly' | 'yearly') => {
     if (planId === 'free') return
-    const link = PAYMENT_LINKS[planId]
+    const key = `${planId}-${billingType || billing}`
+    const link = PAYMENT_LINKS[key]
     if (link) {
       window.open(link, '_blank')
     }
@@ -350,7 +353,7 @@ const UpgradePage: React.FC = () => {
             </div>
             <p style={{ margin: '0 0 20px', fontSize: '0.8rem', color: '#aaa' }}>{prices.agency.note}</p>
             <button
-              onClick={() => handleUpgrade('agency')}
+              onClick={() => handleUpgrade('agency', billing)}
               disabled={loading === 'agency' || currentTier === 'agency'}
               style={{
                 padding: '11px 0',

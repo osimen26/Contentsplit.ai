@@ -7,6 +7,7 @@ interface AuthContextType {
   user: User | null
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
+  loginWithGoogle: (accessToken: string) => Promise<void>
   logout: () => void
   updateUser: (updates: Partial<User>) => void
   notifyLoggedIn: () => void
@@ -50,9 +51,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loginMutation = useLogin()
   const logoutMutation = useLogout()
+  const googleAuthMutation = useGoogleAuthMutation()
 
   const login = async (email: string, password: string) => {
     await loginMutation.mutateAsync({ email, password })
+    setTokenExists(true)
+    await refetch()
+  }
+
+  const loginWithGoogle = async (accessToken: string) => {
+    await googleAuthMutation.mutateAsync({ access_token: accessToken })
     setTokenExists(true)
     await refetch()
   }
@@ -79,7 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isLoading = tokenExists && (isUserLoading || (!user && !isError))
 
   return (
-    <AuthContext.Provider value={{ user: user || null, isLoading, login, logout, updateUser, notifyLoggedIn, setTokenExists, refetch, isError }}>
+    <AuthContext.Provider value={{ user: user || null, isLoading, login, loginWithGoogle, logout, updateUser, notifyLoggedIn, setTokenExists, refetch, isError }}>
       {children}
     </AuthContext.Provider>
   )
