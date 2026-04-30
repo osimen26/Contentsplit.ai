@@ -406,7 +406,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* NEW FEATURES SECTION */}
-      <section id="features" style={{ paddingTop: '100px', paddingBottom: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: `1px solid ${COLORS.border}`, backgroundColor: COLORS.bg }}>
+      <section id="features" style={{ paddingTop: '100px', paddingBottom: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: `1px solid ${COLORS.border}`, backgroundColor: COLORS.bg, paddingLeft: '20px', paddingRight: '20px' }}>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
           <div className="animate-slideUp" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#EDE9FE', color: COLORS.primary, padding: '6px 16px', borderRadius: '100px', fontSize: '11px', fontWeight: 700, letterSpacing: '1px', marginBottom: '16px' }}>FEATURES</div>
           <h2 style={{ fontSize: '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '20px', lineHeight: 1.2, maxWidth: '600px', margin: '0 auto 20px' }}>Everything you need to scale.</h2>
@@ -418,7 +418,7 @@ const LandingPage: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '32px' : '64px', maxWidth: '1100px', width: '100%', alignItems: 'flex-start' }}>
           
           {/* Left Column: Interactive Feature Tabs */}
-          <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: isMobile ? '-24px' : '0' }}>
+          <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '12px', marginTop: isMobile ? '24px' : '0' }}>
             {[
               {
                 title: "AI-Powered Analysis",
