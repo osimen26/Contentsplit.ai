@@ -115,27 +115,36 @@ app.use(async (req, res, next) => {
   next()
 })
 
-// Simple file-based persistence for mock mode
+// Simple file-based persistence for mock mode (skipped on Vercel's read-only FS)
 const DB_PATH = path.resolve(__dirname, 'db')
-if (!fs.existsSync(DB_PATH)) fs.mkdirSync(DB_PATH, { recursive: true })
+try {
+  if (!fs.existsSync(DB_PATH)) fs.mkdirSync(DB_PATH, { recursive: true })
+} catch (e) {
+  // Vercel has a read-only filesystem — mock DB persistence is not available
+  console.warn('⚠️ Cannot create db directory (read-only FS):', e.message)
+}
 
 function loadMockDb(name) {
-  const filePath = path.join(DB_PATH, `${name}.json`)
-  if (fs.existsSync(filePath)) {
-    try {
+  try {
+    const filePath = path.join(DB_PATH, `${name}.json`)
+    if (fs.existsSync(filePath)) {
       const data = JSON.parse(fs.readFileSync(filePath, 'utf8'))
       return new Map(Object.entries(data))
-    } catch (e) {
-      console.error(`Error loading ${name} DB:`, e)
     }
+  } catch (e) {
+    console.error(`Error loading ${name} DB:`, e.message)
   }
   return new Map()
 }
 
 function saveMockDb(name, map) {
-  const filePath = path.join(DB_PATH, `${name}.json`)
-  const data = Object.fromEntries(map)
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+  try {
+    const filePath = path.join(DB_PATH, `${name}.json`)
+    const data = Object.fromEntries(map)
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+  } catch (e) {
+    console.warn(`⚠️ Cannot save ${name} DB:`, e.message)
+  }
 }
 
 const usersDb = loadMockDb('users')
@@ -147,7 +156,7 @@ const JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_KEY || 'conten
 // getUserDb returns DB interface (Supabase or mock)
 // Call initSupabase() before using this in request handlers
 function getUserDb() {
-  // Return Supabase-backed DB if available, otherwise use mock
+  // Return Supabase-backed DB if available
   if (supabase) {
     return {
       async findByEmail(email) {
@@ -170,65 +179,61 @@ function getUserDb() {
         if (error && error.code !== 'PGRST116') throw error
         return data || null
       },
-async create(email, password, firstName, lastName) {
-      console.log('Creating user in Supabase:', email)
-      // Only add name fields if provided (they may not exist in DB)
-      let userData = { 
-        email, 
-        password_hash: hashPassword(password),
-        tier: 'free',
-        display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
-      }
-      
-      // Remove first_name/last_name if they exist (not in our schema)
-      delete userData.first_name
-      delete userData.last_name
-      
-      const { data, error } = await supabase
-        .from('users')
-        .insert(userData)
-        .select()
-        .single()
-      console.log('Insert result:', { error: error?.message, data: !!data })
-      if (error) {
-        console.log('Error details:', JSON.stringify(error))
-        // Check if it's a column missing error, try without name fields
-        if (error.message && (error.message.includes('first_name') || error.message.includes('last_name') || error.message.includes('column'))) {
-          console.log('Detected missing column error, retrying without name fields...')
-          const { data: retryData, error: retryError } = await supabase
-            .from('users')
-            .insert({ 
-              email, 
-              password_hash: hashPassword(password), 
-              tier: 'free',
-              display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
-            })
-            .select()
-            .single()
-          if (retryError) {
-            console.error('Supabase insert error:', retryError)
-            throw retryError
-          }
-          return retryData
+      async create(email, password, firstName, lastName) {
+        console.log('Creating user in Supabase:', email)
+        const userData = {
+          email,
+          password_hash: hashPassword(password),
+          tier: 'free',
+          display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
         }
-        console.error('Supabase insert error:', error)
-        throw error
+
+        const { data, error } = await supabase
+          .from('users')
+          .insert(userData)
+          .select()
+          .single()
+        console.log('Insert result:', { error: error?.message, data: !!data })
+        if (error) {
+          console.log('Error details:', JSON.stringify(error))
+          // Check if it's a column missing error, try without name fields
+          if (error.message && (error.message.includes('first_name') || error.message.includes('last_name') || error.message.includes('column'))) {
+            console.log('Detected missing column error, retrying without name fields...')
+            const { data: retryData, error: retryError } = await supabase
+              .from('users')
+              .insert({
+                email,
+                password_hash: hashPassword(password),
+                tier: 'free',
+                display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
+              })
+              .select()
+              .single()
+            if (retryError) {
+              console.error('Supabase insert error:', retryError)
+              throw retryError
+            }
+            return retryData
+          }
+          console.error('Supabase insert error:', error)
+          throw error
+        }
+        return data
+      },
+      async update(id, updates) {
+        const { data, error } = await supabase
+          .from('users')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single()
+        if (error) throw error
+        return data
       }
-      return data
-    },
-    async update(id, updates) {
-      const { data, error } = await supabase
-        .from('users')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single()
-      if (error) throw error
-      return data
     }
   }
-}
 
+  // Fallback: mock in-memory DB
   return {
     findByEmail(email) {
       return Array.from(usersDb.values()).find(u => u.email.toLowerCase() === email.toLowerCase()) || null
@@ -237,14 +242,14 @@ async create(email, password, firstName, lastName) {
       return usersDb.get(id) || null
     },
     create(email, password, firstName, lastName) {
-      const user = { 
-        id: crypto.randomUUID(), 
-        email: email.toLowerCase(), 
+      const user = {
+        id: crypto.randomUUID(),
+        email: email.toLowerCase(),
         password_hash: hashPassword(password),
-        tier: 'free', 
+        tier: 'free',
         first_name: firstName,
         last_name: lastName,
-        created_at: new Date().toISOString() 
+        created_at: new Date().toISOString()
       }
       usersDb.set(user.id, user)
       saveMockDb('users', usersDb)
