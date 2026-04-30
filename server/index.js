@@ -70,24 +70,55 @@ if (!DEEPSEEK_API_KEY) {
 }
 
 // ── SUPABASE CONFIG ─────────────────────────────────────────────────────────
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY || process.env.VITE_SUPABASE_ANON_KEY
-const isPlaceholder = (val) => !val || val.includes('your-project') || val.includes('your_supabase')
-
 let supabase = null
 
-if (supabaseUrl && supabaseKey && !isPlaceholder(supabaseUrl) && !isPlaceholder(supabaseKey)) {
-  supabase = createClient(supabaseUrl, supabaseKey, {
-    auth: { autoRefreshToken: false, persistSession: false }
+async function initSupabase() {
+  if (supabase) return supabase
+
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY || process.env.VITE_SUPABASE_ANON_KEY
+
+  console.log('Supabase env check:', { 
+    hasUrl: !!supabaseUrl, 
+    hasKey: !!supabaseKey,
+    url: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'MISSING'
   })
-  console.log('✅ Supabase client initialized')
-} else {
-  console.warn('⚠️  Supabase not configured or using placeholders - using mock mode (data persisted to .json files)')
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('⚠️ Supabase env vars missing')
+    return null
+  }
+
+  try {
+    supabase = createClient(supabaseUrl, supabaseKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    })
+    // Test connection
+    const { error } = await supabase.from('users').select('id').limit(1)
+    if (error) {
+      console.error('⚠️ Supabase connection test failed:', error.message)
+      supabase = null
+    } else {
+      console.log('✅ Supabase initialized and verified')
+    }
+  } catch (e) {
+    console.error('⚠️ Supabase init error:', e.message)
+    supabase = null
+  }
+
+  return supabase
 }
 
 // ── MIDDLEWARE ───────────────────────────────────────────────────────────────
 app.use(cors())
 app.use(express.json({ limit: '1mb' }))
+
+// Initialize services on first API request (handles Vercel serverless cold starts)
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    if (!supabase) await initSupabase()`n    if (!flutterwave && req.path.includes('/payments/')) await getFlutterwave()`n  }
+  next()
+})
 
 // Simple file-based persistence for mock mode
 const DB_PATH = path.resolve(__dirname, 'db')
@@ -118,28 +149,32 @@ const outputsDb = loadMockDb('outputs')
 const sessionsDb = loadMockDb('sessions')
 const JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_KEY || 'contentsplit-secret-key'
 
+// getUserDb returns DB interface (Supabase or mock)
+// Call initSupabase() before using this in request handlers
 function getUserDb() {
-  return supabase ? {
-    async findByEmail(email) {
-      console.log('findByEmail:', email)
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('email', email.toLowerCase())
-        .single()
-      console.log('findByEmail result:', { error: error?.message })
-      if (error && error.code !== 'PGRST116') throw error
-      return data || null
-    },
-    async findById(id) {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', id)
-        .single()
-      if (error && error.code !== 'PGRST116') throw error
-      return data || null
-    },
+  // Return Supabase-backed DB if available, otherwise use mock
+  if (supabase) {
+    return {
+      async findByEmail(email) {
+        console.log('findByEmail:', email)
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', email.toLowerCase())
+          .single()
+        console.log('findByEmail result:', { error: error?.message })
+        if (error && error.code !== 'PGRST116') throw error
+        return data || null
+      },
+      async findById(id) {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', id)
+          .single()
+        if (error && error.code !== 'PGRST116') throw error
+        return data || null
+      },
 async create(email, password, firstName, lastName) {
       console.log('Creating user in Supabase:', email)
       // Only add name fields if provided (they may not exist in DB)
@@ -1267,6 +1302,15 @@ app.post('/api/payments/initiate', requireAuth, async (req, res) => {
   
   if (!flutterwave) {
     return res.status(503).json({ error: 'Payment system not configured' })
+  }
+
+  // Initialize Supabase if not already done
+  if (!supabase) {
+    await initSupabase()
+  }
+
+  if (!supabase) {
+    return res.status(503).json({ error: 'Database not configured' })
   }
 
   try {
