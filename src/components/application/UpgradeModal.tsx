@@ -4,7 +4,7 @@ import { X, Sparkles, Check, ArrowRight, Lock, Zap } from 'lucide-react'
 interface UpgradeModalProps {
   isOpen: boolean
   onClose: () => void
-  onUpgrade: (tier: 'pro' | 'agency') => void
+  onUpgrade?: (tier: 'pro' | 'agency') => void
   dailyUsage: number
   dailyLimit: number
   isFreeTier: boolean
@@ -21,6 +21,16 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
   const modalRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
   const [isAnimated, setIsAnimated] = useState(false)
+
+  const PAYMENT_LINKS: Record<string, string> = {
+    pro: 'https://flutterwave.com/pay/kaiatbkk5efs',
+    agency: 'https://flutterwave.com/pay/ellrx9v3v56p',
+  }
+
+  const handleUpgrade = (tier: 'pro' | 'agency') => {
+    window.open(PAYMENT_LINKS[tier], '_blank')
+    onUpgrade?.(tier)
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -194,7 +204,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
             {/* Pro Plan */}
             <div
-              onClick={() => onUpgrade('pro')}
+              onClick={() => handleUpgrade('pro')}
               style={{
                 padding: '20px',
                 borderRadius: '16px',
@@ -243,7 +253,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
 
             {/* Agency Plan */}
             <div
-              onClick={() => onUpgrade('agency')}
+              onClick={() => handleUpgrade('agency')}
               style={{
                 padding: '20px',
                 borderRadius: '16px',

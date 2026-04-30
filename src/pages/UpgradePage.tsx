@@ -68,19 +68,16 @@ const UpgradePage: React.FC = () => {
 
   const currentTier = user?.tier || 'free'
 
-  const handleUpgrade = async (planId: string) => {
+  const PAYMENT_LINKS: Record<string, string> = {
+    pro: 'https://flutterwave.com/pay/kaiatbkk5efs',
+    agency: 'https://flutterwave.com/pay/ellrx9v3v56p',
+  }
+
+  const handleUpgrade = (planId: string) => {
     if (planId === 'free') return
-    setLoading(planId)
-    try {
-      const data = await apiClient.initiatePayment(planId)
-      if (data.paymentLink) {
-        window.location.href = data.paymentLink
-      }
-    } catch (err) {
-      console.error('Payment initiation failed:', err)
-      alert('Failed to initiate payment. Please try again.')
-    } finally {
-      setLoading(null)
+    const link = PAYMENT_LINKS[planId]
+    if (link) {
+      window.open(link, '_blank')
     }
   }
 
