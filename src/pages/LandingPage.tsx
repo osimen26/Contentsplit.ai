@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from '@components/application';
 import { TwitterIcon, LinkedInIcon, InstagramIcon, FacebookIcon, NewsletterIcon } from '@components/ui/SocialIcons';
-import { GoogleAuth } from '@/components/auth/GoogleAuth';
+import GoogleAuth from '@/components/auth/GoogleAuth';
 
 // Exact colors from image
 const COLORS = {
