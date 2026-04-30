@@ -175,68 +175,108 @@ const LandingPage: React.FC = () => {
 
         {/* HERO MOCKUP */}
         <div className="animate-float hero-mockup-container" style={{ position: 'relative', width: '100%', maxWidth: '900px', height: isMobile ? '360px' : '480px', margin: '0 auto', marginTop: '20px' }}>
-          
+          {/* Background Cards (Peek out on mobile, fan on desktop) */}
+          <div className="hero-card-fan-1" style={{ 
+            position: 'absolute', top: '50%', left: '50%', 
+            transform: isMobile ? 'translate(-85%, -40%) rotate(-12deg)' : 'translate(-160%, -35%) rotate(-15deg)', 
+            width: isMobile ? '200px' : '240px', 
+            backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, 
+            boxShadow: '0 15px 30px rgba(0,0,0,0.04)', zIndex: 0, overflow: 'hidden', 
+            opacity: isMobile ? 0.4 : 0.8 
+          }}>
+            <div style={{ padding: '12px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><InstagramIcon size={12}/></div>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: COLORS.textMain }}>Instagram</span>
+            </div>
+            <div style={{ padding: '16px' }}>
+              <div style={{ width: '100%', height: isMobile ? '60px' : '100px', backgroundColor: '#F3F4F6', borderRadius: '12px' }}></div>
+            </div>
+          </div>
 
+          <div className="hero-card-fan-2" style={{ 
+            position: 'absolute', top: '50%', left: '50%', 
+            transform: isMobile ? 'translate(-15%, -40%) rotate(12deg)' : 'translate(60%, -35%) rotate(15deg)', 
+            width: isMobile ? '200px' : '240px', 
+            backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, 
+            boxShadow: '0 15px 30px rgba(0,0,0,0.04)', zIndex: 0, overflow: 'hidden', 
+            opacity: isMobile ? 0.4 : 0.8 
+          }}>
+            <div style={{ padding: '12px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: '#1877F2', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FacebookIcon size={12}/></div>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: COLORS.textMain }}>Facebook</span>
+            </div>
+            <div style={{ padding: '16px' }}>
+              <div style={{ width: '100%', height: isMobile ? '60px' : '100px', backgroundColor: '#EBF5FF', borderRadius: '12px' }}></div>
+            </div>
+          </div>
 
-          {/* Left Card - Twitter */}
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-110%, -45%) rotate(-8deg)', width: '280px', backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, boxShadow: '0 20px 40px rgba(0,0,0,0.06)', zIndex: 1, overflow: 'hidden' }}>
+          {/* Twitter Card */}
+          <div className="hero-card-left" style={{ 
+            position: 'absolute', top: '50%', left: '50%', 
+            transform: isMobile ? 'translate(-95%, -45%) rotate(-6deg)' : 'translate(-115%, -45%) rotate(-8deg)', 
+            width: isMobile ? '220px' : '280px', 
+            backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, 
+            boxShadow: '0 20px 40px rgba(0,0,0,0.06)', zIndex: 1, overflow: 'hidden',
+            opacity: isMobile ? 0.7 : 1
+          }}>
             <div style={{ padding: '16px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#1D9BF0', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><TwitterIcon size={14}/></div>
-              <span style={{ fontSize: '14px', fontWeight: 600, color: COLORS.textMain }}>Twitter/X Thread</span>
+              <span style={{ fontSize: '14px', fontWeight: 600, color: COLORS.textMain }}>Twitter Thread</span>
             </div>
-            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: COLORS.primary, opacity: 0.1, flexShrink: 0 }}></div>
-                <div>
-                  <div style={{ width: '80px', height: '8px', backgroundColor: '#E5E7EB', borderRadius: '4px', marginBottom: '8px' }}></div>
-                  <p style={{ margin: 0, fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5 }}>Stop manually rewriting your blog posts for every social platform. 🧵</p>
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: COLORS.primary, opacity: 0.1, flexShrink: 0 }}></div>
-                <div>
-                  <div style={{ width: '60px', height: '8px', backgroundColor: '#E5E7EB', borderRadius: '4px', marginBottom: '8px' }}></div>
-                  <p style={{ margin: 0, fontSize: '13px', color: COLORS.supportText, lineHeight: 1.5 }}>Most creators spend hours adapting one piece of content. I found a system that does it instantly...</p>
-                </div>
-              </div>
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ width: '80px', height: '8px', backgroundColor: '#F3F4F6', borderRadius: '4px' }}></div>
+              <p style={{ margin: 0, fontSize: '12px', color: COLORS.textMain, lineHeight: 1.4 }}>1/ Turn your blog posts into punchy threads...</p>
+              <div style={{ width: '100%', height: '40px', backgroundColor: '#F9FAFB', borderRadius: '8px' }}></div>
             </div>
           </div>
 
-          {/* Right Card - Newsletter */}
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(10%, -45%) rotate(8deg)', width: '280px', backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, boxShadow: '0 20px 40px rgba(0,0,0,0.06)', zIndex: 2, overflow: 'hidden' }}>
+          {/* Newsletter Card */}
+          <div className="hero-card-right" style={{ 
+            position: 'absolute', top: '50%', left: '50%', 
+            transform: isMobile ? 'translate(-5%, -45%) rotate(6deg)' : 'translate(15%, -45%) rotate(8deg)', 
+            width: isMobile ? '220px' : '280px', 
+            backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, 
+            boxShadow: '0 20px 40px rgba(0,0,0,0.06)', zIndex: 2, overflow: 'hidden',
+            opacity: isMobile ? 0.7 : 1
+          }}>
             <div style={{ padding: '16px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#EA4335', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><NewsletterIcon size={14}/></div>
-              <span style={{ fontSize: '14px', fontWeight: 600, color: COLORS.textMain }}>Email Newsletter</span>
+              <span style={{ fontSize: '14px', fontWeight: 600, color: COLORS.textMain }}>Newsletter</span>
             </div>
             <div style={{ padding: '24px' }}>
-              <div style={{ width: '100%', height: '80px', backgroundColor: '#FCE8E8', borderRadius: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EA4335' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-              </div>
-              <p style={{ margin: '0 0 8px 0', fontSize: '15px', fontWeight: 600, color: COLORS.textMain }}>The Content Strategy Playbook</p>
-              <p style={{ margin: 0, fontSize: '13px', color: COLORS.supportText, lineHeight: 1.6 }}>In this week's issue, we cover how to automate your content distribution without losing your authentic voice...</p>
+              <div style={{ width: '100%', height: '60px', backgroundColor: '#FCE8E8', borderRadius: '12px', marginBottom: '12px' }}></div>
+              <p style={{ margin: 0, fontSize: '12px', color: COLORS.supportText, lineHeight: 1.4 }}>Automate your email content...</p>
             </div>
           </div>
 
-          {/* Center Card - LinkedIn */}
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '320px', backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, boxShadow: '0 30px 60px rgba(0,0,0,0.1)', zIndex: 3, overflow: 'hidden' }}>
-            <div style={{ padding: '20px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <LinkedInIcon size={32}/>
+          {/* Center Card - LinkedIn (Focus) */}
+          <div className="hero-card-center" style={{ 
+            position: 'absolute', top: '50%', left: '50%', 
+            transform: 'translate(-50%, -50%)', 
+            width: isMobile ? '260px' : '320px', 
+            backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, 
+            boxShadow: '0 30px 60px rgba(0,0,0,0.1)', zIndex: 3, overflow: 'hidden' 
+          }}>
+            <div style={{ padding: '16px 20px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <LinkedInIcon size={28}/>
               <div>
-                <div style={{ fontSize: '15px', fontWeight: 600, color: COLORS.textMain }}>LinkedIn Post</div>
-                <div style={{ fontSize: '12px', color: COLORS.textMuted }}>Professional Tone</div>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: COLORS.textMain }}>LinkedIn Post</div>
+                <div style={{ fontSize: '11px', color: COLORS.textMuted }}>Professional Tone</div>
               </div>
             </div>
-            <div style={{ padding: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                 <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#E8F0FB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0A66C2' }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
-                 <div>
-                   <div style={{ width: '100px', height: '10px', backgroundColor: '#E5E7EB', borderRadius: '4px', marginBottom: '6px' }}></div>
-                   <div style={{ width: '60px', height: '8px', backgroundColor: '#F3F4F6', borderRadius: '4px' }}></div>
-                 </div>
+            <div style={{ padding: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: COLORS.primary, opacity: 0.1 }}></div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ width: '60px', height: '6px', backgroundColor: '#E5E7EB', borderRadius: '3px', marginBottom: '4px' }}></div>
+                  <div style={{ width: '40px', height: '4px', backgroundColor: '#F3F4F6', borderRadius: '2px' }}></div>
+                </div>
               </div>
-              <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: COLORS.textMain, lineHeight: 1.6 }}>I just discovered a game-changing workflow for content distribution. Instead of starting from scratch every time...</p>
-              <div style={{ width: '100%', height: '140px', backgroundColor: '#F3F4F6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              <p style={{ margin: 0, fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5, textAlign: 'center' }}>
+                I just discovered a game-changing workflow for content distribution. Instead of starting from scratch...
+              </p>
+              <div style={{ width: '100%', height: isMobile ? '100px' : '140px', backgroundColor: '#F3F4F6', borderRadius: '16px', marginTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
               </div>
             </div>
           </div>
@@ -870,6 +910,37 @@ const LandingPage: React.FC = () => {
         @keyframes float {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-10px); }
+        }
+
+        .hero-mockup-container {
+          perspective: 1000px;
+        }
+
+        .hero-card-center, .hero-card-left, .hero-card-right, .hero-card-fan-1, .hero-card-fan-2 {
+          transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .hero-mockup-container:hover .hero-card-center {
+          transform: translate(-50%, -55%) scale(1.02);
+          box-shadow: 0 40px 80px rgba(0,0,0,0.15);
+        }
+
+        .hero-mockup-container:hover .hero-card-left {
+          transform: translate(-125%, -48%) rotate(-12deg) scale(0.98);
+        }
+
+        .hero-mockup-container:hover .hero-card-right {
+          transform: translate(25%, -48%) rotate(12deg) scale(0.98);
+        }
+
+        .hero-mockup-container:hover .hero-card-fan-1 {
+          transform: translate(-180%, -38%) rotate(-20deg) scale(0.95);
+          opacity: 0.9;
+        }
+
+        .hero-mockup-container:hover .hero-card-fan-2 {
+          transform: translate(80%, -38%) rotate(20deg) scale(0.95);
+          opacity: 0.9;
         }
 
         @keyframes scan {
