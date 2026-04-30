@@ -93,14 +93,7 @@ async function initSupabase() {
     supabase = createClient(supabaseUrl, supabaseKey, {
       auth: { autoRefreshToken: false, persistSession: false }
     })
-    // Test connection
-    const { error } = await supabase.from('users').select('id').limit(1)
-    if (error) {
-      console.error('⚠️ Supabase connection test failed:', error.message)
-      supabase = null
-    } else {
-      console.log('✅ Supabase initialized and verified')
-    }
+    console.log('✅ Supabase client initialized')
   } catch (e) {
     console.error('⚠️ Supabase init error:', e.message)
     supabase = null
