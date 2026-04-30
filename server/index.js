@@ -116,7 +116,9 @@ app.use(express.json({ limit: '1mb' }))
 // Initialize services on first API request (handles Vercel serverless cold starts)
 app.use(async (req, res, next) => {
   if (req.path.startsWith('/api/')) {
-    if (!supabase) await initSupabase()`n    if (!flutterwave && req.path.includes('/payments/')) await getFlutterwave()`n  }
+    if (!supabase) await initSupabase()
+    if (!flutterwave && req.path.includes('/payments/')) await getFlutterwave()
+  }
   next()
 })
 
