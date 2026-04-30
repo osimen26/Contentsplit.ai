@@ -255,7 +255,7 @@ const LandingPage: React.FC = () => {
 
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '32px' : '48px', maxWidth: '1100px', width: '100%', position: 'relative', alignItems: 'center' }}>
           {!isMobile && (
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 5, pointerEvents: 'none' }}>
+            <div className="animate-pulseArrow" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 5, pointerEvents: 'none' }}>
               <div style={{ backgroundColor: COLORS.white, width: '40px', height: '40px', borderRadius: '50%', border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={COLORS.primary} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
               </div>
@@ -647,6 +647,12 @@ const LandingPage: React.FC = () => {
           to { opacity: 1; transform: scale(1); }
         }
 
+        @keyframes pulseArrow {
+          0% { box-shadow: 0 0 0 0 rgba(91, 80, 214, 0.4); transform: translate(-50%, -50%) scale(1); }
+          50% { box-shadow: 0 0 0 15px rgba(91, 80, 214, 0); transform: translate(-50%, -50%) scale(1.05); }
+          100% { box-shadow: 0 0 0 0 rgba(91, 80, 214, 0); transform: translate(-50%, -50%) scale(1); }
+        }
+
         @media (max-width: 768px) {
           .hero-mockup-container {
             display: none;
@@ -667,6 +673,7 @@ const LandingPage: React.FC = () => {
         .animate-slideUp { animation: slideUp 0.6s ease forwards; }
         .animate-float { animation: float 3s ease-in-out infinite; }
         .animate-scaleIn { animation: scaleIn 0.3s ease forwards; }
+        .animate-pulseArrow { animation: pulseArrow 2s infinite cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%; }
 
         .pricing-card {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

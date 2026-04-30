@@ -104,6 +104,14 @@ async function initSupabase() {
 
 // ── MIDDLEWARE ───────────────────────────────────────────────────────────────
 app.use(cors())
+app.use((req, res, next) => {
+  // If Vercel already parsed the body, mark it so express.json skips it.
+  // This prevents the 30s timeout hang.
+  if (req.body && typeof req.body === 'object' && Object.keys(req.body).length > 0) {
+    req._body = true; 
+  }
+  next();
+});
 app.use(express.json({ limit: '1mb' }))
 
 // Initialize services on first API request (handles Vercel serverless cold starts)
