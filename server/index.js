@@ -1260,6 +1260,11 @@ ${content}`
 
 // Create payment link
 app.post('/api/payments/initiate', requireAuth, async (req, res) => {
+  // Initialize Flutterwave if not already done
+  if (!flutterwave) {
+    await getFlutterwave()
+  }
+  
   if (!flutterwave) {
     return res.status(503).json({ error: 'Payment system not configured' })
   }
@@ -1302,6 +1307,11 @@ app.post('/api/payments/initiate', requireAuth, async (req, res) => {
 
 // Verify payment webhook
 app.post('/api/payments/webhook', async (req, res) => {
+  // Initialize Flutterwave if not already done
+  if (!flutterwave) {
+    await getFlutterwave()
+  }
+  
   if (!flutterwave) {
     return res.status(503).json({ error: 'Payment not configured' })
   }
@@ -1363,7 +1373,7 @@ app.post('/api/payments/webhook', async (req, res) => {
 
     res.json({ received: true })
   } catch (err) {
-    console.error('Webhook error:', err)
+    console.error('Webhook error:', err.message, err.stack)
     res.status(500).json({ error: 'Webhook failed' })
   }
 })
