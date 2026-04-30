@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useCurrentUser, useLogout, useLogin } from '@services/query-hooks'
+import { useCurrentUser, useLogout, useLogin, useGoogleAuthMutation } from '@services/query-hooks'
 import { User } from '@services/api-client'
 
 interface AuthContextType {
