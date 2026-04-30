@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Logo } from '@components/application';
 import { TwitterIcon, LinkedInIcon, InstagramIcon, FacebookIcon, NewsletterIcon } from '@components/ui/SocialIcons';
 import '../styles/landing.css';
@@ -7,7 +7,6 @@ import '../styles/landing.css';
 const LandingPage: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const navigate = useNavigate();
 
   // Intersection Observer for animations
   useEffect(() => {

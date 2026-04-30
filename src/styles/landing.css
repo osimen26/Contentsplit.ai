@@ -1374,8 +1374,8 @@
 }
 
 .landing-page-redesign .btn-plan-primary {
-  background: var(--sys-color-primary);
-  border: 1px solid var(--sys-color-primary);
+  background: var(--sys-color-primary-40);
+  border: 1px solid var(--sys-color-primary-40);
   color: white;
   box-shadow: 0 4px 12px rgba(107, 97, 231, 0.2);
 }

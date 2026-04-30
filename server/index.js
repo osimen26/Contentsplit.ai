@@ -68,29 +68,50 @@ if (!DEEPSEEK_API_KEY) {
 }
 
 // ── SUPABASE CONFIG ─────────────────────────────────────────────────────────
-const supabaseUrl = process.env.SUPABASE_URL
-const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_KEY
+const isPlaceholder = (val) => !val || val.includes('your-project') || val.includes('your_supabase')
 
-let supabase = null
-
-if (supabaseUrl && supabaseKey) {
+if (supabaseUrl && supabaseKey && !isPlaceholder(supabaseUrl) && !isPlaceholder(supabaseKey)) {
   supabase = createClient(supabaseUrl, supabaseKey, {
     auth: { autoRefreshToken: false, persistSession: false }
   })
   console.log('✅ Supabase client initialized')
 } else {
-  console.warn('⚠️  SUPABASE_URL/SUPABASE_KEY not set - using mock mode')
+  console.warn('⚠️  Supabase not configured or using placeholders - using mock mode (data persisted to .json files)')
 }
 
 // ── MIDDLEWARE ───────────────────────────────────────────────────────────────
 app.use(cors())
 app.use(express.json({ limit: '1mb' }))
 
-// In-memory fallback if no database
-const usersDb = new Map()
-const conversionsDb = new Map()
-const outputsDb = new Map()
-const sessionsDb = new Map()
+// Simple file-based persistence for mock mode
+import fs from 'fs'
+import path from 'path'
+const DB_PATH = './server/db'
+if (!fs.existsSync(DB_PATH)) fs.mkdirSync(DB_PATH, { recursive: true })
+
+function loadMockDb(name) {
+  const filePath = path.join(DB_PATH, `${name}.json`)
+  if (fs.existsSync(filePath)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf8'))
+      return new Map(Object.entries(data))
+    } catch (e) {
+      console.error(`Error loading ${name} DB:`, e)
+    }
+  }
+  return new Map()
+}
+
+function saveMockDb(name, map) {
+  const filePath = path.join(DB_PATH, `${name}.json`)
+  const data = Object.fromEntries(map)
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+}
+
+const usersDb = loadMockDb('users')
+const conversionsDb = loadMockDb('conversions')
+const outputsDb = loadMockDb('outputs')
+const sessionsDb = loadMockDb('sessions')
 const JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_KEY || 'contentsplit-secret-key'
 
 function getUserDb() {
@@ -100,7 +121,7 @@ function getUserDb() {
       const { data, error } = await supabase
         .from('users')
         .select('*')
-        .eq('email', email)
+        .eq('email', email.toLowerCase())
         .single()
       console.log('findByEmail result:', { error: error?.message })
       if (error && error.code !== 'PGRST116') throw error
@@ -124,6 +145,10 @@ async create(email, password, firstName, lastName) {
         tier: 'free',
         display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
       }
+      
+      // Remove first_name/last_name if they exist (not in our schema)
+      delete userData.first_name
+      delete userData.last_name
       
       const { data, error } = await supabase
         .from('users')
@@ -169,7 +194,7 @@ async create(email, password, firstName, lastName) {
     }
   } : {
     findByEmail(email) {
-      return Array.from(usersDb.values()).find(u => u.email === email) || null
+      return Array.from(usersDb.values()).find(u => u.email.toLowerCase() === email.toLowerCase()) || null
     },
     findById(id) {
       return usersDb.get(id) || null
@@ -177,7 +202,7 @@ async create(email, password, firstName, lastName) {
     create(email, password, firstName, lastName) {
       const user = { 
         id: crypto.randomUUID(), 
-        email, 
+        email: email.toLowerCase(), 
         password_hash: hashPassword(password),
         tier: 'free', 
         first_name: firstName,
@@ -185,6 +210,7 @@ async create(email, password, firstName, lastName) {
         created_at: new Date().toISOString() 
       }
       usersDb.set(user.id, user)
+      saveMockDb('users', usersDb)
       return user
     },
     update(id, updates) {
@@ -237,6 +263,7 @@ function verifyToken(token) {
 async function sendRecoveryEmail(toEmail, token, fromEmail) {
   const APP_URL = process.env.APP_URL || 'http://localhost:3000'
   const recoveryLink = `${APP_URL}/reset-password?token=${token}&email=${encodeURIComponent(toEmail)}`
+  const isPlaceholder = (val) => !val || val.includes('your_resend_api_key') || val.includes('your_deepseek_api_key')
   
   const emailHtml = `
 <!DOCTYPE html>
@@ -253,19 +280,19 @@ async function sendRecoveryEmail(toEmail, token, fromEmail) {
 </html>
   `.trim()
 
-  if (process.env.RESEND_API_KEY) {
+  if (process.env.RESEND_API_KEY && !isPlaceholder(process.env.RESEND_API_KEY)) {
     const { Resend } = await import('resend')
     const resend = new Resend(process.env.RESEND_API_KEY)
     
     await resend.emails.send({
-      from: process.env.RESEND_FROM || 'ContentSplit <noreply@resend.dev>',
+      from: process.env.EMAIL_FROM || 'ContentSplit <noreply@resend.dev>',
       to: toEmail,
       subject: 'ContentSplit - Password Recovery',
       html: emailHtml,
     })
     
     console.log(`📧 Recovery email sent via Resend to ${toEmail}`)
-  } else if (process.env.SMTP_HOST) {
+  } else if (process.env.SMTP_HOST && process.env.SMTP_HOST.trim() !== '') {
     // Production: send via SMTP
     const nodemailer = await import('nodemailer')
     const transporter = nodemailer.createTransport({
@@ -285,10 +312,10 @@ async function sendRecoveryEmail(toEmail, token, fromEmail) {
       html: emailHtml,
     })
     
-    console.log(`📧 Recovery email sent to ${toEmail}`)
+    console.log(`📧 Recovery email sent via SMTP to ${toEmail}`)
   } else {
-    console.log(`📧 Would send email to ${toEmail} (SMTP not configured)`)
-    console.log(`   Preview: ${recoveryLink}`)
+    console.log(`📧 [MOCK] Password recovery email for: ${toEmail}`)
+    console.log(`   Link: ${recoveryLink}`)
   }
 }
 
@@ -376,10 +403,16 @@ ${inputText}
 // Health check
 app.get('/api/health', async (req, res) => {
   let tableStatus = 'unknown'
+  let userCount = 0
   if (supabase) {
     try {
-      const { error } = await supabase.from('users').select('id').limit(1)
-      tableStatus = error ? error.message : 'ok'
+      const { data, error } = await supabase.from('users').select('id', { count: 'exact' })
+      if (error) {
+        tableStatus = error.message
+      } else {
+        tableStatus = 'ok'
+        userCount = data?.length || 0
+      }
     } catch (e) {
       tableStatus = e.message
     }
@@ -388,7 +421,8 @@ app.get('/api/health', async (req, res) => {
     status: 'ok', 
     model: DEEPSEEK_MODEL,
     database: supabase ? 'connected' : 'mock',
-    table_status: tableStatus
+    table_status: tableStatus,
+    user_count: userCount
   })
 })
 
@@ -405,11 +439,13 @@ app.post('/api/auth/login', async (req, res) => {
     const user = await userDb.findByEmail(email)
     
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' })
+      console.log('Login failed: User not found for email:', email)
+      return res.status(401).json({ error: 'Invalid email or password' })
     }
     
     if (!verifyPassword(password, user.password_hash)) {
-      return res.status(401).json({ error: 'Invalid credentials' })
+      console.log('Login failed: Password mismatch for email:', email)
+      return res.status(401).json({ error: 'Invalid email or password' })
     }
 
     // Create session
@@ -1052,57 +1088,19 @@ app.post('/api/auth/recover', async (req, res) => {
     }
 
     const recoveryToken = generateToken(user.id)
-    const APP_URL = process.env.APP_URL || 'http://localhost:5173'
-    const recoveryLink = `${APP_URL}/reset-password?token=${recoveryToken}&email=${encodeURIComponent(email)}`
-    
-    console.log(`📧 Password recovery email would be sent to: ${email}`)
-    console.log(`   Recovery link: ${recoveryLink}`)
-    console.log(`   RESEND_API_KEY set: ${!!process.env.RESEND_API_KEY}`)
-    
-    // Return debug info in response
-    const debugInfo = {
-      recoveryLink,
-      resendKeySet: !!process.env.RESEND_API_KEY,
-      appUrl: APP_URL
+    const debugInfo = { 
+      email, 
+      userFound: true, 
+      smtpConfigured: !!process.env.SMTP_HOST, 
+      resendKeySet: !!process.env.RESEND_API_KEY 
     }
-    
-    if (process.env.RESEND_API_KEY) {
-      try {
-        const { Resend } = await import('resend')
-        const resend = new Resend(process.env.RESEND_API_KEY)
-        
-        const result = await resend.emails.send({
-          from: process.env.RESEND_FROM || 'ContentSplit <noreply@resend.dev>',
-          to: email,
-          subject: 'ContentSplit - Password Recovery',
-          html: `
-<!DOCTYPE html>
-<html>
-<body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <h2 style="color: #1a1a1a;">ContentSplit - Password Recovery</h2>
-  <p>You requested to reset your password. Click the button below to create a new password:</p>
-  <a href="${recoveryLink}" style="display: inline-block; background: #1a1a1a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin: 20px 0;">
-    Reset Password
-  </a>
-  <p style="color: #666; font-size: 14px;">This link expires in 1 hour.</p>
-  <p style="color: #666; font-size: 14px;">If you didn't request this, ignore this email.</p>
-</body>
-</html>
-          `.trim(),
-        })
-        
-        console.log(`📧 Recovery email sent via Resend:`, result)
-        res.json({ success: true, message: 'Recovery email sent!', debug: debugInfo })
-      } catch (emailErr) {
-        console.error('Resend error:', emailErr)
-        res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: { ...debugInfo, error: String(emailErr) } })
-      }
-    } else if (process.env.SMTP_HOST) {
-      await sendRecoveryEmail(email, recoveryToken, process.env.RECOVERY_EMAIL_FROM || 'noreply@contentsplit.ai')
+
+    try {
+      await sendRecoveryEmail(email, recoveryToken, process.env.EMAIL_FROM || 'noreply@contentsplit.ai')
       res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: debugInfo })
-    } else {
-      // No email service - return link in response for testing
-      res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: debugInfo })
+    } catch (emailErr) {
+      console.error('📧 Email sending failed:', emailErr)
+      res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: { ...debugInfo, error: String(emailErr) } })
     }
   } catch (err) {
     console.error('Recovery error:', err)
