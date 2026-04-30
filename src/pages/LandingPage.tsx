@@ -2,590 +2,760 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from '@components/application';
 import { TwitterIcon, LinkedInIcon, InstagramIcon, FacebookIcon, NewsletterIcon } from '@components/ui/SocialIcons';
-import '../styles/landing.css';
+
+// Exact colors from image
+const COLORS = {
+  bg: '#F5F5F7',
+  primary: '#5B50D6',
+  textMain: '#1A1D23',
+  textMuted: '#6B7280',
+  white: '#FFFFFF',
+  border: '#E5E7EB',
+  pillBg: '#F3F4F6',
+  supportText: '#4B5563',
+};
 
 const LandingPage: React.FC = () => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [activeSection, setActiveSection] = useState<string>('');
+  const [activeFeature, setActiveFeature] = useState<number>(0);
+  const [selectedPlan, setSelectedPlan] = useState<number>(1);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Intersection Observer for animations
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-
-    document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const stepPreviews = [
-    {
-      label: 'Step 1 — Paste your content',
-      html: (
-        <>
-          <div className="preview-item">
-            <strong>Blog URL or text</strong>
-            <br />
-            Drop in your article and ContentSplit parses the full text, extracting key ideas and tone.
-          </div>
-          <div className="preview-item" style={{ background: 'var(--sys-color-neutral-100)', borderColor: 'var(--sys-color-primary-90)', color: 'var(--sys-color-primary)' }}>
-            ✓ Tone detected: casual + expert
-            <br />
-            ✓ Key ideas extracted: 5
-            <br />✓ Reading level: professional
-          </div>
-        </>
-      )
-    },
-    {
-      label: 'Step 2 — Choose your platforms',
-      html: (
-        <>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
-            <span style={{ background: 'var(--sys-color-secondary-95)', color: '#1D9BF0', padding: 'var(--sys-spacing-xs) var(--sys-spacing-sm)', borderRadius: 'var(--sys-radius-full)', fontSize: 'var(--sys-font-small-text-regular-font-size, 12px)' }}><TwitterIcon size={12} /> Twitter</span>
-            <span style={{ background: 'var(--sys-color-secondary-90)', color: '#0A66C2', padding: 'var(--sys-spacing-xs) var(--sys-spacing-sm)', borderRadius: 'var(--sys-radius-full)', fontSize: 'var(--sys-font-small-text-regular-font-size, 12px)' }}><LinkedInIcon size={12} /> LinkedIn</span>
-            <span style={{ background: 'var(--sys-color-secondary-90)', color: '#1877F2', padding: 'var(--sys-spacing-xs) var(--sys-spacing-sm)', borderRadius: 'var(--sys-radius-full)', fontSize: 'var(--sys-font-small-text-regular-font-size, 12px)' }}><FacebookIcon size={12} /> Facebook</span>
-            <span style={{ background: 'var(--sys-color-error-95)', color: '#E1306C', padding: 'var(--sys-spacing-xs) var(--sys-spacing-sm)', borderRadius: 'var(--sys-radius-full)', fontSize: 'var(--sys-font-small-text-regular-font-size, 12px)' }}><InstagramIcon size={12} /> Instagram</span>
-            <span style={{ background: 'var(--sys-color-success-95)', color: '#10B981', padding: 'var(--sys-spacing-xs) var(--sys-spacing-sm)', borderRadius: 'var(--sys-radius-full)', fontSize: 'var(--sys-font-small-text-regular-font-size, 12px)' }}><NewsletterIcon size={12} /> Newsletter</span>
-          </div>
-          <div className="preview-item" style={{ fontSize: '13px' }}>
-            Select one or all — ContentSplit generates each format independently, optimised for each platform.
-          </div>
-        </>
-      )
-    },
-    {
-      label: 'Step 3 — Copy and publish',
-      html: (
-        <>
-          <div className="preview-item" style={{ background: 'var(--sys-color-neutral-100)', borderColor: 'var(--sys-color-primary-90)' }}>
-            <strong style={{ color: 'var(--sys-color-primary)' }}>Twitter thread ready</strong>
-            <br />
-            <span style={{ fontSize: '13px', color: 'var(--sys-color-neutral-50)' }}>🚀 Building a coding habit in 30 days? Here's the secret…</span>
-          </div>
-          <div className="preview-item" style={{ fontSize: '13px' }}>
-            Edit any output directly, then copy with one click. Changes auto-save as you type.
-          </div>
-        </>
-      )
-    }
-  ];
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['features', 'how-it-works', 'pricing'];
+      const scrollPosition = window.scrollY + 200; // Increased offset for header
 
-  const faqs = [
-    {
-      q: 'Does ContentSplit work with any blog post?',
-      a: 'Yes — paste a URL or the raw text. ContentSplit handles any length, any topic. It works best with blog posts over 300 words, as that gives it enough material to generate strong, distinct outputs for every platform.'
-    },
-    {
-      q: 'Will the output actually sound like me?',
-      a: "ContentSplit analyses your writing — tone, cadence, vocabulary — and mirrors it across every output. It's not generic AI-speak. That said, every output is editable, so you can tweak anything before you publish."
-    },
-    {
-      q: 'Can I edit the outputs before I publish?',
-      a: 'Absolutely. Every output opens in an editable field. You can change the tone, rephrase lines, or shorten the copy — and your changes auto-save as you type. Nothing gets lost.'
-    },
-    {
-      q: 'How is this different from just using ChatGPT?',
-      a: 'ChatGPT requires careful prompting, doesn\'t understand platform-specific formats, and produces generic output. ContentSplit is purpose-built for content repurposing — it knows what a LinkedIn post, a Twitter thread, and a newsletter intro actually look like, and it preserves your voice automatically.'
-    },
-    {
-      q: "What's included in the free plan?",
-      a: "The free plan gives you 5 repurposes per day — no credit card required. That's enough to see the full output quality across all five platforms before you decide if you want more."
-    }
-  ];
+      let foundSection = '';
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            foundSection = section;
+            break;
+          }
+        }
+      }
+      setActiveSection(foundSection);
+    };
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className="landing-page-redesign">
-      {/* NAV */}
-      <nav className="nav">
-        <Link to="/" className="nav-logo">
-          <div className="nav-logo-icon">
+    <div style={{ backgroundColor: COLORS.bg, minHeight: '100vh', fontFamily: '"Inter", "DM Sans", sans-serif', color: COLORS.textMain, overflowX: 'hidden' }}>
+      
+      {/* HEADER */}
+      <header style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        padding: isMobile ? '16px 24px' : '24px 48px', 
+        position: 'absolute', 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        zIndex: 50 
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '18px' }}>
+          <div style={{ width: '28px', height: '28px', backgroundColor: COLORS.primary, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Logo size={16} color="white" />
           </div>
-          <span className="nav-logo-text">ContentSplit</span>
+          ContentSplit
+        </div>
+        {!isMobile && (
+          <div style={{ display: 'flex', gap: '32px', fontSize: '14px', fontWeight: 500 }}>
+            <a href="#features" className={`nav-link ${activeSection === 'features' ? 'active' : ''}`}>Features</a>
+            <a href="#how-it-works" className={`nav-link ${activeSection === 'how-it-works' ? 'active' : ''}`}>How it works</a>
+            <a href="#pricing" className={`nav-link ${activeSection === 'pricing' ? 'active' : ''}`}>Pricing</a>
+          </div>
+        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '24px', fontSize: '14px', fontWeight: 600 }}>
+          {!isMobile && <Link to="/login" style={{ color: COLORS.textMuted, textDecoration: 'none' }}>Log in</Link>}
+          <Link to="/register" className="btn-primary" style={{ padding: isMobile ? '8px 16px' : '10px 24px', fontSize: isMobile ? '13px' : '14px' }}>
+            {isMobile ? 'Start Free' : 'Start free \u2192'}
+          </Link>
+        </div>
+      </header>
+
+      {/* HERO SECTION */}
+      <section style={{ paddingTop: isMobile ? '120px' : '160px', paddingBottom: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
+        <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1px', color: COLORS.textMuted, textTransform: 'uppercase', marginBottom: '20px' }}>AI-POWERED CONTENT REPURPOSING</p>
+        
+        <h1 style={{ fontSize: isMobile ? '36px' : '64px', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: '20px', maxWidth: '800px' }}>
+          Turn one blog post into a <br />
+          week's worth of <span style={{ color: COLORS.primary }}>content</span>
+        </h1>
+        
+        <p style={{ fontSize: isMobile ? '16px' : '18px', color: COLORS.textMuted, maxWidth: '640px', lineHeight: 1.5, marginBottom: '32px' }}>
+          Paste your article. ContentSplit transforms it into optimized posts for Twitter, Facebook, LinkedIn, Instagram, and newsletters — all in seconds.
+        </p>
+        
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '12px', width: isMobile ? '100%' : 'auto', marginBottom: '16px' }}>
+          <Link to="/register" style={{ 
+            backgroundColor: COLORS.primary, 
+            color: COLORS.white, 
+            padding: isMobile ? '14px 24px' : '16px 32px', 
+            borderRadius: '100px', 
+            fontSize: '16px', 
+            fontWeight: 500, 
+            textDecoration: 'none', 
+            textAlign: 'center',
+            boxShadow: isMobile ? `0 0 40px ${COLORS.primary}20` : 'none' 
+          }}>
+            Start for free &rarr;
+          </Link>
+          <a href="#how-it-works" style={{ backgroundColor: COLORS.white, color: COLORS.textMain, padding: isMobile ? '14px 24px' : '16px 32px', borderRadius: '100px', fontSize: '16px', fontWeight: 500, border: `1px solid ${COLORS.border}`, textDecoration: 'none', textAlign: 'center' }}>
+            See how it works
+          </a>
+        </div>
+        
+        <p style={{ fontSize: '12px', color: COLORS.textMuted, marginBottom: isMobile ? '40px' : '64px' }}>
+          No credit card required • 5 free repurposes per day
+        </p>
+
+        {/* HERO MOCKUP */}
+        <div className="animate-float hero-mockup-container" style={{ position: 'relative', width: '100%', maxWidth: '900px', height: isMobile ? '360px' : '480px', margin: '0 auto', marginTop: '20px' }}>
+          
+
+
+          {/* Left Card - Twitter */}
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-110%, -45%) rotate(-8deg)', width: '280px', backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, boxShadow: '0 20px 40px rgba(0,0,0,0.06)', zIndex: 1, overflow: 'hidden' }}>
+            <div style={{ padding: '16px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#1D9BF0', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><TwitterIcon size={14}/></div>
+              <span style={{ fontSize: '14px', fontWeight: 600, color: COLORS.textMain }}>Twitter/X Thread</span>
+            </div>
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: COLORS.primary, opacity: 0.1, flexShrink: 0 }}></div>
+                <div>
+                  <div style={{ width: '80px', height: '8px', backgroundColor: '#E5E7EB', borderRadius: '4px', marginBottom: '8px' }}></div>
+                  <p style={{ margin: 0, fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5 }}>Stop manually rewriting your blog posts for every social platform. 🧵</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: COLORS.primary, opacity: 0.1, flexShrink: 0 }}></div>
+                <div>
+                  <div style={{ width: '60px', height: '8px', backgroundColor: '#E5E7EB', borderRadius: '4px', marginBottom: '8px' }}></div>
+                  <p style={{ margin: 0, fontSize: '13px', color: COLORS.supportText, lineHeight: 1.5 }}>Most creators spend hours adapting one piece of content. I found a system that does it instantly...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Card - Newsletter */}
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(10%, -45%) rotate(8deg)', width: '280px', backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, boxShadow: '0 20px 40px rgba(0,0,0,0.06)', zIndex: 2, overflow: 'hidden' }}>
+            <div style={{ padding: '16px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#EA4335', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><NewsletterIcon size={14}/></div>
+              <span style={{ fontSize: '14px', fontWeight: 600, color: COLORS.textMain }}>Email Newsletter</span>
+            </div>
+            <div style={{ padding: '24px' }}>
+              <div style={{ width: '100%', height: '80px', backgroundColor: '#FCE8E8', borderRadius: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EA4335' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              </div>
+              <p style={{ margin: '0 0 8px 0', fontSize: '15px', fontWeight: 600, color: COLORS.textMain }}>The Content Strategy Playbook</p>
+              <p style={{ margin: 0, fontSize: '13px', color: COLORS.supportText, lineHeight: 1.6 }}>In this week's issue, we cover how to automate your content distribution without losing your authentic voice...</p>
+            </div>
+          </div>
+
+          {/* Center Card - LinkedIn */}
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '320px', backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, boxShadow: '0 30px 60px rgba(0,0,0,0.1)', zIndex: 3, overflow: 'hidden' }}>
+            <div style={{ padding: '20px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <LinkedInIcon size={32}/>
+              <div>
+                <div style={{ fontSize: '15px', fontWeight: 600, color: COLORS.textMain }}>LinkedIn Post</div>
+                <div style={{ fontSize: '12px', color: COLORS.textMuted }}>Professional Tone</div>
+              </div>
+            </div>
+            <div style={{ padding: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                 <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#E8F0FB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0A66C2' }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                 <div>
+                   <div style={{ width: '100px', height: '10px', backgroundColor: '#E5E7EB', borderRadius: '4px', marginBottom: '6px' }}></div>
+                   <div style={{ width: '60px', height: '8px', backgroundColor: '#F3F4F6', borderRadius: '4px' }}></div>
+                 </div>
+              </div>
+              <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: COLORS.textMain, lineHeight: 1.6 }}>I just discovered a game-changing workflow for content distribution. Instead of starting from scratch every time...</p>
+              <div style={{ width: '100%', height: '140px', backgroundColor: '#F3F4F6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS SECTION */}
+      <section id="how-it-works" style={{ paddingTop: '60px', paddingBottom: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
+        <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1px', color: COLORS.textMuted, textTransform: 'uppercase', marginBottom: '16px' }}>HOW IT WORKS</p>
+        <h2 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: isMobile ? '40px' : '64px', textAlign: 'center' }}>Three steps. Zero friction.</h2>
+        
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '24px' : '40px', maxWidth: '800px', width: '100%' }}>
+          {!isMobile && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '40px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: COLORS.primary, color: COLORS.white, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 600, zIndex: 2 }}>1</div>
+              <div style={{ width: '2px', height: '100px', backgroundColor: '#E5E7EB', margin: '4px 0' }}></div>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: COLORS.primary, color: COLORS.white, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 600, zIndex: 2 }}>2</div>
+              <div style={{ width: '2px', height: '100px', backgroundColor: '#E5E7EB', margin: '4px 0' }}></div>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: COLORS.primary, color: COLORS.white, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 600, zIndex: 2 }}>3</div>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', flex: 1, marginTop: isMobile ? '0' : '-12px' }}>
+            {[
+              { 
+                step: 1, 
+                title: "Paste your content", 
+                desc: "Drop in your blog post URL or paste the full text. ContentSplit reads it and understands the key ideas, tone, and structure.",
+                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 
+              },
+              { 
+                step: 2, 
+                title: "Choose your platforms", 
+                desc: "Pick which formats you need — one or all six. ContentSplit generates each one separately, tailored to each platform.",
+                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> 
+              },
+              { 
+                step: 3, 
+                title: "Copy and publish", 
+                desc: "Each output is editable before you copy. Tweak the tone, swap out phrases, and publish directly.",
+                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> 
+              }
+            ].map((s, i) => (
+              <div key={i} style={{ backgroundColor: COLORS.white, border: `1px solid ${COLORS.border}`, borderRadius: '16px', padding: isMobile ? '24px' : '32px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '20px', alignItems: 'flex-start', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: COLORS.primary, flexShrink: 0 }}>
+                  {s.icon}
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '18px', fontWeight: 600, color: COLORS.textMain, marginBottom: '8px' }}>{isMobile && `${s.step}. `}{s.title}</h3>
+                  <p style={{ fontSize: '14px', color: COLORS.supportText, lineHeight: 1.5 }}>{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* DEMO SECTION */}
+      <section id="demo" style={{ paddingTop: '60px', paddingBottom: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
+        <h2 style={{ fontSize: isMobile ? '28px' : '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '16px', textAlign: 'center' }}>See it work before you sign up.</h2>
+        <p style={{ fontSize: isMobile ? '14px' : '16px', color: COLORS.textMuted, maxWidth: '500px', textAlign: 'center', lineHeight: 1.5, marginBottom: isMobile ? '40px' : '64px' }}>
+          No account needed. Paste any blog excerpt and watch ContentSplit generate a Twitter thread in real time.
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '32px' : '48px', maxWidth: '1100px', width: '100%', position: 'relative', alignItems: 'center' }}>
+          {!isMobile && (
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 5, pointerEvents: 'none' }}>
+              <div style={{ backgroundColor: COLORS.white, width: '40px', height: '40px', borderRadius: '50%', border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={COLORS.primary} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+              </div>
+            </div>
+          )}
+
+          <div style={{ width: '100%', flex: 1, backgroundColor: COLORS.white, borderRadius: '16px', border: `1px solid ${COLORS.border}`, padding: '24px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', position: 'relative' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1px', color: COLORS.textMuted, textTransform: 'uppercase' }}>BLOG EXCERPT</div>
+            </div>
+            <textarea 
+              defaultValue="Repurposing content isn't just about reaching more people; it's about respecting your audience's platform of choice. A 2,000-word deep dive might be perfect for a Sunday morning newsletter, but on Twitter, your audience wants the punchy, high-level takeaways in under 60 seconds."
+              style={{ width: '100%', height: isMobile ? '200px' : '240px', backgroundColor: '#F3F4F6', border: 'none', borderRadius: '12px', padding: '16px', fontSize: '14px', color: COLORS.textMain, resize: 'none', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6 }}
+            ></textarea>
+          </div>
+
+          <div style={{ width: '100%', flex: 1, backgroundColor: COLORS.white, borderRadius: '16px', border: `1px solid ${COLORS.border}`, padding: '24px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1px', color: COLORS.textMuted, textTransform: 'uppercase' }}>GENERATED THREAD</div>
+              <TwitterIcon size={16} />
+            </div>
+            <div style={{ width: '100%', height: isMobile ? '200px' : '240px', backgroundColor: '#F9FAFB', border: `1px solid ${COLORS.border}`, borderRadius: '12px', padding: '16px', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5 }}>1/ Content repurposing is NOT just copy-pasting. It’s about platform-native storytelling. 🧵</div>
+                <div style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5 }}>2/ Respect the channel. Twitter users want punchy takeaways, not 2000 words.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* NEW FEATURES SECTION */}
+      <section id="features" style={{ paddingTop: '100px', paddingBottom: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: `1px solid ${COLORS.border}`, backgroundColor: COLORS.bg }}>
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <div className="animate-slideUp" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#EDE9FE', color: COLORS.primary, padding: '6px 16px', borderRadius: '100px', fontSize: '11px', fontWeight: 700, letterSpacing: '1px', marginBottom: '16px' }}>FEATURES</div>
+          <h2 style={{ fontSize: '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '20px', lineHeight: 1.2, maxWidth: '600px', margin: '0 auto 20px' }}>Everything you need to scale.</h2>
+          <p style={{ fontSize: '16px', color: COLORS.textMuted, maxWidth: '500px', margin: '0 auto', lineHeight: 1.5 }}>
+            Powerful features designed to turn your single blog post into a multi-channel content engine.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '32px' : '64px', maxWidth: '1100px', width: '100%', alignItems: 'flex-start' }}>
+          {/* Left Column: Interactive Feature Tabs */}
+          <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: isMobile ? '-24px' : '0' }}>
+            {[
+              {
+                title: "AI-Powered Analysis",
+                desc: "Paste any blog post or article. Our AI breaks down your content to understand key takeaways, tone, and specific audience segments.",
+                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              },
+              {
+                title: "One Article, Six Channels",
+                desc: "Transform a single piece of long-form content into platform-native posts for Twitter, LinkedIn, Instagram, and more in seconds.",
+                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+              },
+              {
+                title: "Bulk Content Processing",
+                desc: "Batch-process up to 10 articles at once. Run your entire week’s social media strategy in a single 5-minute session.",
+                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+              }
+            ].map((f, i) => (
+              <div 
+                key={i}
+                onClick={() => setActiveFeature(i)}
+                style={{ 
+                  padding: isMobile ? '16px' : '24px', 
+                  borderRadius: '16px', 
+                  border: `1px solid ${activeFeature === i ? COLORS.primary : COLORS.border}`, 
+                  backgroundColor: activeFeature === i ? '#F5F3FF' : COLORS.white,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: activeFeature === i ? '0 10px 30px rgba(91, 80, 214, 0.08)' : 'none'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ color: activeFeature === i ? COLORS.primary : COLORS.textMuted }}>{f.icon}</div>
+                  <h3 style={{ fontSize: isMobile ? '16px' : '18px', fontWeight: 600, color: activeFeature === i ? COLORS.primary : COLORS.textMain, margin: 0 }}>{f.title}</h3>
+                </div>
+                {activeFeature === i && (
+                  <p style={{ marginTop: '12px', fontSize: '14px', color: COLORS.supportText, lineHeight: 1.6, animation: 'fadeIn 0.4s ease' }}>{f.desc}</p>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Right Column: Dynamic Mockups */}
+          {!isMobile && (
+            <div style={{ flex: 1.2, height: '480px', position: 'relative' }}>
+              <div key={activeFeature} className="animate-scaleIn" style={{ 
+                width: '100%', 
+                height: '100%', 
+                backgroundColor: COLORS.white, 
+                borderRadius: '24px', 
+                border: `1px solid ${COLORS.border}`, 
+                boxShadow: '0 30px 60px rgba(0,0,0,0.06)',
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '40px'
+              }}>
+                {activeFeature === 0 && (
+                  <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1px' }}>STEP 1: ANALYZE</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ width: '100%', height: '12px', backgroundColor: '#F3F4F6', borderRadius: '6px' }}></div>
+                      <div style={{ width: '90%', height: '12px', backgroundColor: '#F3F4F6', borderRadius: '6px' }}></div>
+                      <div style={{ width: '95%', height: '12px', backgroundColor: COLORS.primary, opacity: 0.1, borderRadius: '6px' }}></div>
+                      <div style={{ width: '70%', height: '12px', backgroundColor: '#F3F4F6', borderRadius: '6px' }}></div>
+                    </div>
+                  </div>
+                )}
+                {activeFeature === 1 && (
+                  <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1px' }}>STEP 2: SPLIT</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                      {[TwitterIcon, LinkedInIcon, FacebookIcon, InstagramIcon].map((Icon, i) => (
+                        <div key={i} style={{ padding: '16px', borderRadius: '16px', border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                           <Icon size={16} />
+                           <div style={{ width: '60%', height: '6px', backgroundColor: '#F3F4F6', borderRadius: '3px' }}></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {activeFeature === 2 && (
+                  <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1px' }}>STEP 3: SCALE</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      {[1, 2, 3].map(i => (
+                        <div key={i} style={{ padding: '16px', borderRadius: '12px', backgroundColor: i === 1 ? '#F5F3FF' : '#F9FAFB', border: i === 1 ? `1px solid ${COLORS.primary}20` : 'none', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: i === 1 ? COLORS.primary : '#E5E7EB', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700 }}>{i}</div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ width: '120px', height: '8px', backgroundColor: i === 1 ? COLORS.primary : '#E5E7EB', opacity: 0.3, borderRadius: '4px', marginBottom: '6px' }}></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section style={{ paddingTop: '60px', paddingBottom: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#F5F3FF', borderTop: `1px solid ${COLORS.border}`, paddingLeft: '20px', paddingRight: '20px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.primary, color: COLORS.white, padding: '6px 16px', borderRadius: '100px', fontSize: '11px', fontWeight: 700, letterSpacing: '1px', marginBottom: '16px' }}>TESTIMONIALS</div>
+          <h2 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '16px' }}>What creators are saying.</h2>
+        </div>
+        <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ display: isMobile ? 'flex' : 'grid', flexDirection: isMobile ? 'column' : 'row', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+            {[
+              {
+                name: "Sarah J.",
+                role: "Solo Creator",
+                quote: "ContentSplit turned my 2-hour social media 'grind' into a 10-minute task. I can finally focus on writing again.",
+                initial: "S"
+              },
+              {
+                name: "David L.",
+                role: "Agency Owner",
+                quote: "We use it for all our clients. The ability to batch-process articles and maintain a human voice is a massive win.",
+                initial: "D"
+              },
+              {
+                name: "Elena R.",
+                role: "Writer",
+                quote: "My LinkedIn engagement has doubled since I started using native platform-specific posts. It just works.",
+                initial: "E"
+              }
+            ].map((t, i) => (
+              <div key={i} style={{ backgroundColor: COLORS.white, borderRadius: '20px', padding: '24px', border: `1px solid ${COLORS.border}`, boxShadow: '0 4px 20px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ color: '#FBBF24', display: 'flex', gap: '4px', marginBottom: '16px' }}>
+                  {[1,2,3,4,5].map(star => <svg key={star} width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>)}
+                </div>
+                <p style={{ fontSize: '15px', color: COLORS.textMain, lineHeight: 1.6, marginBottom: '24px', flex: 1 }}>"{t.quote}"</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', borderTop: `1px solid ${COLORS.border}`, paddingTop: '16px' }}>
+                  <div style={{ width: '40px', height: '40px', backgroundColor: COLORS.primary, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: COLORS.white, fontWeight: 700, fontSize: '16px' }}>{t.initial}</div>
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: COLORS.primary }}>{t.name}</div>
+                    <div style={{ fontSize: '12px', color: COLORS.textMuted }}>{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PRICING SECTION */}
+      <section id="pricing" style={{ paddingTop: '60px', paddingBottom: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <h2 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '16px' }}>Simple, transparent pricing</h2>
+          <p style={{ fontSize: '16px', color: COLORS.textMuted, maxWidth: '500px', margin: '0 auto', lineHeight: 1.5 }}>
+            Start free, upgrade when you're ready.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', backgroundColor: '#F3F4F6', padding: '4px', borderRadius: '100px', marginBottom: isMobile ? '32px' : '40px', border: `1px solid ${COLORS.border}` }}>
+          <button onClick={() => setBillingCycle('monthly')} style={{ padding: '8px 24px', borderRadius: '100px', fontSize: '14px', fontWeight: 700, border: 'none', cursor: 'pointer', backgroundColor: billingCycle === 'monthly' ? COLORS.primary : 'transparent', color: billingCycle === 'monthly' ? COLORS.white : COLORS.textMuted, transition: 'all 0.3s' }}>Monthly</button>
+          <button onClick={() => setBillingCycle('yearly')} style={{ padding: '8px 24px', borderRadius: '100px', fontSize: '14px', fontWeight: 700, border: 'none', cursor: 'pointer', backgroundColor: billingCycle === 'yearly' ? COLORS.primary : 'transparent', color: billingCycle === 'yearly' ? COLORS.white : COLORS.textMuted, transition: 'all 0.3s', display: 'flex', alignItems: 'center', gap: '6px' }}>Yearly <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: billingCycle === 'yearly' ? COLORS.white : COLORS.primary, padding: '2px 6px', borderRadius: '100px', fontSize: '10px' }}>-20%</span></button>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '20px', maxWidth: '1050px', width: '100%' }}>
+          {[
+            { 
+              name: "STARTER", 
+              price: "$0", 
+              desc: "For individual creators.", 
+              features: ["5 repurposes / day", "All core platforms", "Community support"],
+              btn: "Get Started Free"
+            },
+            { 
+              name: "PROFESSIONAL", 
+              price: billingCycle === 'monthly' ? "$12" : "$10", 
+              desc: "For serious business creators.", 
+              features: ["Unlimited repurposes", "Bulk processing", "Custom AI training", "Priority support"],
+              btn: "Start Free Trial",
+              popular: true
+            },
+            { 
+              name: "AGENCY", 
+              price: billingCycle === 'monthly' ? "$40" : "$32", 
+              desc: "Scale across all your clients.", 
+              features: ["Unlimited team members", "Client workspaces", "API Access", "Dedicated manager"],
+              btn: "Contact Sales"
+            }
+          ].map((plan, i) => (
+            <div 
+              key={i} 
+              onClick={() => setSelectedPlan(i)}
+              className={`pricing-card ${selectedPlan === i ? 'active' : ''}`}
+              style={{ 
+                flex: 1, 
+                backgroundColor: COLORS.white, 
+                borderRadius: '24px', 
+                padding: isMobile ? '32px 24px' : '48px 32px', 
+                border: `2px solid ${selectedPlan === i ? COLORS.primary : COLORS.border}`, 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                textAlign: 'center',
+                position: 'relative'
+              }}
+            >
+              {plan.popular && <div style={{ position: 'absolute', top: '-12px', backgroundColor: COLORS.primary, color: COLORS.white, padding: '4px 16px', borderRadius: '100px', fontSize: '10px', fontWeight: 800 }}>MOST POPULAR</div>}
+              <h3 style={{ fontSize: '12px', fontWeight: 700, color: COLORS.textMuted, marginBottom: '24px' }}>{plan.name}</h3>
+              <div style={{ fontSize: '40px', fontWeight: 700, color: COLORS.textMain }}>{plan.price}<span style={{ fontSize: '14px', color: COLORS.textMuted }}>/mo</span></div>
+              <p style={{ fontSize: '14px', color: COLORS.supportText, margin: '16px 0 32px', minHeight: '40px' }}>{plan.desc}</p>
+              <ul style={{ listStyle: 'none', padding: 0, width: '100%', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+                {plan.features.map((f, j) => (
+                  <li key={j} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: COLORS.textMain }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="3"><polyline points="20 6 9 17 4 12"></polyline></svg> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link to="/register" style={{ display: 'block', width: '100%', padding: '14px', backgroundColor: selectedPlan === i ? COLORS.primary : 'transparent', border: `1px solid ${COLORS.primary}`, borderRadius: '12px', color: selectedPlan === i ? COLORS.white : COLORS.primary, fontWeight: 700, textDecoration: 'none', marginTop: '32px' }}>{plan.btn}</Link>
+            </div>
+          ))}
+        </div>
+      </section>
+      
+      {/* FAQ SECTION */}
+      <section id="faq" style={{ paddingTop: '60px', paddingBottom: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#FAFAFA', borderTop: `1px solid ${COLORS.border}`, paddingLeft: '20px', paddingRight: '20px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#EDE9FE', color: COLORS.primary, padding: '6px 16px', borderRadius: '100px', fontSize: '11px', fontWeight: 700, letterSpacing: '1px', marginBottom: '16px' }}>FAQ</div>
+          <h2 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '12px' }}>Questions worth answering.</h2>
+          <p style={{ fontSize: '14px', color: COLORS.textMuted, maxWidth: '480px', margin: '0 auto' }}>Everything you need to know about ContentSplit.</p>
+        </div>
+        <div style={{ maxWidth: '720px', width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {[
+            { q: "Does ContentSplit work with any blog post?", a: "Yes. Simply paste the text and it handles the rest. No formatting required." },
+            { q: "Will the output actually sound like me?", a: "Yes. ContentSplit analyzes your writing style before generating outputs." },
+            { q: "Can I edit the outputs before I publish?", a: "Absolutely. Every generated output is fully editable inside ContentSplit." },
+            { q: "What platforms are supported?", a: "X threads, LinkedIn, Instagram, Facebook, and newsletters." },
+            { q: "Is there a free plan?", a: "Yes! Our Starter plan is completely free with 5 repurposes per day." }
+          ].map((item, i) => (
+            <div key={i} onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{ backgroundColor: COLORS.white, border: `1px solid ${openFaq === i ? COLORS.primary : COLORS.border}`, borderRadius: '16px', overflow: 'hidden', cursor: 'pointer' }}>
+              <div style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: openFaq === i ? COLORS.primary : COLORS.textMain, flex: 1 }}>{item.q}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={openFaq === i ? COLORS.primary : COLORS.textMuted} strokeWidth="3" style={{ transform: openFaq === i ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </div>
+              {openFaq === i && <div style={{ padding: '0 20px 20px', borderTop: `1px solid ${COLORS.border}`, fontSize: '13px', color: COLORS.supportText, lineHeight: 1.6, paddingTop: '16px' }}>{item.a}</div>}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* BOTTOM CTA SECTION */}
+      <section style={{ paddingTop: '80px', paddingBottom: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', backgroundColor: '#F8F7FF', paddingLeft: '20px', paddingRight: '20px' }}>
+        <h2 style={{ fontSize: isMobile ? '36px' : '56px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '24px', maxWidth: '800px', lineHeight: 1.1 }}>
+          Your next blog post<br/>should be everywhere.
+        </h2>
+        <p style={{ fontSize: '16px', color: COLORS.textMuted, marginBottom: '40px' }}>
+          Start free. No credit card. Just paste and go.
+        </p>
+        <Link to="/register" className="btn-primary" style={{ padding: '16px 40px', fontSize: '18px', width: isMobile ? '100%' : 'auto' }}>
+          Start for free &rarr;
         </Link>
-        <div className="nav-links">
-          <a href="#features">Features</a>
-          <a href="#how">How it works</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#testimonials">Testimonials</a>
-          <a href="#faq">FAQ</a>
-        </div>
-        <div className="nav-actions">
-          <Link to="/login" className="btn-ghost">Log in</Link>
-          <Link to="/register" className="btn-primary">Start free →</Link>
-        </div>
-      </nav>
-
-      {/* HERO */}
-      <section id="hero">
-        <div className="hero-grid"></div>
-        <div className="hero-glow"></div>
-        <div className="hero-inner">
-          <div className="hero-split">
-            <div className="hero-left fade-up">
-              <div className="hero-badge">
-                <span className="hero-badge-dot"></span>
-                <span>AI-powered content repurposing</span>
-              </div>
-            <h1>One blog post. A week of <em>content.</em></h1>
-            <p className="hero-sub">Paste your article. Get platform-ready posts in seconds.</p>
-              <div className="hero-ctas">
-                <Link to="/register" className="btn-hero-primary">Start for free →</Link>
-                <a href="#how" className="btn-hero-ghost">See how it works</a>
-              </div>
-              <div className="hero-trust">
-                <div className="trust-avatars">
-                  <span style={{ background: 'var(--sys-color-primary)' }}>MT</span>
-                  <span style={{ background: 'var(--sys-color-success)' }}>PK</span>
-                  <span style={{ background: 'var(--sys-color-warning)' }}>JR</span>
-                  <span style={{ background: 'var(--sys-color-accent)' }}>SA</span>
-                </div>
-                <span className="trust-text"><strong>2,000+ creators</strong> already saving hours every week</span>
-              </div>
-            </div>
-            <div className="hero-right fade-up" style={{ transitionDelay: '.15s' }}>
-              <div className="hero-mockup">
-                <div className="mockup-input-row">
-                  <div className="mockup-input-text">How to build a consistent coding habit in 30 days — practical tips for developers…</div>
-                  <div className="mockup-send">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  </div>
-                </div>
-                <div className="output-tabs">
-                  <div className="output-tab active">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.2" /><path d="M4 6.5l1.5 1.5 2.5-3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>
-                    Twitter/X
-                  </div>
-                  <div className="output-tab">LinkedIn</div>
-                  <div className="output-tab">Facebook</div>
-                  <div className="output-tab">Instagram</div>
-                </div>
-                <div className="output-card">
-                  <div className="output-platform-row">
-                    <span className="platform-dot"></span>
-                    <span className="platform-name">Twitter/X · Thread</span>
-                  </div>
-                  <div className="output-text">🚀 Building a coding habit in 30 days? Here's the secret: start small, stay consistent, and track your progress. Here's what actually worked for me (thread)↓</div>
-                  <div className="output-meta">
-                    <span className="output-meta-tag">Thread · 8 tweets · 2.1k chars</span>
-                    <span className="copy-btn">Copy all →</span>
-                  </div>
-                </div>
-                <div className="output-stack">
-                  <div className="output-mini">
-                    <span className="output-mini-dot" style={{ background: '#0A66C2' }}></span>
-                    <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px' }}>LinkedIn Post ready</span>
-                    <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '11px', marginLeft: 'auto' }}>420 words</span>
-                  </div>
-                  <div className="output-mini">
-                    <span className="output-mini-dot" style={{ background: '#1877F2' }}></span>
-                    <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px' }}>Facebook Post ready</span>
-                    <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '11px', marginLeft: 'auto' }}>280 words</span>
-                  </div>
-                  <div className="output-mini">
-                    <span className="output-mini-dot" style={{ background: '#E1306C' }}></span>
-                    <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px' }}>Instagram Caption ready</span>
-                    <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '11px', marginLeft: 'auto' }}>140 words</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* TRUST STRIP */}
-      <div id="trust">
-        <div className="trust-strip">
-          <span className="trust-strip-label">We support</span>
-          <div className="platform-pill"><TwitterIcon size={16} /> Twitter/X</div>
-          <div className="platform-pill"><FacebookIcon size={16} /> Facebook</div>
-          <div className="platform-pill"><LinkedInIcon size={16} /> LinkedIn</div>
-          <div className="platform-pill"><InstagramIcon size={16} /> Instagram</div>
-          <div className="platform-pill"><NewsletterIcon size={16} /> Newsletter</div>
-        </div>
-      </div>
-
-      {/* OUTPUT CARDS */}
-      <section id="outputs">
-        <div className="section-inner">
-          <div className="outputs-head fade-up">
-            <p className="eyebrow">What it creates</p>
-            <h2 className="section-heading">Your blog, <em>everywhere</em> it needs to be.</h2>
-            <p className="section-sub">Paste your article. In seconds, ContentSplit generates six distinct content formats, each optimised for how people actually consume content on that platform.</p>
-          </div>
-          <div className="outputs-grid">
-            <div className="output-platform-card card-twitter fade-up">
-              <div className="card-platform-row">
-                <div className="card-platform-icon" style={{ background: '#E8F5FD' }}><TwitterIcon size={20} /></div>
-                <div>
-                  <div className="card-platform-name">Twitter/X</div>
-                  <div className="card-platform-type">Thread</div>
-                </div>
-              </div>
-              <div className="card-content">
-                🚀 Building a coding habit in 30 days? Here's the secret: start small, stay consistent, and track your progress (thread)↓
-                <div className="card-tag">8 tweets · Hook + CTA</div>
-              </div>
-            </div>
-            <div className="output-platform-card card-linkedin fade-up" style={{ transitionDelay: '.05s' }}>
-              <div className="card-platform-row">
-                <div className="card-platform-icon" style={{ background: '#E8F0FB' }}><LinkedInIcon size={20} /></div>
-                <div>
-                  <div className="card-platform-name">LinkedIn</div>
-                  <div className="card-platform-type">Thought leadership post</div>
-                </div>
-              </div>
-              <div className="card-content">
-                After helping 50+ developers build consistent habits, I found one thing that separates those who ship from those who don't…
-                <div className="card-tag">Professional tone</div>
-              </div>
-            </div>
-            <div className="output-platform-card card-facebook fade-up" style={{ transitionDelay: '.1s' }}>
-              <div className="card-platform-row">
-                <div className="card-platform-icon" style={{ background: '#E7F0FD' }}><FacebookIcon size={20} /></div>
-                <div>
-                  <div className="card-platform-name">Facebook</div>
-                  <div className="card-platform-type">Engaging post</div>
-                </div>
-              </div>
-              <div className="card-content">
-                I tried building a coding habit 3 times before it finally stuck. The difference wasn't willpower — it was these 5 small changes.
-                <div className="card-tag">Conversational</div>
-              </div>
-            </div>
-            <div className="output-platform-card card-instagram fade-up" style={{ transitionDelay: '.15s' }}>
-              <div className="card-platform-row">
-                <div className="card-platform-icon" style={{ background: '#FDE8F5' }}><InstagramIcon size={20} /></div>
-                <div>
-                  <div className="card-platform-name">Instagram</div>
-                  <div className="card-platform-type">Caption + hashtags</div>
-                </div>
-              </div>
-              <div className="card-content">
-                Consistency beats perfection every time 🔁 Here's a simple 30-day framework that works…
-                <div className="card-tag">Hook + 15 hashtags</div>
-              </div>
-            </div>
-            <div className="output-platform-card card-newsletter fade-up" style={{ transitionDelay: '.2s' }}>
-              <div className="card-platform-row">
-                <div className="card-platform-icon" style={{ background: '#E8FDF4' }}><NewsletterIcon size={20} /></div>
-                <div>
-                  <div className="card-platform-name">Newsletter</div>
-                  <div className="card-platform-type">Email intro</div>
-                </div>
-              </div>
-              <div className="card-content">
-                This week I want to share something that changed how I approach coding — a dead-simple 30-day system that actually sticks.
-                <div className="card-tag">Warm, direct tone</div>
-              </div>
-            </div>
-            <div className="output-platform-card fade-up" style={{ transitionDelay: '.25s', background: 'linear-gradient(135deg, var(--sys-color-primary-95) 0%, var(--sys-color-primary-90) 100%)', borderColor: 'var(--sys-color-primary-80)' }}>
-              <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', minHeight: '140px' }}>
-                <div style={{ fontSize: '28px', marginBottom: '10px' }}>✦</div>
-                <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--sys-color-primary-30)', marginBottom: '6px' }}>All 5 platforms. One paste.</div>
-                <div style={{ fontSize: '13px', color: 'var(--sys-color-primary)' }}>No credit card required · 5 free repurposes/day</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section id="how">
-        <div className="section-inner">
-          <div className="fade-up">
-            <p className="eyebrow">How it works</p>
-            <h2 className="section-heading">Blog to every platform.<br />Three steps.</h2>
-          </div>
-          <div className="how-layout">
-            <div className="steps-list">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className={`step-item ${activeStep === i ? 'active' : ''}`} onClick={() => setActiveStep(i)}>
-                  <div className="step-num">{i + 1}</div>
-                  <div className="step-text">
-                    <div className="step-title">{['Paste content', 'Choose platforms', 'Copy and publish'][i]}</div>
-                    <div className="step-desc">
-                      {[
-                        'Drop in your blog post. ContentSplit reads it and matches your voice.',
-                        'Pick formats. Each output is tailored to the platform.',
-                        'Edit before copying. Changes auto-saved.'
-                      ][i]}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div>
-              <div className="how-preview" id="how-preview">
-                <div className="preview-label" id="preview-label">{stepPreviews[activeStep].label}</div>
-                <div className="preview-screen">
-                  <div className="preview-step-vis" id="preview-vis">
-                    {stepPreviews[activeStep].html}
-                  </div>
-                </div>
-              </div>
-              <div className="how-cta fade-up">
-                <Link to="/register" className="btn-hero-primary" style={{ background: 'var(--sys-color-primary)' }}>Try it free — no card needed →</Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURES */}
-      <section id="features" style={{ padding: '100px 0' }}>
-        <div className="section-inner" style={{ padding: '0 40px' }}>
-          <div className="features-head fade-up">
-            <p className="eyebrow">Features</p>
-            <h2 className="section-heading">Built different from basic AI writers.</h2>
-            <p className="section-sub">Three things that make ContentSplit actually useful — not just another wrapper around GPT.</p>
-          </div>
-        </div>
-        <div style={{ maxWidth: '1160px', margin: '0 auto', padding: '0 40px' }}>
-          <div className="features-list">
-            <div className="feature-row">
-              <div className="feature-copy">
-                <div className="feature-num">Feature 01</div>
-                <h3 className="feature-title">It writes like you, not like a robot.</h3>
-                <p className="feature-desc">ContentSplit preserves your unique voice across every platform. It analyses your writing style — your cadence, vocabulary, and tone — and mirrors it in every output.</p>
-                <div className="feature-tag">◆ Voice preservation</div>
-              </div>
-              <div className="feature-visual">
-                <div className="fv-card">
-                  <div className="fv-row">
-                    <div className="fv-avatar" style={{ background: 'var(--sys-color-primary)' }}>MT</div>
-                    <div>
-                      <div className="fv-name">Marcus T.</div>
-                      <div className="fv-handle">@marcust · Just now</div>
-                    </div>
-                  </div>
-                  <div className="fv-text">🚀 Building a coding habit in 30 days? Here's the secret that changed everything for me…</div>
-                  <div className="fv-meta">Voice match: your style ✓</div>
-                </div>
-              </div>
-            </div>
-            <div className="feature-row" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-              <div className="feature-copy">
-                <div className="feature-num">Feature 02</div>
-                <h3 className="feature-title">One article. Five platforms. Seconds.</h3>
-                <p className="feature-desc">Stop spending hours reformatting the same content. ContentSplit generates all five platform formats simultaneously — each tailored, each ready to copy and paste.</p>
-                <div className="feature-tag">◆ Instant repurposing</div>
-              </div>
-              <div className="feature-visual">
-                <div className="fv-card">
-                  <div style={{ marginBottom: '14px' }}>
-                    <div className="fv-bar-label" style={{ marginBottom: '5px' }}><span>Generating outputs</span><span>5/5 done</span></div>
-                    <div className="fv-bar-wrap"><div className="fv-bar" style={{ width: '100%' }}></div></div>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
-                    {['🐦 Twitter thread', '💼 LinkedIn post', '📘 Facebook post', '📷 Instagram caption', '✉ Newsletter intro'].map((item, i) => (
-                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
-                        <span>{item}</span><span style={{ color: 'var(--sys-color-success)' }}>✓ Ready</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ marginTop: '14px', fontSize: '11px', color: 'rgba(255,255,255,0.2)' }}>Generated in 4.2 seconds</div>
-                </div>
-              </div>
-            </div>
-            <div className="feature-row" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-              <div className="feature-copy">
-                <div className="feature-num">Feature 03</div>
-                <h3 className="feature-title">Edit. Auto-saved.</h3>
-                <p className="feature-desc">Tweak tone, swap phrases. Auto-saves as you go.</p>
-                <div className="feature-tag">◆ Auto-saved edits</div>
-              </div>
-              <div className="feature-visual">
-                <div className="fv-card">
-                  <div className="fv-edit-box">
-                    Building a coding habit in 30 days? Here's the secret that changed everything for me<span className="fv-edit-cursor"></span>
-                  </div>
-                  <div className="fv-toolbar">
-                    <button className="fv-tool">Tone ▾</button>
-                    <button className="fv-tool">Shorten</button>
-                    <button className="fv-tool">Rephrase</button>
-                    <button className="fv-tool" style={{ marginLeft: 'auto', color: 'var(--sys-color-success)' }}>Auto-saved ✓</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* TESTIMONIALS */}
-      <section id="testimonials">
-        <div className="section-inner">
-          <div className="testi-head fade-up">
-            <p className="eyebrow">Testimonials</p>
-            <h2 className="section-heading">What creators say.</h2>
-            <p className="section-sub" style={{ color: 'var(--sys-color-neutral-50)', fontWeight: 300, fontSize: '16px' }}>Joined by 2,000+ creators.</p>
-          </div>
-          <div className="testi-grid">
-            <div className="testi-card fade-up">
-              <div className="testi-stars"><span className="star">★</span><span className="star">★</span><span className="star">★</span><span className="star">★</span><span className="star">★</span></div>
-              <p className="testi-quote">"LinkedIn output is scary good. Doesn't sound like AI."</p>
-              <div className="testi-author">
-                <div className="author-avatar" style={{ background: 'var(--sys-color-primary)' }}>MT</div>
-                <div>
-                  <div className="author-name">Marcus T.</div>
-                  <div className="author-title">Newsletter Writer</div>
-                </div>
-              </div>
-            </div>
-            <div className="testi-card fade-up" style={{ transitionDelay: '.06s' }}>
-              <div className="testi-stars"><span className="star">★</span><span className="star">★</span><span className="star">★</span><span className="star">★</span><span className="star">★</span></div>
-              <p className="testi-quote">"Whole week of content in 5 minutes."</p>
-              <div className="testi-author">
-                <div className="author-avatar" style={{ background: 'var(--sys-color-success)' }}>PK</div>
-                <div>
-                  <div className="author-name">Priya K.</div>
-                  <div className="author-title">Growth Marketer</div>
-                </div>
-              </div>
-            </div>
-            <div className="testi-card fade-up" style={{ transitionDelay: '.12s' }}>
-              <div className="testi-stars"><span className="star">★</span><span className="star">★</span><span className="star">★</span><span className="star">★</span><span className="star">★</span></div>
-              <p className="testi-quote">"Cut content time in half. Engagement up."</p>
-              <div className="testi-author">
-                <div className="author-avatar" style={{ background: 'var(--sys-color-warning)' }}>JR</div>
-                <div>
-                  <div className="author-name">James R.</div>
-                  <div className="author-title">Creator & Developer</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      {/* PRICING */}
-      <section id="pricing">
-        <div className="section-inner">
-          <div className="pricing-head fade-up">
-            <p className="eyebrow">Pricing</p>
-            <h2 className="section-heading">Built for every <em>stage</em> of your growth.</h2>
-            <p className="section-sub">Start free, upgrade when you're ready. All plans include our core AI engine.</p>
-          </div>
-
-          <div className="pricing-grid">
-            {/* Starter Plan */}
-            <div className="pricing-card fade-up" style={{ transitionDelay: '.05s' }}>
-              <div className="plan-name">Starter</div>
-              <div className="plan-price">$0 <span>/mo</span></div>
-              <p className="plan-desc">For creators just starting to explore the power of repurposing.</p>
-              <ul className="plan-features">
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 5 conversions per day</li>
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> All 5 core platforms</li>
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Standard AI model</li>
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Community support</li>
-              </ul>
-              <Link to="/register" className="btn-plan btn-plan-outline">Start for free</Link>
-            </div>
-
-            {/* Pro Plan */}
-            <div className="pricing-card popular fade-up" style={{ transitionDelay: '.1s' }}>
-              <div className="popular-badge">Most Popular</div>
-              <div className="plan-name">Pro</div>
-              <div className="plan-price">$29 <span>/mo</span></div>
-              <p className="plan-desc">For serious creators and marketers who need high-volume output.</p>
-              <ul className="plan-features">
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Unlimited conversions</li>
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Advanced "Voice" model</li>
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Multi-document batching</li>
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Priority email support</li>
-              </ul>
-              <Link to="/register" className="btn-plan btn-plan-primary">Get Pro Access</Link>
-            </div>
-
-            {/* Enterprise Plan */}
-            <div className="pricing-card fade-up" style={{ transitionDelay: '.15s' }}>
-              <div className="plan-name">Team</div>
-              <div className="plan-price">$79 <span>/mo</span></div>
-              <p className="plan-desc">For content teams and agencies managing multiple clients.</p>
-              <ul className="plan-features">
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 5 team seats included</li>
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Collaborative workspace</li>
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Custom platform templates</li>
-                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Dedicated account manager</li>
-              </ul>
-              <Link to="/register" className="btn-plan btn-plan-outline">Contact Sales</Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq">
-        <div className="section-inner">
-          <div className="faq-layout">
-            <div className="faq-aside fade-up">
-              <p className="eyebrow">FAQ</p>
-              <h2 className="section-heading" style={{ fontSize: '36px' }}>Common questions.</h2>
-              <p className="section-sub" style={{ fontSize: '15px', marginTop: '12px' }}>Still need help? <Link to="/contact" style={{ color: 'var(--sys-color-primary)', textDecoration: 'none' }}>Chat with us →</Link></p>
-            </div>
-            <div className="faq-list fade-up" style={{ transitionDelay: '.1s' }}>
-              {faqs.map((faq, i) => (
-                <div key={i} className={`faq-item ${openFaq === i ? 'open' : ''}`}>
-                  <button className="faq-q" onClick={() => toggleFaq(i)}>
-                    {faq.q}
-                    <svg className="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-                  </button>
-                  <div className="faq-a">{faq.a}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section id="cta">
-        <div className="hero-glow"></div>
-        <div className="cta-inner">
-          <p className="eyebrow" style={{ color: 'var(--sys-color-primary)' }}>Get started</p>
-          <h2 className="section-heading">One blog post.<br /><em>A week of content.</em></h2>
-          <p className="section-sub">Start repurposing for free. No credit card, no setup, no waiting.</p>
-          <div className="cta-buttons">
-            <Link to="/register" className="btn-hero-primary" style={{ padding: '14px 32px', fontSize: '16px' }}>Start for free →</Link>
-            <a href="#how" className="btn-hero-ghost">See how it works</a>
-          </div>
-          <p className="cta-note">5 free repurposes per day · No credit card required</p>
-        </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="footer-area">
-        <div className="footer-inner">
-          <Link to="/" className="footer-logo">
-            <div className="footer-logo-icon">
-              <Logo size={14} color="white" />
+      {/* FOOTER */}
+      <footer style={{ backgroundColor: '#0F172A', paddingTop: '80px', paddingBottom: '48px', paddingLeft: isMobile ? '20px' : '48px', paddingRight: isMobile ? '20px' : '48px', display: 'flex', justifyContent: 'center', color: '#94A3B8' }}>
+        <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: isMobile ? '48px' : '80px', alignItems: isMobile ? 'center' : 'stretch' }}>
+          
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: '48px', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '320px', alignItems: isMobile ? 'center' : 'flex-start' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 700, fontSize: '20px', color: COLORS.white }}>
+                <div style={{ width: '28px', height: '28px', backgroundColor: COLORS.primary, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Logo size={16} color="white" />
+                </div>
+                ContentSplit
+              </div>
+              <p style={{ fontSize: '14px', color: '#94A3B8', lineHeight: 1.6, margin: 0 }}>
+                The ultimate content distribution engine for creators. Turn one article into 10+ social posts in seconds.
+              </p>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                {[TwitterIcon, LinkedInIcon, InstagramIcon].map((Icon, i) => (
+                  <div key={i} style={{ width: '36px', height: '36px', backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#CBD5E1' }}>
+                    <Icon size={16} />
+                  </div>
+                ))}
+              </div>
             </div>
-            <span className="footer-logo-text">ContentSplit</span>
-          </Link>
-          <div className="footer-links">
-            <a href="#features">Features</a>
-            <a href="#how">How it works</a>
-            <a href="#pricing">Pricing</a>
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
+
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, auto)', gap: isMobile ? '40px' : '64px', textAlign: isMobile ? 'center' : 'left' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <h4 style={{ fontSize: '11px', fontWeight: 700, color: COLORS.white, textTransform: 'uppercase' }}>Product</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' }}>
+                  <Link to="#features" style={{ color: '#94A3B8', textDecoration: 'none' }}>Features</Link>
+                  <Link to="#pricing" style={{ color: '#94A3B8', textDecoration: 'none' }}>Pricing</Link>
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <h4 style={{ fontSize: '11px', fontWeight: 700, color: COLORS.white, textTransform: 'uppercase' }}>Resources</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' }}>
+                  <Link to="#" style={{ color: '#94A3B8', textDecoration: 'none' }}>Blog</Link>
+                  <Link to="#" style={{ color: '#94A3B8', textDecoration: 'none' }}>Docs</Link>
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <h4 style={{ fontSize: '11px', fontWeight: 700, color: COLORS.white, textTransform: 'uppercase' }}>Legal</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' }}>
+                  <Link to="#" style={{ color: '#94A3B8', textDecoration: 'none' }}>Privacy</Link>
+                  <Link to="#" style={{ color: '#94A3B8', textDecoration: 'none' }}>Terms</Link>
+                </div>
+              </div>
+            </div>
           </div>
-          <span className="footer-copy">© 2025 ContentSplit</span>
+
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', width: '100%', paddingTop: '32px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', gap: '20px', textAlign: 'center' }}>
+            <div style={{ fontSize: '13px', color: '#64748B' }}>
+              © {new Date().getFullYear()} ContentSplit.ai
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748B' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }}></div>
+              All systems operational
+            </div>
+          </div>
         </div>
       </footer>
+      
+      <style>{`
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+
+        @keyframes scaleIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+          .hero-mockup-container {
+            display: none;
+          }
+          .pricing-card.active {
+            transform: none !important;
+          }
+          .nav-link {
+            display: none;
+          }
+        }
+
+        @media (max-width: 480px) {
+          h2 { font-size: 28px !important; }
+        }
+
+        .animate-fadeIn { animation: fadeIn 0.4s ease forwards; }
+        .animate-slideUp { animation: slideUp 0.6s ease forwards; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-scaleIn { animation: scaleIn 0.3s ease forwards; }
+
+        .pricing-card {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
+        }
+        .pricing-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+          border-color: ${COLORS.primary}40 !important;
+        }
+        .pricing-card.active {
+          border-color: ${COLORS.primary} !important;
+          box-shadow: 0 20px 40px rgba(91, 80, 214, 0.1) !important;
+          background-color: ${COLORS.white} !important;
+        }
+
+        .btn-primary {
+          background-color: ${COLORS.primary};
+          color: ${COLORS.white};
+          padding: 12px 28px;
+          border-radius: 100px;
+          font-weight: 600;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.2s ease;
+          border: none;
+          cursor: pointer;
+        }
+        .btn-primary:hover {
+          transform: translateY(-2px);
+          filter: brightness(1.1);
+          box-shadow: 0 10px 20px rgba(91, 80, 214, 0.2);
+        }
+
+        .btn-secondary {
+          background-color: ${COLORS.white};
+          color: ${COLORS.textMain};
+          padding: 12px 28px;
+          border-radius: 100px;
+          font-weight: 600;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.2s ease;
+          border: 1px solid ${COLORS.border};
+          cursor: pointer;
+        }
+        .btn-secondary:hover {
+          background-color: ${COLORS.pillBg};
+          transform: translateY(-1px);
+        }
+
+        .nav-link {
+          color: ${COLORS.textMuted};
+          text-decoration: none;
+          transition: all 0.2s;
+          padding: 4px 0;
+          position: relative;
+        }
+        .nav-link:hover {
+          color: ${COLORS.textMain};
+        }
+        .nav-link::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background-color: transparent;
+          border-radius: 100px;
+          transition: background-color 0.2s;
+        }
+        .nav-link:hover {
+          color: ${COLORS.primary};
+        }
+
+        .nav-link.active {
+          color: ${COLORS.textMain};
+          font-weight: 600;
+        }
+        .nav-link.active::after {
+          background-color: ${COLORS.primary};
+        }
+        
+      `}</style>
     </div>
   );
 };
