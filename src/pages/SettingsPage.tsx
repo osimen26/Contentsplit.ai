@@ -441,7 +441,7 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
   const planTagline = isAgency ? 'Higher limits, team access' : isPro ? 'Create content at scale' : 'Start repurposing content'
 
   const features = isFree
-    ? ['5 conversions per day', 'All supported platforms', 'Basic tone options', 'Copy to clipboard']
+    ? ['1 conversion per day', 'All supported platforms', 'Basic tone options', 'Copy to clipboard']
     : isPro
     ? ['Unlimited daily conversions', 'All supported platforms', 'Advanced tone matching', 'Priority AI processing', 'Early access to new platforms', 'Content history (30 days)']
     : ['Everything in Pro', 'Up to 5 team members', 'Unlimited content history', 'Custom tone presets', 'Priority support']

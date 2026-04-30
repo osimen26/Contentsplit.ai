@@ -666,7 +666,7 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
       const userDb = getUserDb()
       const user = await userDb.findById(userId)
       const tierLimits = {
-        free: 5,        // 5 per day
+        free: 1,        // 1 per day
         pro: 100,      // 100 per day
         agency: 999999  // unlimited
       }

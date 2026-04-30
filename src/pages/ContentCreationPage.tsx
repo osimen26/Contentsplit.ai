@@ -149,7 +149,7 @@ const ContentCreationPage: React.FC = () => {
     if (!userMsg?.text || selectedPlatforms.length === 0) return
 
     // Check daily limit before generating
-    const dailyLimit = usageStats?.daily_limit || 5
+    const dailyLimit = usageStats?.daily_limit || 1
     const dailyUsage = usageStats?.daily_usage || 0
     
     if (dailyUsage >= dailyLimit) {
@@ -469,7 +469,7 @@ const ContentCreationPage: React.FC = () => {
                   {msg.type === 'limit_reached' && (
                     <LimitReachedBubble
                       dailyUsage={usageStats?.daily_usage || 0}
-                      dailyLimit={usageStats?.daily_limit || 5}
+                      dailyLimit={usageStats?.daily_limit || 1}
                       onUpgrade={() => {
                         // Scroll to top and show upgrade options
                         const upgradeEvent = new CustomEvent('show-upgrade')
@@ -555,7 +555,7 @@ const ContentCreationPage: React.FC = () => {
           window.location.href = `/api/payments/initiate?plan=${tier}`
         }}
         dailyUsage={usageStats?.daily_usage || 0}
-        dailyLimit={usageStats?.daily_limit || 5}
+        dailyLimit={usageStats?.daily_limit || 1}
         isFreeTier={isFreeTier}
       />
     </div>

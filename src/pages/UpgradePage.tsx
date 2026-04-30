@@ -6,17 +6,17 @@ import { useCurrentUser } from '@/services/query-hooks'
 
 const PLANS = {
   monthly: {
-    pro: { price: '$19', period: 'USD/month', note: 'billed monthly' },
-    agency: { price: '$49', period: 'USD/month', note: 'billed monthly' },
+    pro: { price: '$12', period: 'USD/month', note: 'billed monthly' },
+    agency: { price: '$40', period: 'USD/month', note: 'billed monthly' },
   },
   yearly: {
-    pro: { price: '$15', period: 'USD/month', note: 'billed annually', savings: 'Save 21%' },
-    agency: { price: '$39', period: 'USD/month', note: 'billed annually', savings: 'Save 20%' },
+    pro: { price: '$10', period: 'USD/month', note: 'billed annually', savings: 'Save 17%' },
+    agency: { price: '$32', period: 'USD/month', note: 'billed annually', savings: 'Save 20%' },
   },
 }
 
 const FREE_FEATURES = [
-  '5 conversions per day',
+  '1 conversion per day',
   'All supported platforms',
   'Basic tone options',
   'Copy to clipboard',
@@ -270,7 +270,7 @@ const UpgradePage: React.FC = () => {
                   {b === 'monthly' ? 'Monthly' : (
                     <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                       Yearly
-                      <span style={{ color: '#16a34a', fontWeight: 600 }}>·Save 21%</span>
+                      <span style={{ color: '#16a34a', fontWeight: 600 }}>·Save 17%</span>
                     </span>
                   )}
                 </button>

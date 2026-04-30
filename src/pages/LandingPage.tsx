@@ -358,14 +358,17 @@ const LandingPage: React.FC = () => {
                 key={i}
                 onClick={() => setActiveFeature(i)}
                 style={{ 
-                  padding: isMobile ? '16px' : '24px', 
-                  borderRadius: '16px', 
-                  border: `1px solid ${activeFeature === i ? COLORS.primary : COLORS.border}`, 
-                  backgroundColor: activeFeature === i ? '#F5F3FF' : COLORS.white,
+                  padding: isMobile ? '16px 20px' : '24px 32px', 
+                  borderRadius: isMobile ? '12px' : '0 16px 16px 0', 
+                  borderLeft: isMobile ? 'none' : `4px solid ${activeFeature === i ? COLORS.primary : 'transparent'}`,
+                  borderTop: isMobile ? `4px solid ${activeFeature === i ? COLORS.primary : 'transparent'}` : 'none',
+                  backgroundColor: activeFeature === i ? '#F5F3FF' : 'transparent',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: activeFeature === i ? '0 10px 30px rgba(91, 80, 214, 0.08)' : 'none'
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  opacity: activeFeature === i ? 1 : 0.6
                 }}
+                onMouseEnter={(e) => { if (activeFeature !== i) { e.currentTarget.style.backgroundColor = '#F9FAFB'; e.currentTarget.style.opacity = '0.9'; } }}
+                onMouseLeave={(e) => { if (activeFeature !== i) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.opacity = '0.6'; } }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ color: activeFeature === i ? COLORS.primary : COLORS.textMuted }}>{f.icon}</div>
@@ -441,15 +444,22 @@ const LandingPage: React.FC = () => {
                 width: '100%', 
                 height: '100%', 
                 backgroundColor: COLORS.white, 
-                borderRadius: '24px', 
+                borderRadius: '16px', 
                 border: `1px solid ${COLORS.border}`, 
-                boxShadow: '0 30px 60px rgba(0,0,0,0.06)',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.06)',
                 overflow: 'hidden',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '40px'
+                flexDirection: 'column'
               }}>
+                {/* macOS Window Header */}
+                <div style={{ padding: '16px 20px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#FF5F56' }}></div>
+                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#FFBD2E' }}></div>
+                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#27C93F' }}></div>
+                </div>
+                
+                {/* Inner Canvas */}
+                <div style={{ flex: 1, padding: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FAFAFA' }}>
                 {/* Dynamic Mockup Render */}
                 {activeFeature === 0 && (
                   <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
@@ -490,6 +500,7 @@ const LandingPage: React.FC = () => {
                     </div>
                   </div>
                 )}
+                </div>
               </div>
             </div>
           )}
@@ -561,7 +572,7 @@ const LandingPage: React.FC = () => {
               name: "STARTER", 
               price: "$0", 
               desc: "For individual creators.", 
-              features: ["5 repurposes / day", "All core platforms", "Community support"],
+              features: ["1 repurpose / day", "All core platforms", "Community support"],
               btn: "Get Started Free"
             },
             { 
@@ -627,7 +638,7 @@ const LandingPage: React.FC = () => {
             { q: "Will the output actually sound like me?", a: "Yes. ContentSplit analyzes your writing style before generating outputs." },
             { q: "Can I edit the outputs before I publish?", a: "Absolutely. Every generated output is fully editable inside ContentSplit." },
             { q: "What platforms are supported?", a: "X threads, LinkedIn, Instagram, Facebook, and newsletters." },
-            { q: "Is there a free plan?", a: "Yes! Our Starter plan is completely free with 5 repurposes per day." }
+            { q: "Is there a free plan?", a: "Yes! Our Starter plan is completely free with 1 repurpose per day." }
           ].map((item, i) => (
             <div key={i} onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{ backgroundColor: COLORS.white, border: `1px solid ${openFaq === i ? COLORS.primary : COLORS.border}`, borderRadius: '16px', overflow: 'hidden', cursor: 'pointer' }}>
               <div style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>

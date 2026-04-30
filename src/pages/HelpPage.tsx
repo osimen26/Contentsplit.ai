@@ -51,7 +51,7 @@ const COLLECTIONS = [
       {
         id: 'b-1',
         title: 'What is included in the Free plan?',
-        body: 'The Free plan gives you 5 content conversions per day. You have access to all supported platforms and tone options. It is a great way to get started and experience the power of ContentSplit before upgrading.',
+        body: 'The Free plan gives you 1 content conversion per day. You have access to all supported platforms and tone options. It is a great way to get started and experience the power of ContentSplit before upgrading.',
       },
       {
         id: 'b-2',
