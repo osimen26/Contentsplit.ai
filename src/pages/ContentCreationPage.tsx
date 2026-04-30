@@ -132,10 +132,13 @@ const ContentCreationPage: React.FC = () => {
 
   const handleInputSubmit = () => {
     if (!inputText.trim()) return
+    const userId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+    const prefId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+    
     setMessages(prev => [
       ...prev,
-      { id: crypto.randomUUID(), role: 'user', type: 'text', text: inputText },
-      { id: crypto.randomUUID(), role: 'assistant', type: 'preferences' }
+      { id: userId, role: 'user', type: 'text', text: inputText },
+      { id: prefId, role: 'assistant', type: 'preferences' }
     ])
     setInputText('')
   }
@@ -154,14 +157,16 @@ const ContentCreationPage: React.FC = () => {
     
     if (dailyUsage >= dailyLimit) {
       setShowUpgradeModal(true)
+      const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
       setMessages(prev => [
         ...prev.filter(m => m.type !== 'loading' && m.type !== 'preferences'),
-        { id: crypto.randomUUID(), role: 'assistant', type: 'limit_reached' }
+        { id: limitId, role: 'assistant', type: 'limit_reached' }
       ])
       return
     }
 
-    setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', type: 'loading' }])
+    const loadingId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+    setMessages(prev => [...prev, { id: loadingId, role: 'assistant', type: 'loading' }])
     generateMutation.mutate(
       {
         input_text: userMsg.text,
@@ -173,9 +178,10 @@ const ContentCreationPage: React.FC = () => {
       {
         onSuccess: (data) => {
           setCurrentConversionId(data.conversion.id)
+          const resultId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
           setMessages(prev => [
             ...prev.filter(m => m.type !== 'loading' && m.type !== 'preferences'),
-            { id: crypto.randomUUID(), role: 'assistant', type: 'result' }
+            { id: resultId, role: 'assistant', type: 'result' }
           ])
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -185,14 +191,16 @@ const ContentCreationPage: React.FC = () => {
           // Check if it's a limit reached error
           if (err?.response?.data?.limit_reached) {
             setShowUpgradeModal(true)
+            const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
             setMessages(prev => [
               ...prev.filter(m => m.type !== 'loading'),
-              { id: crypto.randomUUID(), role: 'assistant', type: 'limit_reached' }
+              { id: limitId, role: 'assistant', type: 'limit_reached' }
             ])
           } else {
+            const errorId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
             setMessages(prev => [
               ...prev.filter(m => m.type !== 'loading'),
-              { id: crypto.randomUUID(), role: 'assistant', type: 'error', text: errorMsg }
+              { id: errorId, role: 'assistant', type: 'error', text: errorMsg }
             ])
           }
         },
@@ -202,7 +210,8 @@ const ContentCreationPage: React.FC = () => {
 
   const handleRegenerate = () => {
     if (!currentConversionId || !activeTab) return
-    setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', type: 'loading' }])
+    const loadingId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+    setMessages(prev => [...prev, { id: loadingId, role: 'assistant', type: 'loading' }])
     regenerateMutation.mutate({
       conversion_id: currentConversionId,
       platform: activeTab as 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'email' | 'summary',
@@ -213,9 +222,10 @@ const ContentCreationPage: React.FC = () => {
       },
       onError: (err: any) => {
         const errorMsg = err?.response?.data?.error || err?.message || 'Failed to regenerate content'
+        const errorId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
         setMessages(prev => [
           ...prev.filter(m => m.type !== 'loading'),
-          { id: crypto.randomUUID(), role: 'assistant', type: 'error', text: errorMsg }
+          { id: errorId, role: 'assistant', type: 'error', text: errorMsg }
         ])
       }
     })
@@ -530,7 +540,7 @@ const ContentCreationPage: React.FC = () => {
         flexShrink: 0, zIndex: 10,
         padding: '16px 16px 24px',
         background: 'transparent',
-        pointerEvents: 'none',
+        pointerEvents: 'auto', // Changed to auto to ensure mobile clicks always register
       }}>
         <div style={{ width: '100%', maxWidth: 840, margin: '0 auto', pointerEvents: 'auto' }}>
           <ChatInput

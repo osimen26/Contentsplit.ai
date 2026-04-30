@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from '@components/application';
 import { TwitterIcon, LinkedInIcon, InstagramIcon, FacebookIcon, NewsletterIcon } from '@components/ui/SocialIcons';
-import GoogleAuth from '@/components/auth/GoogleAuth';
+
 
 // Exact colors from image
 const COLORS = {
@@ -22,8 +22,9 @@ const LandingPage: React.FC = () => {
   const [activeFeature, setActiveFeature] = useState<number>(0);
   const [selectedPlan, setSelectedPlan] = useState<number>(1);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [activeStep, setActiveStep] = useState<number>(1);
+   const [isMobile, setIsMobile] = useState(false);
+   const [activeStep, setActiveStep] = useState<number>(1);
+   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const DEMO_FULL_TEXT = "Repurposing content isn't just about reaching more people; it's about respecting your audience's platform of choice. A 2,000-word deep dive might be perfect for a Sunday morning newsletter, but on Twitter, your audience wants the punchy, high-level takeaways in under 60 seconds.";
   const [demoText, setDemoText] = useState("");
@@ -63,6 +64,15 @@ const LandingPage: React.FC = () => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -135,12 +145,53 @@ const LandingPage: React.FC = () => {
           </div>
         )}
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '24px', fontSize: '14px', fontWeight: 600 }}>
-          {!isMobile && <Link to="/login" style={{ color: COLORS.textMuted, textDecoration: 'none' }}>Log in</Link>}
-          <Link to="/register" className="btn-primary" style={{ padding: isMobile ? '8px 16px' : '10px 24px', fontSize: isMobile ? '13px' : '14px' }}>
-            {isMobile ? 'Start Free' : 'Start free \u2192'}
-          </Link>
+          {!isMobile ? (
+            <>
+              <Link to="/login" style={{ color: COLORS.textMuted, textDecoration: 'none' }}>Log in</Link>
+              <Link to="/register" className="btn-primary" style={{ padding: '10px 24px', fontSize: '14px' }}>
+                Start free \u2192
+              </Link>
+            </>
+          ) : (
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', color: COLORS.textMain, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              {isMenuOpen ? (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              ) : (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+              )}
+            </button>
+          )}
         </div>
       </header>
+
+      {/* MOBILE MENU OVERLAY */}
+      {isMobile && isMenuOpen && (
+        <div style={{ 
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+          backgroundColor: COLORS.white, zIndex: 100, display: 'flex', flexDirection: 'column',
+          padding: '80px 24px 40px', animation: 'fadeIn 0.3s ease'
+        }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', alignItems: 'center', textAlign: 'center' }}>
+            <Link to="/register" onClick={() => setIsMenuOpen(false)} className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: '18px' }}>
+              Start free \u2192
+            </Link>
+            <a href="#features" onClick={() => setIsMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 600, color: COLORS.textMain, textDecoration: 'none' }}>Features</a>
+            <a href="#how-it-works" onClick={() => setIsMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 600, color: COLORS.textMain, textDecoration: 'none' }}>How it works</a>
+            <a href="#pricing" onClick={() => setIsMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 600, color: COLORS.textMain, textDecoration: 'none' }}>Pricing</a>
+            <hr style={{ width: '100%', border: 'none', borderTop: `1px solid ${COLORS.border}`, margin: '8px 0' }} />
+            <Link to="/login" onClick={() => setIsMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 600, color: COLORS.textMuted, textDecoration: 'none' }}>Log in</Link>
+          </div>
+          <button 
+            onClick={() => setIsMenuOpen(false)}
+            style={{ position: 'absolute', top: '24px', right: '24px', background: 'none', border: 'none', color: COLORS.textMain }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+      )}
 
       {/* HERO SECTION */}
       <section style={{ paddingTop: isMobile ? '120px' : '160px', paddingBottom: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
@@ -163,9 +214,6 @@ const LandingPage: React.FC = () => {
             <a href="#how-it-works" className="btn-secondary" style={{ minWidth: isMobile ? '100%' : '220px', padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px', whiteSpace: 'nowrap' }}>
               See how it works
             </a>
-          </div>
-          <div style={{ width: isMobile ? '100%' : '280px' }}>
-            <GoogleAuth buttonText="Sign up with Google" />
           </div>
         </div>
         
