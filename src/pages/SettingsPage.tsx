@@ -40,7 +40,7 @@ const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = (
 )
 
 const FieldRow: React.FC<{ label: string; children: React.ReactNode; hint?: React.ReactNode; noBorder?: boolean }> = ({ label, children, hint, noBorder }) => (
-  <div style={{ 
+  <div className="field-row" style={{ 
     display: 'flex', 
     alignItems: 'center', 
     justifyContent: 'space-between', 
