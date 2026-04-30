@@ -16,6 +16,8 @@ import { dirname, join } from 'path'
 import { createClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 import crypto from 'crypto'
+import fs from 'fs'
+import path from 'path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -68,7 +70,11 @@ if (!DEEPSEEK_API_KEY) {
 }
 
 // ── SUPABASE CONFIG ─────────────────────────────────────────────────────────
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY || process.env.VITE_SUPABASE_ANON_KEY
 const isPlaceholder = (val) => !val || val.includes('your-project') || val.includes('your_supabase')
+
+let supabase = null
 
 if (supabaseUrl && supabaseKey && !isPlaceholder(supabaseUrl) && !isPlaceholder(supabaseKey)) {
   supabase = createClient(supabaseUrl, supabaseKey, {
@@ -84,9 +90,7 @@ app.use(cors())
 app.use(express.json({ limit: '1mb' }))
 
 // Simple file-based persistence for mock mode
-import fs from 'fs'
-import path from 'path'
-const DB_PATH = './server/db'
+const DB_PATH = path.resolve(__dirname, 'db')
 if (!fs.existsSync(DB_PATH)) fs.mkdirSync(DB_PATH, { recursive: true })
 
 function loadMockDb(name) {
@@ -294,7 +298,8 @@ async function sendRecoveryEmail(toEmail, token, fromEmail) {
     console.log(`📧 Recovery email sent via Resend to ${toEmail}`)
   } else if (process.env.SMTP_HOST && process.env.SMTP_HOST.trim() !== '') {
     // Production: send via SMTP
-    const nodemailer = await import('nodemailer')
+    const nodemailerModule = await import('nodemailer')
+    const nodemailer = nodemailerModule.default || nodemailerModule
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT || '587'),
@@ -304,9 +309,12 @@ async function sendRecoveryEmail(toEmail, token, fromEmail) {
         pass: process.env.SMTP_PASS,
       },
     })
+
+    // Verify connection before sending
+    await transporter.verify()
     
     await transporter.sendMail({
-      from: fromEmail,
+      from: process.env.EMAIL_FROM || fromEmail,
       to: toEmail,
       subject: 'ContentSplit - Password Recovery',
       html: emailHtml,

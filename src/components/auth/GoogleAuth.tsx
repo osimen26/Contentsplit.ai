@@ -24,12 +24,14 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ buttonText = 'Continue with Goo
         setError(null)
         
         console.log('Sending token to backend for verification...')
-        await googleAuthMutation.mutateAsync({ access_token: tokenResponse.access_token })
+        const result = await googleAuthMutation.mutateAsync({ access_token: tokenResponse.access_token })
         console.log('Backend verification successful')
         
         setTokenExists(true)
         await refetch()
-        navigate('/onboarding')
+        // Route returning users to dashboard, new users to onboarding
+        const hasCompletedOnboarding = result?.user?.persona || result?.user?.tone
+        navigate(hasCompletedOnboarding ? '/dashboard' : '/onboarding')
       } catch (err: unknown) {
         console.error('Google backend auth error:', err)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

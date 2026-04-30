@@ -63,9 +63,9 @@ const LoginPage: React.FC = () => {
       console.error(err)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const serverMsg: string = (err as any)?.response?.data?.error || (err instanceof Error ? err.message : '')
-      if (serverMsg.includes('Invalid credentials')) {
+      if (serverMsg.includes('Invalid email or password') || serverMsg.includes('Invalid credentials')) {
         setError('Invalid email or password. Please check your credentials.')
-      } else if (serverMsg.includes('connect') || serverMsg.includes('Network') || !serverMsg) {
+      } else if (serverMsg.includes('connect') || serverMsg.includes('Network') || serverMsg.includes('ECONNREFUSED') || !serverMsg) {
         setError('Cannot reach the server. Make sure the backend is running.')
       } else {
         setError(serverMsg || 'Failed to login. Please try again.')
