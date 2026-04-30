@@ -279,8 +279,8 @@ const LandingPage: React.FC = () => {
             </div>
             <div style={{ width: '100%', height: isMobile ? '200px' : '240px', backgroundColor: '#F9FAFB', border: `1px solid ${COLORS.border}`, borderRadius: '12px', padding: '16px', overflowY: 'auto' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5 }}>1/ Content repurposing is NOT just copy-pasting. It’s about platform-native storytelling. 🧵</div>
-                <div style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5 }}>2/ Respect the channel. Twitter users want punchy takeaways, not 2000 words.</div>
+                <div className="demo-generated-line" style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5, animationDelay: '1s' }}>1/ Content repurposing is NOT just copy-pasting. It’s about platform-native storytelling. 🧵</div>
+                <div className="demo-generated-line" style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5, animationDelay: '2.5s' }}>2/ Respect the channel. Twitter users want punchy takeaways, not 2000 words.</div>
               </div>
             </div>
           </div>
@@ -298,6 +298,7 @@ const LandingPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '32px' : '64px', maxWidth: '1100px', width: '100%', alignItems: 'flex-start' }}>
+          
           {/* Left Column: Interactive Feature Tabs */}
           <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: isMobile ? '-24px' : '0' }}>
             {[
@@ -335,7 +336,63 @@ const LandingPage: React.FC = () => {
                   <h3 style={{ fontSize: isMobile ? '16px' : '18px', fontWeight: 600, color: activeFeature === i ? COLORS.primary : COLORS.textMain, margin: 0 }}>{f.title}</h3>
                 </div>
                 {activeFeature === i && (
-                  <p style={{ marginTop: '12px', fontSize: '14px', color: COLORS.supportText, lineHeight: 1.6, animation: 'fadeIn 0.4s ease' }}>{f.desc}</p>
+                  <div style={{ animation: 'fadeIn 0.4s ease' }}>
+                    <p style={{ marginTop: '12px', fontSize: '14px', color: COLORS.supportText, lineHeight: 1.6 }}>{f.desc}</p>
+                    
+                    {/* Mobile Inline Mockup */}
+                    {isMobile && (
+                      <div className="animate-scaleIn" style={{ 
+                        width: '100%', 
+                        marginTop: '20px',
+                        backgroundColor: COLORS.white, 
+                        borderRadius: '16px', 
+                        border: `1px solid ${COLORS.border}`, 
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
+                        overflow: 'hidden',
+                        padding: '24px'
+                      }}>
+                        {activeFeature === 0 && (
+                          <div style={{ width: '100%' }}>
+                            <div className="animate-slideUp" style={{ fontSize: '11px', fontWeight: 700, color: COLORS.primary, marginBottom: '20px', letterSpacing: '1px' }}>STEP 1: ANALYZE</div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                              <div className="skeleton-line" style={{ width: '100%', height: '10px', borderRadius: '5px', animationDelay: '0.1s' }}></div>
+                              <div className="skeleton-line" style={{ width: '90%', height: '10px', borderRadius: '5px', animationDelay: '0.2s' }}></div>
+                              <div className="skeleton-line" style={{ width: '95%', height: '10px', borderRadius: '5px', animationDelay: '0.3s' }}></div>
+                              <div className="skeleton-line" style={{ width: '70%', height: '10px', borderRadius: '5px', animationDelay: '0.4s' }}></div>
+                            </div>
+                          </div>
+                        )}
+                        {activeFeature === 1 && (
+                          <div style={{ width: '100%' }}>
+                            <div className="animate-slideUp" style={{ fontSize: '11px', fontWeight: 700, color: COLORS.primary, marginBottom: '20px', letterSpacing: '1px' }}>STEP 2: SPLIT</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                              {[TwitterIcon, LinkedInIcon, FacebookIcon, InstagramIcon].map((Icon, idx) => (
+                                <div key={idx} className="animate-slideUp" style={{ padding: '12px', borderRadius: '12px', border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', gap: '8px', animationDelay: `${idx * 0.1}s`, opacity: 0, animationFillMode: 'forwards' }}>
+                                   <Icon size={14} />
+                                   <div className="skeleton-line" style={{ width: '60%', height: '4px', borderRadius: '2px' }}></div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {activeFeature === 2 && (
+                          <div style={{ width: '100%' }}>
+                            <div className="animate-slideUp" style={{ fontSize: '11px', fontWeight: 700, color: COLORS.primary, marginBottom: '20px', letterSpacing: '1px' }}>STEP 3: SCALE</div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                              {[1, 2, 3].map(idx => (
+                                <div key={idx} className="animate-slideUp" style={{ padding: '12px', borderRadius: '10px', backgroundColor: idx === 1 ? '#F5F3FF' : '#F9FAFB', border: idx === 1 ? `1px solid ${COLORS.primary}20` : 'none', display: 'flex', alignItems: 'center', gap: '12px', animationDelay: `${idx * 0.15}s`, opacity: 0, animationFillMode: 'forwards' }}>
+                                  <div style={{ width: '28px', height: '28px', borderRadius: '6px', backgroundColor: idx === 1 ? COLORS.primary : '#E5E7EB', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700 }}>{idx}</div>
+                                  <div style={{ flex: 1 }}>
+                                    <div className="skeleton-line" style={{ width: '80px', height: '6px', borderRadius: '3px', marginBottom: '4px' }}></div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             ))}
@@ -357,25 +414,26 @@ const LandingPage: React.FC = () => {
                 justifyContent: 'center',
                 padding: '40px'
               }}>
+                {/* Dynamic Mockup Render */}
                 {activeFeature === 0 && (
                   <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
-                    <div style={{ fontSize: '12px', fontWeight: 700, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1px' }}>STEP 1: ANALYZE</div>
+                    <div className="animate-slideUp" style={{ fontSize: '12px', fontWeight: 700, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1px' }}>STEP 1: ANALYZE</div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div style={{ width: '100%', height: '12px', backgroundColor: '#F3F4F6', borderRadius: '6px' }}></div>
-                      <div style={{ width: '90%', height: '12px', backgroundColor: '#F3F4F6', borderRadius: '6px' }}></div>
-                      <div style={{ width: '95%', height: '12px', backgroundColor: COLORS.primary, opacity: 0.1, borderRadius: '6px' }}></div>
-                      <div style={{ width: '70%', height: '12px', backgroundColor: '#F3F4F6', borderRadius: '6px' }}></div>
+                      <div className="skeleton-line" style={{ width: '100%', height: '12px', borderRadius: '6px', animationDelay: '0.1s' }}></div>
+                      <div className="skeleton-line" style={{ width: '90%', height: '12px', borderRadius: '6px', animationDelay: '0.2s' }}></div>
+                      <div className="skeleton-line" style={{ width: '95%', height: '12px', borderRadius: '6px', animationDelay: '0.3s' }}></div>
+                      <div className="skeleton-line" style={{ width: '70%', height: '12px', borderRadius: '6px', animationDelay: '0.4s' }}></div>
                     </div>
                   </div>
                 )}
                 {activeFeature === 1 && (
                   <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
-                    <div style={{ fontSize: '12px', fontWeight: 700, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1px' }}>STEP 2: SPLIT</div>
+                    <div className="animate-slideUp" style={{ fontSize: '12px', fontWeight: 700, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1px' }}>STEP 2: SPLIT</div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                       {[TwitterIcon, LinkedInIcon, FacebookIcon, InstagramIcon].map((Icon, i) => (
-                        <div key={i} style={{ padding: '16px', borderRadius: '16px', border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div key={i} className="animate-slideUp" style={{ padding: '16px', borderRadius: '16px', border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', gap: '12px', animationDelay: `${i * 0.1}s`, opacity: 0, animationFillMode: 'forwards' }}>
                            <Icon size={16} />
-                           <div style={{ width: '60%', height: '6px', backgroundColor: '#F3F4F6', borderRadius: '3px' }}></div>
+                           <div className="skeleton-line" style={{ width: '60%', height: '6px', borderRadius: '3px' }}></div>
                         </div>
                       ))}
                     </div>
@@ -383,13 +441,13 @@ const LandingPage: React.FC = () => {
                 )}
                 {activeFeature === 2 && (
                   <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
-                    <div style={{ fontSize: '12px', fontWeight: 700, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1px' }}>STEP 3: SCALE</div>
+                    <div className="animate-slideUp" style={{ fontSize: '12px', fontWeight: 700, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1px' }}>STEP 3: SCALE</div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                       {[1, 2, 3].map(i => (
-                        <div key={i} style={{ padding: '16px', borderRadius: '12px', backgroundColor: i === 1 ? '#F5F3FF' : '#F9FAFB', border: i === 1 ? `1px solid ${COLORS.primary}20` : 'none', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div key={i} className="animate-slideUp" style={{ padding: '16px', borderRadius: '12px', backgroundColor: i === 1 ? '#F5F3FF' : '#F9FAFB', border: i === 1 ? `1px solid ${COLORS.primary}20` : 'none', display: 'flex', alignItems: 'center', gap: '16px', animationDelay: `${i * 0.15}s`, opacity: 0, animationFillMode: 'forwards' }}>
                           <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: i === 1 ? COLORS.primary : '#E5E7EB', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700 }}>{i}</div>
                           <div style={{ flex: 1 }}>
-                            <div style={{ width: '120px', height: '8px', backgroundColor: i === 1 ? COLORS.primary : '#E5E7EB', opacity: 0.3, borderRadius: '4px', marginBottom: '6px' }}></div>
+                            <div className="skeleton-line" style={{ width: '120px', height: '8px', borderRadius: '4px', marginBottom: '6px' }}></div>
                           </div>
                         </div>
                       ))}
@@ -653,6 +711,16 @@ const LandingPage: React.FC = () => {
           100% { box-shadow: 0 0 0 0 rgba(91, 80, 214, 0); transform: translate(-50%, -50%) scale(1); }
         }
 
+        @keyframes skeletonShimmer {
+          0% { background-position: -200px 0; }
+          100% { background-position: calc(200px + 100%) 0; }
+        }
+
+        @keyframes revealText {
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 768px) {
           .hero-mockup-container {
             display: none;
@@ -674,6 +742,17 @@ const LandingPage: React.FC = () => {
         .animate-float { animation: float 3s ease-in-out infinite; }
         .animate-scaleIn { animation: scaleIn 0.3s ease forwards; }
         .animate-pulseArrow { animation: pulseArrow 2s infinite cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%; }
+
+        .skeleton-line {
+          background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+          background-size: 200px 100%;
+          animation: skeletonShimmer 1.5s infinite linear;
+        }
+
+        .demo-generated-line {
+          opacity: 0;
+          animation: revealText 0.6s ease forwards;
+        }
 
         .pricing-card {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
