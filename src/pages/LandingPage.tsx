@@ -156,11 +156,11 @@ const LandingPage: React.FC = () => {
         </p>
         
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: isMobile ? '100%' : 'auto', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '12px', width: '100%' }}>
-            <Link to="/register" className="btn-primary" style={{ flex: 1, padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '16px', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}>
+            <Link to="/register" className="btn-primary" style={{ minWidth: isMobile ? '100%' : '220px', padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px', whiteSpace: 'nowrap' }}>
               Start for free &rarr;
             </Link>
-            <a href="#how-it-works" className="btn-secondary" style={{ flex: 1, padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px' }}>
+            <a href="#how-it-works" className="btn-secondary" style={{ minWidth: isMobile ? '100%' : '220px', padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px', whiteSpace: 'nowrap' }}>
               See how it works
             </a>
           </div>
@@ -1031,6 +1031,7 @@ const LandingPage: React.FC = () => {
           transition: all 0.2s ease;
           border: none;
           cursor: pointer;
+          white-space: nowrap;
         }
         .btn-primary:hover {
           transform: translateY(-2px);
@@ -1052,6 +1053,7 @@ const LandingPage: React.FC = () => {
           transition: all 0.2s ease;
           border: 1px solid ${COLORS.border};
           cursor: pointer;
+          white-space: nowrap;
         }
         .btn-secondary:hover {
           background-color: ${COLORS.pillBg};
