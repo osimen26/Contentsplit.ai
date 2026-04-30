@@ -1426,7 +1426,10 @@ app.post('/api/payments/webhook', async (req, res) => {
 })
 
 // ── START ─────────────────────────────────────────────────────────────
-if (process.env.NODE_ENV !== 'production') {
+// Only start a TCP server for local development.
+// On Vercel, the app is wrapped by serverless-http in api/index.js.
+const isVercel = process.env.VERCEL || process.env.VERCEL_ENV
+if (!isVercel && process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`\n🚀  ContentSplit backend running at http://localhost:${PORT}`)
     console.log(`🔐  DeepSeek API key: ${DEEPSEEK_API_KEY ? '✓ loaded' : '✗ MISSING'}`)

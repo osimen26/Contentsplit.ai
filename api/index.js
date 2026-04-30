@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     try {
       console.log('Loading server/index.js...');
       const { default: app } = await import('../server/index.js');
-      console.log('Server loaded successfully');
+      console.log('Server loaded successfully, type:', typeof app);
       
       cachedHandler = serverless(app, {
         binary: ['*/*']
@@ -19,14 +19,13 @@ export default async function handler(req, res) {
       console.error('Failed to load server:', e.message, e.stack);
       return res.status(500).json({ 
         error: 'Server initialization failed', 
-        details: e.message,
-        stack: e.stack 
+        details: e.message
       });
     }
   }
 
   try {
-    return cachedHandler(req, res);
+    return await cachedHandler(req, res);
   } catch (e) {
     console.error('Request error:', e.message, e.stack);
     return res.status(500).json({ error: 'Request failed', details: e.message });
