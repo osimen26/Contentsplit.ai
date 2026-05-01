@@ -149,7 +149,7 @@ const LandingPage: React.FC = () => {
             <>
               <Link to="/login" style={{ color: COLORS.textMuted, textDecoration: 'none' }}>Log in</Link>
               <Link to="/register" className="btn-primary" style={{ padding: '10px 24px', fontSize: '14px' }}>
-                Start free \u2192
+                Get started →
               </Link>
             </>
           ) : (
@@ -176,7 +176,7 @@ const LandingPage: React.FC = () => {
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', alignItems: 'center', textAlign: 'center' }}>
             <Link to="/register" onClick={() => setIsMenuOpen(false)} className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: '18px' }}>
-              Start free \u2192
+              Get started →
             </Link>
             <a href="#features" onClick={() => setIsMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 600, color: COLORS.textMain, textDecoration: 'none' }}>Features</a>
             <a href="#how-it-works" onClick={() => setIsMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 600, color: COLORS.textMain, textDecoration: 'none' }}>How it works</a>
@@ -209,7 +209,7 @@ const LandingPage: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: isMobile ? '100%' : 'auto', marginBottom: '16px' }}>
           <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '16px', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}>
             <Link to="/register" className="btn-primary" style={{ minWidth: isMobile ? '100%' : '220px', padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px', whiteSpace: 'nowrap' }}>
-              Start for free &rarr;
+              Get started →
             </Link>
             <a href="#how-it-works" className="btn-secondary" style={{ minWidth: isMobile ? '100%' : '220px', padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px', whiteSpace: 'nowrap' }}>
               See how it works
