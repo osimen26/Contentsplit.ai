@@ -1438,12 +1438,16 @@ app.post('/api/payments/webhook', async (req, res) => {
 // On Vercel, the app is wrapped by serverless-http in api/index.js.
 const isVercel = process.env.VERCEL || process.env.VERCEL_ENV
 if (!isVercel && process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`\n🚀  ContentSplit backend running at http://localhost:${PORT}`)
-    console.log(`🔐  DeepSeek API key: ${DEEPSEEK_API_KEY ? '✓ loaded' : '✗ MISSING'}`)
-    console.log(`⚡  Model: ${DEEPSEEK_MODEL}`)
-    console.log(`🗄️  Database: ${supabase ? 'Supabase' : 'Mock (in-memory)'}\n`)
-  })
+  ;(async () => {
+    // Initialize Supabase before starting so the console log is accurate
+    await initSupabase()
+    app.listen(PORT, () => {
+      console.log(`\n🚀  ContentSplit backend running at http://localhost:${PORT}`)
+      console.log(`🔐  DeepSeek API key: ${DEEPSEEK_API_KEY ? '✓ loaded' : '✗ MISSING'}`)
+      console.log(`⚡  Model: ${DEEPSEEK_MODEL}`)
+      console.log(`🗄️  Database: ${supabase ? 'Supabase' : 'Mock (in-memory)'}\n`)
+    })
+  })()
 }
 
 export default app

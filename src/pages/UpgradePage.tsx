@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Check } from 'lucide-react'
-import { apiClient } from '@/services/api-client'
 import { useCurrentUser } from '@/services/query-hooks'
 
 const PLANS = {
@@ -64,7 +63,7 @@ const UpgradePage: React.FC = () => {
   const navigate = useNavigate()
   const { data: user } = useCurrentUser()
   const [billing, setBilling] = useState<'monthly' | 'yearly'>('yearly')
-  const [loading, setLoading] = useState<string | null>(null)
+  const [loading] = useState<string | null>(null)
 
   const currentTier = user?.tier || 'free'
 

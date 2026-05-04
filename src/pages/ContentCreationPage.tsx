@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { ChatInput, ChatLoadingBubble, PlatformSelector, ToneSelector, GeneratedContent, RegenerationControls, Logo, LimitReachedBubble, UpgradeModal } from '@components/application'
+import { ChatInput, ChatLoadingBubble, PlatformSelector, ToneSelector, GeneratedContent, RegenerationControls, Logo, LimitReachedBubble, LimitReachedBanner, UpgradeModal } from '@components/application'
 import { useGenerateContent, useRegenerateContent, useOutputs, useCurrentUser, useUsageStats } from '@services/query-hooks'
 import { Target, Ruler, Palette, User, Sparkles, FileText, Zap, Globe } from 'lucide-react'
 import type { Output } from '@services/api-client'
@@ -108,6 +108,9 @@ const ContentCreationPage: React.FC = () => {
   const { data: user } = useCurrentUser()
   const { data: usageStats } = useUsageStats()
   const isFreeTier = user?.tier === 'free' || !user?.tier
+  const dailyUsage = usageStats?.daily_usage || 0
+  const dailyLimit = usageStats?.daily_limit || 1
+  const limitReached = isFreeTier && dailyUsage >= dailyLimit
   
   const generateMutation = useGenerateContent()
   const regenerateMutation = useRegenerateContent()
@@ -130,6 +133,13 @@ const ContentCreationPage: React.FC = () => {
     }
   }, [selectedPlatforms, activeTab])
 
+  const handleNewChat = () => {
+    setMessages([])
+    setInputText('')
+    setCurrentConversionId(null)
+    setSelectedRegenerationOption(undefined)
+  }
+
   const handleInputSubmit = () => {
     if (!inputText.trim()) return
     const userId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
@@ -151,10 +161,7 @@ const ContentCreationPage: React.FC = () => {
     const userMsg = [...messages].reverse().find(m => m.role === 'user' && m.type === 'text')
     if (!userMsg?.text || selectedPlatforms.length === 0) return
 
-    // Check daily limit before generating
-    const dailyLimit = usageStats?.daily_limit || 1
-    const dailyUsage = usageStats?.daily_usage || 0
-    
+    // Check daily limit before generating (uses outer-scope dailyUsage/dailyLimit)
     if (dailyUsage >= dailyLimit) {
       setShowUpgradeModal(true)
       const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
@@ -478,13 +485,9 @@ const ContentCreationPage: React.FC = () => {
                   {/* ── Limit Reached State ── */}
                   {msg.type === 'limit_reached' && (
                     <LimitReachedBubble
-                      dailyUsage={usageStats?.daily_usage || 0}
-                      dailyLimit={usageStats?.daily_limit || 1}
-                      onUpgrade={() => {
-                        // Scroll to top and show upgrade options
-                        const upgradeEvent = new CustomEvent('show-upgrade')
-                        window.dispatchEvent(upgradeEvent)
-                      }}
+                      dailyUsage={dailyUsage}
+                      dailyLimit={dailyLimit}
+                      onUpgrade={() => setShowUpgradeModal(true)}
                       isFreeTier={isFreeTier}
                     />
                   )}
@@ -538,18 +541,30 @@ const ContentCreationPage: React.FC = () => {
       {/* ── Input Area (persistently docked) ── */}
       <div className="chat-input-area-container" style={{
         flexShrink: 0, zIndex: 10,
-        padding: '16px 16px 24px',
+        padding: '12px 16px 24px',
         background: 'transparent',
         pointerEvents: 'auto', // Changed to auto to ensure mobile clicks always register
       }}>
-        <div style={{ width: '100%', maxWidth: 840, margin: '0 auto', pointerEvents: 'auto' }}>
+        <div style={{ width: '100%', maxWidth: 840, margin: '0 auto', pointerEvents: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+
+          {/* ── ChatGPT-style limit reached banner ── */}
+          {limitReached && (
+            <LimitReachedBanner
+              dailyUsage={dailyUsage}
+              dailyLimit={dailyLimit}
+              isFreeTier={isFreeTier}
+              onUpgrade={() => setShowUpgradeModal(true)}
+              onNewChat={handleNewChat}
+            />
+          )}
+
           <ChatInput
             value={inputText}
             onChange={setInputText}
             onSubmit={handleInputSubmit}
             placeholder="Paste your blog post or article here to convert…"
           />
-          <p className="chat-input-helper-text" style={{ textAlign: 'center', marginTop: '8px', fontSize: '0.75rem', color: 'var(--sys-color-tertiary)', fontWeight: 500, display: 'block' }}>
+          <p className="chat-input-helper-text" style={{ textAlign: 'center', marginTop: '0', fontSize: '0.75rem', color: 'var(--sys-color-tertiary)', fontWeight: 500, display: 'block' }}>
             Press Enter to send · Shift+Enter for new line
           </p>
         </div>
@@ -564,8 +579,8 @@ const ContentCreationPage: React.FC = () => {
           // Redirect to payment
           window.location.href = `/api/payments/initiate?plan=${tier}`
         }}
-        dailyUsage={usageStats?.daily_usage || 0}
-        dailyLimit={usageStats?.daily_limit || 1}
+        dailyUsage={dailyUsage}
+        dailyLimit={dailyLimit}
         isFreeTier={isFreeTier}
       />
     </div>
