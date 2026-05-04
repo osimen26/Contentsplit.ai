@@ -72,7 +72,7 @@ export const ProductPreview: React.FC = () => {
     const demoText = "How to build a consistent coding habit in 30 days — practical tips for developers..."
     let currentText = ""
     let typingInterval: ReturnType<typeof setInterval>
-    let timeouts: ReturnType<typeof setTimeout>[] = []
+    const timeouts: ReturnType<typeof setTimeout>[] = []
 
     const startSequence = () => {
       setInput('')

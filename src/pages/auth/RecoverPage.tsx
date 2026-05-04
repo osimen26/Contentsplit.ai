@@ -20,6 +20,7 @@ const RecoverPage: React.FC = () => {
     try {
       await apiClient.recoverPassword(email)
       setIsSubmitted(true)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error('Recovery error:', err)
       const message = err?.response?.data?.message || err?.response?.data?.error || 'Something went wrong. Please try again.'

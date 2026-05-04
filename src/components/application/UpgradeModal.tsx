@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { X, Sparkles, Check, ArrowRight, Lock, Zap } from 'lucide-react'
+import { X, Check, ArrowRight, Lock, Zap } from 'lucide-react'
 
 interface UpgradeModalProps {
   isOpen: boolean
@@ -33,15 +33,21 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
   }
 
   useEffect(() => {
+    let timer1: ReturnType<typeof setTimeout>
+    let timer2: ReturnType<typeof setTimeout>
+    
     if (isOpen) {
-      setIsVisible(true)
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setIsAnimated(true))
-      })
+      timer1 = setTimeout(() => {
+        setIsVisible(true)
+        timer2 = setTimeout(() => setIsAnimated(true), 10)
+      }, 0)
     } else {
       setIsAnimated(false)
-      const timer = setTimeout(() => setIsVisible(false), 300)
-      return () => clearTimeout(timer)
+      timer1 = setTimeout(() => setIsVisible(false), 300)
+    }
+    return () => {
+      clearTimeout(timer1)
+      clearTimeout(timer2)
     }
   }, [isOpen])
 

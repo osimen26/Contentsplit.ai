@@ -11,8 +11,10 @@ const PaymentCallbackPage: React.FC = () => {
 
   useEffect(() => {
     if (!reference) {
-      setStatus('error')
-      setMessage('No payment reference found.')
+      setTimeout(() => {
+        setStatus('error')
+        setMessage('No payment reference found.')
+      }, 0)
       return
     }
 
@@ -20,7 +22,7 @@ const PaymentCallbackPage: React.FC = () => {
       try {
         const data = await apiClient.verifyPayment(reference)
         
-        if (data.status === 'success') {
+        if (data.success) {
           setStatus('success')
           setMessage(`Payment successful! You are now on the ${data.tier} plan.`)
           
@@ -30,12 +32,12 @@ const PaymentCallbackPage: React.FC = () => {
           }, 3000)
         } else {
           setStatus('error')
-          setMessage(data.message || 'Payment verification failed.')
+          setMessage((data as { message?: string }).message || 'Payment verification failed.')
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Payment verification error:', err)
         setStatus('error')
-        setMessage(err?.response?.data?.error || 'Payment verification failed. Please contact support.')
+        setMessage((err as { response?: { data?: { error?: string } } })?.response?.data?.error || 'Payment verification failed. Please contact support.')
       }
     }
 

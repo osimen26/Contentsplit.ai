@@ -429,6 +429,7 @@ const AppearanceSection: React.FC = () => {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
   const { data: user } = useCurrentUser()
   const navigate = useNavigate()

@@ -662,7 +662,7 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
     const userId = req.userId || 'anonymous'
 
     // Check daily limit before generating (skip for anonymous users)
-    if (userId !== 'anonymous' && supabase) {
+    if (userId !== 'anonymous') {
       const userDb = getUserDb()
       const user = await userDb.findById(userId)
       const tierLimits = {
@@ -675,13 +675,22 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
       const startOfDay = new Date()
       startOfDay.setHours(0, 0, 0, 0)
 
-      const { count } = await supabase
-        .from('conversions')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .gte('created_at', startOfDay.toISOString())
+      let conversionsToday = 0
 
-      const conversionsToday = count || 0
+      if (supabase) {
+        const { count } = await supabase
+          .from('conversions')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .gte('created_at', startOfDay.toISOString())
+
+        conversionsToday = count || 0
+      } else {
+        const allConversions = Array.from(conversionsDb.values())
+        conversionsToday = allConversions.filter(c => 
+          c.user_id === userId && new Date(c.created_at) >= startOfDay
+        ).length
+      }
 
       if (conversionsToday >= limit) {
         return res.status(429).json({
@@ -1042,17 +1051,16 @@ app.get('/api/users/usage', requireAuth, async (req, res) => {
     const user = await userDb.findById(req.userId)
     
     const tierLimits = {
-      free: 5,        // 5 per day
+      free: 1,        // 1 per day
       pro: 100,      // 100 per day  
       agency: 999999  // unlimited
     }
 
     let conversionsToday = 0
+    const startOfDay = new Date()
+    startOfDay.setHours(0, 0, 0, 0)
     
     if (supabase) {
-      const startOfDay = new Date()
-      startOfDay.setHours(0, 0, 0, 0)
-      
       const { count } = await supabase
         .from('conversions')
         .select('*', { count: 'exact', head: true })
@@ -1060,11 +1068,16 @@ app.get('/api/users/usage', requireAuth, async (req, res) => {
         .gte('created_at', startOfDay.toISOString())
 
       conversionsToday = count || 0
+    } else {
+      const allConversions = Array.from(conversionsDb.values())
+      conversionsToday = allConversions.filter(c => 
+        c.user_id === req.userId && new Date(c.created_at) >= startOfDay
+      ).length
     }
 
     res.json({
       daily_usage: conversionsToday,
-      daily_limit: tierLimits[user?.tier || 'free'] || 5,
+      daily_limit: tierLimits[user?.tier || 'free'] || 1,
       conversions_today: conversionsToday
     })
   } catch (err) {

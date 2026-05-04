@@ -227,6 +227,7 @@ const ContentCreationPage: React.FC = () => {
       onSuccess: () => {
         setMessages(prev => prev.filter(m => m.type !== 'loading'))
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (err: any) => {
         const errorMsg = err?.response?.data?.error || err?.message || 'Failed to regenerate content'
         const errorId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
