@@ -172,7 +172,7 @@ function getUserDb() {
         const { data, error } = await supabase
           .from('users')
           .select('*')
-          .eq('email', email.toLowerCase())
+          .eq('email', email.trim().toLowerCase())
           .single()
         console.log('findByEmail result:', { error: error?.message })
         if (error && error.code !== 'PGRST116') throw error
@@ -188,6 +188,7 @@ function getUserDb() {
         return data || null
       },
       async create(email, password, firstName, lastName) {
+        email = email.trim().toLowerCase()
         console.log('Creating user in Supabase:', email)
         const userData = {
           email,
@@ -244,7 +245,7 @@ function getUserDb() {
   // Fallback: mock in-memory DB
   return {
     findByEmail(email) {
-      return Array.from(usersDb.values()).find(u => u.email.toLowerCase() === email.toLowerCase()) || null
+      return Array.from(usersDb.values()).find(u => u.email.trim().toLowerCase() === email.trim().toLowerCase()) || null
     },
     findById(id) {
       return usersDb.get(id) || null
@@ -252,7 +253,7 @@ function getUserDb() {
     create(email, password, firstName, lastName) {
       const user = {
         id: crypto.randomUUID(),
-        email: email.toLowerCase(),
+        email: email.trim().toLowerCase(),
         password_hash: hashPassword(password),
         tier: 'free',
         first_name: firstName,
@@ -268,6 +269,7 @@ function getUserDb() {
       if (user) {
         Object.assign(user, updates)
         usersDb.set(id, user)
+        saveMockDb('users', usersDb)
       }
       return user
     }
@@ -483,7 +485,8 @@ app.get('/api/health', async (req, res) => {
 // Login
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { email: rawEmail, password } = req.body
+    const email = rawEmail?.trim()
     
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' })
@@ -521,7 +524,8 @@ app.post('/api/auth/login', async (req, res) => {
 // Register
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { email, password, firstName, lastName } = req.body
+    const { email: rawEmail, password, firstName, lastName } = req.body
+    const email = rawEmail?.trim()
     
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' })
@@ -790,6 +794,8 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
             regeneration_count: 0
           })
         }
+        saveMockDb('conversions', conversionsDb)
+        saveMockDb('outputs', outputsDb)
         console.log('✅ Saved conversion to mock database')
       }
 
@@ -917,6 +923,8 @@ app.delete('/api/conversions/:id', requireAuth, async (req, res) => {
       outputsDb.forEach((output, key) => {
         if (output.conversion_id === id) outputsDb.delete(key)
       })
+      saveMockDb('conversions', conversionsDb)
+      saveMockDb('outputs', outputsDb)
     }
 
     res.json({ success: true })
@@ -1027,6 +1035,15 @@ app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
         content,
         regeneration_count: 1
       })
+    } else {
+      outputsDb.set(outputId, {
+        id: outputId,
+        conversion_id,
+        platform,
+        content,
+        regeneration_count: 1
+      })
+      saveMockDb('outputs', outputsDb)
     }
 
     res.json({
