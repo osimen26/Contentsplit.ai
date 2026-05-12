@@ -63,23 +63,26 @@ const UpgradePage: React.FC = () => {
   const navigate = useNavigate()
   const { data: user } = useCurrentUser()
   const [billing, setBilling] = useState<'monthly' | 'yearly'>('yearly')
-  const [loading] = useState<string | null>(null)
+  const [loading, setLoading] = useState<string | null>(null)
 
   const currentTier = user?.tier || 'free'
 
-  const PAYMENT_LINKS: Record<string, string> = {
-    'pro-monthly': 'https://flutterwave.com/pay/kaiatbkk5efs',
-    'pro-yearly': 'https://flutterwave.com/pay/p5lme1qqkne7',
-    'agency-monthly': 'https://flutterwave.com/pay/ellrx9v3v56p',
-    'agency-yearly': 'https://flutterwave.com/pay/qyooicoaepeg',
-  }
-
-  const handleUpgrade = (planId: string, billingType?: 'monthly' | 'yearly') => {
+  const handleUpgrade = async (planId: string, billingType?: 'monthly' | 'yearly') => {
     if (planId === 'free') return
-    const key = `${planId}-${billingType || billing}`
-    const link = PAYMENT_LINKS[key]
-    if (link) {
-      window.open(link, '_blank')
+    try {
+      setLoading(planId)
+      const { apiClient } = await import('@/services/api-client')
+      const response = await apiClient.initiatePayment(planId)
+      if (response?.paymentLink) {
+        window.open(response.paymentLink, '_blank')
+      } else {
+        alert('Failed to generate payment link. Please try again.')
+      }
+    } catch (error) {
+      console.error('Payment initiation error:', error)
+      alert('Failed to initialize payment. Please check your connection and try again.')
+    } finally {
+      setLoading(null)
     }
   }
 

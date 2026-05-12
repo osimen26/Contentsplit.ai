@@ -112,7 +112,12 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use(express.json({ limit: '1mb' }))
+app.use(express.json({ 
+  limit: '1mb',
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}))
 
 // Initialize services on first API request (handles Vercel serverless cold starts)
 app.use(async (req, res, next) => {
@@ -1390,6 +1395,9 @@ app.post('/api/payments/initiate', requireAuth, async (req, res) => {
   }
 })
 
+// Simple memory cache for replay protection
+const processedTransactions = new Set()
+
 // Verify payment webhook
 app.post('/api/payments/webhook', async (req, res) => {
   // Initialize Flutterwave if not already done
@@ -1405,15 +1413,21 @@ app.post('/api/payments/webhook', async (req, res) => {
     const secretHash = process.env.FLUTTERWAVE_WEBHOOK_SECRET || process.env.FLUTTERWAVE_SECRET_HASH
     const signature = req.headers['flutterwave-webhook-signature']
 
-    // Verify signature if configured
-    if (secretHash && signature) {
+    // Strict signature verification
+    if (secretHash) {
+      if (!signature) {
+        console.warn('⚠️ Webhook attempt without signature')
+        return res.status(401).json({ error: 'Missing signature' })
+      }
+
+      const payloadString = req.rawBody ? req.rawBody.toString('utf8') : JSON.stringify(req.body)
       const expectedSignature = crypto
         .createHmac('sha256', secretHash)
-        .update(JSON.stringify(req.body))
+        .update(payloadString)
         .digest('hex')
 
       if (signature !== expectedSignature) {
-        console.warn('Invalid webhook signature')
+        console.warn('⚠️ Invalid webhook signature')
         return res.status(401).json({ error: 'Invalid signature' })
       }
     }
@@ -1426,11 +1440,17 @@ app.post('/api/payments/webhook', async (req, res) => {
       const txRef = data.tx_ref
       const amount = data.amount
       const status = data.status
+      const txId = data.id
+
+      // Replay protection
+      if (processedTransactions.has(txId)) {
+        console.log(`⚠️ Transaction ${txId} already processed`)
+        return res.json({ received: true, status: 'duplicate' })
+      }
 
       // Handle failed/cancelled transactions
       if (status === 'failed' || status === 'cancelled') {
         console.log(`❌ Payment ${status} for tx_ref: ${txRef}`)
-        // Log failed payment - could also update user status or send notification
         return res.json({ received: true, status: 'failed' })
       }
 
@@ -1438,6 +1458,19 @@ app.post('/api/payments/webhook', async (req, res) => {
       if (status !== 'successful') {
         console.log(`⚠️ Unhandled payment status: ${status} for tx_ref: ${txRef}`)
         return res.json({ received: true, status: 'unhandled' })
+      }
+
+      // Verify transaction with Flutterwave API to ensure payload wasn't spoofed
+      try {
+        const verifyRes = await flutterwave.Transaction.verify({ id: txId })
+        if (verifyRes.data.status !== 'successful' || verifyRes.data.amount < amount) {
+          console.warn(`❌ Transaction verification failed for ${txId}`)
+          return res.status(400).json({ error: 'Verification failed' })
+        }
+        console.log(`✅ Transaction ${txId} verified with Flutterwave API`)
+      } catch (verifyErr) {
+        console.error('Flutterwave verify API error:', verifyErr.message)
+        return res.status(500).json({ error: 'Verification error' })
       }
 
       // Extract user ID from tx_ref (format: CS_timestamp_userId)
@@ -1454,6 +1487,10 @@ app.post('/api/payments/webhook', async (req, res) => {
       await userDb.update(userId, { tier })
 
       console.log(`✅ Updated user ${userId} to ${tier} tier`)
+
+      // Add to processed transactions and clear if it gets too large
+      processedTransactions.add(txId)
+      if (processedTransactions.size > 10000) processedTransactions.clear()
     }
 
     res.json({ received: true })

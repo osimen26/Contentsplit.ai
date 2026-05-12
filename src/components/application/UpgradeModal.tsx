@@ -21,15 +21,25 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
   const modalRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
   const [isAnimated, setIsAnimated] = useState(false)
+  const [loading, setLoading] = useState<string | null>(null)
 
-  const PAYMENT_LINKS: Record<string, string> = {
-    pro: 'https://flutterwave.com/pay/kaiatbkk5efs',
-    agency: 'https://flutterwave.com/pay/ellrx9v3v56p',
-  }
-
-  const handleUpgrade = (tier: 'pro' | 'agency') => {
-    window.open(PAYMENT_LINKS[tier], '_blank')
-    onUpgrade?.(tier)
+  const handleUpgrade = async (tier: 'pro' | 'agency') => {
+    try {
+      setLoading(tier)
+      const { apiClient } = await import('@/services/api-client')
+      const response = await apiClient.initiatePayment(tier)
+      if (response?.paymentLink) {
+        window.open(response.paymentLink, '_blank')
+        onUpgrade?.(tier)
+      } else {
+        alert('Failed to generate payment link. Please try again.')
+      }
+    } catch (error) {
+      console.error('Payment initiation error:', error)
+      alert('Failed to initialize payment. Please check your connection and try again.')
+    } finally {
+      setLoading(null)
+    }
   }
 
   useEffect(() => {
@@ -236,7 +246,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                     Pro Plan
                   </h3>
                   <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#6366f1', fontWeight: 600 }}>
-                    ₦5,000/month
+                    $12 USD/month
                   </p>
                 </div>
                 <ArrowRight size={20} style={{ color: '#6366f1' }} />
@@ -297,7 +307,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                     </span>
                   </div>
                   <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#a855f7', fontWeight: 600 }}>
-                    ₦15,000/month
+                    $40 USD/month
                   </p>
                 </div>
                 <ArrowRight size={20} style={{ color: '#a855f7' }} />
