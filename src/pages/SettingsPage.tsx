@@ -32,7 +32,7 @@ const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = (
       left: checked ? 22 : 2,
       width: 20, height: 20,
       borderRadius: '50%',
-      backgroundColor: '#111118',
+      backgroundColor: '#0D1018',
       boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
       transition: 'left 0.2s',
     }} />
@@ -84,7 +84,7 @@ const inputStyle: React.CSSProperties = {
   outline: 'none',
   fontSize: '0.9rem',
   color: '#333',
-  backgroundColor: '#111118',
+  backgroundColor: '#0D1018',
   boxSizing: 'border-box',
   transition: 'border-color 0.2s, box-shadow 0.2s',
 }
@@ -635,7 +635,7 @@ const SettingsPage: React.FC = () => {
       display: 'flex', 
       flexDirection: 'column',
       height: '100%', 
-      backgroundColor: '#0A0A0F',
+      backgroundColor: '#080B10',
       fontFamily: 'Inter, system-ui, sans-serif'
     }}>
       

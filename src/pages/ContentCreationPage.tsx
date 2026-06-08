@@ -275,10 +275,10 @@ const ContentCreationPage: React.FC = () => {
           <div style={{ textAlign: 'center', width: '100%', padding: 0 }}>
             <div style={{
               width: 56, height: 56, borderRadius: '16px',
-              background: 'var(--sys-color-primary)',
+              background: '#14B8A6',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 24px',
-              boxShadow: '0 8px 32px rgba(99, 102, 241, 0.25)',
+              boxShadow: '0 8px 32px rgba(20, 184, 166, 0.3)',
             }}>
               <Logo size={28} color="white" />
             </div>
@@ -287,17 +287,15 @@ const ContentCreationPage: React.FC = () => {
               fontWeight: 800,
               marginBottom: '16px',
               lineHeight: 1.2,
-              paddingBottom: '12px',
-              color: 'var(--sys-color-neutral-10)',
+              color: '#E8EDF5',
               letterSpacing: '-0.02em',
-              overflow: 'visible',
               width: '100%',
               padding: '0 16px',
               boxSizing: 'border-box',
             }}>
               Ready to repurpose?
             </h1>
-            <p style={{ color: 'var(--sys-color-neutral-50)', width: '100%', padding: '0 16px', boxSizing: 'border-box', lineHeight: 1.6, fontSize: '1rem' }}>
+            <p style={{ color: '#8A9BB5', width: '100%', padding: '0 16px', boxSizing: 'border-box', lineHeight: 1.6, fontSize: '1rem' }}>
                Paste your long-form content below to effortlessly adapt it for any platform.
             </p>
           </div>
@@ -320,7 +318,7 @@ const ContentCreationPage: React.FC = () => {
                   alignItems: 'center',
                   gap: '16px',
                   padding: '16px 20px',
-                  color: 'var(--sys-color-neutral-20)',
+                  color: '#C8D4E8',
                   fontSize: '0.95rem',
                   fontWeight: 500,
                   textAlign: 'left',
@@ -334,8 +332,8 @@ const ContentCreationPage: React.FC = () => {
                 <div style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   width: 40, height: 40, borderRadius: 10,
-                  backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                  color: '#6366f1', flexShrink: 0
+                  backgroundColor: 'rgba(20, 184, 166, 0.12)',
+                  color: '#14B8A6', flexShrink: 0
                 }}>
                   {s.icon}
                 </div>
@@ -359,10 +357,10 @@ const ContentCreationPage: React.FC = () => {
                 <div className="chat-avatar" style={{
                   width: 32, height: 32, borderRadius: 10, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: msg.role === 'user' ? '#6C63FF' : '#1A1A24',
-                  color: msg.role === 'user' ? '#ffffff' : '#6C63FF',
-                  boxShadow: msg.role === 'user' ? '0 4px 12px rgba(108, 99, 255, 0.3)' : 'none',
-                  border: msg.role === 'assistant' ? '1px solid #2A2A38' : 'none',
+                  background: msg.role === 'user' ? '#14B8A6' : '#151C28',
+                  color: msg.role === 'user' ? '#ffffff' : '#14B8A6',
+                  boxShadow: msg.role === 'user' ? '0 4px 12px rgba(20, 184, 166, 0.3)' : 'none',
+                  border: msg.role === 'assistant' ? '1px solid #1E2838' : 'none',
                   marginTop: '4px',
                 }}>
                   {msg.role === 'user' ? <User size={20} /> : <Sparkles size={20} />}
@@ -435,20 +433,20 @@ const ContentCreationPage: React.FC = () => {
                                 letterSpacing: '0.01em',
                                 border: 'none',
                                 background: 'var(--sys-color-primary)',
-                                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+                                boxShadow: '0 4px 12px rgba(20, 184, 166, 0.3)',
                                 transition: 'all 0.2s ease',
                                 cursor: selectedPlatforms.length === 0 || generateMutation.isPending ? 'not-allowed' : 'pointer',
                               }}
                               onMouseEnter={e => {
                                 if (!generateMutation.isPending && selectedPlatforms.length > 0) {
                                   e.currentTarget.style.background = 'var(--sys-color-primary-30)'
-                                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)'
+                                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(20, 184, 166, 0.4)'
                                   e.currentTarget.style.transform = 'translateY(-2px)'
                                 }
                               }}
                               onMouseLeave={e => {
                                 e.currentTarget.style.background = 'var(--sys-color-primary)'
-                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)'
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(20, 184, 166, 0.3)'
                                 e.currentTarget.style.transform = 'translateY(0)'
                               }}
                             >

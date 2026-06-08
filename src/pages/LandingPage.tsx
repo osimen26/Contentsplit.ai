@@ -20,15 +20,15 @@ const YoutubeIcon = ({ size = 20, color = '#FF0000' }: { size?: number; color?: 
 
 // ─── Design tokens (ContentSplit BUILD_GUIDE v1.0) ───────────────────────────
 const T = {
-  bg:          '#0A0A0F',
-  surface:     '#111118',
-  surface2:    '#1A1A24',
-  border:      '#2A2A38',
-  accent:      '#6C63FF',
+  bg:          '#080B10',
+  surface:     '#0D1018',
+  surface2:    '#151C28',
+  border:      '#1E2838',
+  accent:      '#14B8A6',
   accentWarm:  '#FF6B6B',
   textPrimary:   '#F0F0F5',
-  textSecondary: '#8888A0',
-  textMuted:     '#4A4A60',
+  textSecondary: '#8A9BB5',
+  textMuted:     '#3D5068',
   white:       '#FFFFFF',
   rSm:  '6px',
   rMd:  '12px',
@@ -408,7 +408,7 @@ const formats = [
   { id:'instagram',  Icon: IgIcon,      color:'#E1306C', label:'Instagram',  format:'Caption',     desc:'Scroll-stopping caption with hashtags',      stats:'2200 chars · 30 hashtags' },
   { id:'newsletter', Icon: Mail,        color:'#EA4335', label:'Newsletter', format:'Email',       desc:'Email-ready section with subject line',      stats:'Subject line + opening paragraph' },
   { id:'youtube',    Icon: YoutubeIcon, color:'#FF0000', label:'YouTube',    format:'Description', desc:'SEO-optimized video description',            stats:'Timestamps · keywords · CTAs' },
-  { id:'summary',    Icon: FileText,    color:'#6C63FF', label:'Summary',    format:'TL;DR',       desc:'Quick summary for busy readers',             stats:'3–5 bullet points' },
+  { id:'summary',    Icon: FileText,    color:'#14B8A6', label:'Summary',    format:'TL;DR',       desc:'Quick summary for busy readers',             stats:'3–5 bullet points' },
 ]
 
 const OutputShowcase: React.FC = () => (

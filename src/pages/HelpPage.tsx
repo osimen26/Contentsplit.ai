@@ -205,7 +205,7 @@ const HelpPage: React.FC = () => {
   return (
     <div style={{
       minHeight: '100dvh',
-      backgroundColor: '#0A0A0F',
+      backgroundColor: '#080B10',
       fontFamily: 'Inter, system-ui, sans-serif',
     }}>
 
@@ -216,7 +216,7 @@ const HelpPage: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
         borderBottom: '1px solid rgba(0,0,0,0.06)',
-        backgroundColor: '#111118',
+        backgroundColor: '#0D1018',
         position: 'sticky',
         top: 0,
         zIndex: 10,
@@ -256,7 +256,7 @@ const HelpPage: React.FC = () => {
           padding: '64px 40px 48px',
           textAlign: 'center',
           borderBottom: '1px solid rgba(0,0,0,0.06)',
-          backgroundColor: '#111118',
+          backgroundColor: '#0D1018',
         }}>
           <p style={{ fontSize: '0.85rem', color: '#888', fontWeight: 500, marginBottom: 12, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
             Help Center
@@ -283,13 +283,13 @@ const HelpPage: React.FC = () => {
                 border: '1px solid rgba(0,0,0,0.12)',
                 borderRadius: 10,
                 outline: 'none',
-                backgroundColor: '#111118',
+                backgroundColor: '#0D1018',
                 boxSizing: 'border-box',
                 transition: 'border-color 0.2s, box-shadow 0.2s',
               }}
               onFocus={e => {
                 e.target.style.borderColor = 'var(--sys-color-primary-40, #6366f1)'
-                e.target.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.1)'
+                e.target.style.boxShadow = '0 0 0 3px rgba(20, 184, 166,0.1)'
               }}
               onBlur={e => {
                 e.target.style.borderColor = 'rgba(0,0,0,0.12)'
@@ -313,7 +313,7 @@ const HelpPage: React.FC = () => {
                 <p style={{ fontSize: '1rem' }}>No articles found. Try a different search term.</p>
               </div>
             ) : (
-              <div style={{ backgroundColor: '#111118', borderRadius: 12, border: '1px solid #2A2A38', overflow: 'hidden' }}>
+              <div style={{ backgroundColor: '#0D1018', borderRadius: 12, border: '1px solid #1E2838', overflow: 'hidden' }}>
                 {searchResults.map((article, i) => (
                   <button
                     key={article.id}
@@ -331,7 +331,7 @@ const HelpPage: React.FC = () => {
                       textAlign: 'left',
                       transition: 'background-color 0.15s',
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#1A1A24')}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#151C28')}
                     onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                   >
                     <div>
@@ -361,8 +361,8 @@ const HelpPage: React.FC = () => {
                   style={{
                     textAlign: 'left',
                     padding: '28px 24px',
-                    backgroundColor: '#111118',
-                    border: '1px solid #2A2A38',
+                    backgroundColor: '#0D1018',
+                    border: '1px solid #1E2838',
                     borderRadius: 12,
                     cursor: 'pointer',
                     transition: 'box-shadow 0.2s, transform 0.2s',
@@ -403,8 +403,8 @@ const HelpPage: React.FC = () => {
             <div style={{
               marginTop: 48,
               padding: '36px',
-              backgroundColor: '#111118',
-              border: '1px solid #2A2A38',
+              backgroundColor: '#0D1018',
+              border: '1px solid #1E2838',
               borderRadius: 12,
               display: 'flex',
               alignItems: 'center',
@@ -444,7 +444,7 @@ const HelpPage: React.FC = () => {
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 8,
                     padding: '10px 20px',
-                    backgroundColor: '#1A1A24',
+                    backgroundColor: '#151C28',
                     color: '#333',
                     borderRadius: 8,
                     textDecoration: 'none',
@@ -487,8 +487,8 @@ const HelpPage: React.FC = () => {
 
             {/* Articles Accordion */}
             <div style={{
-              backgroundColor: '#111118',
-              border: '1px solid #2A2A38',
+              backgroundColor: '#0D1018',
+              border: '1px solid #1E2838',
               borderRadius: 12,
               padding: '0 24px',
             }}>

@@ -75,7 +75,7 @@ const SidebarContentComponent: React.FC<{
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{
               width: 28, height: 28, borderRadius: 8,
-              background: 'linear-gradient(135deg, var(--sys-color-primary-60), var(--sys-color-primary-30))',
+              background: 'linear-gradient(135deg, #14B8A6, #0D9488)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <Logo size={15} color="white" />
@@ -93,7 +93,7 @@ const SidebarContentComponent: React.FC<{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               width: 28, height: 28, borderRadius: 6,
               border: 'none', backgroundColor: 'transparent',
-              color: 'var(--sys-color-neutral-50)', cursor: 'pointer',
+              color: '#3D5068', cursor: 'pointer',
               transition: 'background-color 0.15s',
             }}
           >
@@ -102,7 +102,7 @@ const SidebarContentComponent: React.FC<{
         )}
         {inDrawer && (
           <button onClick={onMobileClose} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4 }}>
-            <XIcon size={20} color="var(--sys-color-neutral-40)" />
+            <XIcon size={20} color="#8A9BB5" />
           </button>
         )}
       </div>
@@ -124,19 +124,19 @@ const SidebarContentComponent: React.FC<{
             cursor: 'pointer',
             minHeight: 44,
             border: 'none',
-            background: 'var(--sys-color-primary)',
+            background: '#14B8A6',
             color: 'white',
-            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
+            boxShadow: '0 2px 8px rgba(20, 184, 166, 0.3)',
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = 'var(--sys-color-primary-30)'
-            e.currentTarget.style.boxShadow = '0 4px 16px rgba(99, 102, 241, 0.4)'
+            e.currentTarget.style.background = '#0D9488'
+            e.currentTarget.style.boxShadow = '0 4px 16px rgba(20, 184, 166, 0.4)'
             e.currentTarget.style.transform = 'translateY(-1px)'
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = 'var(--sys-color-primary)'
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(99, 102, 241, 0.3)'
+            e.currentTarget.style.background = '#14B8A6'
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(20, 184, 166, 0.3)'
             e.currentTarget.style.transform = 'translateY(0)'
           }}
         >
@@ -154,12 +154,12 @@ const SidebarContentComponent: React.FC<{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '6px 10px',
               borderRadius: 8,
-              border: '1px solid #2A2A38',
-              backgroundColor: '#1A1A24',
+              border: '1px solid #1E2838',
+              backgroundColor: '#151C28',
               transition: 'all 0.2s ease',
             }}
           >
-            <Search size={14} color="var(--sys-color-neutral-50)" />
+            <Search size={14} color="#3D5068" />
             <input
               type="text"
               placeholder="Search conversions…"
@@ -183,7 +183,7 @@ const SidebarContentComponent: React.FC<{
               padding: '4px 8px 4px',
               fontSize: '0.75rem',
               fontWeight: 600,
-              color: 'var(--sys-color-neutral-50)',
+              color: '#8A9BB5',
               textTransform: 'uppercase',
               letterSpacing: '0.04em',
               marginBottom: 2,
@@ -191,7 +191,7 @@ const SidebarContentComponent: React.FC<{
               Recents
             </div>
             {recentItems.length === 0 && (
-              <p style={{ padding: '8px 10px', fontSize: '0.85rem', color: 'var(--sys-color-neutral-60)' }}>
+              <p style={{ padding: '8px 10px', fontSize: '0.85rem', color: '#3D5068' }}>
                 {search ? 'No results found.' : 'Your conversions will appear here.'}
               </p>
             )}
@@ -228,14 +228,14 @@ const SidebarContentComponent: React.FC<{
                       textDecoration: 'none',
                       fontSize: '0.88rem',
                       fontWeight: active ? 600 : 500,
-                      color: active ? '#6C63FF' : '#8888A0',
+                      color: active ? '#14B8A6' : '#8A9BB5',
                       backgroundColor: 'transparent',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                     }}
                     title={`${item.input_text}`}
                   >
-                    <span style={{ color: active ? '#6C63FF' : '#4A4A60', flexShrink: 0 }}>
+                    <span style={{ color: active ? '#14B8A6' : '#3D5068', flexShrink: 0 }}>
                       <FileText size={14} />
                     </span>
                     <span style={{
@@ -287,7 +287,7 @@ const SidebarContentComponent: React.FC<{
       {/* ── FOOTER: Settings + Profile ── */}
       <div style={{
         flexShrink: 0,
-        borderTop: '1px solid #2A2A38',
+        borderTop: '1px solid #1E2838',
         padding: '8px 6px',
         display: 'flex',
         flexDirection: 'column',
@@ -309,6 +309,8 @@ const SidebarContentComponent: React.FC<{
           collapsed={collapsed && !inDrawer}
           onClick={onMobileClose}
         />
+        {/* Separator before destructive action — P9 destructive-nav-separation */}
+        <div style={{ height: '1px', background: '#1E2838', margin: '6px 8px' }} />
         <FooterAction
           icon={<LogOut size={16} />}
           label="Log out"
@@ -332,7 +334,7 @@ const SidebarContentComponent: React.FC<{
                 background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
                 color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontWeight: 700, fontSize: '12px',
-                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)'
+                boxShadow: '0 2px 8px rgba(20, 184, 166, 0.3)'
               }}>
                 {avatarLetter}
               </div>
@@ -340,7 +342,7 @@ const SidebarContentComponent: React.FC<{
                 <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#F0F0F5', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1 }}>
                   {username}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#8888A0', fontWeight: 500, lineHeight: 1 }}>
+                <div style={{ fontSize: '0.72rem', color: '#8A9BB5', fontWeight: 500, lineHeight: 1 }}>
                   {tier}
                 </div>
               </div>
@@ -353,9 +355,9 @@ const SidebarContentComponent: React.FC<{
                   flexShrink: 0,
                   padding: '4px 10px',
                   borderRadius: 20,
-                  border: '1px solid #2A2A38',
-                  backgroundColor: 'rgba(108,99,255,0.08)',
-                  color: '#8888A0',
+                  border: '1px solid #1E2838',
+                  backgroundColor: 'rgba(20, 184, 166,0.08)',
+                  color: '#8A9BB5',
                   fontSize: '0.78rem',
                   fontWeight: 600,
                   textDecoration: 'none',
@@ -393,8 +395,8 @@ const FooterLink: React.FC<{
       textDecoration: 'none',
       fontSize: '0.88rem',
       fontWeight: active ? 600 : 500,
-      color: active ? '#6C63FF' : '#8888A0',
-      backgroundColor: active ? 'rgba(108, 99, 255, 0.12)' : 'transparent',
+      color: active ? '#14B8A6' : '#8A9BB5',
+      backgroundColor: active ? 'rgba(20, 184, 166, 0.12)' : 'transparent',
       justifyContent: collapsed ? 'center' : 'flex-start',
     }}
     title={collapsed ? label : undefined}
@@ -425,7 +427,7 @@ const FooterAction: React.FC<{
       cursor: 'pointer',
       fontSize: '0.88rem',
       fontWeight: 500,
-      color: isDanger ? '#ef4444' : '#475569',
+      color: isDanger ? '#F87171' : '#8A9BB5',
       backgroundColor: 'transparent',
       justifyContent: collapsed ? 'center' : 'flex-start',
       width: '100%',
@@ -479,7 +481,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         backgroundColor: 'rgba(17,17,24,0.96)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid #2A2A38',
+        borderBottom: '1px solid #1E2838',
         alignItems: 'center',
         padding: '0 16px',
         gap: 12,
@@ -518,7 +520,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         backgroundColor: 'rgba(17,17,24,0.98)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
-        borderRight: '1px solid #2A2A38',
+        borderRight: '1px solid #1E2838',
         transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
         transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         display: 'flex', flexDirection: 'column',
@@ -613,11 +615,11 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           .mobile-header { height: 52px; }
         }
 
-        * { scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.2) transparent; }
+        * { scrollbar-width: thin; scrollbar-color: rgba(20, 184, 166, 0.2) transparent; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background-color: rgba(99, 102, 241, 0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background-color: rgba(99, 102, 241, 0.4); }
+        ::-webkit-scrollbar-thumb { background-color: rgba(20, 184, 166, 0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background-color: rgba(20, 184, 166, 0.4); }
       `}</style>
     </div>
   )
