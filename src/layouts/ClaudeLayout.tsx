@@ -80,7 +80,7 @@ const SidebarContentComponent: React.FC<{
             }}>
               <Logo size={15} color="white" />
             </div>
-            <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--sys-color-neutral-10)' }}>
+            <span style={{ fontWeight: 700, fontSize: '1rem', color: '#F0F0F5' }}>
               ContentSplit
             </span>
           </div>
@@ -154,8 +154,8 @@ const SidebarContentComponent: React.FC<{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '6px 10px',
               borderRadius: 8,
-              border: '1px solid var(--sys-color-neutral-90)',
-              backgroundColor: 'var(--sys-color-neutral-99)',
+              border: '1px solid #2A2A38',
+              backgroundColor: '#1A1A24',
               transition: 'all 0.2s ease',
             }}
           >
@@ -167,7 +167,7 @@ const SidebarContentComponent: React.FC<{
               onChange={e => onSearchChange(e.target.value)}
               style={{
                 border: 'none', background: 'transparent', outline: 'none',
-                fontSize: '0.85rem', color: 'var(--sys-color-neutral-20)',
+                fontSize: '0.85rem', color: '#F0F0F5',
                 width: '100%',
               }}
             />
@@ -228,14 +228,14 @@ const SidebarContentComponent: React.FC<{
                       textDecoration: 'none',
                       fontSize: '0.88rem',
                       fontWeight: active ? 600 : 500,
-                      color: active ? '#4f46e5' : '#475569',
+                      color: active ? '#6C63FF' : '#8888A0',
                       backgroundColor: 'transparent',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                     }}
                     title={`${item.input_text}`}
                   >
-                    <span style={{ color: active ? '#6366f1' : '#94a3b8', flexShrink: 0 }}>
+                    <span style={{ color: active ? '#6C63FF' : '#4A4A60', flexShrink: 0 }}>
                       <FileText size={14} />
                     </span>
                     <span style={{
@@ -287,7 +287,7 @@ const SidebarContentComponent: React.FC<{
       {/* ── FOOTER: Settings + Profile ── */}
       <div style={{
         flexShrink: 0,
-        borderTop: '1px solid rgba(0,0,0,0.05)',
+        borderTop: '1px solid #2A2A38',
         padding: '8px 6px',
         display: 'flex',
         flexDirection: 'column',
@@ -337,10 +337,10 @@ const SidebarContentComponent: React.FC<{
                 {avatarLetter}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, overflow: 'hidden' }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1 }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#F0F0F5', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1 }}>
                   {username}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 500, lineHeight: 1 }}>
+                <div style={{ fontSize: '0.72rem', color: '#8888A0', fontWeight: 500, lineHeight: 1 }}>
                   {tier}
                 </div>
               </div>
@@ -353,9 +353,9 @@ const SidebarContentComponent: React.FC<{
                   flexShrink: 0,
                   padding: '4px 10px',
                   borderRadius: 20,
-                  border: '1px solid #cbd5e1',
-                  backgroundColor: 'rgba(255,255,255,0.5)',
-                  color: '#475569',
+                  border: '1px solid #2A2A38',
+                  backgroundColor: 'rgba(108,99,255,0.08)',
+                  color: '#8888A0',
                   fontSize: '0.78rem',
                   fontWeight: 600,
                   textDecoration: 'none',
@@ -393,8 +393,8 @@ const FooterLink: React.FC<{
       textDecoration: 'none',
       fontSize: '0.88rem',
       fontWeight: active ? 600 : 500,
-      color: active ? '#4f46e5' : '#475569',
-      backgroundColor: active ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
+      color: active ? '#6C63FF' : '#8888A0',
+      backgroundColor: active ? 'rgba(108, 99, 255, 0.12)' : 'transparent',
       justifyContent: collapsed ? 'center' : 'flex-start',
     }}
     title={collapsed ? label : undefined}
@@ -476,24 +476,24 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         display: 'none',
         position: 'fixed', top:0, left: 0, right: 0, zIndex: 200,
         height: 56,
-        backgroundColor: 'rgba(255,255,255,0.95)',
+        backgroundColor: 'rgba(17,17,24,0.96)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid rgba(0,0,0,0.06)',
+        borderBottom: '1px solid #2A2A38',
         alignItems: 'center',
         padding: '0 16px',
         gap: 12,
-        boxShadow: '0 1px 8px rgba(0,0,0,0.04)',
+        boxShadow: '0 1px 8px rgba(0,0,0,0.3)',
       }} className="mobile-header">
         <button
           onClick={() => setMobileOpen(true)}
           style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 6, display: 'flex', borderRadius: 8, transition: 'background-color 0.15s' }}
-          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.05)'}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'}
           onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
         >
-          <Menu size={22} color="#1e293b" />
+          <Menu size={22} color="#F0F0F5" />
         </button>
-        <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1e293b', letterSpacing: '-0.01em' }}>ContentSplit</span>
+        <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#F0F0F5', letterSpacing: '-0.01em' }}>ContentSplit</span>
       </header>
 
       {/* ── MOBILE DRAWER OVERLAY ── */}
@@ -502,7 +502,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           onClick={() => setMobileOpen(false)}
           style={{
             position: 'fixed', inset: 0, zIndex: 300,
-            backgroundColor: 'rgba(0,0,0,0.3)',
+            backgroundColor: 'rgba(0,0,0,0.6)',
             backdropFilter: 'blur(4px)',
             WebkitBackdropFilter: 'blur(4px)',
             opacity: 1,
@@ -515,10 +515,10 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       <div style={{
         position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 400,
         width: 280,
-        backgroundColor: 'rgba(255,255,255,0.98)',
+        backgroundColor: 'rgba(17,17,24,0.98)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
-        borderRight: '1px solid rgba(0,0,0,0.06)',
+        borderRight: '1px solid #2A2A38',
         transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
         transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         display: 'flex', flexDirection: 'column',

@@ -1,1149 +1,921 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Logo } from '@components/application';
-import { TwitterIcon, LinkedInIcon, InstagramIcon, FacebookIcon, NewsletterIcon } from '@components/ui/SocialIcons';
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import {
+  Menu, X, ArrowRight, Check, ChevronDown, Copy,
+  FileText, Layers, Star, Sparkles, Zap, Edit3, CheckCircle,
+  Mail, List,
+} from 'lucide-react'
+import {
+  TwitterIcon as TwIcon,
+  LinkedInIcon as LiIcon,
+  InstagramIcon as IgIcon,
+} from '@components/ui/SocialIcons'
+
+const YoutubeIcon = ({ size = 20, color = '#FF0000' }: { size?: number; color?: string }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill={color}>
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+)
 
 
-// Exact colors from image
-const COLORS = {
-  bg: '#F5F5F7',
-  primary: '#5B50D6',
-  textMain: '#1A1D23',
-  textMuted: '#6B7280',
-  white: '#FFFFFF',
-  border: '#E5E7EB',
-  pillBg: '#F3F4F6',
-  supportText: '#4B5563',
-};
+// ─── Design tokens (ContentSplit BUILD_GUIDE v1.0) ───────────────────────────
+const T = {
+  bg:          '#0A0A0F',
+  surface:     '#111118',
+  surface2:    '#1A1A24',
+  border:      '#2A2A38',
+  accent:      '#6C63FF',
+  accentWarm:  '#FF6B6B',
+  textPrimary:   '#F0F0F5',
+  textSecondary: '#8888A0',
+  textMuted:     '#4A4A60',
+  white:       '#FFFFFF',
+  rSm:  '6px',
+  rMd:  '12px',
+  rLg:  '20px',
+  rPill:'999px',
+}
 
-const LandingPage: React.FC = () => {
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [activeSection, setActiveSection] = useState<string>('');
-  const [activeFeature, setActiveFeature] = useState<number>(0);
-  const [selectedPlan, setSelectedPlan] = useState<number>(1);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-   const [isMobile, setIsMobile] = useState(false);
-   const [activeStep, setActiveStep] = useState<number>(1);
-   const [isMenuOpen, setIsMenuOpen] = useState(false);
+// ─── Shared font import (only loaded once) ────────────────────────────────────
+const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');`
 
-  const DEMO_FULL_TEXT = "Repurposing content isn't just about reaching more people; it's about respecting your audience's platform of choice. A 2,000-word deep dive might be perfect for a Sunday morning newsletter, but on Twitter, your audience wants the punchy, high-level takeaways in under 60 seconds.";
-  const [demoText, setDemoText] = useState("");
-  const [demoState, setDemoState] = useState<'idle' | 'typing' | 'done'>('idle');
+// ─── Utility styles ───────────────────────────────────────────────────────────
+const syne  = (size: number, weight = 700, extra?: React.CSSProperties): React.CSSProperties => ({
+  fontFamily: '"Syne", sans-serif', fontWeight: weight, fontSize: size, ...extra,
+})
+const dm = (size: number, weight = 400, extra?: React.CSSProperties): React.CSSProperties => ({
+  fontFamily: '"DM Sans", sans-serif', fontWeight: weight, fontSize: size, ...extra,
+})
+const mono = (size: number): React.CSSProperties => ({
+  fontFamily: '"JetBrains Mono", monospace', fontSize: size,
+})
+const label: React.CSSProperties = {
+  ...dm(11, 600),
+  letterSpacing: '0.12em', textTransform: 'uppercase', color: T.accent,
+}
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setDemoState(prev => prev === 'idle' ? 'typing' : prev);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    const demoSection = document.getElementById('demo');
-    if (demoSection) observer.observe(demoSection);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (demoState !== 'typing') return;
-    let i = 0;
-    const interval = setInterval(() => {
-      setDemoText(DEMO_FULL_TEXT.substring(0, i));
-      i++;
-      if (i > DEMO_FULL_TEXT.length) {
-        clearInterval(interval);
-        setDemoState('done');
-      }
-    }, 15);
-    return () => clearInterval(interval);
-  }, [demoState]);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => { document.body.style.overflow = 'unset'; };
-  }, [isMenuOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['features', 'how-it-works', 'pricing'];
-      const scrollPosition = window.scrollY + 200; // Increased offset for header
-
-      let foundSection = '';
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            foundSection = section;
-            break;
-          }
-        }
-      }
-      setActiveSection(foundSection);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const step = parseInt(entry.target.getAttribute('data-step') || '1')
-            setActiveStep(step)
-          }
-        })
-      },
-      { threshold: 0.6, rootMargin: '-10% 0px -20% 0px' }
-    )
-
-    const steps = document.querySelectorAll('.how-it-works-step')
-    steps.forEach((s) => observer.observe(s))
-
-    return () => steps.forEach((s) => observer.unobserve(s))
-  }, []);
-
+// ─────────────────────────────────────────────────────────────────────────────
+// NAV
+// ─────────────────────────────────────────────────────────────────────────────
+const Nav: React.FC = () => {
+  const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
+  const navItems = [
+    { label: 'Features',     href: '#features' },
+    { label: 'How it works', href: '#how-it-works' },
+    { label: 'Pricing',      href: '#pricing' },
+  ]
   return (
-    <div style={{ backgroundColor: COLORS.bg, minHeight: '100vh', fontFamily: '"Inter", "DM Sans", sans-serif', color: COLORS.textMain, overflowX: 'hidden' }}>
-      
-      {/* HEADER */}
-      <header style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        padding: isMobile ? '16px 24px' : '24px 48px', 
-        position: 'absolute', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
-        zIndex: 50 
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '18px' }}>
-          <div style={{ width: '28px', height: '28px', backgroundColor: COLORS.primary, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Logo size={16} color="white" />
-          </div>
-          ContentSplit
-        </div>
-        {!isMobile && (
-          <div style={{ display: 'flex', gap: '32px', fontSize: '14px', fontWeight: 500 }}>
-            <a href="#features" className={`nav-link ${activeSection === 'features' ? 'active' : ''}`}>Features</a>
-            <a href="#how-it-works" className={`nav-link ${activeSection === 'how-it-works' ? 'active' : ''}`}>How it works</a>
-            <a href="#pricing" className={`nav-link ${activeSection === 'pricing' ? 'active' : ''}`}>Pricing</a>
-          </div>
-        )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '24px', fontSize: '14px', fontWeight: 600 }}>
-          {!isMobile ? (
-            <>
-              <Link to="/login" style={{ color: COLORS.textMuted, textDecoration: 'none' }}>Log in</Link>
-              <Link to="/register" className="btn-primary" style={{ padding: '10px 24px', fontSize: '14px' }}>
-                Get started →
-              </Link>
-            </>
-          ) : (
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', color: COLORS.textMain, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              {isMenuOpen ? (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-              ) : (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-              )}
-            </button>
-          )}
-        </div>
-      </header>
+    <>
+      <nav style={{
+        position: 'fixed', top: 0, left: 0, right: 0, height: '64px', zIndex: 1000,
+        background: `${T.bg}cc`, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+        borderBottom: `1px solid ${T.border}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 48px',
+      }} className="cs-nav">
+        {/* Logo */}
+        <Link to="/" style={{ display:'flex', alignItems:'center', textDecoration:'none' }}>
+          <span style={{ color: T.accent, fontSize: '26px', fontWeight: 700, lineHeight: 1, marginRight: '2px' }}>●</span>
+          <span style={syne(20, 700, { color: T.textPrimary })}>ContentSplit</span>
+        </Link>
 
-      {/* MOBILE MENU OVERLAY */}
-      {isMobile && isMenuOpen && (
-        <div style={{ 
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-          backgroundColor: COLORS.white, zIndex: 100, display: 'flex', flexDirection: 'column',
-          padding: '80px 24px 40px', animation: 'fadeIn 0.3s ease'
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', alignItems: 'center', textAlign: 'center' }}>
-            <Link to="/register" onClick={() => setIsMenuOpen(false)} className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: '18px' }}>
-              Get started →
-            </Link>
-            <a href="#features" onClick={() => setIsMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 600, color: COLORS.textMain, textDecoration: 'none' }}>Features</a>
-            <a href="#how-it-works" onClick={() => setIsMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 600, color: COLORS.textMain, textDecoration: 'none' }}>How it works</a>
-            <a href="#pricing" onClick={() => setIsMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 600, color: COLORS.textMain, textDecoration: 'none' }}>Pricing</a>
-            <hr style={{ width: '100%', border: 'none', borderTop: `1px solid ${COLORS.border}`, margin: '8px 0' }} />
-            <Link to="/login" onClick={() => setIsMenuOpen(false)} style={{ fontSize: '20px', fontWeight: 600, color: COLORS.textMuted, textDecoration: 'none' }}>Log in</Link>
-          </div>
-          <button 
-            onClick={() => setIsMenuOpen(false)}
-            style={{ position: 'absolute', top: '24px', right: '24px', background: 'none', border: 'none', color: COLORS.textMain }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        {/* Desktop links */}
+        <ul style={{ display:'flex', gap:'32px', listStyle:'none', margin:0, padding:0 }} className="cs-nav-links">
+          {navItems.map(({ label: l, href }) => (
+            <li key={href}>
+              <a href={href} style={{ ...dm(14, 500, { color: T.textSecondary, textDecoration:'none' }) }} className="cs-nav-link">{l}</a>
+            </li>
+          ))}
+        </ul>
+
+        {/* Desktop actions */}
+        <div style={{ display:'flex', alignItems:'center', gap:'12px' }} className="cs-nav-right">
+          <button onClick={() => navigate('/login')} style={{ ...dm(14, 500, { color: T.textSecondary }), background:'transparent', border:'none', cursor:'pointer', padding:'8px 16px', borderRadius: T.rSm }} className="cs-ghost-btn">
+            Log in
           </button>
+          <Link to="/register" style={{ ...dm(14, 500, { color: T.white }), background: T.accent, border:'none', padding:'10px 22px', borderRadius: T.rPill, textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'6px' }} className="cs-pill-btn">
+            Start free →
+          </Link>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button aria-label="Open menu" onClick={() => setOpen(true)} style={{ display:'none', background:'transparent', border:'none', cursor:'pointer', padding:'8px', color: T.textPrimary }} className="cs-mobile-btn">
+          <Menu size={24} aria-hidden="true" />
+        </button>
+      </nav>
+
+      {/* Mobile drawer */}
+      {open && (
+        <div style={{
+          position:'fixed', inset:0, background:`${T.bg}ee`,
+          backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
+          zIndex:1001, display:'flex', flexDirection:'column', padding:'24px',
+        }} role="dialog" aria-modal="true" aria-label="Navigation menu">
+          <button aria-label="Close menu" onClick={() => setOpen(false)} style={{ position:'absolute', top:16, right:16, background:'transparent', border:'none', cursor:'pointer', color: T.textPrimary }}><X size={24} aria-hidden="true"/></button>
+          <div style={{ display:'flex', flexDirection:'column', gap:'8px', marginTop:'80px' }}>
+            {navItems.map(({ label: l, href }) => (
+              <a key={href} href={href} onClick={() => setOpen(false)}
+                style={{ ...dm(18, 500, { color: T.textPrimary, textDecoration:'none' }), padding:'16px 0', borderBottom:`1px solid ${T.border}` }}>
+                {l}
+              </a>
+            ))}
+          </div>
+          <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginTop:'auto' }}>
+            <button onClick={() => { navigate('/login'); setOpen(false) }}
+              style={{ ...dm(16, 500, { color: T.textSecondary }), background:'transparent', border:`1px solid ${T.border}`, cursor:'pointer', padding:'14px', borderRadius: T.rMd }}>
+              Log in
+            </button>
+            <Link to="/register" onClick={() => setOpen(false)}
+              style={{ ...dm(16, 500, { color: T.white }), background: T.accent, padding:'14px', borderRadius: T.rMd, textDecoration:'none', textAlign:'center' }}>
+              Start free →
+            </Link>
+          </div>
         </div>
       )}
 
-      {/* HERO SECTION */}
-      <section style={{ paddingTop: isMobile ? '120px' : '160px', paddingBottom: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
-        <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1px', color: COLORS.textMuted, textTransform: 'uppercase', marginBottom: '20px' }}>AI-POWERED CONTENT REPURPOSING</p>
-        
-        <h1 style={{ fontSize: isMobile ? '36px' : '64px', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: '20px', maxWidth: '800px' }}>
-          Turn one blog post into a <br />
-          week's worth of <span style={{ color: COLORS.primary }}>content</span>
-        </h1>
-        
-        <p style={{ fontSize: isMobile ? '16px' : '18px', color: COLORS.textMuted, maxWidth: '640px', lineHeight: 1.5, marginBottom: '32px' }}>
-          Paste your article. ContentSplit transforms it into optimized posts for Twitter, Facebook, LinkedIn, Instagram, and newsletters — all in seconds.
-        </p>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: isMobile ? '100%' : 'auto', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '16px', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}>
-            <Link to="/register" className="btn-primary" style={{ minWidth: isMobile ? '100%' : '220px', padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px', whiteSpace: 'nowrap' }}>
-              Get started →
-            </Link>
-            <a href="#how-it-works" className="btn-secondary" style={{ minWidth: isMobile ? '100%' : '220px', padding: isMobile ? '14px 24px' : '16px 32px', fontSize: '16px', whiteSpace: 'nowrap' }}>
-              See how it works
-            </a>
-          </div>
-        </div>
-        
-        <p style={{ fontSize: '12px', color: COLORS.textMuted, marginBottom: isMobile ? '40px' : '64px' }}>
-          No credit card required • 1 free repurpose per day
-        </p>
-
-        {/* HERO MOCKUP */}
-        <div className="animate-float hero-mockup-container" style={{ position: 'relative', width: '100%', maxWidth: '900px', height: isMobile ? '360px' : '480px', margin: '0 auto', marginTop: '20px' }}>
-          {/* Background Cards (Peek out on mobile, fan on desktop) */}
-          <div className="hero-card-fan-1" style={{ 
-            position: 'absolute', top: '50%', left: '50%', 
-            transform: isMobile ? 'translate(-85%, -40%) rotate(-12deg)' : 'translate(-160%, -35%) rotate(-15deg)', 
-            width: isMobile ? '200px' : '240px', 
-            backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, 
-            boxShadow: '0 15px 30px rgba(0,0,0,0.04)', zIndex: 0, overflow: 'hidden', 
-            opacity: isMobile ? 0.4 : 0.8 
-          }}>
-            <div style={{ padding: '12px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><InstagramIcon size={12}/></div>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: COLORS.textMain }}>Instagram</span>
-            </div>
-            <div style={{ padding: '16px' }}>
-              <div style={{ width: '100%', height: isMobile ? '60px' : '100px', backgroundColor: '#F3F4F6', borderRadius: '12px' }}></div>
-            </div>
-          </div>
-
-          <div className="hero-card-fan-2" style={{ 
-            position: 'absolute', top: '50%', left: '50%', 
-            transform: isMobile ? 'translate(-15%, -40%) rotate(12deg)' : 'translate(60%, -35%) rotate(15deg)', 
-            width: isMobile ? '200px' : '240px', 
-            backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, 
-            boxShadow: '0 15px 30px rgba(0,0,0,0.04)', zIndex: 0, overflow: 'hidden', 
-            opacity: isMobile ? 0.4 : 0.8 
-          }}>
-            <div style={{ padding: '12px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: '#1877F2', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FacebookIcon size={12}/></div>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: COLORS.textMain }}>Facebook</span>
-            </div>
-            <div style={{ padding: '16px' }}>
-              <div style={{ width: '100%', height: isMobile ? '60px' : '100px', backgroundColor: '#EBF5FF', borderRadius: '12px' }}></div>
-            </div>
-          </div>
-
-          {/* Twitter Card */}
-          <div className="hero-card-left" style={{ 
-            position: 'absolute', top: '50%', left: '50%', 
-            transform: isMobile ? 'translate(-95%, -45%) rotate(-6deg)' : 'translate(-115%, -45%) rotate(-8deg)', 
-            width: isMobile ? '220px' : '280px', 
-            backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, 
-            boxShadow: '0 20px 40px rgba(0,0,0,0.06)', zIndex: 1, overflow: 'hidden',
-            opacity: isMobile ? 0.7 : 1
-          }}>
-            <div style={{ padding: '16px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#1D9BF0', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><TwitterIcon size={14}/></div>
-              <span style={{ fontSize: '14px', fontWeight: 600, color: COLORS.textMain }}>Twitter Thread</span>
-            </div>
-            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ width: '80px', height: '8px', backgroundColor: '#F3F4F6', borderRadius: '4px' }}></div>
-              <p style={{ margin: 0, fontSize: '12px', color: COLORS.textMain, lineHeight: 1.4 }}>1/ Turn your blog posts into punchy threads...</p>
-              <div style={{ width: '100%', height: '40px', backgroundColor: '#F9FAFB', borderRadius: '8px' }}></div>
-            </div>
-          </div>
-
-          {/* Newsletter Card */}
-          <div className="hero-card-right" style={{ 
-            position: 'absolute', top: '50%', left: '50%', 
-            transform: isMobile ? 'translate(-5%, -45%) rotate(6deg)' : 'translate(15%, -45%) rotate(8deg)', 
-            width: isMobile ? '220px' : '280px', 
-            backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, 
-            boxShadow: '0 20px 40px rgba(0,0,0,0.06)', zIndex: 2, overflow: 'hidden',
-            opacity: isMobile ? 0.7 : 1
-          }}>
-            <div style={{ padding: '16px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#EA4335', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><NewsletterIcon size={14}/></div>
-              <span style={{ fontSize: '14px', fontWeight: 600, color: COLORS.textMain }}>Newsletter</span>
-            </div>
-            <div style={{ padding: '24px' }}>
-              <div style={{ width: '100%', height: '60px', backgroundColor: '#FCE8E8', borderRadius: '12px', marginBottom: '12px' }}></div>
-              <p style={{ margin: 0, fontSize: '12px', color: COLORS.supportText, lineHeight: 1.4 }}>Automate your email content...</p>
-            </div>
-          </div>
-
-          {/* Center Card - LinkedIn (Focus) */}
-          <div className="hero-card-center" style={{ 
-            position: 'absolute', top: '50%', left: '50%', 
-            transform: 'translate(-50%, -50%)', 
-            width: isMobile ? '260px' : '320px', 
-            backgroundColor: COLORS.white, borderRadius: '24px', border: `1px solid ${COLORS.border}`, 
-            boxShadow: '0 30px 60px rgba(0,0,0,0.1)', zIndex: 3, overflow: 'hidden' 
-          }}>
-            <div style={{ padding: '16px 20px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <LinkedInIcon size={28}/>
-              <div>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: COLORS.textMain }}>LinkedIn Post</div>
-                <div style={{ fontSize: '11px', color: COLORS.textMuted }}>Professional Tone</div>
-              </div>
-            </div>
-            <div style={{ padding: '20px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: COLORS.primary, opacity: 0.1 }}></div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ width: '60px', height: '6px', backgroundColor: '#E5E7EB', borderRadius: '3px', marginBottom: '4px' }}></div>
-                  <div style={{ width: '40px', height: '4px', backgroundColor: '#F3F4F6', borderRadius: '2px' }}></div>
-                </div>
-              </div>
-              <p style={{ margin: 0, fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5, textAlign: 'center' }}>
-                I just discovered a game-changing workflow for content distribution. Instead of starting from scratch...
-              </p>
-              <div style={{ width: '100%', height: isMobile ? '100px' : '140px', backgroundColor: '#F3F4F6', borderRadius: '16px', marginTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS SECTION */}
-      <section id="how-it-works" style={{ paddingTop: '100px', paddingBottom: '120px', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingLeft: '20px', paddingRight: '20px', backgroundColor: '#FAFAFA' }}>
-        <div className="animate-slideUp" style={{ textAlign: 'center', marginBottom: '80px' }}>
-          <p style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '2px', color: COLORS.primary, textTransform: 'uppercase', marginBottom: '16px' }}>HOW IT WORKS</p>
-          <h2 style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: 800, color: COLORS.textMain, letterSpacing: '-0.03em', marginBottom: '16px' }}>Three steps. Zero friction.</h2>
-          <p style={{ fontSize: '16px', color: COLORS.textMuted, maxWidth: '500px', margin: '0 auto', lineHeight: 1.6 }}>
-            Our streamlined workflow takes the heavy lifting out of content distribution.
-          </p>
-        </div>
-        
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '40px' : '64px', maxWidth: '1000px', width: '100%', position: 'relative' }}>
-          {!isMobile && (
-            <div style={{ position: 'sticky', top: '200px', height: 'fit-content', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60px' }}>
-              {/* Background Line */}
-              <div style={{ position: 'absolute', top: '30px', bottom: '30px', width: '2px', backgroundColor: '#E5E7EB', zIndex: 0 }}></div>
-              
-              {/* Active Progress Line */}
-              <div style={{ 
-                position: 'absolute', 
-                top: '30px', 
-                width: '3px', 
-                backgroundColor: COLORS.primary, 
-                zIndex: 1, 
-                transition: 'height 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                height: activeStep === 1 ? '0%' : activeStep === 2 ? '50%' : '100%',
-                boxShadow: `0 0 10px ${COLORS.primary}40`
-              }}></div>
-
-              {[1, 2, 3].map((num) => (
-                <div key={num} style={{ 
-                  width: '44px', 
-                  height: '44px', 
-                  borderRadius: '50%', 
-                  backgroundColor: activeStep >= num ? COLORS.primary : COLORS.white, 
-                  color: activeStep >= num ? COLORS.white : '#9CA3AF', 
-                  border: `2px solid ${activeStep >= num ? COLORS.primary : '#E5E7EB'}`,
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  fontSize: '18px', 
-                  fontWeight: 700, 
-                  zIndex: 2, 
-                  marginBottom: '100px',
-                  transition: 'all 0.4s ease',
-                  boxShadow: activeStep === num ? `0 0 20px ${COLORS.primary}40` : 'none',
-                  transform: activeStep === num ? 'scale(1.15)' : 'scale(1)'
-                }}>
-                  {num}
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', flex: 1 }}>
-            {[
-              { 
-                step: 1, 
-                title: "Paste your content", 
-                desc: "Drop in your blog post URL or paste the full text. ContentSplit reads it and understands the key ideas, tone, and structure.",
-                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 
-              },
-              { 
-                step: 2, 
-                title: "Choose your platforms", 
-                desc: "Pick which formats you need — one or all six. ContentSplit generates each one separately, tailored to each platform.",
-                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> 
-              },
-              { 
-                step: 3, 
-                title: "Copy and publish", 
-                desc: "Each output is editable before you copy. Tweak the tone, swap out phrases, and publish directly.",
-                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> 
-              }
-            ].map((s, i) => (
-              <div 
-                key={i} 
-                data-step={s.step}
-                className="how-it-works-step"
-                style={{ 
-                  backgroundColor: COLORS.white, 
-                  border: `1px solid ${activeStep === s.step ? COLORS.primary + '30' : COLORS.border}`, 
-                  borderRadius: '24px', 
-                  padding: isMobile ? '24px' : '40px', 
-                  display: 'flex', 
-                  flexDirection: isMobile ? 'column' : 'row', 
-                  gap: '24px', 
-                  alignItems: 'flex-start', 
-                  boxShadow: activeStep === s.step ? '0 20px 40px rgba(0,0,0,0.04)' : '0 4px 12px rgba(0,0,0,0.01)',
-                  transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-                  transform: activeStep === s.step ? 'translateX(10px)' : 'translateX(0)',
-                  opacity: activeStep === s.step ? 1 : 0.6
-                }}
-              >
-                <div style={{ 
-                  width: '56px', 
-                  height: '56px', 
-                  borderRadius: '16px', 
-                  backgroundColor: activeStep === s.step ? COLORS.primary + '10' : '#F3F4F6', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  color: activeStep === s.step ? COLORS.primary : '#9CA3AF', 
-                  flexShrink: 0,
-                  transition: 'all 0.4s ease'
-                }}>
-                  {s.icon}
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: COLORS.textMain, marginBottom: '12px' }}>{isMobile && `${s.step}. `}{s.title}</h3>
-                  <p style={{ fontSize: '15px', color: COLORS.supportText, lineHeight: 1.6 }}>{s.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* DEMO SECTION */}
-      <section id="demo" style={{ paddingTop: '60px', paddingBottom: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
-        <h2 style={{ fontSize: isMobile ? '28px' : '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '16px', textAlign: 'center' }}>See it work before you sign up.</h2>
-        <p style={{ fontSize: isMobile ? '14px' : '16px', color: COLORS.textMuted, maxWidth: '500px', textAlign: 'center', lineHeight: 1.5, marginBottom: isMobile ? '40px' : '64px' }}>
-          No account needed. Paste any blog excerpt and watch ContentSplit generate a Twitter thread in real time.
-        </p>
-
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '32px' : '48px', maxWidth: '1100px', width: '100%', position: 'relative', alignItems: 'center' }}>
-          {!isMobile && (
-            <div className="animate-pulseArrow" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 5, pointerEvents: 'none' }}>
-              <div style={{ backgroundColor: COLORS.white, width: '40px', height: '40px', borderRadius: '50%', border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={COLORS.primary} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
-              </div>
-            </div>
-          )}
-
-          <div style={{ width: '100%', flex: 1, backgroundColor: COLORS.white, borderRadius: '16px', border: `1px solid ${COLORS.border}`, padding: '24px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', position: 'relative' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1px', color: COLORS.textMuted, textTransform: 'uppercase' }}>BLOG EXCERPT</div>
-            </div>
-            <textarea 
-              value={demoText}
-              readOnly
-              placeholder="Waiting for input..."
-              style={{ width: '100%', height: isMobile ? '200px' : '240px', backgroundColor: '#F3F4F6', border: 'none', borderRadius: '12px', padding: '16px', fontSize: '14px', color: COLORS.textMain, resize: 'none', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6 }}
-            ></textarea>
-          </div>
-
-          <div style={{ width: '100%', flex: 1, backgroundColor: COLORS.white, borderRadius: '16px', border: `1px solid ${COLORS.border}`, padding: '24px', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1px', color: COLORS.textMuted, textTransform: 'uppercase' }}>GENERATED THREAD</div>
-              <TwitterIcon size={16} />
-            </div>
-            <div style={{ width: '100%', height: isMobile ? '200px' : '240px', backgroundColor: '#F9FAFB', border: `1px solid ${COLORS.border}`, borderRadius: '12px', padding: '16px', overflowY: 'auto' }}>
-              {demoState === 'done' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div className="demo-generated-line" style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5, animationDelay: '0.2s' }}>1/ Content repurposing is NOT just copy-pasting. It’s about platform-native storytelling. 🧵</div>
-                  <div className="demo-generated-line" style={{ fontSize: '13px', color: COLORS.textMain, lineHeight: 1.5, animationDelay: '1.2s' }}>2/ Respect the channel. Twitter users want punchy takeaways, not 2000 words.</div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* NEW FEATURES SECTION */}
-      <section id="features" style={{ paddingTop: '100px', paddingBottom: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: `1px solid ${COLORS.border}`, backgroundColor: COLORS.bg, paddingLeft: '20px', paddingRight: '20px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <div className="animate-slideUp" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#EDE9FE', color: COLORS.primary, padding: '6px 16px', borderRadius: '100px', fontSize: '11px', fontWeight: 700, letterSpacing: '1px', marginBottom: '16px' }}>FEATURES</div>
-          <h2 style={{ fontSize: '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '20px', lineHeight: 1.2, maxWidth: '600px', margin: '0 auto 20px' }}>Everything you need to scale.</h2>
-          <p style={{ fontSize: '16px', color: COLORS.textMuted, maxWidth: '500px', margin: '0 auto', lineHeight: 1.5 }}>
-            Powerful features designed to turn your single blog post into a multi-channel content engine.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '32px' : '64px', maxWidth: '1100px', width: '100%', alignItems: 'flex-start' }}>
-          
-          {/* Left Column: Interactive Feature Tabs */}
-          <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '12px', marginTop: isMobile ? '24px' : '0' }}>
-            {[
-              {
-                title: "AI-Powered Analysis",
-                desc: "Paste any blog post or article. Our AI breaks down your content to understand key takeaways, tone, and specific audience segments.",
-                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-              },
-              {
-                title: "One Article, Six Channels",
-                desc: "Transform a single piece of long-form content into platform-native posts for Twitter, LinkedIn, Instagram, and more in seconds.",
-                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
-              },
-              {
-                title: "Bulk Content Processing",
-                desc: "Batch-process up to 10 articles at once. Run your entire week’s social media strategy in a single 5-minute session.",
-                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-              }
-            ].map((f, i) => (
-              <div 
-                key={i}
-                onClick={() => setActiveFeature(i)}
-                style={{ 
-                  padding: isMobile ? '16px 20px' : '24px 32px', 
-                  borderRadius: isMobile ? '12px' : '0 16px 16px 0', 
-                  borderLeft: isMobile ? 'none' : `4px solid ${activeFeature === i ? COLORS.primary : 'transparent'}`,
-                  borderTop: isMobile ? `4px solid ${activeFeature === i ? COLORS.primary : 'transparent'}` : 'none',
-                  backgroundColor: activeFeature === i ? '#F5F3FF' : 'transparent',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  opacity: activeFeature === i ? 1 : 0.6
-                }}
-                onMouseEnter={(e) => { if (activeFeature !== i) { e.currentTarget.style.backgroundColor = '#F9FAFB'; e.currentTarget.style.opacity = '0.9'; } }}
-                onMouseLeave={(e) => { if (activeFeature !== i) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.opacity = '0.6'; } }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ color: activeFeature === i ? COLORS.primary : COLORS.textMuted }}>{f.icon}</div>
-                  <h3 style={{ fontSize: isMobile ? '16px' : '18px', fontWeight: 600, color: activeFeature === i ? COLORS.primary : COLORS.textMain, margin: 0 }}>{f.title}</h3>
-                </div>
-                {activeFeature === i && (
-                  <div style={{ animation: 'fadeIn 0.4s ease' }}>
-                    <p style={{ marginTop: '12px', fontSize: '14px', color: COLORS.supportText, lineHeight: 1.6 }}>{f.desc}</p>
-                    
-                    {/* Mobile Inline Mockup */}
-                    {isMobile && (
-                      <div className="animate-scaleIn" style={{ 
-                        width: '100%', 
-                        marginTop: '20px',
-                        backgroundColor: COLORS.white, 
-                        borderRadius: '16px', 
-                        border: `1px solid ${COLORS.border}`, 
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
-                        overflow: 'hidden',
-                        padding: '24px'
-                      }}>
-                        {activeFeature === 0 && (
-                          <div style={{ width: '100%' }}>
-                            <div className="animate-slideUp" style={{ fontSize: '11px', fontWeight: 700, color: COLORS.primary, marginBottom: '20px', letterSpacing: '1px' }}>STEP 1: ANALYZE</div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                              <div className="skeleton-line" style={{ width: '100%', height: '10px', borderRadius: '5px', animationDelay: '0.1s' }}></div>
-                              <div className="skeleton-line" style={{ width: '90%', height: '10px', borderRadius: '5px', animationDelay: '0.2s' }}></div>
-                              <div className="skeleton-line" style={{ width: '95%', height: '10px', borderRadius: '5px', animationDelay: '0.3s' }}></div>
-                              <div className="skeleton-line" style={{ width: '70%', height: '10px', borderRadius: '5px', animationDelay: '0.4s' }}></div>
-                            </div>
-                          </div>
-                        )}
-                        {activeFeature === 1 && (
-                          <div style={{ width: '100%' }}>
-                            <div className="animate-slideUp" style={{ fontSize: '11px', fontWeight: 700, color: COLORS.primary, marginBottom: '20px', letterSpacing: '1px' }}>STEP 2: SPLIT</div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                              {[TwitterIcon, LinkedInIcon, FacebookIcon, InstagramIcon].map((Icon, idx) => (
-                                <div key={idx} className="animate-slideUp" style={{ padding: '12px', borderRadius: '12px', border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', gap: '8px', animationDelay: `${idx * 0.1}s`, opacity: 0, animationFillMode: 'forwards' }}>
-                                   <Icon size={14} />
-                                   <div className="skeleton-line" style={{ width: '60%', height: '4px', borderRadius: '2px' }}></div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        {activeFeature === 2 && (
-                          <div style={{ width: '100%' }}>
-                            <div className="animate-slideUp" style={{ fontSize: '11px', fontWeight: 700, color: COLORS.primary, marginBottom: '20px', letterSpacing: '1px' }}>STEP 3: SCALE</div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                              {[1, 2, 3].map(idx => (
-                                <div key={idx} className="animate-slideUp" style={{ padding: '12px', borderRadius: '10px', backgroundColor: idx === 1 ? '#F5F3FF' : '#F9FAFB', border: idx === 1 ? `1px solid ${COLORS.primary}20` : 'none', display: 'flex', alignItems: 'center', gap: '12px', animationDelay: `${idx * 0.15}s`, opacity: 0, animationFillMode: 'forwards' }}>
-                                  <div style={{ width: '28px', height: '28px', borderRadius: '6px', backgroundColor: idx === 1 ? COLORS.primary : '#E5E7EB', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700 }}>{idx}</div>
-                                  <div style={{ flex: 1 }}>
-                                    <div className="skeleton-line" style={{ width: '80px', height: '6px', borderRadius: '3px', marginBottom: '4px' }}></div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Right Column: Dynamic Mockups */}
-          {!isMobile && (
-            <div style={{ flex: 1.2, height: '480px', position: 'relative' }}>
-              <div key={activeFeature} className="animate-scaleIn" style={{ 
-                width: '100%', 
-                height: '100%', 
-                backgroundColor: COLORS.white, 
-                borderRadius: '16px', 
-                border: `1px solid ${COLORS.border}`, 
-                boxShadow: '0 20px 40px rgba(0,0,0,0.06)',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column'
-              }}>
-                {/* macOS Window Header */}
-                <div style={{ padding: '16px 20px', borderBottom: `1px solid ${COLORS.border}`, backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#FF5F56' }}></div>
-                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#FFBD2E' }}></div>
-                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#27C93F' }}></div>
-                </div>
-                
-                {/* Inner Canvas */}
-                <div style={{ flex: 1, padding: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FAFAFA' }}>
-                {/* Dynamic Mockup Render */}
-                {activeFeature === 0 && (
-                  <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
-                    <div className="animate-slideUp" style={{ fontSize: '11px', fontWeight: 800, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1.5px', opacity: 0.8 }}>STEP 1: ANALYZE</div>
-                    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '12px', padding: '20px', backgroundColor: 'white', borderRadius: '12px', border: `1px solid ${COLORS.border}`, overflow: 'hidden' }}>
-                      {/* Scanning Beam */}
-                      <div style={{ 
-                        position: 'absolute', 
-                        left: 0, 
-                        right: 0, 
-                        height: '2px', 
-                        background: `linear-gradient(90deg, transparent, ${COLORS.primary}, transparent)`, 
-                        boxShadow: `0 0 10px ${COLORS.primary}`,
-                        animation: 'scan 2s linear infinite',
-                        zIndex: 2
-                      }}></div>
-                      
-                      <div className="skeleton-line" style={{ width: '100%', height: '10px', borderRadius: '5px', animationDelay: '0.1s' }}></div>
-                      <div className="skeleton-line" style={{ width: '90%', height: '10px', borderRadius: '5px', animationDelay: '0.2s' }}></div>
-                      <div className="skeleton-line" style={{ width: '95%', height: '10px', borderRadius: '5px', animationDelay: '0.3s' }}></div>
-                      <div className="skeleton-line" style={{ width: '70%', height: '10px', borderRadius: '5px', animationDelay: '0.4s' }}></div>
-                    </div>
-                  </div>
-                )}
-                {activeFeature === 1 && (
-                  <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
-                    <div className="animate-slideUp" style={{ fontSize: '11px', fontWeight: 800, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1.5px', opacity: 0.8 }}>STEP 2: SPLIT</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                      {[TwitterIcon, LinkedInIcon, FacebookIcon, InstagramIcon].map((Icon, i) => (
-                        <div key={i} className="animate-slideUp" style={{ 
-                          padding: '12px', 
-                          borderRadius: '12px', 
-                          backgroundColor: 'white',
-                          border: `1px solid ${COLORS.border}`, 
-                          display: 'flex', 
-                          flexDirection: 'column',
-                          gap: '10px', 
-                          animationDelay: `${i * 0.1}s`, 
-                          opacity: 0, 
-                          animationFillMode: 'forwards',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
-                        }}>
-                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                             <div style={{ width: '20px', height: '20px', borderRadius: '4px', backgroundColor: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                               <Icon size={12} />
-                             </div>
-                             <div className="skeleton-line" style={{ width: '40%', height: '4px', borderRadius: '2px' }}></div>
-                           </div>
-                           <div className="skeleton-line" style={{ width: '100%', height: '3px', borderRadius: '1.5px' }}></div>
-                           <div className="skeleton-line" style={{ width: '80%', height: '3px', borderRadius: '1.5px' }}></div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {activeFeature === 2 && (
-                  <div style={{ width: '100%', animation: 'fadeIn 0.5s ease' }}>
-                    <div className="animate-slideUp" style={{ fontSize: '11px', fontWeight: 800, color: COLORS.primary, marginBottom: '24px', letterSpacing: '1.5px', opacity: 0.8 }}>STEP 3: SCALE</div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      {[1, 2, 3].map(i => (
-                        <div key={i} className="animate-slideUp" style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'white', border: `1px solid ${COLORS.border}`, display: 'flex', alignItems: 'center', gap: '12px', animationDelay: `${i * 0.15}s`, opacity: 0, animationFillMode: 'forwards' }}>
-                          <div style={{ width: '28px', height: '28px', borderRadius: '6px', backgroundColor: i === 1 ? COLORS.primary : '#F3F4F6', color: i === 1 ? 'white' : '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700 }}>{i}</div>
-                          <div style={{ flex: 1 }}>
-                            <div className="skeleton-line" style={{ width: '40%', height: '6px', borderRadius: '3px', marginBottom: '4px' }}></div>
-                            <div style={{ width: '100%', height: '3px', backgroundColor: '#F3F4F6', borderRadius: '1.5px', position: 'relative', overflow: 'hidden' }}>
-                              <div style={{ 
-                                position: 'absolute', 
-                                left: 0, 
-                                top: 0, 
-                                bottom: 0, 
-                                width: i === 1 ? '85%' : i === 2 ? '45%' : '20%', 
-                                backgroundColor: i === 1 ? COLORS.primary : '#D1D5DB', 
-                                borderRadius: '1.5px',
-                                transition: 'width 1s ease-out'
-                              }}></div>
-                            </div>
-                          </div>
-                          <div style={{ fontSize: '10px', fontWeight: 600, color: i === 1 ? COLORS.primary : '#9CA3AF' }}>{i === 1 ? 'LIVE' : 'QUEUE'}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section style={{ paddingTop: '60px', paddingBottom: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#F5F3FF', borderTop: `1px solid ${COLORS.border}`, paddingLeft: '20px', paddingRight: '20px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.primary, color: COLORS.white, padding: '6px 16px', borderRadius: '100px', fontSize: '11px', fontWeight: 700, letterSpacing: '1px', marginBottom: '16px' }}>TESTIMONIALS</div>
-          <h2 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '16px' }}>What creators are saying.</h2>
-        </div>
-        <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ display: isMobile ? 'flex' : 'grid', flexDirection: isMobile ? 'column' : 'row', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
-            {[
-              {
-                name: "Sarah J.",
-                role: "Solo Creator",
-                quote: "ContentSplit turned my 2-hour social media 'grind' into a 10-minute task. I can finally focus on writing again.",
-                initial: "S"
-              },
-              {
-                name: "David L.",
-                role: "Agency Owner",
-                quote: "We use it for all our clients. The ability to batch-process articles and maintain a human voice is a massive win.",
-                initial: "D"
-              },
-              {
-                name: "Elena R.",
-                role: "Writer",
-                quote: "My LinkedIn engagement has doubled since I started using native platform-specific posts. It just works.",
-                initial: "E"
-              }
-            ].map((t, i) => (
-              <div key={i} style={{ backgroundColor: COLORS.white, borderRadius: '20px', padding: '24px', border: `1px solid ${COLORS.border}`, boxShadow: '0 4px 20px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ color: '#FBBF24', display: 'flex', gap: '4px', marginBottom: '16px' }}>
-                  {[1,2,3,4,5].map(star => <svg key={star} width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>)}
-                </div>
-                <p style={{ fontSize: '15px', color: COLORS.textMain, lineHeight: 1.6, marginBottom: '24px', flex: 1 }}>"{t.quote}"</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', borderTop: `1px solid ${COLORS.border}`, paddingTop: '16px' }}>
-                  <div style={{ width: '40px', height: '40px', backgroundColor: COLORS.primary, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: COLORS.white, fontWeight: 700, fontSize: '16px' }}>{t.initial}</div>
-                  <div>
-                    <div style={{ fontSize: '14px', fontWeight: 700, color: COLORS.primary }}>{t.name}</div>
-                    <div style={{ fontSize: '12px', color: COLORS.textMuted }}>{t.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PRICING SECTION */}
-      <section id="pricing" style={{ paddingTop: '60px', paddingBottom: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h2 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '16px' }}>Simple, transparent pricing</h2>
-          <p style={{ fontSize: '16px', color: COLORS.textMuted, maxWidth: '500px', margin: '0 auto', lineHeight: 1.5 }}>
-            Start free, upgrade when you're ready.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', backgroundColor: '#F3F4F6', padding: '4px', borderRadius: '100px', marginBottom: isMobile ? '32px' : '40px', border: `1px solid ${COLORS.border}` }}>
-          <button onClick={() => setBillingCycle('monthly')} style={{ padding: '8px 24px', borderRadius: '100px', fontSize: '14px', fontWeight: 700, border: 'none', cursor: 'pointer', backgroundColor: billingCycle === 'monthly' ? COLORS.primary : 'transparent', color: billingCycle === 'monthly' ? COLORS.white : COLORS.textMuted, transition: 'all 0.3s' }}>Monthly</button>
-          <button onClick={() => setBillingCycle('yearly')} style={{ padding: '8px 24px', borderRadius: '100px', fontSize: '14px', fontWeight: 700, border: 'none', cursor: 'pointer', backgroundColor: billingCycle === 'yearly' ? COLORS.primary : 'transparent', color: billingCycle === 'yearly' ? COLORS.white : COLORS.textMuted, transition: 'all 0.3s', display: 'flex', alignItems: 'center', gap: '6px' }}>Yearly <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: billingCycle === 'yearly' ? COLORS.white : COLORS.primary, padding: '2px 6px', borderRadius: '100px', fontSize: '10px' }}>-20%</span></button>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '20px', maxWidth: '1050px', width: '100%' }}>
-          {[
-            { 
-              name: "STARTER", 
-              price: "$0", 
-              desc: "For individual creators.", 
-              features: ["1 repurpose / day", "All core platforms", "Community support"],
-              btn: "Get Started Free"
-            },
-            { 
-              name: "PROFESSIONAL", 
-              price: billingCycle === 'monthly' ? "$12" : "$10", 
-              desc: "For serious business creators.", 
-              features: ["Unlimited repurposes", "Bulk processing", "Custom AI training", "Priority support"],
-              btn: "Start Free Trial",
-              popular: true
-            },
-            { 
-              name: "AGENCY", 
-              price: billingCycle === 'monthly' ? "$40" : "$32", 
-              desc: "Scale across all your clients.", 
-              features: ["Unlimited team members", "Client workspaces", "API Access", "Dedicated manager"],
-              btn: "Contact Sales"
-            }
-          ].map((plan, i) => (
-            <div 
-              key={i} 
-              onClick={() => setSelectedPlan(i)}
-              className={`pricing-card ${selectedPlan === i ? 'active' : ''}`}
-              style={{ 
-                flex: 1, 
-                backgroundColor: COLORS.white, 
-                borderRadius: '24px', 
-                padding: isMobile ? '32px 24px' : '48px 32px', 
-                border: `2px solid ${selectedPlan === i ? COLORS.primary : COLORS.border}`, 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
-                textAlign: 'center',
-                position: 'relative'
-              }}
-            >
-              {plan.popular && <div style={{ position: 'absolute', top: '-12px', backgroundColor: COLORS.primary, color: COLORS.white, padding: '4px 16px', borderRadius: '100px', fontSize: '10px', fontWeight: 800 }}>MOST POPULAR</div>}
-              <h3 style={{ fontSize: '12px', fontWeight: 700, color: COLORS.textMuted, marginBottom: '24px' }}>{plan.name}</h3>
-              <div style={{ fontSize: '40px', fontWeight: 700, color: COLORS.textMain }}>{plan.price}<span style={{ fontSize: '14px', color: COLORS.textMuted }}>/mo</span></div>
-              <p style={{ fontSize: '14px', color: COLORS.supportText, margin: '16px 0 32px', minHeight: '40px' }}>{plan.desc}</p>
-              <ul style={{ listStyle: 'none', padding: 0, width: '100%', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
-                {plan.features.map((f, j) => (
-                  <li key={j} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: COLORS.textMain }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="3"><polyline points="20 6 9 17 4 12"></polyline></svg> {f}
-                  </li>
-                ))}
-              </ul>
-              <Link to="/register" style={{ display: 'block', width: '100%', padding: '14px', backgroundColor: selectedPlan === i ? COLORS.primary : 'transparent', border: `1px solid ${COLORS.primary}`, borderRadius: '12px', color: selectedPlan === i ? COLORS.white : COLORS.primary, fontWeight: 700, textDecoration: 'none', marginTop: '32px' }}>{plan.btn}</Link>
-            </div>
-          ))}
-        </div>
-      </section>
-      
-      {/* FAQ SECTION */}
-      <section id="faq" style={{ paddingTop: '60px', paddingBottom: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#FAFAFA', borderTop: `1px solid ${COLORS.border}`, paddingLeft: '20px', paddingRight: '20px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#EDE9FE', color: COLORS.primary, padding: '6px 16px', borderRadius: '100px', fontSize: '11px', fontWeight: 700, letterSpacing: '1px', marginBottom: '16px' }}>FAQ</div>
-          <h2 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '12px' }}>Questions worth answering.</h2>
-          <p style={{ fontSize: '14px', color: COLORS.textMuted, maxWidth: '480px', margin: '0 auto' }}>Everything you need to know about ContentSplit.</p>
-        </div>
-        <div style={{ maxWidth: '720px', width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {[
-            { q: "Does ContentSplit work with any blog post?", a: "Yes. Simply paste the text and it handles the rest. No formatting required." },
-            { q: "Will the output actually sound like me?", a: "Yes. ContentSplit analyzes your writing style before generating outputs." },
-            { q: "Can I edit the outputs before I publish?", a: "Absolutely. Every generated output is fully editable inside ContentSplit." },
-            { q: "What platforms are supported?", a: "X threads, LinkedIn, Instagram, Facebook, and newsletters." },
-            { q: "Is there a free plan?", a: "Yes! Our Starter plan is completely free with 1 repurpose per day." }
-          ].map((item, i) => (
-            <div key={i} onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{ backgroundColor: COLORS.white, border: `1px solid ${openFaq === i ? COLORS.primary : COLORS.border}`, borderRadius: '16px', overflow: 'hidden', cursor: 'pointer' }}>
-              <div style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '14px', fontWeight: 600, color: openFaq === i ? COLORS.primary : COLORS.textMain, flex: 1 }}>{item.q}</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={openFaq === i ? COLORS.primary : COLORS.textMuted} strokeWidth="3" style={{ transform: openFaq === i ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </div>
-              {openFaq === i && <div style={{ padding: '0 20px 20px', borderTop: `1px solid ${COLORS.border}`, fontSize: '13px', color: COLORS.supportText, lineHeight: 1.6, paddingTop: '16px' }}>{item.a}</div>}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* BOTTOM CTA SECTION */}
-      <section style={{ paddingTop: '80px', paddingBottom: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', backgroundColor: '#F8F7FF', paddingLeft: '20px', paddingRight: '20px' }}>
-        <h2 style={{ fontSize: isMobile ? '36px' : '56px', fontWeight: 700, color: COLORS.textMain, letterSpacing: '-0.02em', marginBottom: '24px', maxWidth: '800px', lineHeight: 1.1 }}>
-          Your next blog post<br/>should be everywhere.
-        </h2>
-        <p style={{ fontSize: '16px', color: COLORS.textMuted, marginBottom: '40px' }}>
-          Start free. No credit card. Just paste and go.
-        </p>
-        <Link to="/register" className="btn-primary" style={{ padding: '16px 40px', fontSize: '18px', width: isMobile ? '100%' : 'auto' }}>
-          Start for free &rarr;
-        </Link>
-      </section>
-
-      {/* FOOTER */}
-      {/* FOOTER */}
-      <footer style={{ backgroundColor: '#0F172A', paddingTop: '80px', paddingBottom: '48px', paddingLeft: isMobile ? '20px' : '48px', paddingRight: isMobile ? '20px' : '48px', display: 'flex', justifyContent: 'center', color: '#94A3B8' }}>
-        <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: isMobile ? '48px' : '80px', alignItems: 'flex-start' }}>
-          
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: '48px', alignItems: 'flex-start', textAlign: 'left' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '320px', alignItems: 'flex-start' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 700, fontSize: '20px', color: COLORS.white }}>
-                <div style={{ width: '28px', height: '28px', backgroundColor: COLORS.primary, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Logo size={16} color="white" />
-                </div>
-                ContentSplit
-              </div>
-              <p style={{ fontSize: '14px', color: '#94A3B8', lineHeight: 1.6, margin: 0 }}>
-                The ultimate content distribution engine for creators. Turn one article into 10+ social posts in seconds.
-              </p>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                {[TwitterIcon, LinkedInIcon, InstagramIcon].map((Icon, i) => (
-                  <div key={i} style={{ width: '36px', height: '36px', backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#CBD5E1' }}>
-                    <Icon size={16} />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, auto)', gap: isMobile ? '40px' : '64px', textAlign: 'left' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <h4 style={{ fontSize: '11px', fontWeight: 700, color: COLORS.white, textTransform: 'uppercase' }}>Product</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' }}>
-                  <Link to="#features" style={{ color: '#94A3B8', textDecoration: 'none' }}>Features</Link>
-                  <Link to="#pricing" style={{ color: '#94A3B8', textDecoration: 'none' }}>Pricing</Link>
-                </div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <h4 style={{ fontSize: '11px', fontWeight: 700, color: COLORS.white, textTransform: 'uppercase' }}>Resources</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' }}>
-                  <Link to="#" style={{ color: '#94A3B8', textDecoration: 'none' }}>Blog</Link>
-                  <Link to="#" style={{ color: '#94A3B8', textDecoration: 'none' }}>Docs</Link>
-                </div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <h4 style={{ fontSize: '11px', fontWeight: 700, color: COLORS.white, textTransform: 'uppercase' }}>Legal</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' }}>
-                  <Link to="#" style={{ color: '#94A3B8', textDecoration: 'none' }}>Privacy</Link>
-                  <Link to="#" style={{ color: '#94A3B8', textDecoration: 'none' }}>Terms</Link>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', width: '100%', paddingTop: '32px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: '20px', textAlign: isMobile ? 'left' : 'center' }}>
-            <div style={{ fontSize: '13px', color: '#64748B' }}>
-              © {new Date().getFullYear()} ContentSplit.ai
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748B' }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }}></div>
-              All systems operational
-            </div>
-          </div>
-        </div>
-      </footer>
-      
       <style>{`
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
+        ${FONT_IMPORT}
+
+        /* Skip link */
+        .cs-skip-link {
+          position: absolute; top: -100%; left: 0;
+          background: ${T.accent}; color: ${T.white};
+          padding: 12px 24px; font-weight: 600; font-size: 14px;
+          text-decoration: none; z-index: 9999; border-radius: 0 0 8px 0;
+        }
+        .cs-skip-link:focus { top: 0; }
+
+        /* Nav */
+        .cs-nav-link { position: relative; }
+        .cs-nav-link::after { content:''; position:absolute; bottom:-4px; left:0; width:0; height:2px; background:${T.accent}; transition:width 0.2s ease; }
+        .cs-nav-link:hover { color:${T.textPrimary} !important; }
+        .cs-nav-link:hover::after { width:100%; }
+        .cs-ghost-btn:hover { color:${T.textPrimary} !important; background:${T.surface} !important; }
+        .cs-pill-btn:hover { transform:scale(1.03); box-shadow:0 4px 20px ${T.accent}40; }
+
+        /* Focus visible — every interactive element */
+        :focus-visible {
+          outline: 2px solid ${T.accent};
+          outline-offset: 3px;
+          border-radius: 4px;
         }
 
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-
-        .hero-mockup-container {
-          perspective: 1000px;
-        }
-
-        .hero-card-center, .hero-card-left, .hero-card-right, .hero-card-fan-1, .hero-card-fan-2 {
-          transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        .hero-mockup-container:hover .hero-card-center {
-          transform: translate(-50%, -55%) scale(1.02);
-          box-shadow: 0 40px 80px rgba(0,0,0,0.15);
-        }
-
-        .hero-mockup-container:hover .hero-card-left {
-          transform: translate(-125%, -48%) rotate(-12deg) scale(0.98);
-        }
-
-        .hero-mockup-container:hover .hero-card-right {
-          transform: translate(25%, -48%) rotate(12deg) scale(0.98);
-        }
-
-        .hero-mockup-container:hover .hero-card-fan-1 {
-          transform: translate(-180%, -38%) rotate(-20deg) scale(0.95);
-          opacity: 0.9;
-        }
-
-        .hero-mockup-container:hover .hero-card-fan-2 {
-          transform: translate(80%, -38%) rotate(20deg) scale(0.95);
-          opacity: 0.9;
-        }
-
-        @keyframes scan {
-          0% { top: -20%; }
-          100% { top: 120%; }
-        }
-
-        @keyframes scaleIn {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes pulseArrow {
-          0% { box-shadow: 0 0 0 0 rgba(91, 80, 214, 0.4); transform: translate(-50%, -50%) scale(1); }
-          50% { box-shadow: 0 0 0 15px rgba(91, 80, 214, 0); transform: translate(-50%, -50%) scale(1.05); }
-          100% { box-shadow: 0 0 0 0 rgba(91, 80, 214, 0); transform: translate(-50%, -50%) scale(1); }
-        }
-
-        @keyframes skeletonShimmer {
-          0% { background-position: -200px 0; }
-          100% { background-position: calc(200px + 100%) 0; }
-        }
-
-        @keyframes revealText {
-          0% { opacity: 0; transform: translateY(10px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
+        /* touch-action on all clickable elements */
+        button, a, [role="button"] { touch-action: manipulation; }
+        -webkit-tap-highlight-color: transparent;
 
         @media (max-width: 768px) {
-          .hero-mockup-container {
-            display: none;
+          .cs-nav-links, .cs-nav-right { display:none !important; }
+          .cs-mobile-btn { display:flex !important; }
+        }
+
+        @keyframes fadeInUp {
+          from { opacity:0; transform:translateY(16px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
+        @keyframes floatY {
+          0%,100% { transform:translateY(0); }
+          50%      { transform:translateY(-8px); }
+        }
+
+        /* Respect reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
           }
-          .pricing-card.active {
-            transform: none !important;
-          }
-          .nav-link {
-            display: none;
-          }
         }
-
-        @media (max-width: 480px) {
-          h2 { font-size: 28px !important; }
-        }
-
-        .animate-fadeIn { animation: fadeIn 0.4s ease forwards; }
-        .animate-slideUp { animation: slideUp 0.6s ease forwards; }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .animate-scaleIn { animation: scaleIn 0.3s ease forwards; }
-        .animate-pulseArrow { animation: pulseArrow 2s infinite cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%; }
-
-        .skeleton-line {
-          background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
-          background-size: 200px 100%;
-          animation: skeletonShimmer 1.5s infinite linear;
-        }
-
-        .demo-generated-line {
-          opacity: 0;
-          animation: revealText 0.6s ease forwards;
-        }
-
-        .pricing-card {
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          cursor: pointer;
-        }
-        .pricing-card:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
-          border-color: ${COLORS.primary}40 !important;
-        }
-        .pricing-card.active {
-          border-color: ${COLORS.primary} !important;
-          box-shadow: 0 20px 40px rgba(91, 80, 214, 0.1) !important;
-          background-color: ${COLORS.white} !important;
-        }
-
-        .btn-primary {
-          background-color: ${COLORS.primary};
-          color: ${COLORS.white};
-          padding: 12px 28px;
-          border-radius: 100px;
-          font-weight: 600;
-          text-decoration: none;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          transition: all 0.2s ease;
-          border: none;
-          cursor: pointer;
-          white-space: nowrap;
-        }
-        .btn-primary:hover {
-          transform: translateY(-2px);
-          filter: brightness(1.1);
-          box-shadow: 0 10px 20px rgba(91, 80, 214, 0.2);
-        }
-
-        .btn-secondary {
-          background-color: ${COLORS.white};
-          color: ${COLORS.textMain};
-          padding: 12px 28px;
-          border-radius: 100px;
-          font-weight: 600;
-          text-decoration: none;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          transition: all 0.2s ease;
-          border: 1px solid ${COLORS.border};
-          cursor: pointer;
-          white-space: nowrap;
-        }
-        .btn-secondary:hover {
-          background-color: ${COLORS.pillBg};
-          transform: translateY(-1px);
-        }
-
-        .nav-link {
-          color: ${COLORS.textMuted};
-          text-decoration: none;
-          transition: all 0.2s;
-          padding: 4px 0;
-          position: relative;
-        }
-        .nav-link:hover {
-          color: ${COLORS.textMain};
-        }
-        .nav-link::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 2px;
-          background-color: transparent;
-          border-radius: 100px;
-          transition: background-color 0.2s;
-        }
-        .nav-link:hover {
-          color: ${COLORS.primary};
-        }
-
-        .nav-link.active {
-          color: ${COLORS.textMain};
-          font-weight: 600;
-        }
-        .nav-link.active::after {
-          background-color: ${COLORS.primary};
-        }
-        
       `}</style>
-    </div>
-  );
-};
+    </>
+  )
+}
 
-export default LandingPage;
+// ─────────────────────────────────────────────────────────────────────────────
+// HERO
+// ─────────────────────────────────────────────────────────────────────────────
+const platformTabs = [
+  { id:'twitter',    label:'Twitter/X',  Icon: TwIcon  },
+  { id:'linkedin',   label:'LinkedIn',   Icon: LiIcon  },
+  { id:'instagram',  label:'Instagram',  Icon: IgIcon  },
+  { id:'newsletter', label:'Newsletter', Icon: Mail    },
+  { id:'youtube',    label:'YouTube',    Icon: YoutubeIcon },
+  { id:'summary',    label:'Summary',    Icon: List    },
+]
+
+const mockOutputs: Record<string, string[]> = {
+  twitter: [
+    '🌟 Just discovered the secret to 10x content creation.',
+    'Most creators spend hours repurposing one piece of content. Here is the better way:',
+    '1/ Write once  2/ Auto-distribute  3/ Never repeat yourself',
+    'Your time is worth more than editing AI outputs.',
+    'The future of content is one-click everywhere. 🚀',
+  ],
+  linkedin: [
+    `I'm excited to share a framework that has transformed my content creation workflow.\n\nAfter months of experimentation, here is what actually works:\n→ Write once\n→ Adapt for each platform\n→ Distribute everywhere\n\nWhat's your content strategy? 👇`,
+  ],
+  instagram: [
+    `The secret to 10x your content creation 🔥\n\nWrite once. Distribute everywhere. Here's the framework creators are using to dominate every platform without burning out.\n\n#contentcreator #growthhacks #socialmedia #contentmarketing #creator`,
+  ],
+  newsletter: [
+    `Subject: The content creation secret nobody talks about\n\nHey,\n\nMost creators grind for hours repurposing a single blog post. There's a better way — and I'm going to show you exactly how it works.`,
+  ],
+  youtube: [
+    `Hook (0-15s): "What if I told you that a single blog post could power your entire week of content across every platform?"\n\n[CUT] Setup (15-45s): "Today I'm sharing the exact framework I use..."\n\n[CUT] Main content...`,
+  ],
+  summary: [
+    `📝 TL;DR\n• Key insight: One article → unlimited content\n• Framework: Write once, adapt everywhere  \n• Result: 10x output, same effort`,
+  ],
+}
+
+const Hero: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('twitter')
+
+  return (
+    <section style={{
+      minHeight: '100vh', background: T.bg,
+      display:'flex', flexDirection:'column', alignItems:'center',
+      padding:'120px 24px 80px', position:'relative', overflow:'hidden',
+    }}>
+      {/* Radial accent glow */}
+      <div style={{
+        position:'absolute', top:0, left:'50%', transform:'translateX(-50%)',
+        width:'700px', height:'500px', pointerEvents:'none',
+        background:`radial-gradient(ellipse at 50% 0%, ${T.accent}20 0%, transparent 65%)`,
+      }} />
+
+      <div style={{ position:'relative', zIndex:1, display:'flex', flexDirection:'column', alignItems:'center', width:'100%', maxWidth:'900px' }}>
+        {/* Badge */}
+        <div style={{
+          ...dm(13, 400, { color: T.textSecondary }),
+          border:`1px solid ${T.border}`, background: T.surface,
+          padding:'6px 16px', borderRadius: T.rPill,
+          marginBottom:'24px',
+          opacity:0, animation:'fadeInUp 0.6s ease forwards',
+          animationDelay: '0ms',
+        }}>
+          ✦ AI-Powered Content Repurposing
+        </div>
+
+        {/* Headline */}
+        <h1 style={{
+          ...syne(72, 800, { color: T.textPrimary, textAlign:'center', lineHeight:1.05, maxWidth:'860px', marginBottom:'24px' }),
+          fontSize:'clamp(2.5rem, 7vw, 4.5rem)',
+          textWrap:'balance',
+          opacity:0, animation:'fadeInUp 0.6s ease forwards', animationDelay:'150ms',
+        }}>
+          One blog post.<br />
+          <span style={{ color: T.accent }}>Six</span> platforms.<br />
+          Zero rewrites.
+        </h1>
+
+        {/* Sub */}
+        <p style={{
+          ...dm(18, 400, { color: T.textSecondary, textAlign:'center', lineHeight:1.6, maxWidth:'580px', marginBottom:'40px' }),
+          fontSize:'clamp(1rem, 2vw, 1.25rem)',
+          opacity:0, animation:'fadeInUp 0.6s ease forwards', animationDelay:'300ms',
+        }}>
+          ContentSplit takes your long-form blog and breaks it into ready-to-publish content for Twitter/X, LinkedIn, Instagram, newsletters, YouTube, and more. Paste once. Publish everywhere.
+        </p>
+
+        {/* CTAs */}
+        <div style={{ display:'flex', gap:'12px', marginBottom:'16px', flexWrap:'wrap', justifyContent:'center', opacity:0, animation:'fadeInUp 0.6s ease forwards', animationDelay:'450ms' }}>
+          <Link to="/register" style={{ ...dm(16, 600, { color: T.white }), background: T.accent, padding:'16px 32px', borderRadius: T.rPill, textDecoration:'none', display:'flex', alignItems:'center', gap:'8px' }} className="cs-cta-primary">
+            Start for free <ArrowRight size={18} />
+          </Link>
+          <a href="#how-it-works" style={{ ...dm(16, 500, { color: T.textSecondary }), border:`1px solid ${T.border}`, padding:'16px 32px', borderRadius: T.rPill, textDecoration:'none', display:'flex', alignItems:'center', gap:'8px' }} className="cs-cta-ghost">
+            See how it works
+          </a>
+        </div>
+
+        {/* Below CTA */}
+        <p style={{ ...dm(12, 400, { color: T.textMuted }), marginBottom:'64px', opacity:0, animation:'fadeInUp 0.6s ease forwards', animationDelay:'600ms' }}>
+          No credit card required · 5 free repurposes per day
+        </p>
+
+        {/* Hero Mockup */}
+        <div style={{
+          width:'100%', maxWidth:'1000px',
+          opacity:0, animation:'fadeInUp 0.6s ease forwards, floatY 4s ease-in-out 750ms infinite',
+          animationDelay:'750ms',
+        }} className="cs-hero-mockup">
+          <div style={{ background: T.surface, border:`1px solid ${T.border}`, borderRadius: T.rLg, overflow:'hidden', boxShadow:`0 0 80px ${T.accent}12` }}>
+            {/* Window chrome */}
+            <div style={{ display:'flex', alignItems:'center', gap:'8px', padding:'14px 20px', background: T.surface2, borderBottom:`1px solid ${T.border}` }}>
+              {['#FF5F57','#FFBD2E','#28CA41'].map((c,i) => <div key={i} style={{ width:12, height:12, borderRadius:'50%', background:c }}/>)}
+              <span style={{ ...mono(11), color: T.textMuted, marginLeft:'12px' }}>ContentSplit — editor</span>
+            </div>
+
+            {/* Two-panel content */}
+            <div style={{ display:'grid', gridTemplateColumns:'300px 1fr', minHeight:'380px' }} className="cs-mockup-grid">
+              {/* Left: Input */}
+              <div style={{ padding:'20px', background: T.surface2, borderRight:`1px solid ${T.border}` }} className="cs-input-panel">
+                <div style={{ ...label, marginBottom:'12px' }}>Your Blog Post</div>
+                <div style={{ background: T.surface, border:`1px solid ${T.border}`, borderRadius: T.rMd, padding:'16px', height:'300px', ...dm(13, 400, { color: T.textSecondary, lineHeight:1.6 }), overflow:'hidden' }}>
+{`The secret to 10x your content creation...
+
+Most creators spend hours repurposing one piece of content across multiple platforms. But there's a better way.
+
+By treating your content as a reusable asset and using AI to handle the formatting, you can turn one article into weeks worth of social posts.
+
+Here's the framework I use:
+1. Write once
+2. Adapt for each platform
+3. Distribute everywhere
+
+The future of content is one-click everywhere.`}
+                </div>
+              </div>
+
+              {/* Right: Output */}
+              <div style={{ display:'flex', flexDirection:'column' }}>
+                {/* Platform tabs */}
+                <div style={{ display:'flex', borderBottom:`1px solid ${T.border}`, overflowX:'auto' }}>
+                  {platformTabs.map(({ id, label: lbl, Icon }) => (
+                    <button key={id} onClick={() => setActiveTab(id)} aria-pressed={activeTab === id} style={{
+                      ...dm(12, 500),
+                      color: activeTab === id ? T.accent : T.textMuted,
+                      background:'transparent', border:'none', cursor:'pointer',
+                      padding:'14px 16px', whiteSpace:'nowrap',
+                      borderBottom:`2px solid ${activeTab === id ? T.accent : 'transparent'}`,
+                      display:'flex', alignItems:'center', gap:'6px',
+                      transition:'color 0.2s ease, border-color 0.2s ease',
+                    }}>
+                      <Icon size={13} /> {lbl}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Output content */}
+                <div style={{ padding:'20px', flex:1, overflow:'auto', display:'flex', flexDirection:'column', gap:'10px' }}>
+                  {(mockOutputs[activeTab] ?? []).map((t, i) => (
+                    <div key={i} style={{ padding:'12px 16px', background: T.surface2, border:`1px solid ${T.border}`, borderRadius: T.rMd, ...dm(13, 400, { color: T.textPrimary, lineHeight:1.55 }), whiteSpace:'pre-wrap' }}>
+                      {activeTab === 'twitter' && <span style={{ ...dm(11,600,{ color: T.accent }), marginRight:'8px' }}>{i+1}</span>}
+                      {t}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        .cs-cta-primary:hover { transform:translateY(-2px); box-shadow:0 8px 24px ${T.accent}40; }
+        .cs-cta-ghost:hover   { color:${T.textPrimary} !important; border-color:${T.textMuted} !important; }
+        @media (max-width: 768px) {
+          .cs-hero-mockup { display:none; }
+          .cs-mockup-grid { grid-template-columns:1fr !important; }
+          .cs-input-panel { border-right:none !important; border-bottom:1px solid ${T.border} !important; }
+        }
+      `}</style>
+    </section>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SOCIAL PROOF BAR
+// ─────────────────────────────────────────────────────────────────────────────
+const SocialProofBar: React.FC = () => {
+  const logos = ['Indie Hackers', 'Product Hunt', 'Growth.design', 'Beehiiv', 'Substack']
+  return (
+    <section style={{ background: T.surface, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:'28px 24px' }}>
+      <div style={{ maxWidth:'1100px', margin:'0 auto', display:'flex', flexDirection:'column', alignItems:'center', gap:'16px' }}>
+        <p style={{ ...dm(14, 400, { color: T.textMuted, textAlign:'center' }) }}>
+          Trusted by 2,000+ creators, marketers, and content teams
+        </p>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'24px', flexWrap:'wrap', opacity:0.4 }}>
+          {logos.map((l, i) => (
+            <React.Fragment key={l}>
+              <span style={{ ...mono(12), color: T.textMuted, letterSpacing:'0.05em' }}>{l}</span>
+              {i < logos.length - 1 && <span style={{ width:4, height:4, borderRadius:'50%', background: T.textMuted, display:'inline-block', opacity:0.3 }}/>}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// OUTPUT SHOWCASE
+// ─────────────────────────────────────────────────────────────────────────────
+const formats = [
+  { id:'twitter',    Icon: TwIcon,      color:'#1DA1F2', label:'Twitter/X',  format:'Thread',      desc:'Hook → thread → CTA, tweet by tweet',       stats:'280 chars · 5–10 tweets' },
+  { id:'linkedin',   Icon: LiIcon,      color:'#0A66C2', label:'LinkedIn',   format:'Post',        desc:'Professional thought leadership post',       stats:'Professional tone · 3000 chars' },
+  { id:'instagram',  Icon: IgIcon,      color:'#E1306C', label:'Instagram',  format:'Caption',     desc:'Scroll-stopping caption with hashtags',      stats:'2200 chars · 30 hashtags' },
+  { id:'newsletter', Icon: Mail,        color:'#EA4335', label:'Newsletter', format:'Email',       desc:'Email-ready section with subject line',      stats:'Subject line + opening paragraph' },
+  { id:'youtube',    Icon: YoutubeIcon, color:'#FF0000', label:'YouTube',    format:'Description', desc:'SEO-optimized video description',            stats:'Timestamps · keywords · CTAs' },
+  { id:'summary',    Icon: FileText,    color:'#6C63FF', label:'Summary',    format:'TL;DR',       desc:'Quick summary for busy readers',             stats:'3–5 bullet points' },
+]
+
+const OutputShowcase: React.FC = () => (
+  <section style={{ background: T.bg, padding:'96px 24px' }}>
+    <div style={{ maxWidth:'1200px', margin:'0 auto' }}>
+      <span style={{ ...label, display:'block', marginBottom:'12px' }}>WHAT IT CREATES</span>
+      <h2 style={{ ...syne(48, 700, { color: T.textPrimary, marginBottom:'16px' }), fontSize:'clamp(2rem, 4vw, 3rem)' }}>
+        Your blog, everywhere it needs to be.
+      </h2>
+      <p style={{ ...dm(17, 400, { color: T.textSecondary, lineHeight:1.6, maxWidth:'600px', marginBottom:'48px' }) }}>
+        Paste your article. In seconds, ContentSplit generates six distinct content formats, each optimised for how people actually consume content on that platform.
+      </p>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(300px, 1fr))', gap:'20px' }}>
+        {formats.map(f => (
+          <div key={f.id} style={{ background: T.surface, border:`1px solid ${T.border}`, borderRadius: T.rLg, padding:'24px', transition:'color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease' }} className="cs-format-card">
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                <div style={{ width:40, height:40, borderRadius: T.rMd, background:`${f.color}15`, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <f.Icon size={20} color={f.color} />
+                </div>
+                <span style={{ ...dm(14, 600, { color: T.textPrimary }) }}>{f.label}</span>
+              </div>
+              <ArrowRight size={16} color={T.textMuted} aria-hidden="true" />
+            </div>
+            <div style={{ ...dm(18, 700, { color: T.textPrimary, marginBottom:'8px' }) }}>{f.format}</div>
+            <p style={{ ...dm(13, 400, { color: T.textSecondary, lineHeight:1.5, marginBottom:'16px' }) }}>{f.desc}</p>
+            <div style={{ ...mono(11), color: T.textMuted, padding:'8px 12px', background: T.surface2, borderRadius:'8px', display:'inline-block' }}>{f.stats}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <style>{`.cs-format-card:hover { border-color:${T.accent}40 !important; transform:translateY(-4px); box-shadow:0 8px 32px ${T.accent}15; }`}</style>
+  </section>
+)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HOW IT WORKS
+// ─────────────────────────────────────────────────────────────────────────────
+const steps = [
+  { step:1, Icon: FileText, title:'Paste your content',     desc:'Drop in your blog post URL or paste the full text. ContentSplit reads it and understands the key ideas, tone, and structure.' },
+  { step:2, Icon: Layers,   title:'Choose your platforms',  desc:"Pick which formats you need — one or all six. ContentSplit generates each one separately, tailored to that platform's content style." },
+  { step:3, Icon: Copy,     title:'Copy and publish',       desc:'Each output is editable before you copy. Tweak the tone, swap out phrases, and publish directly from the editor.' },
+]
+
+const HowItWorks: React.FC = () => (
+  <section id="how-it-works" style={{ background: T.bg, padding:'96px 24px', scrollMarginTop:'64px' }}>
+    <div style={{ maxWidth:'800px', margin:'0 auto' }}>
+      <span style={{ ...label, display:'block', textAlign:'center', marginBottom:'12px' }}>HOW IT WORKS</span>
+      <h2 style={{ ...syne(48, 700, { color: T.textPrimary, textAlign:'center', marginBottom:'56px' }), fontSize:'clamp(2rem, 4vw, 3rem)' }}>
+        Three steps. Zero friction.
+      </h2>
+      <div style={{ position:'relative', display:'flex', flexDirection:'column', gap:'48px' }}>
+        <div style={{ position:'absolute', left:'32px', top:0, bottom:0, width:'2px', background: T.border, zIndex:0 }}/>
+        {steps.map(s => (
+          <div key={s.step} style={{ position:'relative', zIndex:1, display:'flex', alignItems:'flex-start', gap:'24px' }}>
+            {/* Ghost number */}
+            <div style={{ position:'absolute', left:'-8px', top:'-16px', ...syne(120, 800, { color: T.accent }), opacity:0.06, lineHeight:1, pointerEvents:'none', userSelect:'none' }}>{s.step}</div>
+            {/* Icon box */}
+            <div style={{ width:64, height:64, flexShrink:0, borderRadius: T.rMd, background: T.surface, border:`1px solid ${T.border}`, display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <s.Icon size={24} color={T.accent} />
+            </div>
+            <div style={{ paddingTop:'8px' }}>
+              <h3 style={{ ...syne(20, 600, { color: T.textPrimary, marginBottom:'10px' }) }}>{s.title}</h3>
+              <p style={{ ...dm(16, 400, { color: T.textSecondary, lineHeight:1.65, maxWidth:'440px' }) }}>{s.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LIVE DEMO
+// ─────────────────────────────────────────────────────────────────────────────
+const LiveDemo: React.FC = () => {
+  const [input, setInput] = useState('')
+  const [output, setOutput] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  const generateThread = async () => {
+    if (!input.trim()) return
+    setLoading(true)
+    setOutput([])
+    try {
+      const res = await fetch('/api/generate-thread', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ content: input }),
+      })
+      const data = await res.json()
+      if (data.tweets) {
+        for (let i = 0; i < data.tweets.length; i++) {
+          await new Promise(r => setTimeout(r, 100))
+          setOutput(prev => [...prev, data.tweets[i]])
+        }
+      }
+    } catch (e) { console.error(e) }
+    finally { setLoading(false) }
+  }
+
+  const copyAll = () => {
+    navigator.clipboard.writeText(output.map((t,i) => `${i+1}. ${t}`).join('\n\n'))
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <section style={{ background: T.surface, padding:'96px 24px' }}>
+      <div style={{ maxWidth:'900px', margin:'0 auto' }}>
+        <h2 style={{ ...syne(48, 700, { color: T.textPrimary, textAlign:'center', marginBottom:'16px' }), fontSize:'clamp(2rem, 4vw, 3rem)' }}>
+          See it work before you sign up.
+        </h2>
+        <p style={{ ...dm(16, 400, { color: T.textSecondary, textAlign:'center', marginBottom:'48px' }) }}>
+          No account needed. Paste any blog excerpt and watch ContentSplit generate a Twitter thread in real time.
+        </p>
+        <div style={{ background: T.bg, border:`1px solid ${T.border}`, borderRadius: T.rLg, display:'grid', gridTemplateColumns:'1fr 1fr', overflow:'hidden' }} className="cs-demo-grid">
+          {/* Left */}
+          <div style={{ padding:'24px', borderRight:`1px solid ${T.border}` }} className="cs-demo-left">
+            <label htmlFor="cs-demo-input" style={{ ...label, display:'block', marginBottom:'12px' }}>Blog excerpt</label>
+            <textarea
+              id="cs-demo-input"
+              aria-label="Blog excerpt — paste a paragraph from any blog post"
+              style={{ width:'100%', height:'200px', background: T.surface2, border:`1px solid ${T.border}`, borderRadius: T.rMd, padding:'16px', ...dm(15, 400, { color: T.textSecondary }), resize:'none', outline:'none', transition:'border-color 0.2s ease', boxSizing:'border-box' }}
+              placeholder="Paste a paragraph from any blog post…"
+              value={input} onChange={e => setInput(e.target.value)}
+              className="cs-demo-textarea"
+            />
+            <button
+              onClick={generateThread} disabled={loading || !input.trim()}
+              style={{ ...dm(14, 600, { color: T.white }), background: T.accent, border:'none', cursor:'pointer', padding:'14px 24px', borderRadius: T.rMd, marginTop:'16px', width:'100%', display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', transition:'color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease' }}
+              className="cs-gen-btn"
+            >
+              {loading ? 'Generating...' : <><Sparkles size={16}/> Generate Twitter Thread <ArrowRight size={16}/></>}
+            </button>
+          </div>
+          {/* Right */}
+          <div style={{ padding:'24px', display:'flex', flexDirection:'column' }}>
+            <div style={{ ...label, marginBottom:'12px' }} aria-hidden="true">Generated Twitter/X Thread</div>
+            <div role="status" aria-live="polite" aria-label="Generated Twitter/X Thread" style={{ display:'flex', flexDirection:'column', gap:'10px', maxHeight:'280px', overflow:'auto', flex:1 }}>
+            {output.length > 0 ? (
+              <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+                {output.map((t,i) => (
+                  <div key={i} style={{ padding:'12px 16px', background: T.surface2, border:`1px solid ${T.border}`, borderRadius: T.rMd, ...dm(14, 400, { color: T.textPrimary, lineHeight:1.55 }) }}>
+                    <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:20, height:20, borderRadius:'50%', background: T.accent, ...dm(11, 600, { color: T.white }), marginRight:'8px' }}>{i+1}</span>
+                    {t}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ ...dm(14, 400, { color: T.textMuted, fontStyle:'italic', textAlign:'center' }), padding:'48px 0' }}>
+                Generated output will appear here…
+              </div>
+            )}
+            </div>
+            {output.length > 0 && (
+              <button onClick={copyAll} style={{ ...dm(13, 500, { color: T.textSecondary }), background:'transparent', border:'none', cursor:'pointer', padding:'8px 12px', borderRadius:'8px', display:'flex', alignItems:'center', gap:'6px', marginTop:'12px', transition:'color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease' }} className="cs-copy-btn">
+                {copied ? <><Check size={14}/> Copied!</> : <><Copy size={14}/> Copy all</>}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+      <style>{`
+        .cs-demo-textarea:focus { border-color:${T.accent} !important; }
+        .cs-gen-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 4px 16px ${T.accent}40; }
+        .cs-gen-btn:disabled { opacity:0.45; cursor:not-allowed; }
+        .cs-copy-btn:hover { background:${T.surface} !important; }
+        @media (max-width:640px) {
+          .cs-demo-grid { grid-template-columns:1fr !important; }
+          .cs-demo-left { border-right:none !important; border-bottom:1px solid ${T.border}; }
+        }
+      `}</style>
+    </section>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FEATURE HIGHLIGHTS
+// ─────────────────────────────────────────────────────────────────────────────
+const features = [
+  {
+    label:'Tone Awareness',
+    headline:"It writes like you, not like a robot.",
+    desc:"ContentSplit preserves the voice, vocabulary, and energy of your original post. The LinkedIn version doesn't sound like the Twitter version — because they shouldn't.",
+    visual:'comparison',
+  },
+  {
+    label:'Batch Mode',
+    headline:"Run a whole content calendar in one session.",
+    desc:"Upload multiple blog posts and queue them. ContentSplit processes each one and returns a full set of outputs per article — ready for scheduling.",
+    visual:'queue',
+  },
+  {
+    label:'Edit Before Export',
+    headline:"Every output is a starting point, not a final draft.",
+    desc:"The editor is inline. Click any generated text and edit it directly. No jumping between tabs or copy-pasting into Notion.",
+    visual:'editor',
+  },
+]
+
+const FeatureVisual: React.FC<{ visual: string }> = ({ visual }) => {
+  if (visual === 'comparison') return (
+    <>
+      <div style={{ display:'flex', gap:'10px', marginBottom:'12px' }}>
+        <TwIcon size={15} /><LiIcon size={15} />
+      </div>
+      {[
+        { platform:'Twitter version', text:'🚀 Just discovered the secret to 10x your content creation. Here is the framework:' },
+        { platform:'LinkedIn version', text:"I'm excited to share a framework that has transformed my content creation workflow. After months of experimentation, here is what actually works..." },
+      ].map(({ platform, text }) => (
+        <div key={platform} style={{ padding:'12px', background: T.surface2, borderRadius: T.rMd, border:`1px solid ${T.border}`, marginBottom:'10px' }}>
+          <span style={{ ...dm(10, 600, { color: T.textMuted, textTransform:'uppercase', letterSpacing:'0.1em', display:'block', marginBottom:'8px' }) }}>{platform}</span>
+          <p style={{ ...dm(13, 400, { color: T.textPrimary, lineHeight:1.5, margin:0 }) }}>{text}</p>
+        </div>
+      ))}
+    </>
+  )
+  if (visual === 'queue') return (
+    <>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px' }}>
+        <span style={{ ...dm(12, 600, { color: T.textSecondary }) }}>Content Queue</span>
+        <span style={{ ...dm(11, 400, { color: T.accent }) }}>3 posts processing</span>
+      </div>
+      {[
+        { text:'SEO framework blog post...', active:true },
+        { text:'Announcing new feature...', active:false },
+        { text:'Weekly newsletter #42...',  active:false },
+      ].map(({ text, active }, i) => (
+        <div key={i} style={{ padding:'12px', background: T.surface2, borderRadius: T.rMd, border:`1px solid ${T.border}`, display:'flex', alignItems:'center', gap:'12px', marginBottom:'10px' }}>
+          <div style={{ width:8, height:8, borderRadius:'50%', background: active ? T.accent : T.border, flexShrink:0 }}/>
+          <span style={{ ...dm(13, 400, { color: T.textPrimary }), flex:1 }}>{text}</span>
+          {active && <Zap size={14} color={T.accent}/>}
+        </div>
+      ))}
+    </>
+  )
+  if (visual === 'editor') return (
+    <>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px' }}>
+        <span style={{ ...dm(12, 600, { color: T.textSecondary }) }}>Tweet #1</span>
+        <Edit3 size={14} color={T.textMuted}/>
+      </div>
+      <div style={{ padding:'12px', background: T.surface2, borderRadius: T.rMd, border:`2px solid ${T.accent}`, marginBottom:'12px' }}>
+        <textarea defaultValue="🚀 Just discovered the secret to 10x your content creation. Here is the framework:"
+          style={{ width:'100%', background:'transparent', border:'none', ...dm(13, 400, { color: T.textPrimary }), resize:'none', outline:'none', minHeight:'80px', fontFamily:'"DM Sans", sans-serif' }}/>
+      </div>
+      <div style={{ display:'flex', gap:'6px', alignItems:'center', ...dm(12, 400, { color: T.accent }) }}>
+        <CheckCircle size={12}/> Changes auto-saved
+      </div>
+    </>
+  )
+  return null
+}
+
+const FeatureHighlights: React.FC = () => (
+  <section id="features" style={{ background: T.bg, padding:'96px 24px', scrollMarginTop:'64px' }}>
+    <div style={{ maxWidth:'1100px', margin:'0 auto' }}>
+      <span style={{ ...label, display:'block', marginBottom:'12px' }}>FEATURES</span>
+      <h2 style={{ ...syne(48, 700, { color: T.textPrimary, marginBottom:'64px' }), fontSize:'clamp(2rem, 4vw, 3rem)' }}>
+        The engine behind your content empire.
+      </h2>
+      {features.map((f, i) => (
+        <div key={f.label} style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'48px', alignItems:'center', padding:'48px 0', borderBottom:`1px solid ${T.border}` }} className="cs-feature-row">
+          {/* Text (swaps sides on even rows) */}
+          <div style={{ order: i % 2 === 1 ? 2 : 1, display:'flex', flexDirection:'column', gap:'14px' }}>
+            <span style={{ ...dm(12, 600, { color: T.accent, textTransform:'uppercase', letterSpacing:'0.1em' }) }}>{f.label}</span>
+            <h3 style={{ ...syne(24, 600, { color: T.textPrimary }) }}>{f.headline}</h3>
+            <p style={{ ...dm(16, 400, { color: T.textSecondary, lineHeight:1.65 }) }}>{f.desc}</p>
+          </div>
+          {/* Visual */}
+          <div style={{ order: i % 2 === 1 ? 1 : 2, background: T.surface, border:`1px solid ${T.border}`, borderRadius: T.rLg, padding:'24px', minHeight:'240px' }}>
+            <FeatureVisual visual={f.visual}/>
+          </div>
+        </div>
+      ))}
+    </div>
+    <style>{`.cs-feature-row { @media (max-width:768px) { grid-template-columns:1fr !important; } }`}</style>
+  </section>
+)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TESTIMONIALS
+// ─────────────────────────────────────────────────────────────────────────────
+const testimonials = [
+  { quote:"I write one post a week and now it shows up everywhere. Saves me 3 hours minimum.",       author:'Adaeze O.', role:'Content Strategist' },
+  { quote:"The LinkedIn output is scary good. It doesn't sound like AI. That's rare.",               author:'Marcus T.', role:'Indie Hacker & Newsletter Writer' },
+  { quote:"I use it for every Substack issue. Twitter thread → newsletter intro → caption. Done.",   author:'Priya K.',  role:'Growth Marketer at a B2B SaaS' },
+]
+
+const Testimonials: React.FC = () => (
+  <section style={{ background: T.surface, padding:'96px 24px' }}>
+    <div style={{ maxWidth:'960px', margin:'0 auto' }}>
+      <h2 style={{ ...syne(48, 700, { color: T.textPrimary, textAlign:'center', marginBottom:'48px' }), fontSize:'clamp(2rem, 4vw, 3rem)' }}>
+        What creators are saying.
+      </h2>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(280px, 1fr))', gap:'24px' }}>
+        {testimonials.map((t, i) => (
+          <div key={i} style={{ background: T.bg, border:`1px solid ${T.border}`, borderRadius: T.rMd, padding:'28px', display:'flex', flexDirection:'column', gap:'16px', transition:'color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease' }} className="cs-tcard">
+            <div style={{ display:'flex', gap:'4px' }} aria-label="5 out of 5 stars">
+              {[...Array(5)].map((_,j) => <Star key={j} size={15} fill={T.accent} color={T.accent} aria-hidden="true"/>)}
+            </div>
+            <p style={{ ...dm(16, 400, { color: T.textSecondary, lineHeight:1.65, fontStyle:'italic' }), flex:1 }}>"{t.quote}"</p>
+            <div>
+              <div style={{ ...dm(14, 600, { color: T.textPrimary }) }}>{t.author}</div>
+              <div style={{ ...dm(13, 400, { color: T.textMuted }) }}>{t.role}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <style>{`.cs-tcard:hover { border-color:${T.accent}40 !important; transform:translateY(-4px); }`}</style>
+  </section>
+)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PRICING
+// ─────────────────────────────────────────────────────────────────────────────
+const plans = [
+  {
+    name:'Free', price:'$0', period:'/month',
+    subtitle:'For creators just getting started',
+    features:['5 repurposes per day','Twitter, LinkedIn, Instagram','Copy-to-clipboard export','Basic editor'],
+    cta:'Get started free', popular:false,
+  },
+  {
+    name:'Pro', price:'$12', period:'/month',
+    subtitle:'For teams and serious creators',
+    features:['Unlimited repurposes','All 6 output formats','Batch mode (up to 10 posts/session)','Inline editor + version history','Priority AI generation','Early access to new formats'],
+    cta:'Start Pro free for 7 days', popular:true,
+  },
+]
+
+const Pricing: React.FC = () => (
+  <section id="pricing" style={{ background: T.surface, padding:'96px 24px', scrollMarginTop:'64px' }}>
+    <div style={{ maxWidth:'900px', margin:'0 auto' }}>
+      <h2 style={{ ...syne(48, 700, { color: T.textPrimary, textAlign:'center', marginBottom:'48px' }), fontSize:'clamp(2rem, 4vw, 3rem)' }}>
+        One tool. Every platform.
+      </h2>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(320px, 1fr))', gap:'24px' }}>
+        {plans.map(plan => (
+          <div key={plan.name} style={{ background: T.bg, border:`1px solid ${plan.popular ? T.accent : T.border}`, borderRadius: T.rLg, padding:'32px', display:'flex', flexDirection:'column', position:'relative', boxShadow: plan.popular ? `0 0 40px ${T.accent}15` : 'none' }}>
+            {plan.popular && (
+              <div style={{ position:'absolute', top:'-12px', left:'50%', transform:'translateX(-50%)', background: T.accent, ...dm(11, 600, { color: T.white }), letterSpacing:'0.05em', textTransform:'uppercase', padding:'6px 16px', borderRadius:'20px' }}>
+                Most popular
+              </div>
+            )}
+            <h3 style={{ ...syne(20, 600, { color: T.textPrimary, marginBottom:'8px' }) }}>{plan.name}</h3>
+            <div style={{ display:'flex', alignItems:'baseline', gap:'4px', marginBottom:'4px' }}>
+              <span style={{ ...syne(48, 700, { color: T.textPrimary }) }}>{plan.price}</span>
+              <span style={{ ...dm(14, 400, { color: T.textMuted }) }}>{plan.period}</span>
+            </div>
+            <p style={{ ...dm(14, 400, { color: T.textSecondary, marginBottom:'24px' }) }}>{plan.subtitle}</p>
+            <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:'12px', flex:1, marginBottom:'32px' }}>
+              {plan.features.map((f,j) => (
+                <li key={j} style={{ display:'flex', alignItems:'center', gap:'12px', ...dm(14, 400, { color: T.textSecondary }) }}>
+                  <Check size={16} color={T.accent}/> {f}
+                </li>
+              ))}
+            </ul>
+            <Link to="/register" style={{ ...dm(15, 600, { color: plan.popular ? T.white : T.textSecondary }), background: plan.popular ? T.accent : 'transparent', border:`1px solid ${plan.popular ? T.accent : T.border}`, padding:'16px 24px', borderRadius: T.rMd, textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', transition:'color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease' }} className={plan.popular ? 'cs-cta-primary' : 'cs-cta-ghost'}>
+              {plan.cta} <ArrowRight size={16}/>
+            </Link>
+          </div>
+        ))}
+      </div>
+      <p style={{ ...dm(13, 400, { color: T.textMuted, textAlign:'center', marginTop:'24px' }) }}>No contracts. Cancel anytime.</p>
+    </div>
+  </section>
+)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FAQ
+// ─────────────────────────────────────────────────────────────────────────────
+const faqs = [
+  { q:'Does ContentSplit work with any blog post?',      a:'Yes. Paste raw text or a URL. It works with Substack, Medium, WordPress, Ghost, or plain Google Docs exports.' },
+  { q:'Will the output actually sound like me?',         a:"ContentSplit uses your original post's vocabulary and sentence structure as a reference. The more specific and human your writing, the better the outputs." },
+  { q:'Can I edit the outputs before I publish?',        a:'Every output is editable inline. ContentSplit generates a starting draft — you always have the final say.' },
+  { q:'What platforms are supported?',                   a:'Twitter/X threads, LinkedIn posts, Instagram captions, newsletter intros, YouTube script hooks, and blog summaries. More formats are in the roadmap.' },
+  { q:'Is there a free plan?',                           a:'Yes. 5 repurposes per day, no credit card required. Upgrade anytime for unlimited access.' },
+  { q:'What happens to my content after I paste it?',   a:"Your content is used only to generate the outputs in your session. We don't train on user data, and nothing is stored after your session ends." },
+]
+
+const FAQ: React.FC = () => {
+  const [open, setOpen] = useState<number|null>(null)
+  return (
+    <section style={{ background: T.surface, padding:'96px 24px' }}>
+      <div style={{ maxWidth:'680px', margin:'0 auto' }}>
+        <h2 style={{ ...syne(40, 700, { color: T.textPrimary, textAlign:'center', marginBottom:'48px' }), fontSize:'clamp(1.75rem, 3vw, 2.5rem)' }}>
+          Questions worth answering.
+        </h2>
+        <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
+          {faqs.map((f,i) => (
+            <div key={i} style={{ background: T.bg, border:`1px solid ${open===i ? T.accent+'60' : T.border}`, borderRadius: T.rMd, overflow:'hidden', transition:'border-color 0.2s ease' }} className="cs-faq-item">
+              <div onClick={() => setOpen(open===i ? null : i)}
+                style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'20px', cursor:'pointer', gap:'16px' }}>
+                <span style={{ ...dm(16, 600, { color: T.textPrimary }), flex:1 }}>{f.q}</span>
+                <ChevronDown size={18} color={T.textMuted} style={{ transform: open===i ? 'rotate(180deg)' : 'none', transition:'transform 0.2s ease', flexShrink:0 }}/>
+              </div>
+              {open===i && (
+                <p style={{ ...dm(15, 400, { color: T.textSecondary, lineHeight:1.65 }), padding:'0 20px 20px', borderTop:`1px solid ${T.border}`, paddingTop:'16px' }}>
+                  {f.a}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      <style>{`.cs-faq-item:hover { border-color:${T.accent}40 !important; }`}</style>
+    </section>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FINAL CTA
+// ─────────────────────────────────────────────────────────────────────────────
+const FinalCTA: React.FC = () => (
+  <section style={{ background:`linear-gradient(180deg, ${T.bg} 0%, ${T.surface} 100%)`, padding:'96px 24px', textAlign:'center' }}>
+    <h2 style={{ ...syne(64, 800, { color: T.textPrimary, marginBottom:'24px', lineHeight:1.05 }), fontSize:'clamp(2.5rem, 5vw, 4rem)' }}>
+      Your next blog post<br />should be everywhere.
+    </h2>
+    <p style={{ ...dm(16, 400, { color: T.textSecondary, marginBottom:'40px' }) }}>
+      Start free. No credit card. No setup. Just paste and go.
+    </p>
+    <Link to="/register" style={{ ...syne(18, 600, { color: T.white }), background: T.accent, padding:'18px 40px', borderRadius: T.rPill, textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'8px', transition:'color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease' }} className="cs-final-cta">
+      Start repurposing for free <ArrowRight size={20} aria-hidden="true"/>
+    </Link>
+    <p style={{ ...dm(12, 400, { color: T.textMuted, marginTop:'24px' }) }}>
+      5 free repurposes daily · Cancel Pro anytime · Built by creators, for creators
+    </p>
+    <style>{`.cs-final-cta:hover { transform:translateY(-2px); box-shadow:0 8px 32px ${T.accent}50; }`}</style>
+  </section>
+)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FOOTER
+// ─────────────────────────────────────────────────────────────────────────────
+const Footer: React.FC = () => {
+  const cols = [
+    { title:'Product',   links:['Features','How it works','Pricing','Changelog','API'] },
+    { title:'Resources', links:['Blog','Templates','Use cases','Docs'] },
+    { title:'Company',   links:['About','Privacy Policy','Terms of Service','Contact'] },
+  ]
+  return (
+    <footer style={{ background: T.surface, borderTop:`1px solid ${T.border}`, padding:'48px 24px' }}>
+      <div style={{ maxWidth:'1200px', margin:'0 auto', display:'grid', gridTemplateColumns:'2fr repeat(3, 1fr)', gap:'48px' }} className="cs-footer-grid">
+        {/* Brand */}
+        <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
+          <Link to="/" style={{ display:'flex', alignItems:'center', textDecoration:'none' }}>
+            <span style={{ color: T.accent, fontSize:'24px', fontWeight:700, marginRight:'2px' }}>●</span>
+            <span style={syne(18, 700, { color: T.textPrimary })}>ContentSplit</span>
+          </Link>
+          <p style={{ ...dm(14, 400, { color: T.textMuted, lineHeight:1.6 }) }}>Turn your blog into everywhere.</p>
+          <div style={{ display:'flex', gap:'10px' }}>
+            {([['Twitter', TwIcon], ['LinkedIn', LiIcon], ['Instagram', IgIcon]] as const).map(([name, Icon], i) => (
+              <a key={i} href="#" aria-label={`ContentSplit on ${name}`} style={{ width:34, height:34, borderRadius:'8px', border:`1px solid ${T.border}`, display:'flex', alignItems:'center', justifyContent:'center', color: T.textMuted, textDecoration:'none', transition:'color 0.2s ease, border-color 0.2s ease' }} className="cs-social-link">
+                <Icon size={15} aria-hidden />
+              </a>
+            ))}
+          </div>
+        </div>
+        {/* Link cols */}
+        {cols.map(({ title, links }) => (
+          <div key={title} style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
+            <h4 style={{ ...dm(12, 600, { color: T.textPrimary, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'4px' }) }}>{title}</h4>
+            {links.map(l => <a key={l} href="#" style={{ ...dm(14, 400, { color: T.textMuted, textDecoration:'none' }) }} className="cs-footer-link">{l}</a>)}
+          </div>
+        ))}
+      </div>
+      <div style={{ maxWidth:'1200px', margin:'40px auto 0', paddingTop:'24px', borderTop:`1px solid ${T.border}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <p style={{ ...dm(12, 400, { color: T.textMuted }) }}>© {new Date().getFullYear()} ContentSplit. All rights reserved.</p>
+        <div style={{ display:'flex', alignItems:'center', gap:'6px', ...dm(12, 400, { color: T.textMuted }) }}>
+          <span style={{ width:6, height:6, borderRadius:'50%', background:'#22C55E', display:'inline-block' }}/>
+          All systems operational
+        </div>
+      </div>
+      <style>{`
+        .cs-social-link:hover { color:${T.textPrimary} !important; border-color:${T.textMuted} !important; }
+        .cs-footer-link:hover { color:${T.textSecondary} !important; }
+        @media (max-width:768px) { .cs-footer-grid { grid-template-columns:1fr 1fr !important; } }
+        @media (max-width:480px) { .cs-footer-grid { grid-template-columns:1fr !important; } }
+      `}</style>
+    </footer>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ROOT PAGE
+// ─────────────────────────────────────────────────────────────────────────────
+const LandingPage: React.FC = () => (
+  <div style={{ background: T.bg, minHeight:'100vh', fontFamily:'"DM Sans", sans-serif', color: T.textPrimary, overflowX:'hidden' }}>
+    <a href="#main-content" className="cs-skip-link">Skip to main content</a>
+    <Nav />
+    <main id="main-content">
+      <Hero />
+      <SocialProofBar />
+      <OutputShowcase />
+      <HowItWorks />
+      <LiveDemo />
+      <FeatureHighlights />
+      <Testimonials />
+      <Pricing />
+      <FAQ />
+      <FinalCTA />
+    </main>
+    <Footer />
+  </div>
+)
+
+export default LandingPage

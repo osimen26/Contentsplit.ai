@@ -359,10 +359,10 @@ const ContentCreationPage: React.FC = () => {
                 <div className="chat-avatar" style={{
                   width: 32, height: 32, borderRadius: 10, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: msg.role === 'user' ? 'var(--sys-color-primary)' : 'rgba(255,255,255,0.6)',
-                  color: msg.role === 'user' ? 'white' : '#6366f1',
-                  boxShadow: msg.role === 'user' ? '0 4px 12px rgba(99, 102, 241, 0.3)' : '0 4px 12px rgba(0,0,0,0.05)',
-                  border: msg.role === 'assistant' ? '1px solid rgba(99, 102, 241, 0.1)' : 'none',
+                  background: msg.role === 'user' ? '#6C63FF' : '#1A1A24',
+                  color: msg.role === 'user' ? '#ffffff' : '#6C63FF',
+                  boxShadow: msg.role === 'user' ? '0 4px 12px rgba(108, 99, 255, 0.3)' : 'none',
+                  border: msg.role === 'assistant' ? '1px solid #2A2A38' : 'none',
                   marginTop: '4px',
                 }}>
                   {msg.role === 'user' ? <User size={20} /> : <Sparkles size={20} />}

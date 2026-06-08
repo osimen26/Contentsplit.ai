@@ -50,12 +50,14 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ buttonText = 'Continue with Goo
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '8px' }}>
       {error && (
-        <div style={{ 
-          padding: '10px 12px', 
-          backgroundColor: '#fee2e2', 
-          color: '#b91c1c', 
-          borderRadius: '8px', 
-          fontSize: '0.85rem' 
+        <div style={{
+          padding: '10px 12px',
+          backgroundColor: 'rgba(255,107,107,0.1)',
+          color: '#FF6B6B',
+          border: '1px solid rgba(255,107,107,0.2)',
+          borderRadius: '8px',
+          fontSize: '0.85rem',
+          textAlign: 'center',
         }}>
           {error}
         </div>
@@ -66,21 +68,25 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ buttonText = 'Continue with Goo
         disabled={isLoading}
         style={{
           width: '100%',
-          padding: '12px 16px',
+          padding: '13px 16px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '12px',
-          backgroundColor: '#ffffff',
-          color: '#1a1a1a',
-          border: '1px solid #d1d5db',
-          borderRadius: '8px',
-          fontSize: '1rem',
+          gap: '10px',
+          backgroundColor: '#1A1A24',
+          color: '#F0F0F5',
+          border: '1px solid #2A2A38',
+          borderRadius: '10px',
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: '0.95rem',
           fontWeight: 500,
           cursor: isLoading ? 'not-allowed' : 'pointer',
-          transition: 'background-color 0.2s',
-          opacity: isLoading ? 0.7 : 1
+          transition: 'border-color 0.2s ease, background-color 0.2s ease',
+          opacity: isLoading ? 0.5 : 1,
+          touchAction: 'manipulation',
         }}
+        onMouseEnter={e => { if (!isLoading) (e.currentTarget as HTMLButtonElement).style.borderColor = '#6C63FF' }}
+        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#2A2A38' }}
       >
         <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>

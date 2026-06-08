@@ -32,7 +32,7 @@ const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = (
       left: checked ? 22 : 2,
       width: 20, height: 20,
       borderRadius: '50%',
-      backgroundColor: 'white',
+      backgroundColor: '#111118',
       boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
       transition: 'left 0.2s',
     }} />
@@ -84,7 +84,7 @@ const inputStyle: React.CSSProperties = {
   outline: 'none',
   fontSize: '0.9rem',
   color: '#333',
-  backgroundColor: 'white',
+  backgroundColor: '#111118',
   boxSizing: 'border-box',
   transition: 'border-color 0.2s, box-shadow 0.2s',
 }
@@ -176,7 +176,7 @@ const AccountSection: React.FC = () => {
               width: 40, height: 40, borderRadius: '50%',
               backgroundColor: '#e5e7eb',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#374151', fontWeight: 600, fontSize: '1rem',
+              color: '#F0F0F5', fontWeight: 600, fontSize: '1rem',
             }}>
               {initials}
             </div>
@@ -571,8 +571,8 @@ const DeleteSection: React.FC = () => {
                   padding: '8px 16px', 
                   fontWeight: 500, 
                   fontSize: '0.85rem', 
-                  backgroundColor: '#fee2e2',
-                  color: '#dc2626',
+                  backgroundColor: 'rgba(239,68,68,0.1)',
+                  color: '#FF6B6B',
                   border: 'none',
                   borderRadius: 6,
                   cursor: 'pointer'
@@ -582,8 +582,8 @@ const DeleteSection: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div style={{ padding: '20px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8 }}>
-              <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: '#991b1b', fontWeight: 500 }}>
+            <div style={{ padding: '20px', backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 8 }}>
+              <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: '#FF6B6B', fontWeight: 500 }}>
                 Are you sure you want to delete your account? This action cannot be undone.
               </p>
               <div style={{ display: 'flex', gap: 12 }}>
@@ -609,7 +609,7 @@ const DeleteSection: React.FC = () => {
                     fontSize: '0.85rem', 
                     backgroundColor: 'transparent',
                     border: '1px solid #fca5a5',
-                    color: '#991b1b',
+                    color: '#FF6B6B',
                     borderRadius: 6,
                     cursor: 'pointer'
                   }}
@@ -635,7 +635,7 @@ const SettingsPage: React.FC = () => {
       display: 'flex', 
       flexDirection: 'column',
       height: '100%', 
-      backgroundColor: '#fbfbfb',
+      backgroundColor: '#0A0A0F',
       fontFamily: 'Inter, system-ui, sans-serif'
     }}>
       
