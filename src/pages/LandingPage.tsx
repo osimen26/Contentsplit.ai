@@ -423,7 +423,7 @@ const OutputShowcase: React.FC = () => (
       </p>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(300px, 1fr))', gap:'20px' }}>
         {formats.map(f => (
-          <div key={f.id} style={{ background: T.surface, border:`1px solid ${T.border}`, borderRadius: T.rLg, padding:'24px', transition:'color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease' }} className="cs-format-card">
+          <div key={f.id} style={{ background: T.surface, border:`1px solid ${T.border}`, borderRadius: T.rLg, padding:'24px', transition:'border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease' }} className="cs-format-card">
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px' }}>
               <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
                 <div style={{ width:40, height:40, borderRadius: T.rMd, background:`${f.color}15`, display:'flex', alignItems:'center', justifyContent:'center' }}>
