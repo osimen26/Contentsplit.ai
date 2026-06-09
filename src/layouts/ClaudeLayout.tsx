@@ -75,7 +75,7 @@ const SidebarContentComponent: React.FC<{
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{
               width: 28, height: 28, borderRadius: 8,
-              background: 'linear-gradient(135deg, #14B8A6, #0D9488)',
+              background: 'linear-gradient(135deg, #6b61e7, #4338ca)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <Logo size={15} color="white" />
@@ -124,19 +124,19 @@ const SidebarContentComponent: React.FC<{
             cursor: 'pointer',
             minHeight: 44,
             border: 'none',
-            background: '#14B8A6',
+            background: '#6b61e7',
             color: 'white',
-            boxShadow: '0 2px 8px rgba(20, 184, 166, 0.3)',
+            boxShadow: '0 2px 8px rgba(107, 97, 231, 0.3)',
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = '#0D9488'
-            e.currentTarget.style.boxShadow = '0 4px 16px rgba(20, 184, 166, 0.4)'
+            e.currentTarget.style.background = '#4338ca'
+            e.currentTarget.style.boxShadow = '0 4px 16px rgba(107, 97, 231, 0.4)'
             e.currentTarget.style.transform = 'translateY(-1px)'
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = '#14B8A6'
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(20, 184, 166, 0.3)'
+            e.currentTarget.style.background = '#6b61e7'
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(107, 97, 231, 0.3)'
             e.currentTarget.style.transform = 'translateY(0)'
           }}
         >
@@ -228,14 +228,14 @@ const SidebarContentComponent: React.FC<{
                       textDecoration: 'none',
                       fontSize: '0.88rem',
                       fontWeight: active ? 600 : 500,
-                      color: active ? '#14B8A6' : '#8A9BB5',
+                      color: active ? '#6b61e7' : '#8A9BB5',
                       backgroundColor: 'transparent',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                     }}
                     title={`${item.input_text}`}
                   >
-                    <span style={{ color: active ? '#14B8A6' : '#3D5068', flexShrink: 0 }}>
+                    <span style={{ color: active ? '#6b61e7' : '#3D5068', flexShrink: 0 }}>
                       <FileText size={14} />
                     </span>
                     <span style={{
@@ -334,7 +334,7 @@ const SidebarContentComponent: React.FC<{
                 background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
                 color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontWeight: 700, fontSize: '12px',
-                boxShadow: '0 2px 8px rgba(20, 184, 166, 0.3)'
+                boxShadow: '0 2px 8px rgba(107, 97, 231, 0.3)'
               }}>
                 {avatarLetter}
               </div>
@@ -356,7 +356,7 @@ const SidebarContentComponent: React.FC<{
                   padding: '4px 10px',
                   borderRadius: 20,
                   border: '1px solid #1E2838',
-                  backgroundColor: 'rgba(20, 184, 166,0.08)',
+                  backgroundColor: 'rgba(107, 97, 231,0.08)',
                   color: '#8A9BB5',
                   fontSize: '0.78rem',
                   fontWeight: 600,
@@ -395,8 +395,8 @@ const FooterLink: React.FC<{
       textDecoration: 'none',
       fontSize: '0.88rem',
       fontWeight: active ? 600 : 500,
-      color: active ? '#14B8A6' : '#8A9BB5',
-      backgroundColor: active ? 'rgba(20, 184, 166, 0.12)' : 'transparent',
+      color: active ? '#6b61e7' : '#8A9BB5',
+      backgroundColor: active ? 'rgba(107, 97, 231, 0.12)' : 'transparent',
       justifyContent: collapsed ? 'center' : 'flex-start',
     }}
     title={collapsed ? label : undefined}
@@ -615,11 +615,11 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           .mobile-header { height: 52px; }
         }
 
-        * { scrollbar-width: thin; scrollbar-color: rgba(20, 184, 166, 0.2) transparent; }
+        * { scrollbar-width: thin; scrollbar-color: rgba(107, 97, 231, 0.2) transparent; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background-color: rgba(20, 184, 166, 0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background-color: rgba(20, 184, 166, 0.4); }
+        ::-webkit-scrollbar-thumb { background-color: rgba(107, 97, 231, 0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background-color: rgba(107, 97, 231, 0.4); }
       `}</style>
     </div>
   )

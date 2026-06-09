@@ -24,7 +24,7 @@ const T = {
   surface:     '#0D1018',
   surface2:    '#151C28',
   border:      '#1E2838',
-  accent:      '#14B8A6',
+  accent:      '#6b61e7',
   accentWarm:  '#FF6B6B',
   textPrimary:   '#F0F0F5',
   textSecondary: '#8A9BB5',
@@ -408,7 +408,7 @@ const formats = [
   { id:'instagram',  Icon: IgIcon,      color:'#E1306C', label:'Instagram',  format:'Caption',     desc:'Scroll-stopping caption with hashtags',      stats:'2200 chars · 30 hashtags' },
   { id:'newsletter', Icon: Mail,        color:'#EA4335', label:'Newsletter', format:'Email',       desc:'Email-ready section with subject line',      stats:'Subject line + opening paragraph' },
   { id:'youtube',    Icon: YoutubeIcon, color:'#FF0000', label:'YouTube',    format:'Description', desc:'SEO-optimized video description',            stats:'Timestamps · keywords · CTAs' },
-  { id:'summary',    Icon: FileText,    color:'#14B8A6', label:'Summary',    format:'TL;DR',       desc:'Quick summary for busy readers',             stats:'3–5 bullet points' },
+  { id:'summary',    Icon: FileText,    color:'#6b61e7', label:'Summary',    format:'TL;DR',       desc:'Quick summary for busy readers',             stats:'3–5 bullet points' },
 ]
 
 const OutputShowcase: React.FC = () => (

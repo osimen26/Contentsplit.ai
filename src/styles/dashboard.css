@@ -20,7 +20,7 @@
   filter: blur(120px);
   z-index: 0;
   pointer-events: none;
-  background: rgba(20, 184, 166, 0.08);
+  background: rgba(107, 97, 231, 0.08);
   top: -100px;
   left: -80px;
 }
@@ -39,7 +39,7 @@
   transition: background-color 0.15s ease, color 0.15s ease !important;
 }
 .sidebar-link:hover {
-  background: rgba(20, 184, 166, 0.1) !important;
+  background: rgba(107, 97, 231, 0.1) !important;
   transform: none !important;
 }
 
@@ -69,8 +69,8 @@
 
 .glass-card-hoverable:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(20, 184, 166, 0.1);
-  border-color: rgba(20, 184, 166, 0.3);
+  box-shadow: 0 8px 32px rgba(107, 97, 231, 0.1);
+  border-color: rgba(107, 97, 231, 0.3);
 }
 
 /* ── Chat input ── */
@@ -87,8 +87,8 @@
 }
 
 .chat-input-pill-wrapper:focus-within {
-  border-color: #14B8A6 !important;
-  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15) !important;
+  border-color: #6b61e7 !important;
+  box-shadow: 0 0 0 3px rgba(107, 97, 231, 0.15) !important;
   background: #0D1018 !important;
 }
 
@@ -102,14 +102,14 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .search-input-container:focus-within {
-  border-color: #14B8A6 !important;
-  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.15) !important;
+  border-color: #6b61e7 !important;
+  box-shadow: 0 0 0 2px rgba(107, 97, 231, 0.15) !important;
 }
 
 /* ── Message bubbles ── */
 .user-msg-bubble {
-  background: rgba(20, 184, 166, 0.12) !important;
-  border: 1px solid rgba(20, 184, 166, 0.25) !important;
+  background: rgba(107, 97, 231, 0.12) !important;
+  border: 1px solid rgba(107, 97, 231, 0.25) !important;
   border-radius: 16px 16px 4px 16px !important;
   color: #F0F0F5 !important;
 }
@@ -126,18 +126,18 @@
 
 /* ── Primary button ── */
 .btn-gradient {
-  background: #14B8A6 !important;
+  background: #6b61e7 !important;
   color: #ffffff !important;
   border-radius: 10px !important;
   border: none !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
-  box-shadow: 0 2px 12px rgba(20, 184, 166, 0.3) !important;
+  box-shadow: 0 2px 12px rgba(107, 97, 231, 0.3) !important;
 }
 .btn-gradient:hover:not(:disabled) {
-  background: #0D9488 !important;
-  box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4) !important;
+  background: #4338ca !important;
+  box-shadow: 0 6px 20px rgba(107, 97, 231, 0.4) !important;
   transform: translateY(-1px) !important;
 }
 .btn-gradient:active:not(:disabled) {
@@ -160,13 +160,13 @@
 .platform-card:hover:not(.selected),
 .tone-chip:hover:not(.selected) {
   background: #172030 !important;
-  border-color: rgba(20, 184, 166, 0.4) !important;
+  border-color: rgba(107, 97, 231, 0.4) !important;
 }
 .platform-card.selected,
 .tone-chip.selected {
-  border-color: #14B8A6 !important;
-  background: rgba(20, 184, 166, 0.12) !important;
-  box-shadow: 0 0 0 1px #14B8A6 !important;
+  border-color: #6b61e7 !important;
+  background: rgba(107, 97, 231, 0.12) !important;
+  box-shadow: 0 0 0 1px #6b61e7 !important;
   color: #a5a0ff !important;
 }
 
@@ -184,7 +184,7 @@
 .generated-content-tab.active {
   background: #1E2838 !important;
   box-shadow: none !important;
-  color: #14B8A6 !important;
+  color: #6b61e7 !important;
 }
 
 /* ── Mobile ── */
@@ -362,11 +362,11 @@
 .spin { animation: spin 1s linear infinite; }
 
 /* Scrollbar */
-* { scrollbar-width: thin; scrollbar-color: rgba(20, 184, 166, 0.2) transparent; }
+* { scrollbar-width: thin; scrollbar-color: rgba(107, 97, 231, 0.2) transparent; }
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background-color: rgba(20, 184, 166, 0.2); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background-color: rgba(20, 184, 166, 0.4); }
+::-webkit-scrollbar-thumb { background-color: rgba(107, 97, 231, 0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(107, 97, 231, 0.4); }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
