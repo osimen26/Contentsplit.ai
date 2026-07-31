@@ -5,12 +5,12 @@ import { useCurrentUser } from '@/services/query-hooks'
 
 const PLANS = {
   monthly: {
-    pro: { price: '$12', period: 'USD/month', note: 'billed monthly' },
-    agency: { price: '$40', period: 'USD/month', note: 'billed monthly' },
+    pro: { price: '₦5,000', period: 'NGN/month', note: 'billed monthly' },
+    agency: { price: '₦15,000', period: 'NGN/month', note: 'billed monthly' },
   },
   yearly: {
-    pro: { price: '$10', period: 'USD/month', note: 'billed annually', savings: 'Save 17%' },
-    agency: { price: '$32', period: 'USD/month', note: 'billed annually', savings: 'Save 20%' },
+    pro: { price: '₦54,000', period: 'NGN/year', note: 'billed annually', savings: 'Save 10%' },
+    agency: { price: '₦162,000', period: 'NGN/year', note: 'billed annually', savings: 'Save 10%' },
   },
 }
 
@@ -67,8 +67,9 @@ const UpgradePage: React.FC = () => {
 
   const currentTier = user?.tier || 'free'
 
-  const handleUpgrade = async (planId: string, billingType?: 'monthly' | 'yearly') => {
-    if (planId === 'free') return
+  const handleUpgrade = async (planType: string) => {
+    if (planType === 'free') return
+    const planId = billing === 'yearly' ? `${planType}_yearly` : planType
     try {
       setLoading(planId)
       const { apiClient } = await import('@/services/api-client')
@@ -162,7 +163,7 @@ const UpgradePage: React.FC = () => {
                     padding: '2px 7px',
                     borderRadius: 100,
                   }}>
-                    Save ~20%
+                    Save 10%
                   </span>
                 )}
                 {b === 'yearly' && billing === 'yearly' && (
@@ -275,7 +276,7 @@ const UpgradePage: React.FC = () => {
                   {b === 'monthly' ? 'Monthly' : (
                     <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                       Yearly
-                      <span style={{ color: '#16a34a', fontWeight: 600 }}>·Save 17%</span>
+                      <span style={{ color: '#16a34a', fontWeight: 600 }}>·Save 10%</span>
                     </span>
                   )}
                 </button>
@@ -294,7 +295,7 @@ const UpgradePage: React.FC = () => {
             <p style={{ margin: '0 0 20px', fontSize: '0.8rem', color: '#aaa' }}>{prices.pro.note}</p>
             <button
               onClick={() => handleUpgrade('pro')}
-              disabled={loading === 'pro' || currentTier === 'pro'}
+              disabled={loading === 'pro' || loading === 'pro_yearly' || currentTier === 'pro'}
               style={{
                 padding: '11px 0',
                 borderRadius: 8,
@@ -305,7 +306,7 @@ const UpgradePage: React.FC = () => {
                 fontWeight: 600,
                 cursor: currentTier === 'pro' ? 'default' : 'pointer',
                 marginBottom: 28,
-                opacity: loading === 'pro' ? 0.7 : 1,
+                opacity: (loading === 'pro' || loading === 'pro_yearly') ? 0.7 : 1,
                 transition: 'all 0.15s',
               }}
               onMouseEnter={e => {
@@ -319,7 +320,7 @@ const UpgradePage: React.FC = () => {
                 }
               }}
             >
-              {loading === 'pro' ? 'Redirecting...' : currentTier === 'pro' ? 'Current plan' : 'Get Pro plan'}
+              {(loading === 'pro' || loading === 'pro_yearly') ? 'Redirecting...' : currentTier === 'pro' ? 'Current plan' : 'Get Pro plan'}
             </button>
             <p style={{ margin: '0 0 16px', fontSize: '0.82rem', fontWeight: 600, color: '#111' }}>
               Everything in Free and:
@@ -355,8 +356,8 @@ const UpgradePage: React.FC = () => {
             </div>
             <p style={{ margin: '0 0 20px', fontSize: '0.8rem', color: '#aaa' }}>{prices.agency.note}</p>
             <button
-              onClick={() => handleUpgrade('agency', billing)}
-              disabled={loading === 'agency' || currentTier === 'agency'}
+              onClick={() => handleUpgrade('agency')}
+              disabled={loading === 'agency' || loading === 'agency_yearly' || currentTier === 'agency'}
               style={{
                 padding: '11px 0',
                 borderRadius: 8,
@@ -367,7 +368,7 @@ const UpgradePage: React.FC = () => {
                 fontWeight: 600,
                 cursor: currentTier === 'agency' ? 'default' : 'pointer',
                 marginBottom: 4,
-                opacity: loading === 'agency' ? 0.7 : 1,
+                opacity: (loading === 'agency' || loading === 'agency_yearly') ? 0.7 : 1,
                 transition: 'all 0.15s',
               }}
               onMouseEnter={e => {
@@ -381,7 +382,7 @@ const UpgradePage: React.FC = () => {
                 }
               }}
             >
-              {loading === 'agency' ? 'Redirecting...' : currentTier === 'agency' ? 'Current plan' : 'Get Agency plan'}
+              {(loading === 'agency' || loading === 'agency_yearly') ? 'Redirecting...' : currentTier === 'agency' ? 'Current plan' : 'Get Agency plan'}
             </button>
             <p style={{ margin: '0 0 24px', fontSize: '0.78rem', color: '#aaa', textAlign: 'center' }}>
               No commitment · Cancel anytime

@@ -56,7 +56,9 @@ async function getFlutterwave() {
 const getFlutterwavePlans = () => ({
   free: { amount: 0, name: 'Free Tier' },
   pro: { amount: 5000, name: 'Pro Plan', planId: process.env.FLUTTERWAVE_PLAN_ID_PRO },
-  agency: { amount: 15000, name: 'Agency Plan', planId: process.env.FLUTTERWAVE_PLAN_ID_AGENCY }
+  agency: { amount: 15000, name: 'Agency Plan', planId: process.env.FLUTTERWAVE_PLAN_ID_AGENCY },
+  pro_yearly: { amount: 54000, name: 'Pro Plan (Yearly)', planId: process.env.FLUTTERWAVE_PLAN_ID_PRO_YEARLY },
+  agency_yearly: { amount: 162000, name: 'Agency Plan (Yearly)', planId: process.env.FLUTTERWAVE_PLAN_ID_AGENCY_YEARLY }
 })
 
 // ── DEEPSEEK CONFIG ─────────────────────────────────────────────────────────
@@ -1484,8 +1486,8 @@ app.post('/api/payments/webhook', async (req, res) => {
 
       // Determine tier based on amount
       let tier = 'free'
-      if (amount >= 15000) tier = 'agency'
-      else if (amount >= 5000) tier = 'pro'
+      if (amount >= 160000 || amount === 15000) tier = 'agency' // 15,000 monthly or 162,000 yearly
+      else if (amount >= 5000) tier = 'pro' // 5,000 monthly or 54,000 yearly
 
       // Update user tier
       const userDb = getUserDb()

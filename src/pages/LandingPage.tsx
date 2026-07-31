@@ -727,7 +727,7 @@ const Testimonials: React.FC = () => (
 // ─────────────────────────────────────────────────────────────────────────────
 // PRICING
 // ─────────────────────────────────────────────────────────────────────────────
-const plans = [
+const plansMonthly = [
   {
     name:'Free', price:'₦0', period:'/month',
     subtitle:'For creators just getting started',
@@ -748,43 +748,96 @@ const plans = [
   },
 ]
 
-const Pricing: React.FC = () => (
-  <section id="pricing" style={{ background: T.surface, padding:'96px 24px', scrollMarginTop:'64px' }}>
-    <div style={{ maxWidth:'1100px', margin:'0 auto' }}>
-      <h2 style={{ ...syne(48, 700, { color: T.textPrimary, textAlign:'center', marginBottom:'48px' }), fontSize:'clamp(2rem, 4vw, 3rem)' }}>
-        One tool. Every platform.
-      </h2>
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(320px, 1fr))', gap:'24px' }}>
-        {plans.map(plan => (
-          <div key={plan.name} style={{ background: T.bg, border:`1px solid ${plan.popular ? T.accent : T.border}`, borderRadius: T.rLg, padding:'32px', display:'flex', flexDirection:'column', position:'relative', boxShadow: plan.popular ? `0 0 40px ${T.accent}15` : 'none' }}>
-            {plan.popular && (
-              <div style={{ position:'absolute', top:'-12px', left:'50%', transform:'translateX(-50%)', background: T.accent, ...dm(11, 600, { color: T.white }), letterSpacing:'0.05em', textTransform:'uppercase', padding:'6px 16px', borderRadius:'20px' }}>
-                Most popular
-              </div>
-            )}
-            <h3 style={{ ...syne(20, 600, { color: T.textPrimary, marginBottom:'8px' }) }}>{plan.name}</h3>
-            <div style={{ display:'flex', alignItems:'baseline', gap:'4px', marginBottom:'4px' }}>
-              <span style={{ ...syne(48, 700, { color: T.textPrimary }) }}>{plan.price}</span>
-              <span style={{ ...dm(14, 400, { color: T.textMuted }) }}>{plan.period}</span>
-            </div>
-            <p style={{ ...dm(14, 400, { color: T.textSecondary, marginBottom:'24px' }) }}>{plan.subtitle}</p>
-            <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:'12px', flex:1, marginBottom:'32px' }}>
-              {plan.features.map((f,j) => (
-                <li key={j} style={{ display:'flex', alignItems:'center', gap:'12px', ...dm(14, 400, { color: T.textSecondary }) }}>
-                  <Check size={16} color={T.accent}/> {f}
-                </li>
-              ))}
-            </ul>
-            <Link to="/register" style={{ ...dm(15, 600, { color: plan.popular ? T.white : T.textSecondary }), background: plan.popular ? T.accent : 'transparent', border:`1px solid ${plan.popular ? T.accent : T.border}`, padding:'16px 24px', borderRadius: T.rMd, textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', transition:'color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease' }} className={plan.popular ? 'cs-cta-primary' : 'cs-cta-ghost'}>
-              {plan.cta} <ArrowRight size={16}/>
-            </Link>
+const plansYearly = [
+  {
+    name:'Free', price:'₦0', period:'/month',
+    subtitle:'For creators just getting started',
+    features:['5 repurposes per day','Twitter, LinkedIn, Instagram','Copy-to-clipboard export','Basic editor'],
+    cta:'Get started free', popular:false,
+  },
+  {
+    name:'Pro', price:'₦54,000', period:'/year',
+    subtitle:'For teams and serious creators',
+    features:['Unlimited repurposes','All 6 output formats','Batch mode (up to 10 posts)','Inline editor + version history','Priority AI generation','Early access to new formats'],
+    cta:'Start Pro plan', popular:true,
+  },
+  {
+    name:'Agency', price:'₦162,000', period:'/year',
+    subtitle:'For agencies managing multiple clients',
+    features:['Everything in Pro','Unlimited workspaces','Team collaboration','API access','White-label exports','Dedicated support'],
+    cta:'Start Agency plan', popular:false,
+  },
+]
+
+const Pricing: React.FC = () => {
+  const [billing, setBilling] = React.useState<'monthly'|'yearly'>('yearly');
+  const currentPlans = billing === 'yearly' ? plansYearly : plansMonthly;
+
+  return (
+    <section id="pricing" style={{ background: T.surface, padding:'96px 24px', scrollMarginTop:'64px' }}>
+      <div style={{ maxWidth:'1100px', margin:'0 auto' }}>
+        <h2 style={{ ...syne(48, 700, { color: T.textPrimary, textAlign:'center', marginBottom:'24px' }), fontSize:'clamp(2rem, 4vw, 3rem)' }}>
+          One tool. Every platform.
+        </h2>
+        
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '48px' }}>
+          <div style={{ display: 'inline-flex', backgroundColor: T.bg, border: `1px solid ${T.border}`, borderRadius: 100, padding: 4, gap: 0 }}>
+            {(['monthly', 'yearly'] as const).map(b => (
+              <button
+                key={b}
+                onClick={() => setBilling(b)}
+                style={{
+                  padding: '7px 20px', borderRadius: 100, border: 'none', cursor: 'pointer',
+                  fontSize: '0.88rem', fontWeight: 500,
+                  backgroundColor: billing === b ? T.textPrimary : 'transparent',
+                  color: billing === b ? T.bg : T.textSecondary,
+                  transition: 'all 0.15s', display: 'flex', alignItems: 'center', gap: 8,
+                }}
+              >
+                {b === 'monthly' ? 'Monthly' : 'Yearly'}
+                {b === 'yearly' && billing !== 'yearly' && (
+                  <span style={{ backgroundColor: '#dcfce7', color: '#16a34a', fontSize: '0.72rem', fontWeight: 600, padding: '2px 7px', borderRadius: 100 }}>Save 10%</span>
+                )}
+                {b === 'yearly' && billing === 'yearly' && (
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: T.bg, fontSize: '0.72rem', fontWeight: 600, padding: '2px 7px', borderRadius: 100 }}>Save 10%</span>
+                )}
+              </button>
+            ))}
           </div>
-        ))}
+        </div>
+
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(320px, 1fr))', gap:'24px' }}>
+          {currentPlans.map(plan => (
+            <div key={plan.name} style={{ background: T.bg, border:`1px solid ${plan.popular ? T.accent : T.border}`, borderRadius: T.rLg, padding:'32px', display:'flex', flexDirection:'column', position:'relative', boxShadow: plan.popular ? `0 0 40px ${T.accent}15` : 'none' }}>
+              {plan.popular && (
+                <div style={{ position:'absolute', top:'-12px', left:'50%', transform:'translateX(-50%)', background: T.accent, ...dm(11, 600, { color: T.white }), letterSpacing:'0.05em', textTransform:'uppercase', padding:'6px 16px', borderRadius:'20px' }}>
+                  Most popular
+                </div>
+              )}
+              <h3 style={{ ...syne(20, 600, { color: T.textPrimary, marginBottom:'8px' }) }}>{plan.name}</h3>
+              <div style={{ display:'flex', alignItems:'baseline', gap:'4px', marginBottom:'4px' }}>
+                <span style={{ ...syne(48, 700, { color: T.textPrimary }) }}>{plan.price}</span>
+                <span style={{ ...dm(14, 400, { color: T.textMuted }) }}>{plan.period}</span>
+              </div>
+              <p style={{ ...dm(14, 400, { color: T.textSecondary, marginBottom:'24px' }) }}>{plan.subtitle}</p>
+              <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:'12px', flex:1, marginBottom:'32px' }}>
+                {plan.features.map((f,j) => (
+                  <li key={j} style={{ display:'flex', alignItems:'center', gap:'12px', ...dm(14, 400, { color: T.textSecondary }) }}>
+                    <Check size={16} color={T.accent}/> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link to="/register" style={{ ...dm(15, 600, { color: plan.popular ? T.white : T.textSecondary }), background: plan.popular ? T.accent : 'transparent', border:`1px solid ${plan.popular ? T.accent : T.border}`, padding:'16px 24px', borderRadius: T.rMd, textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', transition:'color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease' }} className={plan.popular ? 'cs-cta-primary' : 'cs-cta-ghost'}>
+                {plan.cta} <ArrowRight size={16}/>
+              </Link>
+            </div>
+          ))}
+        </div>
+        <p style={{ ...dm(13, 400, { color: T.textMuted, textAlign:'center', marginTop:'24px' }) }}>No contracts. Cancel anytime.</p>
       </div>
-      <p style={{ ...dm(13, 400, { color: T.textMuted, textAlign:'center', marginTop:'24px' }) }}>No contracts. Cancel anytime.</p>
-    </div>
-  </section>
-)
+    </section>
+  )
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FAQ
