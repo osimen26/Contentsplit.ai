@@ -30,21 +30,21 @@ const renderWithProviders = (ui: React.ReactElement) => {
 describe('RegisterPage', () => {
   it('renders registration form properly', () => {
     renderWithProviders(<RegisterPage />)
-    
+
     expect(screen.getByText('Create Account', { selector: 'h1' })).toBeInTheDocument()
     expect(screen.getByText('Join ContentSplit today')).toBeInTheDocument()
-    
+
     expect(screen.getByPlaceholderText('First Name')).toBeInTheDocument()
     expect(screen.getByPlaceholderText('Last Name')).toBeInTheDocument()
     expect(screen.getByPlaceholderText('Email address')).toBeInTheDocument()
     expect(screen.getByPlaceholderText('Password')).toBeInTheDocument()
-    
+
     expect(screen.getByRole('button', { name: /Create Account/i })).toBeInTheDocument()
   })
 
   it('allows filling the form and checking terms', () => {
     renderWithProviders(<RegisterPage />)
-    
+
     const emailInput = screen.getByPlaceholderText('Email address') as HTMLInputElement
     const termsCheckbox = screen.getByRole('checkbox') as HTMLInputElement
 
@@ -55,18 +55,19 @@ describe('RegisterPage', () => {
     expect(termsCheckbox.checked).toBe(true)
   })
 
-  it('shows password requirements dynamically', () => {
+  it('shows password strength dynamically', () => {
     renderWithProviders(<RegisterPage />)
-    
+
     const passwordInput = screen.getByPlaceholderText('Password') as HTMLInputElement
-    
-    // Initial state
-    const charReq = screen.getByText('8+ characters')
-    expect(charReq).not.toHaveClass('met')
+
+    // Initial state - no strength bar
+    expect(document.querySelector('.password-strength-fill')).toBeNull()
 
     // Type a strong password
-    fireEvent.change(passwordInput, { target: { value: 'StrongPass1' } })
-    
-    expect(charReq).toHaveClass('met')
+    fireEvent.change(passwordInput, { target: { value: 'StrongPass1!' } })
+
+    const strengthFill = document.querySelector('.password-strength-fill')
+    expect(strengthFill).not.toBeNull()
+    expect(strengthFill).toHaveClass('password-strength-strong')
   })
 })

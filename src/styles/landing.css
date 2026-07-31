@@ -1037,7 +1037,7 @@
     padding: 28px 24px;
   }
 
-/* Pricing */
+  /* Pricing */
   .pricing-section {
     padding: 48px 5%;
   }
@@ -1095,304 +1095,144 @@
     padding-left: 16px !important;
     padding-right: 16px !important;
   }
-  
+
   /* Hero section */
   .hero-section {
     padding: 100px 16px 48px !important;
     text-align: center !important;
   }
-  
+
   .hero-title {
     font-size: clamp(1.5rem, 8vw, 2rem) !important;
     letter-spacing: -0.5px !important;
   }
-  
+
   .hero-subtitle {
     font-size: 0.9375rem !important;
     line-height: 1.5 !important;
     max-width: 100% !important;
   }
-  
+
   /* CTA buttons */
   .cta-primary {
     padding: 14px 28px !important;
     font-size: 1rem !important;
   }
-  
+
   .hero-cta-group {
     flex-direction: column !important;
     align-items: center !important;
     gap: 12px !important;
   }
-  
+
   .hero-cta-group a,
   .hero-cta-group button {
     width: 100% !important;
     max-width: 311px !important;
   }
-  
+
   /* Platform pills */
   .hero-platforms {
     flex-wrap: wrap !important;
     justify-content: center !important;
     gap: 8px !important;
   }
-  
+
   .hero-capsule {
     padding: 8px 12px !important;
     font-size: 0.75rem !important;
   }
-  
+
   /* Features - single column */
   .features-title {
     font-size: clamp(1.35rem, 7vw, 1.75rem) !important;
   }
-  
+
   .features-grid,
   .bento-grid {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
   }
-  
+
   .feature-card,
   .bento-card {
     padding: 20px 16px !important;
   }
-  
+
   /* Bento cards - reset spanning */
-  .bento-1, .bento-2, .bento-3, .bento-4 {
+  .bento-1,
+  .bento-2,
+  .bento-3,
+  .bento-4 {
     grid-column: span 1 !important;
     grid-row: span 1 !important;
   }
-  
+
   /* Pricing - single column */
   .pricing-grid {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
   }
-  
+
   .pricing-card {
     padding: 24px 20px !important;
     max-width: 343px !important;
   }
-  
+
   .pricing-price {
     font-size: 1.75rem !important;
   }
-  
+
   .pricing-features {
     padding: 16px 0 !important;
   }
-  
+
   /* Testimonials */
   .testimonials-section {
     padding: 48px 16px !important;
   }
-  
+
   .testimonial-grid {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
   }
-  
+
   .testimonial-card {
     padding: 20px 16px !important;
     max-width: 343px !important;
   }
-  
+
   /* CTA section */
   .cta-section {
     padding: 48px 16px !important;
   }
-  
+
   .cta-headline {
     font-size: clamp(1.5rem, 6vw, 1.75rem) !important;
   }
-  
+
   /* Footer */
   .landing-footer {
     max-width: 375px !important;
     padding: 24px 16px !important;
   }
-  
+
   .footer-links {
     flex-direction: column !important;
     gap: 12px !important;
   }
-  
+
   /* Dashboard mockup */
   .dashboard-mockup-window {
     height: 200px !important;
     margin: 0 8px !important;
     border-radius: 12px !important;
   }
-  
+
   /* Navbar - fixed for mobile */
   .landing-navbar {
     padding: 12px 16px !important;
     max-width: 375px !important;
-  }
-}
-
-  .pricing-price {
-    font-size: 2rem;
-  }
-
-  .pricing-card {
-    padding: 28px 24px;
-  }
-
-  /* Testimonials - 3-column grid */
-  .testimonial-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--sys-spacing-lg);
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .testimonial-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-
-  /* Equal-width cards - stretch to fill grid */
-  .testimonial-card > * {
-    width: 100%;
-  }
-
-  @media (max-width: 900px) {
-    .testimonial-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* Testimonial Card */
-  .testimonial-card {
-    background: var(--sys-color-neutral-100);
-    padding: var(--sys-spacing-xl);
-    border-radius: var(--sys-radius-lg);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-    text-align: left;
-    transition: all var(--sys-motion-duration-medium) var(--sys-motion-easing-standard);
-    cursor: default;
-    border: 1px solid var(--sys-color-neutral-90);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-  }
-
-  .testimonial-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(107, 97, 231, 0.12);
-    border-color: var(--sys-color-primary-80);
-  }
-
-  /* Equal card height */
-  .testimonial-grid .testimonial-card {
-    height: 100%;
-  }
-
-  /* Star Rating */
-  .star-rating {
-    display: flex;
-    gap: 4px;
-    margin-bottom: var(--sys-spacing-md);
-  }
-
-  .star-rating svg {
-    fill: var(--sys-color-accent-40);
-    color: var(--sys-color-accent-40);
-  }
-
-  /* Metric Pill Badge */
-  .metric-pill {
-    display: inline-flex;
-    align-items: center;
-    background: var(--sys-color-primary-95);
-    color: var(--sys-color-primary-40);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    border: 1px solid var(--sys-color-primary-90);
-  }
-
-  /* User Status Label */
-  .user-status-label {
-    display: inline-flex;
-    align-items: center;
-    color: var(--sys-color-neutral-50);
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .testimonial-card:hover .user-status-label {
-    color: var(--sys-color-primary-40);
-  }
-
-  /* Testimonial Body */
-  .testimonial-body {
-    font-style: italic;
-    color: var(--sys-color-neutral-40);
-    line-height: 1.6;
-    font-size: var(--sys-font-body-text-regular-font-size);
-    margin-bottom: var(--sys-spacing-lg);
-    flex: 1;
-  }
-
-  .testimonial-highlight {
-    color: var(--sys-color-neutral-10);
-    font-weight: 600;
-    font-style: normal;
-  }
-
-  /* User Info Block */
-  .testimonial-user {
-    display: flex;
-    align-items: center;
-    gap: var(--sys-spacing-md);
-    padding-top: var(--sys-spacing-md);
-    border-top: 1px solid var(--sys-color-neutral-95);
-  }
-
-  .testimonial-user .avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-
-  .testimonial-user-name {
-    font-weight: 700;
-    color: var(--sys-color-neutral-10);
-    font-size: 0.95rem;
-  }
-
-  .testimonial-user-role {
-    color: var(--sys-color-neutral-50);
-    font-size: 0.8rem;
-  }
-
-  /* FAQ */
-  .faq-section {
-    padding: 48px 5%;
-  }
-
-  /* Footer */
-  .landing-footer {
-    flex-direction: column;
-    gap: 24px;
-    text-align: center;
-    padding: 32px 5%;
-  }
-
-  .footer-links {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
   }
 }
 

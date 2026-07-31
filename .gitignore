@@ -3,3 +3,4 @@ server/.env
 .env.local
 .env.production
 dist
+.vercel

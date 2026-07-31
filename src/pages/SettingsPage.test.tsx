@@ -147,7 +147,8 @@ describe('SettingsPage', () => {
     fireEvent.click(billingButton)
 
     expect(screen.getAllByText(/Billing/i).length).toBeGreaterThan(0)
-    expect(screen.getByText(/coming soon/)).toBeInTheDocument()
+    expect(screen.getByText('Current Plan')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /upgrade to pro/i })).toBeInTheDocument()
   })
 
   it('switches between navigation sections', () => {
