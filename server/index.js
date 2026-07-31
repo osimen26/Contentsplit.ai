@@ -1465,23 +1465,6 @@ app.post('/api/payments/webhook', async (req, res) => {
         console.log(`⚠️ Unhandled payment status: ${status} for tx_ref: ${txRef}`)
         return res.json({ received: true, status: 'unhandled' })
       }
-    } else if (event.event === 'subscription.cancelled') {
-      const data = event.data
-      const customerEmail = data.customer?.email
-      if (customerEmail) {
-        const userDb = getUserDb()
-        const user = await userDb.findByEmail(customerEmail)
-        if (user) {
-          await userDb.updateSubscription(user.id, 'free')
-          console.log(`❌ Subscription cancelled for ${customerEmail}, downgraded to free`)
-        }
-      }
-      return res.json({ received: true, status: 'cancelled' })
-    } else {
-      console.log(`⚠️ Unhandled webhook event type: ${event.event}`)
-      return res.json({ received: true, status: 'unhandled_event' })
-    }
-
       // Verify transaction with Flutterwave API to ensure payload wasn't spoofed
       try {
         const verifyRes = await flutterwave.Transaction.verify({ id: txId })
@@ -1513,6 +1496,21 @@ app.post('/api/payments/webhook', async (req, res) => {
       // Add to processed transactions and clear if it gets too large
       processedTransactions.add(txId)
       if (processedTransactions.size > 10000) processedTransactions.clear()
+    } else if (event.event === 'subscription.cancelled') {
+      const data = event.data
+      const customerEmail = data.customer?.email
+      if (customerEmail) {
+        const userDb = getUserDb()
+        const user = await userDb.findByEmail(customerEmail)
+        if (user) {
+          await userDb.updateSubscription(user.id, 'free')
+          console.log(`❌ Subscription cancelled for ${customerEmail}, downgraded to free`)
+        }
+      }
+      return res.json({ received: true, status: 'cancelled' })
+    } else {
+      console.log(`⚠️ Unhandled webhook event type: ${event.event}`)
+      return res.json({ received: true, status: 'unhandled_event' })
     }
 
     res.json({ received: true })
