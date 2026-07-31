@@ -729,22 +729,28 @@ const Testimonials: React.FC = () => (
 // ─────────────────────────────────────────────────────────────────────────────
 const plans = [
   {
-    name:'Free', price:'$0', period:'/month',
+    name:'Free', price:'₦0', period:'/month',
     subtitle:'For creators just getting started',
     features:['5 repurposes per day','Twitter, LinkedIn, Instagram','Copy-to-clipboard export','Basic editor'],
     cta:'Get started free', popular:false,
   },
   {
-    name:'Pro', price:'$12', period:'/month',
+    name:'Pro', price:'₦5,000', period:'/month',
     subtitle:'For teams and serious creators',
-    features:['Unlimited repurposes','All 6 output formats','Batch mode (up to 10 posts/session)','Inline editor + version history','Priority AI generation','Early access to new formats'],
-    cta:'Start Pro free for 7 days', popular:true,
+    features:['Unlimited repurposes','All 6 output formats','Batch mode (up to 10 posts)','Inline editor + version history','Priority AI generation','Early access to new formats'],
+    cta:'Start Pro plan', popular:true,
+  },
+  {
+    name:'Agency', price:'₦15,000', period:'/month',
+    subtitle:'For agencies managing multiple clients',
+    features:['Everything in Pro','Unlimited workspaces','Team collaboration','API access','White-label exports','Dedicated support'],
+    cta:'Start Agency plan', popular:false,
   },
 ]
 
 const Pricing: React.FC = () => (
   <section id="pricing" style={{ background: T.surface, padding:'96px 24px', scrollMarginTop:'64px' }}>
-    <div style={{ maxWidth:'900px', margin:'0 auto' }}>
+    <div style={{ maxWidth:'1100px', margin:'0 auto' }}>
       <h2 style={{ ...syne(48, 700, { color: T.textPrimary, textAlign:'center', marginBottom:'48px' }), fontSize:'clamp(2rem, 4vw, 3rem)' }}>
         One tool. Every platform.
       </h2>
