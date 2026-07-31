@@ -33,10 +33,17 @@ const QUICK_HELP = [
   { id: 'contact', title: 'Contact Us', desc: 'Get help from our team', icon: <Mail size={24} />, color: '#22C35D' },
 ]
 
+const HELP_TAB_MAP: Record<string, 'faq' | 'tips' | 'contact'> = {
+  faq: 'faq',
+  tips: 'tips',
+  contact: 'contact',
+}
+
 const HelpPage: React.FC = () => {
   const [activeTopic, setActiveTopic] = useState('general')
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [activeTab, setActiveTab] = useState<'faq' | 'tips' | 'contact'>('faq')
 
   const filteredQuestions = searchQuery 
     ? FAQ_TOPICS.flatMap(t => t.questions.filter(q => q.q.toLowerCase().includes(searchQuery.toLowerCase()) || q.a.toLowerCase().includes(searchQuery.toLowerCase())).map(q => ({ ...q, topic: t.id })))
@@ -118,7 +125,7 @@ const HelpPage: React.FC = () => {
                   boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
                   transition: 'all 0.2s',
                 }}
-                onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => setActiveTab(HELP_TAB_MAP[item.id] || 'faq')}
               >
                 <div style={{ 
                   width: 56, height: 56, borderRadius: 16, 
@@ -137,9 +144,77 @@ const HelpPage: React.FC = () => {
         </div>
       )}
 
-      {/* FAQs Section */}
+      {/* Main Tab Navigation - Only show when not searching */}
       {!searchQuery && (
-        <section id="faq" style={{ maxWidth: 800, margin: '0 auto 48px', padding: '0 24px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto 24px', padding: '0 24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, flexWrap: 'wrap', background: 'white', borderRadius: 16, padding: 8, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+            <button
+              onClick={() => setActiveTab('faq')}
+              style={{
+                flex: 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                padding: '14px 24px',
+                borderRadius: 12,
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '1rem',
+                fontWeight: 600,
+                background: activeTab === 'faq' ? 'var(--sys-color-primary)' : 'transparent',
+                color: activeTab === 'faq' ? 'white' : 'var(--sys-color-neutral-60)',
+                transition: 'all 0.2s',
+                minWidth: 140,
+              }}
+            >
+              <HelpCircle size={18} />
+              FAQs
+            </button>
+            <button
+              onClick={() => setActiveTab('tips')}
+              style={{
+                flex: 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                padding: '14px 24px',
+                borderRadius: 12,
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '1rem',
+                fontWeight: 600,
+                background: activeTab === 'tips' ? 'var(--sys-color-primary)' : 'transparent',
+                color: activeTab === 'tips' ? 'white' : 'var(--sys-color-neutral-60)',
+                transition: 'all 0.2s',
+                minWidth: 140,
+              }}
+            >
+              <Zap size={18} />
+              Platform Tips
+            </button>
+            <button
+              onClick={() => setActiveTab('contact')}
+              style={{
+                flex: 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                padding: '14px 24px',
+                borderRadius: 12,
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '1rem',
+                fontWeight: 600,
+                background: activeTab === 'contact' ? 'var(--sys-color-primary)' : 'transparent',
+                color: activeTab === 'contact' ? 'white' : 'var(--sys-color-neutral-60)',
+                transition: 'all 0.2s',
+                minWidth: 140,
+              }}
+            >
+              <Mail size={18} />
+              Contact Us
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Tab Content - Only render active tab */}
+      {!searchQuery && activeTab === 'faq' && (
+        <section style={{ maxWidth: 800, margin: '0 auto 48px', padding: '0 24px' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 24, textAlign: 'center' }}>Frequently Asked Questions</h2>
           
           {/* Topic Tabs */}
@@ -175,7 +250,6 @@ const HelpPage: React.FC = () => {
                 style={{
                   background: 'white',
                   borderRadius: 16,
-                  overflow: 'hidden',
                   boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
                 }}
               >
@@ -217,8 +291,8 @@ const HelpPage: React.FC = () => {
       )}
 
       {/* Platform Tips Section */}
-      {!searchQuery && (
-        <section id="tips" style={{ maxWidth: 1000, margin: '0 auto 48px', padding: '0 24px' }}>
+      {!searchQuery && activeTab === 'tips' && (
+        <section style={{ maxWidth: 1000, margin: '0 auto 48px', padding: '0 24px' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 8, textAlign: 'center' }}>Platform-Specific Tips</h2>
           <p style={{ fontSize: '1rem', color: 'var(--sys-color-neutral-50)', textAlign: 'center', marginBottom: 32 }}>
             Get the most out of your content on each platform
@@ -270,8 +344,8 @@ const HelpPage: React.FC = () => {
       )}
 
       {/* Contact Section */}
-      {!searchQuery && (
-        <section id="contact" style={{ maxWidth: 800, margin: '0 auto 64px', padding: '0 24px' }}>
+      {!searchQuery && activeTab === 'contact' && (
+        <section style={{ maxWidth: 800, margin: '0 auto 64px', padding: '0 24px' }}>
           <div style={{ 
             background: 'linear-gradient(135deg, var(--sys-color-primary) 0%, #8B5CF6 100%)', 
             borderRadius: 24, 

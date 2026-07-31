@@ -547,8 +547,8 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         </aside>
 
         {/* Main Content */}
-        <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 0 }} className="claude-main dashboard-main">
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+        <main style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', minHeight: 0 }} className="claude-main dashboard-main">
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'auto' }}>
             {children || <Outlet />}
           </div>
         </main>

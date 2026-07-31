@@ -23,7 +23,7 @@
     /* Path aliases */
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
+    // @ts-expect-error - baseUrl deprecated in TS 6.0 but required for path aliases
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],

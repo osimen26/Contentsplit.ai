@@ -73,8 +73,9 @@ const DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
 const DEEPSEEK_MODEL = 'deepseek-chat'
 
 if (!DEEPSEEK_API_KEY) {
-  console.error('❌  DEEPSEEK_API_KEY is not set in server/.env')
-  process.exit(1)
+  console.warn('⚠️  DEEPSEEK_API_KEY not set - AI generation disabled')
+} else {
+  console.log('✅ DeepSeek API configured')
 }
 
 // ── SUPABASE CONFIG ─────────────────────────────────────────────────────────
@@ -102,6 +103,17 @@ const conversionsDb = new Map()
 const outputsDb = new Map()
 const sessionsDb = new Map()
 const JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_KEY || 'contentsplit-secret-key'
+
+// Demo user for local testing
+const demoUser = {
+  id: 'demo-user-123',
+  email: 'demo@demo.com',
+  password_hash: crypto.createHash('sha256').update('demo123').digest('hex'),
+  tier: 'pro',
+  display_name: 'Demo User',
+  created_at: new Date().toISOString()
+}
+usersDb.set(demoUser.id, demoUser)
 
 function getUserDb() {
   return supabase ? {
@@ -394,6 +406,14 @@ app.post('/api/auth/login', async (req, res) => {
     
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' })
+    }
+
+    // Demo user bypass
+    console.log('Login attempt:', { email, password, demoEmail: 'demo@demo.com', demoPass: 'demo123', match: email === 'demo@demo.com' && password === 'demo123' })
+    if (email === 'demo@demo.com' && password === 'demo123') {
+      const token = generateToken(demoUser.id)
+      const { password_hash, ...userWithoutPassword } = demoUser
+      return res.json({ token, user: userWithoutPassword })
     }
 
     const userDb = getUserDb()
