@@ -20,15 +20,15 @@ const YoutubeIcon = ({ size = 20, color = '#FF0000' }: { size?: number; color?: 
 
 // ─── Design tokens (ContentSplit BUILD_GUIDE v1.0) ───────────────────────────
 const T = {
-  bg:          '#080B10',
-  surface:     '#0D1018',
-  surface2:    '#151C28',
-  border:      '#1E2838',
+  bg:          '#FFFFFF',
+  surface:     '#F8FAFC',
+  surface2:    '#F1F5F9',
+  border:      '#E2E8F0',
   accent:      '#6b61e7',
   accentWarm:  '#FF6B6B',
-  textPrimary:   '#F0F0F5',
-  textSecondary: '#8A9BB5',
-  textMuted:     '#3D5068',
+  textPrimary:   '#0F172A',
+  textSecondary: '#475569',
+  textMuted:     '#94A3B8',
   white:       '#FFFFFF',
   rSm:  '6px',
   rMd:  '12px',

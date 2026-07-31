@@ -53,11 +53,11 @@ async function getFlutterwave() {
 }
 
 // Flutterwave pricing (in Naira - 5000 NGN = ~$3/month)
-const FLUTTERWAVE_PLANS = {
+const getFlutterwavePlans = () => ({
   free: { amount: 0, name: 'Free Tier' },
-  pro: { amount: 5000, name: 'Pro Plan' },      // 5000 NGN/month
-  agency: { amount: 15000, name: 'Agency Plan' }  // 15000 NGN/month
-}
+  pro: { amount: 5000, name: 'Pro Plan', planId: process.env.FLUTTERWAVE_PLAN_ID_PRO },
+  agency: { amount: 15000, name: 'Agency Plan', planId: process.env.FLUTTERWAVE_PLAN_ID_AGENCY }
+})
 
 // ── DEEPSEEK CONFIG ─────────────────────────────────────────────────────────
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY
@@ -1361,7 +1361,7 @@ app.post('/api/payments/initiate', requireAuth, async (req, res) => {
 
   try {
     const { planId } = req.body
-    const plan = FLUTTERWAVE_PLANS[planId]
+    const plan = getFlutterwavePlans()[planId]
 
     if (!plan || plan.amount === 0) {
       return res.status(400).json({ error: 'Invalid plan' })
@@ -1370,7 +1370,7 @@ app.post('/api/payments/initiate', requireAuth, async (req, res) => {
     const userDb = getUserDb()
     const user = await userDb.findById(req.userId)
 
-    const response = await flutterwave.PaymentLink.create({
+    const payload = {
       tx_ref: `CS_${Date.now()}_${req.userId}`,
       amount: plan.amount,
       currency: 'NGN',
@@ -1383,7 +1383,13 @@ app.post('/api/payments/initiate', requireAuth, async (req, res) => {
         title: `ContentSplit.ai - ${plan.name}`,
         description: `Monthly subscription for ${plan.name}`
       }
-    })
+    }
+    
+    if (plan.planId) {
+      payload.payment_plan = plan.planId
+    }
+
+    const response = await flutterwave.PaymentLink.create(payload)
 
     res.json({
       paymentLink: response.data.link,
@@ -1459,6 +1465,22 @@ app.post('/api/payments/webhook', async (req, res) => {
         console.log(`⚠️ Unhandled payment status: ${status} for tx_ref: ${txRef}`)
         return res.json({ received: true, status: 'unhandled' })
       }
+    } else if (event.event === 'subscription.cancelled') {
+      const data = event.data
+      const customerEmail = data.customer?.email
+      if (customerEmail) {
+        const userDb = getUserDb()
+        const user = await userDb.findByEmail(customerEmail)
+        if (user) {
+          await userDb.updateSubscription(user.id, 'free')
+          console.log(`❌ Subscription cancelled for ${customerEmail}, downgraded to free`)
+        }
+      }
+      return res.json({ received: true, status: 'cancelled' })
+    } else {
+      console.log(`⚠️ Unhandled webhook event type: ${event.event}`)
+      return res.json({ received: true, status: 'unhandled_event' })
+    }
 
       // Verify transaction with Flutterwave API to ensure payload wasn't spoofed
       try {
