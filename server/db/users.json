@@ -7,5 +7,10 @@
     "first_name": "Test",
     "last_name": "User",
     "created_at": "2026-04-30T10:11:06.611Z"
+  },
+  "f1fdf71f-0243-4c3a-8cfe-e2a2356ca94a": {
+    "id": "f1fdf71f-0243-4c3a-8cfe-e2a2356ca94a",
+    "email": "test@example.com",
+    "password_hash": "123456"
   }
 }
