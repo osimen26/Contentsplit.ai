@@ -1,20 +1,21 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@pages': path.resolve(__dirname, './src/pages'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@services': path.resolve(__dirname, './src/services'),
-      '@contexts': path.resolve(__dirname, './src/contexts'),
-      '@styles': path.resolve(__dirname, './src/styles'),
+      '@': path.resolve(import.meta.dirname, './src'),
+      '@components': path.resolve(import.meta.dirname, './src/components'),
+      '@pages': path.resolve(import.meta.dirname, './src/pages'),
+      '@hooks': path.resolve(import.meta.dirname, './src/hooks'),
+      '@utils': path.resolve(import.meta.dirname, './src/utils'),
+      '@services': path.resolve(import.meta.dirname, './src/services'),
+      '@contexts': path.resolve(import.meta.dirname, './src/contexts'),
+      '@styles': path.resolve(import.meta.dirname, './src/styles'),
     },
   },
   server: {

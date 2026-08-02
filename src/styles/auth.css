@@ -2,17 +2,17 @@
 
 /* ─── Design tokens (matches LandingPage BUILD_GUIDE) ─── */
 :root {
-  --cs-bg:           #080B10;
-  --cs-surface:      #0D1018;
-  --cs-surface2:     #151C28;
-  --cs-border:       #1E2838;
+  --cs-bg:           #F8FAFC;
+  --cs-surface:      #FFFFFF;
+  --cs-surface2:     #FFFFFF;
+  --cs-border:       #E2E8F0;
   --cs-accent:       #6b61e7;
-  --cs-text-primary: #F0F0F5;
-  --cs-text-secondary: #8A9BB5;
-  --cs-text-muted:   #3D5068;
+  --cs-text-primary: #0F172A;
+  --cs-text-secondary: #475569;
+  --cs-text-muted:   #94A3B8;
   --cs-white:        #FFFFFF;
-  --cs-error:        #FF6B6B;
-  --cs-success:      #22C55E;
+  --cs-error:        #EF4444;
+  --cs-success:      #10B981;
 }
 
 /* ─── Wrapper ─── */

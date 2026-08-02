@@ -1,122 +1,89 @@
 import React from 'react'
+import { cn } from '@utils/cn'
 
 export interface ChipProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?:
-    | 'input'
-    | 'choice'
-    | 'filter'
-    | 'action'
-    | 'assist'
-    | 'ai-suggestion'
-    | 'category'
-    | 'model'
-    | 'tone'
-    | 'language'
-    | 'template'
-    | 'suggestion'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
   selected?: boolean
   disabled?: boolean
   icon?: React.ReactNode
   avatar?: React.ReactNode
   removable?: boolean
   onRemove?: () => void
-  badge?: React.ReactNode
-  loading?: boolean
-  className?: string
-  children: React.ReactNode
 }
 
-export const Chip: React.FC<ChipProps> = ({
-  variant = 'input',
+export const Chip = React.forwardRef<HTMLDivElement, ChipProps>(({
+  variant = 'secondary',
   selected = false,
   disabled = false,
   icon,
   avatar,
   removable = false,
   onRemove,
-  badge,
-  loading = false,
-  className = '',
+  className,
   children,
   ...props
-}) => {
-  const baseClass = 'chip'
-  const variantClass = `chip-${variant}`
-  const selectedClass = selected ? 'selected' : ''
-  const disabledClass = disabled ? 'disabled' : ''
-  const loadingClass = loading ? 'loading' : ''
-
-  const combinedClasses = [
-    baseClass,
-    variantClass,
-    selectedClass,
-    disabledClass,
-    loadingClass,
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ')
-
-  const iconElement = icon ? <span className="chip-icon">{icon}</span> : null
-
-  const avatarElement = avatar ? <div className="chip-input-avatar">{avatar}</div> : null
-
-  const badgeElement = badge ? <div className="chip-assist-badge">{badge}</div> : null
-
-  const removeButton = removable ? (
-    <button
-      className="chip-input-remove"
-      aria-label="Remove"
-      onClick={(e) => {
-        e.stopPropagation()
-        onRemove?.()
-      }}
-      type="button"
-    >
-      ×
-    </button>
-  ) : null
-
-  const labelElement = <span className="chip-label">{children}</span>
+}, ref) => {
+  const variants = {
+    primary: "bg-primary text-white border-transparent",
+    secondary: "bg-surface-secondary text-ink-800 border-transparent",
+    outline: "bg-transparent text-ink-800 border-border",
+    ghost: "bg-transparent text-ink-800 border-transparent hover:bg-surface-secondary"
+  }
 
   return (
-    <div className={combinedClasses} {...props}>
-      {avatarElement}
-      {iconElement}
-      {labelElement}
-      {removeButton}
-      {badgeElement}
+    <div
+      ref={ref}
+      className={cn(
+        "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border transition-colors",
+        variants[variant],
+        selected && "bg-ink-950 text-white border-ink-950",
+        disabled && "opacity-50 cursor-not-allowed",
+        className
+      )}
+      {...props}
+    >
+      {avatar && <div className="w-5 h-5 rounded-full overflow-hidden shrink-0 -ml-1">{avatar}</div>}
+      {icon && <span className="shrink-0 w-4 h-4 flex items-center justify-center">{icon}</span>}
+      <span className="truncate">{children}</span>
+      {removable && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            onRemove?.()
+          }}
+          className="ml-0.5 shrink-0 w-4 h-4 rounded-full flex items-center justify-center hover:bg-black/10 focus:outline-none focus:ring-2 focus:ring-primary"
+          aria-label="Remove"
+        >
+          ×
+        </button>
+      )}
     </div>
   )
-}
+})
+Chip.displayName = "Chip"
 
 export interface ChipGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'choice' | 'filter' | 'scrollable'
   label?: string
   description?: string
-  singleSelect?: boolean
-  className?: string
-  children: React.ReactNode
 }
 
-export const ChipGroup: React.FC<ChipGroupProps> = ({
-  variant,
+export const ChipGroup = React.forwardRef<HTMLDivElement, ChipGroupProps>(({
   label,
   description,
-  singleSelect = false,
-  className = '',
+  className,
   children,
   ...props
-}) => {
-  const baseClass = 'chip-group'
-  const variantClass = variant ? `chip-group-${variant}` : ''
-  const combinedClasses = [baseClass, variantClass, className].filter(Boolean).join(' ')
-
+}, ref) => {
   return (
-    <div className={combinedClasses} data-single-select={singleSelect} {...props}>
-      {label && <span className="chip-group-label">{label}</span>}
-      {children}
-      {description && <span className="chip-group-description">{description}</span>}
+    <div ref={ref} className={cn("flex flex-col gap-2", className)} {...props}>
+      {label && <span className="text-sm font-medium text-ink-950">{label}</span>}
+      <div className="flex flex-wrap gap-2">
+        {children}
+      </div>
+      {description && <span className="text-xs text-text-secondary">{description}</span>}
     </div>
   )
-}
+})
+ChipGroup.displayName = "ChipGroup"
+

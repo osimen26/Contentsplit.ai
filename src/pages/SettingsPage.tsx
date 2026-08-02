@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useCurrentUser, useUpdateProfile, useUsageStats } from '@/services/query-hooks'
-import { useTheme } from '@contexts/ThemeContext'
+
 import { Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -32,7 +32,7 @@ const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = (
       left: checked ? 22 : 2,
       width: 20, height: 20,
       borderRadius: '50%',
-      backgroundColor: '#0D1018',
+      backgroundColor: '#FFFFFF',
       boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
       transition: 'left 0.2s',
     }} />
@@ -84,7 +84,7 @@ const inputStyle: React.CSSProperties = {
   outline: 'none',
   fontSize: '0.9rem',
   color: '#333',
-  backgroundColor: '#0D1018',
+  backgroundColor: '#FFFFFF',
   boxSizing: 'border-box',
   transition: 'border-color 0.2s, box-shadow 0.2s',
 }
@@ -102,41 +102,6 @@ const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
   </h2>
 )
 
-const ThemeModeSelector: React.FC = () => {
-  const { theme, setTheme } = useTheme()
-  const modes: Array<{ id: 'light' | 'dark' | 'system'; label: string }> = [
-    { id: 'light', label: 'Light' },
-    { id: 'dark', label: 'Dark' },
-    { id: 'system', label: 'System' },
-  ]
-
-  return (
-    <div style={{ display: 'flex', gap: 0, backgroundColor: 'rgba(0,0,0,0.03)', padding: 4, borderRadius: 8 }}>
-      {modes.map(mode => {
-        const isSelected = theme === mode.id
-        return (
-          <button
-            key={mode.id}
-            onClick={() => setTheme(mode.id)}
-            style={{
-              flex: 1, padding: '6px 16px',
-              borderRadius: 6,
-              border: 'none',
-              backgroundColor: isSelected ? 'white' : 'transparent',
-              color: isSelected ? '#111' : '#666',
-              boxShadow: isSelected ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-              fontSize: '0.85rem', fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'all 0.15s',
-            }}
-          >
-            {mode.label}
-          </button>
-        )
-      })}
-    </div>
-  )
-}
 
 const AccountSection: React.FC = () => {
   const { data: user } = useCurrentUser()
@@ -402,9 +367,6 @@ const AppearanceSection: React.FC = () => {
       <section>
         <SectionHeader title="Preferences" />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <FieldRow label="Color mode">
-            <ThemeModeSelector />
-          </FieldRow>
           <FieldRow label="Chat font">
             <select
               style={{ ...inputStyle, cursor: 'pointer', appearance: 'none', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
@@ -635,7 +597,7 @@ const SettingsPage: React.FC = () => {
       display: 'flex', 
       flexDirection: 'column',
       height: '100%', 
-      backgroundColor: '#080B10',
+      backgroundColor: '#F8FAFC',
       fontFamily: 'Inter, system-ui, sans-serif'
     }}>
       

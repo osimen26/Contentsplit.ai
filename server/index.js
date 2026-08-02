@@ -80,8 +80,8 @@ async function initSupabase() {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
   const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY || process.env.VITE_SUPABASE_ANON_KEY
 
-  console.log('Supabase env check:', { 
-    hasUrl: !!supabaseUrl, 
+  console.log('Supabase env check:', {
+    hasUrl: !!supabaseUrl,
     hasKey: !!supabaseKey,
     url: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'MISSING'
   })
@@ -110,11 +110,11 @@ app.use((req, res, next) => {
   // If Vercel already parsed the body, mark it so express.json skips it.
   // This prevents the 30s timeout hang.
   if (req.body && typeof req.body === 'object' && Object.keys(req.body).length > 0) {
-    req._body = true; 
+    req._body = true;
   }
   next();
 });
-app.use(express.json({ 
+app.use(express.json({
   limit: '1mb',
   verify: (req, res, buf) => {
     req.rawBody = buf;
@@ -293,7 +293,7 @@ function verifyPassword(password, hash) {
 }
 
 function generateToken(userId) {
-  const payload = Buffer.from(JSON.stringify({ 
+  const payload = Buffer.from(JSON.stringify({
     userId: userId || 'recovery',
     type: userId ? 'session' : 'recovery',
     expiresAt: Date.now() + (userId ? (7 * 24 * 60 * 60 * 1000) : (60 * 60 * 1000)) // 7 days for session, 1 hour for recovery
@@ -308,10 +308,10 @@ function verifyToken(token) {
     if (!payload || !signature) return null
     const expectedSignature = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('base64')
     if (signature !== expectedSignature) return null
-    
+
     const data = JSON.parse(Buffer.from(payload, 'base64').toString('utf8'))
     if (data.expiresAt < Date.now()) return null
-    
+
     return data
   } catch (err) {
     return null
@@ -323,7 +323,7 @@ async function sendRecoveryEmail(toEmail, token, fromEmail) {
   const APP_URL = process.env.APP_URL || 'http://localhost:3000'
   const recoveryLink = `${APP_URL}/reset-password?token=${token}&email=${encodeURIComponent(toEmail)}`
   const isPlaceholder = (val) => !val || val.includes('your_resend_api_key') || val.includes('your_deepseek_api_key')
-  
+
   const emailHtml = `
 <!DOCTYPE html>
 <html>
@@ -342,14 +342,14 @@ async function sendRecoveryEmail(toEmail, token, fromEmail) {
   if (process.env.RESEND_API_KEY && !isPlaceholder(process.env.RESEND_API_KEY)) {
     const { Resend } = await import('resend')
     const resend = new Resend(process.env.RESEND_API_KEY)
-    
+
     await resend.emails.send({
       from: process.env.EMAIL_FROM || 'ContentSplit <noreply@resend.dev>',
       to: toEmail,
       subject: 'ContentSplit - Password Recovery',
       html: emailHtml,
     })
-    
+
     console.log(`📧 Recovery email sent via Resend to ${toEmail}`)
   } else if (process.env.SMTP_HOST && process.env.SMTP_HOST.trim() !== '') {
     // Production: send via SMTP
@@ -367,14 +367,14 @@ async function sendRecoveryEmail(toEmail, token, fromEmail) {
 
     // Verify connection before sending
     await transporter.verify()
-    
+
     await transporter.sendMail({
       from: process.env.EMAIL_FROM || fromEmail,
       to: toEmail,
       subject: 'ContentSplit - Password Recovery',
       html: emailHtml,
     })
-    
+
     console.log(`📧 Recovery email sent via SMTP to ${toEmail}`)
   } else {
     console.log(`📧 [MOCK] Password recovery email for: ${toEmail}`)
@@ -388,14 +388,14 @@ function requireAuth(req, res, next) {
   if (!auth || !auth.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'No token provided' })
   }
-  
+
   const token = auth.replace('Bearer ', '')
   const session = verifyToken(token)
-  
+
   if (!session) {
     return res.status(401).json({ error: 'Invalid or expired token' })
   }
-  
+
   req.userId = session.userId
   req.session = session
   next()
@@ -480,8 +480,8 @@ app.get('/api/health', async (req, res) => {
       tableStatus = e.message
     }
   }
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     model: DEEPSEEK_MODEL,
     database: supabase ? 'connected' : 'mock',
     table_status: tableStatus,
@@ -494,19 +494,19 @@ app.post('/api/auth/login', async (req, res) => {
   try {
     const { email: rawEmail, password } = req.body
     const email = rawEmail?.trim()
-    
+
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' })
     }
 
     const userDb = getUserDb()
     const user = await userDb.findByEmail(email)
-    
+
     if (!user) {
       console.log('Login failed: User not found for email:', email)
       return res.status(401).json({ error: 'Invalid email or password' })
     }
-    
+
     if (!verifyPassword(password, user.password_hash)) {
       console.log('Login failed: Password mismatch for email:', email)
       return res.status(401).json({ error: 'Invalid email or password' })
@@ -518,9 +518,9 @@ app.post('/api/auth/login', async (req, res) => {
     // Remove password hash from response
     const { password_hash, ...userWithoutPassword } = user
 
-    res.json({ 
-      token, 
-      user: userWithoutPassword 
+    res.json({
+      token,
+      user: userWithoutPassword
     })
   } catch (err) {
     console.error('Login error:', err)
@@ -533,7 +533,7 @@ app.post('/api/auth/register', async (req, res) => {
   try {
     const { email: rawEmail, password, firstName, lastName } = req.body
     const email = rawEmail?.trim()
-    
+
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' })
     }
@@ -544,7 +544,7 @@ app.post('/api/auth/register', async (req, res) => {
 
     const userDb = getUserDb()
     console.log('Attempting to register:', email)
-    
+
     // Check if user exists
     const existing = await userDb.findByEmail(email)
     if (existing) {
@@ -562,9 +562,9 @@ app.post('/api/auth/register', async (req, res) => {
     // Remove password hash from response
     const { password_hash, ...userWithoutPassword } = user
 
-    res.status(201).json({ 
-      token, 
-      user: userWithoutPassword 
+    res.status(201).json({
+      token,
+      user: userWithoutPassword
     })
   } catch (err) {
     console.error('Registration error:', err.message, err.stack)
@@ -584,29 +584,29 @@ app.post('/api/auth/google', async (req, res) => {
     const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
       headers: { Authorization: `Bearer ${access_token}` }
     })
-    
+
     if (!userInfoRes.ok) {
       return res.status(401).json({ error: 'Invalid Google token' })
     }
-    
+
     const payload = await userInfoRes.json()
     const email = payload.email
     const firstName = payload.given_name || ''
     const lastName = payload.family_name || ''
     const displayName = payload.name || `${firstName} ${lastName}`.trim()
-    
+
     if (!email) {
       return res.status(400).json({ error: 'No email provided by Google' })
     }
 
     const userDb = getUserDb()
     let user = await userDb.findByEmail(email)
-    
+
     if (!user) {
       console.log(`Creating new Google user: ${email} (${displayName})`)
       // Create user if they don't exist.
       user = await userDb.create(email, crypto.randomUUID(), firstName, lastName)
-      
+
       // If the userDb.create didn't set display_name (e.g. in mock mode), we set it here if needed
       // But we updated userDb.create already.
     }
@@ -616,15 +616,15 @@ app.post('/api/auth/google', async (req, res) => {
 
     const { password_hash, ...userWithoutPassword } = user
 
-    res.json({ 
-      token, 
-      user: userWithoutPassword 
+    res.json({
+      token,
+      user: userWithoutPassword
     })
   } catch (err) {
     console.error('Google auth error:', err)
-    res.status(500).json({ 
-      error: 'Google auth failed', 
-      details: process.env.NODE_ENV === 'development' ? err.message : undefined 
+    res.status(500).json({
+      error: 'Google auth failed',
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
     })
   }
 })
@@ -634,7 +634,7 @@ app.get('/api/auth/me', requireAuth, async (req, res) => {
   try {
     const userDb = getUserDb()
     const user = await userDb.findById(req.userId)
-    
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' })
     }
@@ -698,7 +698,7 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
         conversionsToday = count || 0
       } else {
         const allConversions = Array.from(conversionsDb.values())
-        conversionsToday = allConversions.filter(c => 
+        conversionsToday = allConversions.filter(c =>
           c.user_id === userId && new Date(c.created_at) >= startOfDay
         ).length
       }
@@ -761,39 +761,17 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
 
     // Save conversion to Supabase if user is authenticated
     if (userId !== 'anonymous' && supabase) {
-        try {
-          await supabase.from('conversions').insert({
-            id: conversionId,
-            user_id: req.userId,
-            input_text: input_text.slice(0, 500),
-            tone_mode,
-            created_at: new Date().toISOString()
-          })
-
-          for (const output of outputs) {
-            await supabase.from('outputs').insert({
-              id: output.id,
-              conversion_id: conversionId,
-              platform: output.platform,
-              content: output.content,
-              regeneration_count: 0
-            })
-          }
-          console.log('✅ Saved conversion to database')
-        } catch (dbErr) {
-          console.warn('Failed to save conversion:', dbErr.message)
-        }
-      } else {
-        // Save to in-memory mock database
-        conversionsDb.set(conversionId, {
+      try {
+        await supabase.from('conversions').insert({
           id: conversionId,
-          user_id: userId,
+          user_id: req.userId,
           input_text: input_text.slice(0, 500),
           tone_mode,
           created_at: new Date().toISOString()
         })
+
         for (const output of outputs) {
-          outputsDb.set(output.id, {
+          await supabase.from('outputs').insert({
             id: output.id,
             conversion_id: conversionId,
             platform: output.platform,
@@ -801,10 +779,32 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
             regeneration_count: 0
           })
         }
-        saveMockDb('conversions', conversionsDb)
-        saveMockDb('outputs', outputsDb)
-        console.log('✅ Saved conversion to mock database')
+        console.log('✅ Saved conversion to database')
+      } catch (dbErr) {
+        console.warn('Failed to save conversion:', dbErr.message)
       }
+    } else {
+      // Save to in-memory mock database
+      conversionsDb.set(conversionId, {
+        id: conversionId,
+        user_id: userId,
+        input_text: input_text.slice(0, 500),
+        tone_mode,
+        created_at: new Date().toISOString()
+      })
+      for (const output of outputs) {
+        outputsDb.set(output.id, {
+          id: output.id,
+          conversion_id: conversionId,
+          platform: output.platform,
+          content: output.content,
+          regeneration_count: 0
+        })
+      }
+      saveMockDb('conversions', conversionsDb)
+      saveMockDb('outputs', outputsDb)
+      console.log('✅ Saved conversion to mock database')
+    }
 
     res.json({
       conversion: {
@@ -970,7 +970,7 @@ app.get('/api/conversions/:id/outputs', optionalAuth, async (req, res) => {
 app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
   try {
     const { conversion_id, platform, option } = req.body
-    
+
     if (!conversion_id || !platform) {
       return res.status(400).json({ error: 'conversion_id and platform are required' })
     }
@@ -978,21 +978,21 @@ app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
     // Get original conversion to regenerate with same settings
     let originalText = ''
     let toneMode = 'casual'
-    
+
     let conversion = null
-    
+
     if (supabase) {
       const { data, error } = await supabase
         .from('conversions')
         .select('input_text, tone_mode')
         .eq('id', conversion_id)
         .single()
-      
+
       if (data && !error) {
         conversion = data
       }
     }
-    
+
     if (!conversion) {
       // Check mock database
       const mockConversion = conversionsDb.get(conversion_id)
@@ -1000,14 +1000,14 @@ app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
         conversion = mockConversion
       }
     }
-    
+
     if (!conversion) {
       return res.status(404).json({ error: 'Conversion not found' })
     }
-    
+
     originalText = conversion.input_text || ''
     toneMode = conversion.tone_mode || 'casual'
-    
+
     // Build prompt and call DeepSeek
     const prompt = buildPrompt(originalText, platform, toneMode, option)
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
@@ -1032,7 +1032,7 @@ app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
     const content = data.choices?.[0]?.message?.content || ''
 
     const outputId = crypto.randomUUID()
-    
+
     // Update in database
     if (supabase && req.userId) {
       await supabase.from('outputs').insert({
@@ -1073,7 +1073,7 @@ app.get('/api/users/usage', requireAuth, async (req, res) => {
   try {
     const userDb = getUserDb()
     const user = await userDb.findById(req.userId)
-    
+
     const tierLimits = {
       free: 1,        // 1 per day
       pro: 100,      // 100 per day  
@@ -1083,7 +1083,7 @@ app.get('/api/users/usage', requireAuth, async (req, res) => {
     let conversionsToday = 0
     const startOfDay = new Date()
     startOfDay.setHours(0, 0, 0, 0)
-    
+
     if (supabase) {
       const { count } = await supabase
         .from('conversions')
@@ -1094,7 +1094,7 @@ app.get('/api/users/usage', requireAuth, async (req, res) => {
       conversionsToday = count || 0
     } else {
       const allConversions = Array.from(conversionsDb.values())
-      conversionsToday = allConversions.filter(c => 
+      conversionsToday = allConversions.filter(c =>
         c.user_id === req.userId && new Date(c.created_at) >= startOfDay
       ).length
     }
@@ -1115,7 +1115,7 @@ app.patch('/api/users/profile', requireAuth, async (req, res) => {
   try {
     const { displayName, nickname, persona, tone } = req.body
     const userDb = getUserDb()
-    
+
     const updates = {}
     if (displayName !== undefined) updates.display_name = displayName
     if (nickname !== undefined) updates.nickname = nickname
@@ -1123,7 +1123,7 @@ app.patch('/api/users/profile', requireAuth, async (req, res) => {
     if (tone !== undefined) updates.tone = tone
 
     const user = await userDb.update(req.userId, updates)
-    
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' })
     }
@@ -1140,14 +1140,14 @@ app.patch('/api/users/profile', requireAuth, async (req, res) => {
 app.post('/api/users/subscription', requireAuth, async (req, res) => {
   try {
     const { tier } = req.body
-    
+
     if (!tier || !['free', 'pro', 'agency'].includes(tier)) {
       return res.status(400).json({ error: 'Invalid tier' })
     }
 
     const userDb = getUserDb()
     const user = await userDb.update(req.userId, { tier })
-    
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' })
     }
@@ -1166,24 +1166,24 @@ app.post('/api/auth/recover', async (req, res) => {
     const { email } = req.body
     console.log('📧 Recover endpoint hit with email:', email)
     res.setHeader('Content-Type', 'application/json')
-    
+
     if (!email) {
       return res.status(400).json({ error: 'Email is required' })
     }
 
     const userDb = getUserDb()
     const user = await userDb.findByEmail(email)
-    
+
     if (!user) {
       return res.json({ success: true, message: 'If an account exists, a recovery email has been sent.' })
     }
 
     const recoveryToken = generateToken(user.id)
-    const debugInfo = { 
-      email, 
-      userFound: true, 
-      smtpConfigured: !!process.env.SMTP_HOST, 
-      resendKeySet: !!process.env.RESEND_API_KEY 
+    const debugInfo = {
+      email,
+      userFound: true,
+      smtpConfigured: !!process.env.SMTP_HOST,
+      resendKeySet: !!process.env.RESEND_API_KEY
     }
 
     try {
@@ -1203,7 +1203,7 @@ app.post('/api/auth/recover', async (req, res) => {
 app.post('/api/auth/reset-password', async (req, res) => {
   try {
     const { email, token, newPassword } = req.body
-    
+
     if (!email || !token || !newPassword) {
       return res.status(400).json({ error: 'Email, token, and new password are required' })
     }
@@ -1219,7 +1219,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
 
     const userDb = getUserDb()
     const user = await userDb.findByEmail(email)
-    
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' })
     }
@@ -1229,7 +1229,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
     }
 
     await userDb.update(user.id, { password_hash: hashPassword(newPassword) })
-    
+
     const newToken = generateToken(user.id)
 
     const { password_hash, ...userWithoutPassword } = user
@@ -1257,7 +1257,7 @@ app.get('/api/plans', (req, res) => {
 app.post('/api/generate-thread', async (req, res) => {
   try {
     const { content } = req.body
-    
+
     if (!content || content.trim().length < 20) {
       return res.status(400).json({ error: 'Please provide at least 20 characters of content' })
     }
@@ -1347,7 +1347,7 @@ app.post('/api/payments/initiate', requireAuth, async (req, res) => {
   if (!flutterwave) {
     await getFlutterwave()
   }
-  
+
   if (!flutterwave) {
     return res.status(503).json({ error: 'Payment system not configured' })
   }
@@ -1386,7 +1386,7 @@ app.post('/api/payments/initiate', requireAuth, async (req, res) => {
         description: `Monthly subscription for ${plan.name}`
       }
     }
-    
+
     if (plan.planId) {
       payload.payment_plan = plan.planId
     }
@@ -1412,7 +1412,7 @@ app.post('/api/payments/webhook', async (req, res) => {
   if (!flutterwave) {
     await getFlutterwave()
   }
-  
+
   if (!flutterwave) {
     return res.status(503).json({ error: 'Payment not configured' })
   }
@@ -1527,7 +1527,7 @@ app.post('/api/payments/webhook', async (req, res) => {
 // On Vercel, the app is wrapped by serverless-http in api/index.js.
 const isVercel = process.env.VERCEL || process.env.VERCEL_ENV
 if (!isVercel && process.env.NODE_ENV !== 'production') {
-  ;(async () => {
+  ; (async () => {
     // Initialize Supabase before starting so the console log is accurate
     await initSupabase()
     app.listen(PORT, () => {

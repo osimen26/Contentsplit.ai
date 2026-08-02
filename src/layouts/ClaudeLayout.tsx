@@ -154,7 +154,7 @@ const SidebarContentComponent: React.FC<{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '6px 10px',
               borderRadius: 8,
-              border: '1px solid #1E2838',
+              border: '1px solid #E2E8F0',
               backgroundColor: '#151C28',
               transition: 'all 0.2s ease',
             }}
@@ -287,7 +287,7 @@ const SidebarContentComponent: React.FC<{
       {/* ── FOOTER: Settings + Profile ── */}
       <div style={{
         flexShrink: 0,
-        borderTop: '1px solid #1E2838',
+        borderTop: '1px solid #E2E8F0',
         padding: '8px 6px',
         display: 'flex',
         flexDirection: 'column',
@@ -310,7 +310,7 @@ const SidebarContentComponent: React.FC<{
           onClick={onMobileClose}
         />
         {/* Separator before destructive action — P9 destructive-nav-separation */}
-        <div style={{ height: '1px', background: '#1E2838', margin: '6px 8px' }} />
+        <div style={{ height: '1px', background: '#E2E8F0', margin: '6px 8px' }} />
         <FooterAction
           icon={<LogOut size={16} />}
           label="Log out"
@@ -355,7 +355,7 @@ const SidebarContentComponent: React.FC<{
                   flexShrink: 0,
                   padding: '4px 10px',
                   borderRadius: 20,
-                  border: '1px solid #1E2838',
+                  border: '1px solid #E2E8F0',
                   backgroundColor: 'rgba(107, 97, 231,0.08)',
                   color: '#8A9BB5',
                   fontSize: '0.78rem',
@@ -481,7 +481,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         backgroundColor: 'rgba(17,17,24,0.96)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid #1E2838',
+        borderBottom: '1px solid #E2E8F0',
         alignItems: 'center',
         padding: '0 16px',
         gap: 12,
@@ -520,7 +520,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
         backgroundColor: 'rgba(17,17,24,0.98)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
-        borderRight: '1px solid #1E2838',
+        borderRight: '1px solid #E2E8F0',
         transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
         transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         display: 'flex', flexDirection: 'column',

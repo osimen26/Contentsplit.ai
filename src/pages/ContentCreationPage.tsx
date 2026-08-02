@@ -95,6 +95,81 @@ interface ChatMessage {
   text?: string
 }
 
+const ResultBlock = ({ 
+  conversionId, 
+  activeTab, 
+  setActiveTab, 
+  platformOptions, 
+  selectedPlatforms 
+}: { 
+  conversionId: string, 
+  activeTab: string, 
+  setActiveTab: (t: string) => void,
+  platformOptions: any[],
+  selectedPlatforms: string[]
+}) => {
+  const { data: outputs, isLoading: outputsLoading } = useOutputs(conversionId)
+  const regenerateMutation = useRegenerateContent()
+  const [selectedRegenerationOption, setSelectedRegenerationOption] = React.useState<string | undefined>(undefined)
+
+  const getOutputsArray = (data: unknown): Output[] => {
+    if (Array.isArray(data)) return data as Output[]
+    if (data && typeof data === 'object' && 'data' in data) {
+      const record = data as Record<string, unknown>
+      if (Array.isArray(record.data)) return record.data as Output[]
+    }
+    return []
+  }
+
+  const outputsArray = getOutputsArray(outputs)
+  const generatedContent = outputsArray.find(o => o.platform === activeTab)?.content || ''
+
+  const handleRegenerate = () => {
+    if (!conversionId || !activeTab) return
+    regenerateMutation.mutate({
+      conversion_id: conversionId,
+      platform: activeTab as any,
+      option: selectedRegenerationOption as any,
+    })
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+      <div className="glass-card" style={{ padding: '0', overflow: 'hidden' }}>
+        <GeneratedContent
+          platforms={platformOptions
+            .filter(p => selectedPlatforms.includes(p.id))
+            .map(p => ({
+              id: p.id,
+              name: p.name,
+              characterLimit: p.id === 'twitter' ? 280 : p.id === 'linkedin' ? 3000 : 2200,
+            }))}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          content={generatedContent}
+          isLoading={outputsLoading}
+          onRegenerate={handleRegenerate}
+        />
+      </div>
+      <div className="glass-card" style={{ padding: '16px' }}>
+        <RegenerationControls
+          onRegenerate={handleRegenerate}
+          isLoading={regenerateMutation.isPending}
+          regenerateDisabled={!conversionId || !activeTab}
+          remainingUses={15}
+          options={[
+            { id: 'clarity', label: 'Improve Clarity', icon: <Target width={18} height={18} />, selected: selectedRegenerationOption === 'clarity', disabled: false },
+            { id: 'shorter', label: 'Make Shorter', icon: <Ruler width={18} height={18} />, selected: selectedRegenerationOption === 'shorter', disabled: false },
+            { id: 'emotion', label: 'Add Emotion', icon: <Palette width={18} height={18} />, selected: selectedRegenerationOption === 'emotion', disabled: false },
+          ]}
+          selectedOptionId={selectedRegenerationOption}
+          onOptionSelect={setSelectedRegenerationOption}
+        />
+      </div>
+    </div>
+  )
+}
+
 const ContentCreationPage: React.FC = () => {
   const [inputText, setInputText] = useState('')
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -102,8 +177,13 @@ const ContentCreationPage: React.FC = () => {
   const [selectedTone, setSelectedTone] = useState('casual')
   const [activeTab, setActiveTab] = useState('twitter')
   const [currentConversionId, setCurrentConversionId] = useState<string | null>(null)
-  const [selectedRegenerationOption, setSelectedRegenerationOption] = useState<string | undefined>(undefined)
+
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  
+  // Batch Mode states
+  const [isBatchMode, setIsBatchMode] = useState(false)
+  const [batchItems, setBatchItems] = useState<string[]>([])
+  const [isBatchGenerating, setIsBatchGenerating] = useState(false)
   
   const { data: user } = useCurrentUser()
   const { data: usageStats } = useUsageStats()
@@ -113,8 +193,7 @@ const ContentCreationPage: React.FC = () => {
   const limitReached = isFreeTier && dailyUsage >= dailyLimit
   
   const generateMutation = useGenerateContent()
-  const regenerateMutation = useRegenerateContent()
-  const { data: outputs, isLoading: outputsLoading } = useOutputs(currentConversionId || '')
+  const { isLoading: outputsLoading } = useOutputs(currentConversionId || '')
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const hasMessages = messages.length > 0
@@ -137,11 +216,17 @@ const ContentCreationPage: React.FC = () => {
     setMessages([])
     setInputText('')
     setCurrentConversionId(null)
-    setSelectedRegenerationOption(undefined)
   }
 
   const handleInputSubmit = () => {
     if (!inputText.trim()) return
+    
+    if (isBatchMode) {
+      setBatchItems(prev => [...prev, inputText])
+      setInputText('')
+      return
+    }
+
     const userId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
     const prefId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
     
@@ -152,16 +237,83 @@ const ContentCreationPage: React.FC = () => {
     ])
     setInputText('')
   }
+  
+  const handleGenerateBatch = () => {
+    if (batchItems.length === 0) return
+    const userId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+    const prefId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+    
+    setMessages(prev => [
+      ...prev,
+      { id: userId, role: 'user', type: 'text', text: `BATCH QUEUE (${batchItems.length} items):\n\n${batchItems.map((item, i) => `${i+1}. ${item.substring(0, 50)}...`).join('\n')}` },
+      { id: prefId, role: 'assistant', type: 'preferences' }
+    ])
+  }
 
   const handleSuggestion = (text: string) => {
     setInputText(text)
   }
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
+    if (isBatchMode && batchItems.length > 0) {
+      if (selectedPlatforms.length === 0) return
+      
+      setMessages(prev => prev.filter(m => m.type !== 'preferences'))
+      setIsBatchGenerating(true)
+      
+      const itemsToProcess = [...batchItems]
+      setBatchItems([])
+      
+      for (let i = 0; i < itemsToProcess.length; i++) {
+        if (dailyUsage >= dailyLimit) {
+           setShowUpgradeModal(true)
+           const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+           setMessages(prev => [...prev, { id: limitId, role: 'assistant', type: 'limit_reached' }])
+           break
+        }
+        
+        const loadingId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+        setMessages(prev => [...prev, { id: loadingId, role: 'assistant', type: 'loading' }])
+        
+        try {
+          const data = await generateMutation.mutateAsync({
+            input_text: itemsToProcess[i],
+            tone_mode: selectedTone as any,
+            platforms: selectedPlatforms as any,
+          })
+          
+          const resultId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+          setMessages(prev => [
+            ...prev.filter(m => m.id !== loadingId),
+            { id: resultId, role: 'assistant', type: 'result', text: data.conversion.id }
+          ])
+        } catch (err: any) {
+          const errorMsg = err?.response?.data?.error || err?.message || 'Failed to generate content'
+          if (err?.response?.data?.limit_reached) {
+            setShowUpgradeModal(true)
+            const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+            setMessages(prev => [
+              ...prev.filter(m => m.id !== loadingId),
+              { id: limitId, role: 'assistant', type: 'limit_reached' }
+            ])
+            break
+          } else {
+            const errorId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+            setMessages(prev => [
+              ...prev.filter(m => m.id !== loadingId),
+              { id: errorId, role: 'assistant', type: 'error', text: `Item ${i+1} failed: ${errorMsg}` }
+            ])
+          }
+        }
+      }
+      setIsBatchGenerating(false)
+      setIsBatchMode(false)
+      return
+    }
+
     const userMsg = [...messages].reverse().find(m => m.role === 'user' && m.type === 'text')
     if (!userMsg?.text || selectedPlatforms.length === 0) return
 
-    // Check daily limit before generating (uses outer-scope dailyUsage/dailyLimit)
     if (dailyUsage >= dailyLimit) {
       setShowUpgradeModal(true)
       const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
@@ -173,13 +325,12 @@ const ContentCreationPage: React.FC = () => {
     }
 
     const loadingId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-    setMessages(prev => [...prev, { id: loadingId, role: 'assistant', type: 'loading' }])
+    setMessages(prev => [...prev.filter(m => m.type !== 'preferences'), { id: loadingId, role: 'assistant', type: 'loading' }])
+    
     generateMutation.mutate(
       {
         input_text: userMsg.text,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         tone_mode: selectedTone as any,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         platforms: selectedPlatforms as any,
       },
       {
@@ -187,15 +338,12 @@ const ContentCreationPage: React.FC = () => {
           setCurrentConversionId(data.conversion.id)
           const resultId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
           setMessages(prev => [
-            ...prev.filter(m => m.type !== 'loading' && m.type !== 'preferences'),
-            { id: resultId, role: 'assistant', type: 'result' }
+            ...prev.filter(m => m.type !== 'loading'),
+            { id: resultId, role: 'assistant', type: 'result', text: data.conversion.id }
           ])
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (err: any) => {
           const errorMsg = err?.response?.data?.error || err?.message || 'Failed to generate content'
-          
-          // Check if it's a limit reached error
           if (err?.response?.data?.limit_reached) {
             setShowUpgradeModal(true)
             const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
@@ -215,41 +363,7 @@ const ContentCreationPage: React.FC = () => {
     )
   }
 
-  const handleRegenerate = () => {
-    if (!currentConversionId || !activeTab) return
-    const loadingId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-    setMessages(prev => [...prev, { id: loadingId, role: 'assistant', type: 'loading' }])
-    regenerateMutation.mutate({
-      conversion_id: currentConversionId,
-      platform: activeTab as 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'email' | 'summary',
-      option: selectedRegenerationOption as 'clarity' | 'shorter' | 'emotion',
-    }, {
-      onSuccess: () => {
-        setMessages(prev => prev.filter(m => m.type !== 'loading'))
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onError: (err: any) => {
-        const errorMsg = err?.response?.data?.error || err?.message || 'Failed to regenerate content'
-        const errorId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-        setMessages(prev => [
-          ...prev.filter(m => m.type !== 'loading'),
-          { id: errorId, role: 'assistant', type: 'error', text: errorMsg }
-        ])
-      }
-    })
-  }
 
-  const getOutputsArray = (data: unknown): Output[] => {
-    if (Array.isArray(data)) return data as Output[]
-    if (data && typeof data === 'object' && 'data' in data) {
-      const record = data as Record<string, unknown>
-      if (Array.isArray(record.data)) return record.data as Output[]
-    }
-    return []
-  }
-
-  const outputsArray = getOutputsArray(outputs)
-  const generatedContent = outputsArray.find(o => o.platform === activeTab)?.content || ''
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mappedPlatforms = platformOptions.map(p => ({ ...p, disabled: false, icon: PLATFORM_ICONS[p.id] as any }))
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -417,7 +531,7 @@ const ContentCreationPage: React.FC = () => {
                             <button
                               className="btn-gradient"
                               onClick={handleGenerate}
-                              disabled={selectedPlatforms.length === 0 || generateMutation.isPending}
+                              disabled={selectedPlatforms.length === 0 || generateMutation.isPending || isBatchGenerating}
                               style={{
                                 padding: '14px 32px',
                                 minHeight: 48,
@@ -435,10 +549,10 @@ const ContentCreationPage: React.FC = () => {
                                 background: 'var(--sys-color-primary)',
                                 boxShadow: '0 4px 12px rgba(107, 97, 231, 0.3)',
                                 transition: 'all 0.2s ease',
-                                cursor: selectedPlatforms.length === 0 || generateMutation.isPending ? 'not-allowed' : 'pointer',
+                                cursor: selectedPlatforms.length === 0 || generateMutation.isPending || isBatchGenerating ? 'not-allowed' : 'pointer',
                               }}
                               onMouseEnter={e => {
-                                if (!generateMutation.isPending && selectedPlatforms.length > 0) {
+                                if (!generateMutation.isPending && !isBatchGenerating && selectedPlatforms.length > 0) {
                                   e.currentTarget.style.background = 'var(--sys-color-primary-30)'
                                   e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 97, 231, 0.4)'
                                   e.currentTarget.style.transform = 'translateY(-2px)'
@@ -450,8 +564,8 @@ const ContentCreationPage: React.FC = () => {
                                 e.currentTarget.style.transform = 'translateY(0)'
                               }}
                             >
-                              <Sparkles size={18} className={generateMutation.isPending ? 'spin' : ''} />
-                              {generateMutation.isPending ? 'Generating...' : 'Generate Content'}
+                              <Sparkles size={18} className={generateMutation.isPending || isBatchGenerating ? 'spin' : ''} />
+                              {generateMutation.isPending || isBatchGenerating ? 'Generating...' : 'Generate Content'}
                             </button>
                           {selectedPlatforms.length === 0 && (
                             <span style={{ fontSize: '0.85rem', color: 'var(--sys-color-tertiary)', fontWeight: 500, textAlign: 'center' }}>
@@ -493,39 +607,13 @@ const ContentCreationPage: React.FC = () => {
 
                   {/* ── ZONE 3: Output Tabs (GeneratedContent + Regeneration) ── */}
                   {msg.type === 'result' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
-                      <div className="glass-card" style={{ padding: '0', overflow: 'hidden' }}>
-                        <GeneratedContent
-                          platforms={platformOptions
-                            .filter(p => selectedPlatforms.includes(p.id))
-                            .map(p => ({
-                              id: p.id,
-                              name: p.name,
-                              characterLimit: p.id === 'twitter' ? 280 : p.id === 'linkedin' ? 3000 : 2200,
-                            }))}
-                          activeTab={activeTab}
-                          onTabChange={setActiveTab}
-                          content={generatedContent}
-                          isLoading={outputsLoading}
-                          onRegenerate={handleRegenerate}
-                        />
-                      </div>
-                      <div className="glass-card" style={{ padding: '16px' }}>
-                        <RegenerationControls
-                          onRegenerate={handleRegenerate}
-                          isLoading={regenerateMutation.isPending || generateMutation.isPending}
-                          regenerateDisabled={!currentConversionId || !activeTab}
-                          remainingUses={15}
-                          options={[
-                            { id: 'clarity', label: 'Improve Clarity', icon: <Target width={18} height={18} />, selected: selectedRegenerationOption === 'clarity', disabled: false },
-                            { id: 'shorter', label: 'Make Shorter', icon: <Ruler width={18} height={18} />, selected: selectedRegenerationOption === 'shorter', disabled: false },
-                            { id: 'emotion', label: 'Add Emotion', icon: <Palette width={18} height={18} />, selected: selectedRegenerationOption === 'emotion', disabled: false },
-                          ]}
-                          selectedOptionId={selectedRegenerationOption}
-                          onOptionSelect={setSelectedRegenerationOption}
-                        />
-                      </div>
-                    </div>
+                    <ResultBlock
+                      conversionId={msg.text || currentConversionId || ''}
+                      activeTab={activeTab}
+                      setActiveTab={setActiveTab}
+                      platformOptions={platformOptions}
+                      selectedPlatforms={selectedPlatforms}
+                    />
                   )}
 
                 </div>
@@ -561,7 +649,13 @@ const ContentCreationPage: React.FC = () => {
             value={inputText}
             onChange={setInputText}
             onSubmit={handleInputSubmit}
-            placeholder="Paste your blog post or article here to convert…"
+            placeholder={isBatchMode ? "Paste an article here, then add to queue..." : "Paste your blog post or article here to convert…"}
+            isBatchMode={isBatchMode}
+            onToggleBatchMode={setIsBatchMode}
+            batchItems={batchItems}
+            onRemoveBatchItem={(idx) => setBatchItems(prev => prev.filter((_, i) => i !== idx))}
+            onGenerateBatch={handleGenerateBatch}
+            disabled={isBatchGenerating || generateMutation.isPending}
           />
           <p className="chat-input-helper-text" style={{ textAlign: 'center', marginTop: '0', fontSize: '0.75rem', color: 'var(--sys-color-tertiary)', fontWeight: 500, display: 'block' }}>
             Press Enter to send · Shift+Enter for new line

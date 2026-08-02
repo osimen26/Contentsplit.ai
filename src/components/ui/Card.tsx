@@ -1,161 +1,105 @@
 import React from 'react'
+import { cn } from '@utils/cn'
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'elevated' | 'filled' | 'outlined'
-  layout?: 'default' | 'media' | 'text-only' | 'actions' | 'dashboard'
-  selected?: boolean
-  disabled?: boolean
   interactive?: boolean
-  children?: React.ReactNode
 }
 
-export const Card: React.FC<CardProps> = ({
-  variant = 'elevated',
-  layout = 'default',
-  selected = false,
-  disabled = false,
-  interactive = false,
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(({
+  className,
+  interactive,
   children,
-  className = '',
   ...props
-}) => {
-  const baseClass = `card-${variant}`
-  const layoutClass = layout !== 'default' ? `card-${layout}` : ''
-  const selectedClass = selected ? 'selected' : ''
-  const disabledClass = disabled ? 'disabled' : ''
-  const interactiveClass = interactive ? 'layout-interactive' : ''
-
-  const combinedClasses = [
-    baseClass,
-    layoutClass,
-    selectedClass,
-    disabledClass,
-    interactiveClass,
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ')
-
-  const role = interactive ? 'button' : undefined
-  const tabIndex = interactive ? 0 : undefined
-
+}, ref) => {
   return (
-    <div className={combinedClasses} role={role} tabIndex={tabIndex} {...props}>
+    <div
+      ref={ref}
+      className={cn(
+        "rounded-2xl border border-border bg-white text-ink-950 shadow-sm overflow-hidden",
+        interactive && "transition-all duration-250 ease-out hover:shadow-md cursor-pointer hover:-translate-y-1",
+        className
+      )}
+      {...props}
+    >
       {children}
     </div>
   )
-}
+})
+Card.displayName = "Card"
 
-export interface CardMediaProps extends React.HTMLAttributes<HTMLDivElement> {
-  imageUrl?: string
-  imageAlt?: string
-  children?: React.ReactNode
-}
+export const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({
+  className,
+  ...props
+}, ref) => (
+  <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
+))
+CardHeader.displayName = "CardHeader"
 
-export const CardMedia: React.FC<CardMediaProps> = ({
+export const CardHeadline = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(({
+  className,
+  ...props
+}, ref) => (
+  <h3 ref={ref} className={cn("text-xl font-semibold leading-none tracking-tight", className)} {...props} />
+))
+CardHeadline.displayName = "CardHeadline"
+
+export const CardSubhead = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(({
+  className,
+  ...props
+}, ref) => (
+  <p ref={ref} className={cn("text-sm text-text-secondary", className)} {...props} />
+))
+CardSubhead.displayName = "CardSubhead"
+
+export const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({
+  className,
+  ...props
+}, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+))
+CardContent.displayName = "CardContent"
+
+export const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({
+  className,
+  ...props
+}, ref) => (
+  <div ref={ref} className={cn("flex items-center p-6 pt-0", className)} {...props} />
+))
+CardFooter.displayName = "CardFooter"
+
+// Keeping old sub-component names for backwards compatibility if they are used elsewhere
+export const CardMedia = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { imageUrl?: string; imageAlt?: string }>(({
+  className,
   imageUrl,
   imageAlt,
   children,
-  className = '',
   ...props
-}) => {
-  return (
-    <div className={`card-media ${className}`} {...props}>
-      {imageUrl && <img src={imageUrl} alt={imageAlt || ''} className="card-media-image" />}
-      <div className="card-media-content">{children}</div>
-    </div>
-  )
-}
-
-export interface CardHeadlineProps extends React.HTMLAttributes<HTMLHeadingElement> {
-  children?: React.ReactNode
-}
-
-export const CardHeadline: React.FC<CardHeadlineProps> = ({
-  children,
-  className = '',
-  ...props
-}) => (
-  <h3 className={`card-headline ${className}`} {...props}>
-    {children}
-  </h3>
-)
-
-export interface CardSubheadProps extends React.HTMLAttributes<HTMLParagraphElement> {
-  children?: React.ReactNode
-}
-
-export const CardSubhead: React.FC<CardSubheadProps> = ({ children, className = '', ...props }) => (
-  <p className={`card-subhead ${className}`} {...props}>
-    {children}
-  </p>
-)
-
-export interface CardSupportingTextProps extends React.HTMLAttributes<HTMLParagraphElement> {
-  children?: React.ReactNode
-}
-
-export const CardSupportingText: React.FC<CardSupportingTextProps> = ({
-  children,
-  className = '',
-  ...props
-}) => (
-  <p className={`card-supporting-text ${className}`} {...props}>
-    {children}
-  </p>
-)
-
-export interface CardMetadataProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode
-}
-
-export const CardMetadata: React.FC<CardMetadataProps> = ({
-  children,
-  className = '',
-  ...props
-}) => (
-  <div className={`card-metadata ${className}`} {...props}>
-    {children}
+}, ref) => (
+  <div ref={ref} className={cn("relative w-full overflow-hidden", className)} {...props}>
+    {imageUrl && <img src={imageUrl} alt={imageAlt || ''} className="w-full h-auto object-cover" />}
+    {children && <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/60 to-transparent">{children}</div>}
   </div>
-)
+))
+CardMedia.displayName = "CardMedia"
 
-export interface CardActionsProps extends React.HTMLAttributes<HTMLDivElement> {
-  alignment?: 'start' | 'end' | 'between'
-  children?: React.ReactNode
-}
+export const CardSupportingText = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(({
+  className,
+  ...props
+}, ref) => (
+  <p ref={ref} className={cn("text-base text-text-secondary p-6 pt-0", className)} {...props} />
+))
+CardSupportingText.displayName = "CardSupportingText"
 
-export const CardActions: React.FC<CardActionsProps> = ({
+export const CardActions = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { alignment?: 'start' | 'end' | 'between' }>(({
+  className,
   alignment = 'end',
-  children,
-  className = '',
   ...props
-}) => {
-  const alignmentClass = `layout-justify-${alignment}`
-  return (
-    <div className={`card-actions ${alignmentClass} ${className}`} {...props}>
-      {children}
-    </div>
-  )
-}
+}, ref) => (
+  <div ref={ref} className={cn("flex items-center p-6 pt-0 gap-2", 
+    alignment === 'start' && "justify-start",
+    alignment === 'end' && "justify-end",
+    alignment === 'between' && "justify-between w-full",
+  className)} {...props} />
+))
+CardActions.displayName = "CardActions"
 
-export interface CardActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'icon'
-  icon?: React.ReactNode
-  children?: React.ReactNode
-}
-
-export const CardAction: React.FC<CardActionProps> = ({
-  variant = 'primary',
-  icon,
-  children,
-  className = '',
-  ...props
-}) => {
-  const variantClass = `card-action-${variant}`
-  return (
-    <button className={`${variantClass} ${className}`} {...props}>
-      {icon && <span className="card-action-icon-wrapper">{icon}</span>}
-      {children}
-    </button>
-  )
-}

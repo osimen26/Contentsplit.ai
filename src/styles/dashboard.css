@@ -5,7 +5,7 @@
   display: flex;
   height: 100dvh;
   overflow: hidden;
-  background: #080B10;
+  background: #F8FAFC;
   position: relative;
   font-family: 'DM Sans', sans-serif;
 }
@@ -27,8 +27,8 @@
 
 /* ── Sidebar ── */
 .dashboard-sidebar {
-  background: #0D1018 !important;
-  border-right: 1px solid #1E2838 !important;
+  background: #FFFFFF !important;
+  border-right: 1px solid #E2E8F0 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   z-index: 10;
@@ -58,12 +58,12 @@
 
 /* ── Cards ── */
 .glass-card {
-  background: #111D2C;
+  background: #FFFFFF;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-radius: 16px;
-  border: 1px solid #1E2E42;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
@@ -75,10 +75,10 @@
 
 /* ── Chat input ── */
 .chat-input-pill-wrapper {
-  background: #0D1018 !important;
+  background: #FFFFFF !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  border: 1px solid #1E2838 !important;
+  border: 1px solid #E2E8F0 !important;
   border-radius: 16px !important;
   box-shadow: none !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
@@ -89,12 +89,12 @@
 .chat-input-pill-wrapper:focus-within {
   border-color: #6b61e7 !important;
   box-shadow: 0 0 0 3px rgba(107, 97, 231, 0.15) !important;
-  background: #0D1018 !important;
+  background: #FFFFFF !important;
 }
 
 .chat-input-pill-wrapper textarea {
   background: transparent !important;
-  color: #F0F0F5 !important;
+  color: #0F172A !important;
 }
 
 /* Search input */
@@ -111,17 +111,17 @@
   background: rgba(107, 97, 231, 0.12) !important;
   border: 1px solid rgba(107, 97, 231, 0.25) !important;
   border-radius: 16px 16px 4px 16px !important;
-  color: #F0F0F5 !important;
+  color: #0F172A !important;
 }
 
 .ai-msg-bubble {
-  background: #0D1018 !important;
+  background: #FFFFFF !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  border: 1px solid #1E2838 !important;
+  border: 1px solid #E2E8F0 !important;
   border-radius: 16px 16px 16px 4px !important;
   box-shadow: none !important;
-  color: #F0F0F5 !important;
+  color: #0F172A !important;
 }
 
 /* ── Primary button ── */
@@ -144,22 +144,22 @@
   transform: translateY(0) !important;
 }
 .btn-gradient:disabled {
-  background: #1E2838 !important;
+  background: #F1F5F9 !important;
   box-shadow: none !important;
   cursor: not-allowed !important;
-  color: #3D5068 !important;
+  color: #94A3B8 !important;
 }
 
 /* ── Platform cards & tone chips ── */
 .platform-card,
 .tone-chip {
   transition: border-color 0.2s ease, background-color 0.2s ease !important;
-  background: #151C28 !important;
-  border-color: #1E2838 !important;
+  background: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
 }
 .platform-card:hover:not(.selected),
 .tone-chip:hover:not(.selected) {
-  background: #172030 !important;
+  background: #F1F5F9 !important;
   border-color: rgba(107, 97, 231, 0.4) !important;
 }
 .platform-card.selected,
@@ -172,17 +172,17 @@
 
 /* ── Generated content tabs ── */
 .generated-content-tabs {
-  background: #151C28 !important;
+  background: #F8FAFC !important;
   border-radius: 10px !important;
   padding: 4px !important;
 }
 .generated-content-tab {
   border-radius: 7px !important;
   transition: background-color 0.15s ease, color 0.15s ease !important;
-  color: #8A9BB5 !important;
+  color: #475569 !important;
 }
 .generated-content-tab.active {
-  background: #1E2838 !important;
+  background: #E2E8F0 !important;
   box-shadow: none !important;
   color: #6b61e7 !important;
 }
@@ -199,7 +199,7 @@
     padding: 10px 12px max(20px, env(safe-area-inset-bottom)) !important;
     position: sticky;
     bottom: 0;
-    background: linear-gradient(to top, #080B10 20%, rgba(10,10,15,0.9) 60%, transparent) !important;
+    background: linear-gradient(to top, #F8FAFC 20%, rgba(248,250,252,0.9) 60%, transparent) !important;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
@@ -215,9 +215,9 @@
     margin: 0 auto;
     padding: 10px 14px !important;
     border-radius: 14px !important;
-    background: #0D1018 !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
-    border: 1px solid #1E2838 !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+    border: 1px solid #E2E8F0 !important;
   }
 
   .chat-input-pill-wrapper textarea {

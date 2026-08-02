@@ -1,0 +1,80 @@
+{
+  "color": {
+    "ink": {
+      "950": { "value": "#111827", "type": "color" },
+      "800": { "value": "#1F2937", "type": "color" }
+    },
+    "text": {
+      "primary": { "value": "{color.ink.950}", "type": "color" },
+      "secondary": { "value": "#475569", "type": "color" },
+      "muted": { "value": "#94A3B8", "type": "color" }
+    },
+    "background": {
+      "base": { "value": "#FAFAFA", "type": "color" },
+      "surface": { "value": "#FFFFFF", "type": "color" },
+      "surfaceSecondary": { "value": "#F5F7FA", "type": "color" }
+    },
+    "border": {
+      "base": { "value": "#E5E7EB", "type": "color" },
+      "divider": { "value": "#F3F4F6", "type": "color" }
+    },
+    "brand": {
+      "primary": { "value": "#2563EB", "type": "color" },
+      "secondary": { "value": "#06B6D4", "type": "color" },
+      "accent": { "value": "#8B5CF6", "type": "color" }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": { "value": "Inter, sans-serif", "type": "fontFamily" }
+    },
+    "fontSize": {
+      "displayXL": { "value": "72px", "type": "dimension" },
+      "displayL": { "value": "60px", "type": "dimension" },
+      "h1": { "value": "48px", "type": "dimension" },
+      "h2": { "value": "40px", "type": "dimension" },
+      "h3": { "value": "32px", "type": "dimension" },
+      "h4": { "value": "24px", "type": "dimension" },
+      "bodyLarge": { "value": "18px", "type": "dimension" },
+      "body": { "value": "16px", "type": "dimension" },
+      "small": { "value": "14px", "type": "dimension" },
+      "caption": { "value": "12px", "type": "dimension" }
+    }
+  },
+  "spacing": {
+    "4": { "value": "4px", "type": "dimension" },
+    "8": { "value": "8px", "type": "dimension" },
+    "12": { "value": "12px", "type": "dimension" },
+    "16": { "value": "16px", "type": "dimension" },
+    "24": { "value": "24px", "type": "dimension" },
+    "32": { "value": "32px", "type": "dimension" },
+    "40": { "value": "40px", "type": "dimension" },
+    "48": { "value": "48px", "type": "dimension" },
+    "64": { "value": "64px", "type": "dimension" },
+    "80": { "value": "80px", "type": "dimension" },
+    "96": { "value": "96px", "type": "dimension" },
+    "128": { "value": "128px", "type": "dimension" }
+  },
+  "radius": {
+    "sm": { "value": "8px", "type": "dimension" },
+    "md": { "value": "12px", "type": "dimension" },
+    "lg": { "value": "16px", "type": "dimension" },
+    "xl": { "value": "24px", "type": "dimension" },
+    "full": { "value": "999px", "type": "dimension" }
+  },
+  "shadow": {
+    "sm": { "value": "0 1px 2px rgba(0,0,0,.04)", "type": "shadow" },
+    "md": { "value": "0 8px 24px rgba(0,0,0,.06)", "type": "shadow" },
+    "lg": { "value": "0 16px 40px rgba(0,0,0,.08)", "type": "shadow" }
+  },
+  "motion": {
+    "duration": {
+      "fast": { "value": "150ms", "type": "time" },
+      "normal": { "value": "250ms", "type": "time" },
+      "slow": { "value": "350ms", "type": "time" }
+    },
+    "curve": {
+      "easeOut": { "value": "cubic-bezier(0.0, 0.0, 0.2, 1)", "type": "cubicBezier" }
+    }
+  }
+}

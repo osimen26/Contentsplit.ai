@@ -2,6 +2,9 @@
  * Import all design tokens and component styles
  */
 
+/* Premium Design System (Tailwind v4) */
+@import './design-system.css';
+
 /* Design Tokens */
 @import '../../design-tokens-ultimate.css';
 @import '../../motion.css';

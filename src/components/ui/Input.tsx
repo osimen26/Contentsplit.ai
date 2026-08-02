@@ -1,21 +1,17 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { cn } from '@utils/cn'
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  variant?: 'filled' | 'outlined' | 'standard'
   label?: string
   supportingText?: string
   error?: boolean
-  required?: boolean
   iconLeading?: React.ReactNode
   iconTrailing?: React.ReactNode
   fullWidth?: boolean
-  characterLimit?: number
-  type?: 'text' | 'password' | 'email' | 'search' | 'tel' | 'url' | 'date'
   containerClassName?: string
 }
 
-export const Input: React.FC<InputProps> = ({
-  variant = 'filled',
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   id,
   label,
   supportingText,
@@ -24,212 +20,138 @@ export const Input: React.FC<InputProps> = ({
   iconLeading,
   iconTrailing,
   fullWidth = true,
-  characterLimit,
+  containerClassName,
+  className,
   type = 'text',
-  containerClassName = '',
-  className = '',
-  value,
-  onChange,
-  onFocus,
-  onBlur,
   ...props
-}) => {
-  const [isFocused, setIsFocused] = useState(false)
-  const [internalValue, setInternalValue] = useState(value || '')
+}, ref) => {
   const generatedId = React.useId()
   const inputId = id || generatedId
-  const currentValue = value !== undefined ? value : internalValue
-
-  const baseClass = `input-${variant}`
-  const errorClass = error ? 'error' : ''
-  const disabledClass = props.disabled ? 'disabled' : ''
-  const searchClass = type === 'search' ? 'search' : ''
-  const datePickerClass = type === 'date' ? 'date-picker' : ''
-  const selectClass = ''
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value
-    if (value === undefined) {
-      setInternalValue(newValue)
-    }
-    if (onChange) onChange(e)
-  }
-
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    setIsFocused(true)
-    if (onFocus) onFocus(e)
-  }
-
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    setIsFocused(false)
-    if (onBlur) onBlur(e)
-  }
-
-  const currentLength = typeof currentValue === 'string' ? currentValue.length : 0
-  const characterCounter = characterLimit ? (
-    <div className={`character-counter ${currentLength > characterLimit ? 'error' : ''}`}>
-      {currentLength}/{characterLimit}
-    </div>
-  ) : null
 
   const inputElement = (
-    <>
-      {iconLeading && <span className="input-icon-leading">{iconLeading}</span>}
+    <div className="relative flex items-center">
+      {iconLeading && (
+        <span className="absolute left-3 text-ink-800 shrink-0 flex items-center justify-center pointer-events-none">
+          {iconLeading}
+        </span>
+      )}
       <input
+        ref={ref}
         id={inputId}
         type={type}
-        className={[
-          baseClass,
-          errorClass,
-          disabledClass,
-          searchClass,
-          datePickerClass,
-          selectClass,
-          className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
-        value={currentValue}
-        onChange={handleChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
         required={required}
+        className={cn(
+          "flex h-12 w-full rounded-md border bg-white px-4 text-base transition-colors",
+          "border-border text-ink-950 placeholder:text-text-muted",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          error && "border-red-500 focus-visible:ring-red-500",
+          iconLeading && "pl-10",
+          iconTrailing && "pr-10",
+          className
+        )}
         {...props}
       />
-      {iconTrailing && <span className="input-icon-trailing">{iconTrailing}</span>}
-      {label && (
-        <label
-          htmlFor={inputId}
-          className={[
-            'input-label',
-            isFocused || currentValue ? 'floating' : '',
-            error ? 'error' : '',
-            required ? 'required' : '',
-          ]
-            .filter(Boolean)
-            .join(' ')}
-        >
-          {label}
-        </label>
+      {iconTrailing && (
+        <span className="absolute right-3 text-ink-800 shrink-0 flex items-center justify-center">
+          {iconTrailing}
+        </span>
       )}
-      {supportingText && (
-        <div className={`input-supporting-text ${error ? 'error' : ''}`}>{supportingText}</div>
-      )}
-      {characterCounter}
-    </>
+    </div>
   )
 
-  if (fullWidth || label || iconLeading || iconTrailing) {
-    return <div className={`input-container ${containerClassName}`}>{inputElement}</div>
+  if (label || supportingText) {
+    return (
+      <div className={cn("flex flex-col gap-1.5", fullWidth && "w-full", containerClassName)}>
+        {label && (
+          <label htmlFor={inputId} className="text-sm font-medium text-ink-950">
+            {label} {required && <span className="text-red-500">*</span>}
+          </label>
+        )}
+        {inputElement}
+        {supportingText && (
+          <p className={cn("text-xs", error ? "text-red-500" : "text-text-secondary")}>
+            {supportingText}
+          </p>
+        )}
+      </div>
+    )
   }
 
-  return inputElement
-}
+  return (
+    <div className={cn(fullWidth && "w-full", containerClassName)}>
+      {inputElement}
+    </div>
+  )
+})
+
+Input.displayName = 'Input'
 
 export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  variant?: 'filled' | 'outlined' | 'standard'
-  id?: string
   label?: string
   supportingText?: string
   error?: boolean
-  required?: boolean
   fullWidth?: boolean
-  characterLimit?: number
-  rows?: number
   containerClassName?: string
 }
 
-export const TextArea: React.FC<TextAreaProps> = ({
-  variant = 'filled',
+export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(({
   id,
   label,
   supportingText,
   error = false,
   required = false,
   fullWidth = true,
-  characterLimit,
-  containerClassName = '',
-  className = '',
-  value,
-  onChange,
-  onFocus,
-  onBlur,
+  containerClassName,
+  className,
   rows = 4,
   ...props
-}) => {
-  const [isFocused, setIsFocused] = useState(false)
-  const [internalValue, setInternalValue] = useState(value || '')
+}, ref) => {
   const generatedId = React.useId()
   const textareaId = id || generatedId
-  const currentValue = value !== undefined ? value : internalValue
-
-  const baseClass = `input-${variant} textarea`
-  const errorClass = error ? 'error' : ''
-  const disabledClass = props.disabled ? 'disabled' : ''
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value
-    if (value === undefined) {
-      setInternalValue(newValue)
-    }
-    if (onChange) onChange(e)
-  }
-
-  const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    setIsFocused(true)
-    if (onFocus) onFocus(e)
-  }
-
-  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    setIsFocused(false)
-    if (onBlur) onBlur(e)
-  }
-
-  const currentLength = typeof currentValue === 'string' ? currentValue.length : 0
-  const characterCounter = characterLimit ? (
-    <div className={`character-counter ${currentLength > characterLimit ? 'error' : ''}`}>
-      {currentLength}/{characterLimit}
-    </div>
-  ) : null
 
   const textareaElement = (
-    <>
-      <textarea
-        id={textareaId}
-        className={[baseClass, errorClass, disabledClass, className].filter(Boolean).join(' ')}
-        value={currentValue}
-        onChange={handleChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        required={required}
-        rows={rows}
-        {...props}
-      />
-      {label && (
-        <label
-          htmlFor={textareaId}
-          className={[
-            'input-label',
-            isFocused || currentValue ? 'floating' : '',
-            error ? 'error' : '',
-            required ? 'required' : '',
-          ]
-            .filter(Boolean)
-            .join(' ')}
-        >
-          {label}
-        </label>
+    <textarea
+      ref={ref}
+      id={textareaId}
+      required={required}
+      rows={rows}
+      className={cn(
+        "flex w-full rounded-md border bg-white px-4 py-3 text-base transition-colors resize-y",
+        "border-border text-ink-950 placeholder:text-text-muted",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        error && "border-red-500 focus-visible:ring-red-500",
+        className
       )}
-      {supportingText && (
-        <div className={`input-supporting-text ${error ? 'error' : ''}`}>{supportingText}</div>
-      )}
-      {characterCounter}
-    </>
+      {...props}
+    />
   )
 
-  if (fullWidth || label) {
-    return <div className={`input-container ${containerClassName}`}>{textareaElement}</div>
+  if (label || supportingText) {
+    return (
+      <div className={cn("flex flex-col gap-1.5", fullWidth && "w-full", containerClassName)}>
+        {label && (
+          <label htmlFor={textareaId} className="text-sm font-medium text-ink-950">
+            {label} {required && <span className="text-red-500">*</span>}
+          </label>
+        )}
+        {textareaElement}
+        {supportingText && (
+          <p className={cn("text-xs", error ? "text-red-500" : "text-text-secondary")}>
+            {supportingText}
+          </p>
+        )}
+      </div>
+    )
   }
 
-  return textareaElement
-}
+  return (
+    <div className={cn(fullWidth && "w-full", containerClassName)}>
+      {textareaElement}
+    </div>
+  )
+})
+
+TextArea.displayName = 'TextArea'
+

@@ -1,257 +1,79 @@
 import React from 'react'
+import { cn } from '@utils/cn'
 
-export interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> {
-  variant?: 'standard' | 'striped' | 'borderless' | 'interactive' | 'compact'
-  container?: boolean
-  className?: string
-  children: React.ReactNode
-}
+export const Table = React.forwardRef<HTMLTableElement, React.TableHTMLAttributes<HTMLTableElement>>(({ className, ...props }, ref) => (
+  <div className="relative w-full overflow-auto rounded-xl border border-border bg-white shadow-sm">
+    <table
+      ref={ref}
+      className={cn("w-full caption-bottom text-sm", className)}
+      {...props}
+    />
+  </div>
+))
+Table.displayName = "Table"
 
-export const Table: React.FC<TableProps> = ({
-  variant = 'standard',
-  container = false,
-  className = '',
-  children,
-  ...props
-}) => {
-  const baseClass = 'table'
-  const variantClass = `table-${variant}`
-  const containerClass = container ? 'table-container' : ''
+export const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(({ className, ...props }, ref) => (
+  <thead ref={ref} className={cn("border-b border-border bg-surface-secondary/50", className)} {...props} />
+))
+TableHeader.displayName = "TableHeader"
 
-  const combinedClasses = [baseClass, variantClass, containerClass, className]
-    .filter(Boolean)
-    .join(' ')
+export const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(({ className, ...props }, ref) => (
+  <tbody
+    ref={ref}
+    className={cn("[&_tr:last-child]:border-0", className)}
+    {...props}
+  />
+))
+TableBody.displayName = "TableBody"
 
-  const tableElement = (
-    <table className={combinedClasses} {...props}>
-      {children}
-    </table>
-  )
+export const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(({ className, ...props }, ref) => (
+  <tfoot
+    ref={ref}
+    className={cn("border-t border-border bg-surface-secondary/50 font-medium", className)}
+    {...props}
+  />
+))
+TableFooter.displayName = "TableFooter"
 
-  if (container) {
-    return <div className="table-container">{tableElement}</div>
-  }
+export const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(({ className, ...props }, ref) => (
+  <tr
+    ref={ref}
+    className={cn(
+      "border-b border-divider transition-colors hover:bg-surface-secondary/50 data-[state=selected]:bg-surface-secondary",
+      className
+    )}
+    {...props}
+  />
+))
+TableRow.displayName = "TableRow"
 
-  return tableElement
-}
+export const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<HTMLTableCellElement>>(({ className, ...props }, ref) => (
+  <th
+    ref={ref}
+    className={cn(
+      "h-12 px-4 text-left align-middle font-medium text-text-secondary [&:has([role=checkbox])]:pr-0",
+      className
+    )}
+    {...props}
+  />
+))
+TableHead.displayName = "TableHead"
 
-export interface TableContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-  className?: string
-  children: React.ReactNode
-}
+export const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(({ className, ...props }, ref) => (
+  <td
+    ref={ref}
+    className={cn("p-4 align-middle text-ink-950 [&:has([role=checkbox])]:pr-0", className)}
+    {...props}
+  />
+))
+TableCell.displayName = "TableCell"
 
-export const TableContainer: React.FC<TableContainerProps> = ({
-  className = '',
-  children,
-  ...props
-}) => {
-  const combinedClasses = ['table-container', className].filter(Boolean).join(' ')
-  return (
-    <div className={combinedClasses} {...props}>
-      {children}
-    </div>
-  )
-}
+export const TableCaption = React.forwardRef<HTMLTableCaptionElement, React.HTMLAttributes<HTMLTableCaptionElement>>(({ className, ...props }, ref) => (
+  <caption
+    ref={ref}
+    className={cn("mt-4 text-sm text-text-muted", className)}
+    {...props}
+  />
+))
+TableCaption.displayName = "TableCaption"
 
-export interface TableHeaderProps extends React.HTMLAttributes<HTMLTableSectionElement> {
-  sticky?: boolean
-  className?: string
-  children: React.ReactNode
-}
-
-export const TableHeader: React.FC<TableHeaderProps> = ({
-  sticky = false,
-  className = '',
-  children,
-  ...props
-}) => {
-  const stickyClass = sticky ? 'table-header-sticky' : ''
-  const combinedClasses = ['table-header', stickyClass, className].filter(Boolean).join(' ')
-  return (
-    <thead className={combinedClasses} {...props}>
-      {children}
-    </thead>
-  )
-}
-
-export interface TableBodyProps extends React.HTMLAttributes<HTMLTableSectionElement> {
-  className?: string
-  children: React.ReactNode
-}
-
-export const TableBody: React.FC<TableBodyProps> = ({ className = '', children, ...props }) => {
-  const combinedClasses = ['table-body', className].filter(Boolean).join(' ')
-  return (
-    <tbody className={combinedClasses} {...props}>
-      {children}
-    </tbody>
-  )
-}
-
-export interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  selected?: boolean
-  disabled?: boolean
-  className?: string
-  children: React.ReactNode
-}
-
-export const TableRow: React.FC<TableRowProps> = ({
-  selected = false,
-  disabled = false,
-  className = '',
-  children,
-  ...props
-}) => {
-  const combinedClasses = [
-    'table-row',
-    selected ? 'selected' : '',
-    disabled ? 'disabled' : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ')
-  return (
-    <tr className={combinedClasses} {...props}>
-      {children}
-    </tr>
-  )
-}
-
-export interface TableCellProps extends Omit<
-  React.TdHTMLAttributes<HTMLTableCellElement>,
-  'align'
-> {
-  header?: boolean
-  align?: 'left' | 'center' | 'right' | 'numeric'
-  truncate?: boolean
-  multiline?: boolean
-  status?: 'success' | 'warning' | 'error' | 'default'
-  className?: string
-  children: React.ReactNode
-}
-
-export const TableCell: React.FC<TableCellProps> = ({
-  header = false,
-  align = 'left',
-  truncate = false,
-  multiline = false,
-  status = 'default',
-  className = '',
-  children,
-  ...props
-}) => {
-  const alignClass = `table-col-${align}`
-  const truncateClass = truncate ? 'truncate' : ''
-  const multilineClass = multiline ? 'multiline' : ''
-  const statusClass = status !== 'default' ? `table-status-cell ${status}` : ''
-
-  const combinedClasses = [
-    header ? 'table-header-cell' : 'table-data-cell',
-    alignClass,
-    truncateClass,
-    multilineClass,
-    statusClass,
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ')
-
-  const Element = header ? 'th' : 'td'
-  return (
-    <Element className={combinedClasses} {...props}>
-      {children}
-    </Element>
-  )
-}
-
-export interface TableHeaderCellProps extends TableCellProps {
-  sortable?: boolean
-  sortDirection?: 'asc' | 'desc' | 'none'
-  onSort?: () => void
-}
-
-export const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
-  sortable = false,
-  sortDirection = 'none',
-  onSort,
-  align = 'left',
-  className = '',
-  children,
-  ...props
-}) => {
-  const sortClass = sortDirection !== 'none' ? `table-sort-${sortDirection}` : ''
-  const alignClass = `table-col-${align}`
-  const combinedClasses = [
-    'table-header-cell',
-    sortable ? 'sortable' : '',
-    sortClass,
-    alignClass,
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ')
-
-  const handleClick = () => {
-    if (sortable && onSort) {
-      onSort()
-    }
-  }
-
-  return (
-    <th className={combinedClasses} onClick={handleClick} {...props}>
-      {children}
-      {sortable && sortDirection !== 'none' && (
-        <span className="table-sort-indicator">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-      )}
-    </th>
-  )
-}
-
-export interface TablePaginationProps extends React.HTMLAttributes<HTMLDivElement> {
-  currentPage: number
-  totalPages: number
-  onPageChange: (page: number) => void
-  className?: string
-}
-
-export const TablePagination: React.FC<TablePaginationProps> = ({
-  currentPage,
-  totalPages,
-  onPageChange,
-  className = '',
-  ...props
-}) => {
-  const handlePrev = () => {
-    if (currentPage > 1) onPageChange(currentPage - 1)
-  }
-
-  const handleNext = () => {
-    if (currentPage < totalPages) onPageChange(currentPage + 1)
-  }
-
-  const combinedClasses = ['table-pagination', className].filter(Boolean).join(' ')
-
-  return (
-    <div className={combinedClasses} {...props}>
-      <div className="table-pagination-info">
-        Page {currentPage} of {totalPages}
-      </div>
-      <div className="table-pagination-controls">
-        <button
-          className="table-pagination-button"
-          onClick={handlePrev}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <button
-          className="table-pagination-button"
-          onClick={handleNext}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  )
-}
