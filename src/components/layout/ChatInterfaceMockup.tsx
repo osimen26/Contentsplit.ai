@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useGSAP } from '@gsap/react'
-import { PanelLeft, Plus, ArrowUp, RefreshCw, Copy, Sparkles, CheckCircle2, CheckCheck } from 'lucide-react'
+import { Plus, ArrowUp, RefreshCw, Copy, Sparkles, CheckCircle2, CheckCheck } from 'lucide-react'
 import gsap from 'gsap'
 
 gsap.registerPlugin(useGSAP)
@@ -349,81 +349,28 @@ const ChatInterfaceMockup: React.FC = () => {
 
   return (
     <div ref={containerRef} style={{
-      width: '1100px', maxWidth: '100%', height: '733px', margin: '0 auto',
-      background: '#FBFAF9', borderRadius: '10.47px',
-      border: '1px solid rgba(0,0,0,0.04)', display: 'flex', overflow: 'hidden', textAlign: 'left',
+      width: '850px', maxWidth: '100%', height: '640px', margin: '0 auto',
+      background: '#FFFFFF', borderRadius: '16px',
+      border: '1px solid rgba(0,0,0,0.08)', display: 'flex', overflow: 'hidden', textAlign: 'left',
+      boxShadow: '0 12px 48px rgba(0,0,0,0.05)',
     }}>
 
-      {/* ── Sidebar ────────────────────────────────────────────────────────── */}
-      <aside style={{
-        width: '220px', background: '#FBFAF9', display: 'flex', flexDirection: 'column',
-        padding: '20px 16px', flexShrink: 0, borderRight: '1px solid rgba(0,0,0,0.05)',
-      }}>
-        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
-          <img src="/logo.svg" alt="ContentSplit" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
-          <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#0F172A', display: 'flex', padding: '4px' }}>
-            <PanelLeft size={20} strokeWidth={2} />
-          </button>
-        </header>
-
-        <div style={{ marginBottom: '32px' }}>
-          <button style={{
-            width: '100%', background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.13)',
-            borderRadius: '8px', padding: '6px', display: 'flex', alignItems: 'center',
-            justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-          }} className="mockup-btn">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <img src="/bubble-chat-add.svg" alt="" style={{ width: '16px', height: '16px' }} />
-              <span style={{ ...dm(13, 600, { color: '#0F172A' }) }}>New Chat</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ ...dm(9, 600, { color: '#94A3B8', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1px 5px', borderRadius: '4px' }) }}>Ctrl</span>
-              <span style={{ ...dm(9, 600, { color: '#94A3B8', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1px 5px', borderRadius: '4px' }) }}>K</span>
-            </div>
-          </button>
-        </div>
-
-        <nav style={{ flex: 1, overflowY: 'auto' }}>
-          <h3 style={{ ...dm(13, 500, { color: '#94A3B8', marginBottom: '16px', paddingLeft: '4px' }) }}>Chats</h3>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {['Landing Page Development', 'Shared attachments'].map((label, i) => (
-              <li key={i}>
-                <button style={{ width: '100%', background: 'transparent', border: 'none', padding: '8px 4px', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '8px' }}>
-                  <span style={{ ...dm(14, 400, { color: '#1E293B' }) }}>{label}</span>
-                  {i === 1 && <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#111827', flexShrink: 0 }} />}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <footer style={{ marginTop: 'auto', paddingTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-            <img src="/images/trusted-by.jpg" alt="User" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-            <span style={{ ...dm(12, 600, { color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '64px' }) }}>victor os...</span>
-          </div>
-          <button style={{ background: 'rgba(0,0,0,0.03)', border: 'none', borderRadius: '8px', padding: '2.34px 4.23px', cursor: 'pointer', ...dm(12, 600, { color: '#0F172A' }), transition: 'background 0.2s' }}>
-            Upgrade
-          </button>
-        </footer>
-      </aside>
-
       {/* ── Main chat area ──────────────────────────────────────────────────── */}
-      <div style={{ flex: 1, background: '#FBFAF9', padding: '2.94px', display: 'flex' }}>
+      <div style={{ flex: 1, display: 'flex' }}>
         <main style={{
-          flex: 1, background: '#FFFFFF', borderRadius: '10.47px',
-          display: 'flex', flexDirection: 'column', position: 'relative',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.02)', overflow: 'hidden',
+          flex: 1, display: 'flex', flexDirection: 'column', position: 'relative',
+          overflow: 'hidden',
         }}>
 
           {/* Top bar */}
-          <header style={{ padding: '14px 24px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
+          <header style={{ padding: '16px 24px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0, borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
             <button style={{
               background: 'rgba(0,0,0,0.03)', border: 'none', borderRadius: '999px',
               padding: '6px 16px', display: 'flex', alignItems: 'center', gap: '6px',
               cursor: 'pointer', ...dm(13, 600, { color: '#3B82F6' }),
+              transition: 'background 0.2s',
             }}>
-              <img src="/Img.svg" alt="" style={{ width: '14px', height: '14px' }} />
+              <Sparkles size={14} />
               Upgrade your plan
             </button>
           </header>

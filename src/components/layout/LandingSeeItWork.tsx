@@ -33,11 +33,12 @@ const LandingSeeItWork: React.FC = () => {
           margin: '0 auto',
           display: 'flex',
           justifyContent: 'center',
-          boxShadow: '0 24px 64px rgba(0,0,0,0.06)',
-          background: 'rgba(255, 255, 255, 0.5)',
-          padding: '14.54px',
-          borderRadius: '16px',
+          boxShadow: '0 32px 84px rgba(0,0,0,0.06)',
+          background: 'rgba(255, 255, 255, 0.4)',
+          padding: '24px',
+          borderRadius: '24px',
           boxSizing: 'border-box',
+          border: '1px solid rgba(255,255,255,0.6)',
         }}>
           <ChatInterfaceMockup />
         </div>

@@ -51,7 +51,7 @@ function App() {
           <ThemeProvider>
             <PageViewTracker />
             <ErrorBoundary>
-              <Suspense fallback={<LoadingOverlay variant="ai-processing" />}>
+              <Suspense fallback={<LoadingOverlay variant="default" />}>
                 <Routes>
                   {/* Public Landing Page */}
                   <Route path="/" element={<LandingPage />} />

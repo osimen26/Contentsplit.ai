@@ -22,7 +22,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         
         {/* Interactive Chat Mockup */}
         <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-          <div className="pointer-events-auto" style={{ transform: 'scale(0.7)', transformOrigin: 'center' }}>
+          <div className="pointer-events-auto" style={{ transform: 'scale(0.62)', transformOrigin: 'center' }}>
             <div style={{
               background: 'rgba(255, 255, 255, 0.05)',
               backdropFilter: 'blur(10px)',
