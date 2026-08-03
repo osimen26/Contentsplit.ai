@@ -3,44 +3,8 @@ import { useSearchParams, Link } from 'react-router-dom'
 import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react'
 import { Toast } from '@components/ui'
 import { apiClient } from '@/services/api-client'
-import { Logo } from '@components/application'
-
-interface AuthLayoutProps {
-  children: React.ReactNode
-  title: string
-  subtitle: string
-  linkText: string
-  linkUrl: string
-  linkLabel: string
-}
-
-const AuthLayout: React.FC<AuthLayoutProps> = ({
-  children,
-  title,
-  subtitle,
-  linkText,
-  linkUrl,
-  linkLabel,
-}) => (
-  <div className="auth-split-container">
-    <div className="auth-right">
-      <div className="auth-form-container">
-        <div className="auth-brand-header">
-          <div className="auth-brand-icon">
-            <Logo size={22} color="white" />
-          </div>
-          <span className="auth-brand-name">ContentSplit</span>
-        </div>
-        <h1 className="auth-title">{title}</h1>
-        <p className="auth-subtitle">{subtitle}</p>
-        {children}
-        <p className="auth-link-text">
-          {linkText} <Link to={linkUrl} className="auth-link">{linkLabel}</Link>
-        </p>
-      </div>
-    </div>
-  </div>
-)
+import AuthLayout from '@/components/layout/AuthLayout'
+import '@/styles/auth.css'
 
 const ResetPasswordPage: React.FC = () => {
   const [searchParams] = useSearchParams()
@@ -84,67 +48,71 @@ const ResetPasswordPage: React.FC = () => {
     }
   }
 
-  if (!token || !email) {
-    return (
-      <AuthLayout
-        title="Invalid Link"
-        subtitle="This password reset link is invalid or has expired"
-        linkText="Need a new link?"
-        linkUrl="/recover"
-        linkLabel="Request New Link"
-      >
-        <div style={{ textAlign: 'center', padding: '24px 0' }}>
-          <p className="auth-subtitle" style={{ marginBottom: '24px' }}>
-            This password reset link is invalid or has expired.
-          </p>
-          <Link to="/recover" className="auth-primary-btn" style={{ width: '100%' }}>
-            Request New Link
-          </Link>
+  // Common wrapper with AuthLayout for all states
+  const renderContent = (content: React.ReactNode) => (
+    <div style={{ fontFamily: '"DM Sans", sans-serif' }}>
+      <AuthLayout>
+        <div className="w-full flex flex-col items-center">
+          <div className="w-full max-w-[400px]">
+            {/* Brand header */}
+            <Link to="/" className="flex justify-center items-center gap-2 mb-8 no-underline hover:opacity-90 transition-opacity w-full">
+              <img src="/logo.svg" alt="ContentSplit" className="w-[32px] h-[32px] rounded-[8px]" />
+              <span className="text-[1.4rem] font-bold text-slate-900" style={{ fontFamily: '"Syne", sans-serif' }}>ContentSplit</span>
+            </Link>
+            {content}
+          </div>
         </div>
       </AuthLayout>
+    </div>
+  )
+
+  if (!token || !email) {
+    return renderContent(
+      <div style={{ animation: 'authFadeUp 0.4s ease both', textAlign: 'center' }}>
+        <h1 className="text-[28px] font-bold text-slate-900 mb-2 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Invalid Link</h1>
+        <p className="text-[14px] text-slate-600 mb-8 text-center leading-relaxed">
+          This password reset link is invalid or has expired.
+        </p>
+        <Link to="/recover" className="auth-primary-btn" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          Request New Link
+        </Link>
+      </div>
     )
   }
 
   if (isSuccess) {
-    return (
-      <AuthLayout
-        title="Password Reset"
-        subtitle="Your password has been reset successfully"
-        linkText="Ready to log in?"
-        linkUrl="/login"
-        linkLabel="Go to Login"
-      >
-        <div style={{ textAlign: 'center' }}>
-          <CheckCircle 
-            size={64} 
-            color="var(--sys-color-roles-success-color-role-success-color-role)" 
-            style={{ margin: '0 auto 24px' }} 
-          />
-          <p className="auth-subtitle" style={{ marginBottom: '24px' }}>
-            Your password has been successfully reset. You can now log in with your new password.
-          </p>
-          <Link to="/login" className="auth-primary-btn" style={{ width: '100%' }}>
-            Go to Login
-          </Link>
-        </div>
-      </AuthLayout>
+    return renderContent(
+      <div style={{ animation: 'authFadeUp 0.4s ease both', textAlign: 'center' }}>
+        <CheckCircle 
+          size={64} 
+          color="#16a34a" 
+          style={{ margin: '0 auto 24px' }} 
+        />
+        <h1 className="text-[28px] font-bold text-slate-900 mb-2 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Password Reset</h1>
+        <p className="text-[14px] text-slate-600 mb-8 text-center leading-relaxed">
+          Your password has been successfully reset. You can now log in with your new password.
+        </p>
+        <Link to="/login" className="auth-primary-btn" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          Go to Login
+        </Link>
+      </div>
     )
   }
 
-  return (
-    <AuthLayout
-      title="Set New Password"
-      subtitle="Enter your new password below"
-      linkText="Remember your password?"
-      linkUrl="/login"
-      linkLabel="Log in"
-    >
+  return renderContent(
+    <div style={{ animation: 'authFadeUp 0.4s ease both' }}>
       <Lock 
         size={64} 
-        color="var(--sys-color-roles-primary-color-role-primary-role)" 
+        color="#111827" 
         style={{ margin: '0 auto 24px', display: 'block' }} 
       />
-      <form onSubmit={handleSubmit} className="auth-form">
+      
+      <h1 className="text-[28px] font-bold text-slate-900 mb-2 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Set New Password</h1>
+      <p className="text-[14px] text-slate-600 mb-8 text-center leading-relaxed">
+        Enter your new password below
+      </p>
+
+      <form onSubmit={handleSubmit} className="auth-form w-full">
         <div className="auth-input-container">
           <input
             type={showPassword ? 'text' : 'password'}
@@ -178,10 +146,14 @@ const ResetPasswordPage: React.FC = () => {
           />
         </div>
 
-        <button type="submit" className="auth-primary-btn" disabled={isLoading}>
+        <button type="submit" className="auth-primary-btn" disabled={isLoading} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {isLoading ? 'Resetting...' : 'Reset Password'}
         </button>
       </form>
+
+      <p className="auth-link-text" style={{ marginTop: 24, textAlign: 'center' }}>
+        Remember your password? <Link to="/login" className="auth-link">Log in</Link>
+      </p>
 
       {toast && (
         <Toast 
@@ -191,7 +163,7 @@ const ResetPasswordPage: React.FC = () => {
           onClose={() => setToast(null)} 
         />
       )}
-    </AuthLayout>
+    </div>
   )
 }
 
