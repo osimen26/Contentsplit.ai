@@ -69,7 +69,7 @@ const ResetPasswordPage: React.FC = () => {
   if (!token || !email) {
     return renderContent(
       <div style={{ animation: 'authFadeUp 0.4s ease both', textAlign: 'center' }}>
-        <h1 className="text-[28px] font-bold text-slate-900 mb-2 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Invalid Link</h1>
+        <h1 className="text-[28px] font-bold text-slate-900 mb-4 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Invalid Link</h1>
         <p className="text-[14px] text-slate-600 mb-8 text-center leading-relaxed">
           This password reset link is invalid or has expired.
         </p>
@@ -88,7 +88,7 @@ const ResetPasswordPage: React.FC = () => {
           color="#16a34a" 
           style={{ margin: '0 auto 24px' }} 
         />
-        <h1 className="text-[28px] font-bold text-slate-900 mb-2 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Password Reset</h1>
+        <h1 className="text-[28px] font-bold text-slate-900 mb-4 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Password Reset</h1>
         <p className="text-[14px] text-slate-600 mb-8 text-center leading-relaxed">
           Your password has been successfully reset. You can now log in with your new password.
         </p>
@@ -107,7 +107,7 @@ const ResetPasswordPage: React.FC = () => {
         style={{ margin: '0 auto 24px', display: 'block' }} 
       />
       
-      <h1 className="text-[28px] font-bold text-slate-900 mb-2 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Set New Password</h1>
+      <h1 className="text-[28px] font-bold text-slate-900 mb-4 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Set New Password</h1>
       <p className="text-[14px] text-slate-600 mb-8 text-center leading-relaxed">
         Enter your new password below
       </p>

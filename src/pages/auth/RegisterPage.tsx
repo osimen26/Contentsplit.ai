@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useRegister } from '@/services/query-hooks'
 import { useAuth } from '@/contexts/AuthContext'
 import AuthLayout from '@/components/layout/AuthLayout'
+import { Eye, EyeOff } from 'lucide-react'
 
 const RegisterPage: React.FC = () => {
   const [firstName, setFirstName] = useState('')
@@ -11,6 +12,7 @@ const RegisterPage: React.FC = () => {
   const [password, setPassword] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
   const { mutateAsync: registerUser, isPending } = useRegister()
   const { notifyLoggedIn } = useAuth()
@@ -107,14 +109,23 @@ const RegisterPage: React.FC = () => {
 
             <div className="mb-4">
               <label className="block text-[14px] font-medium text-slate-900 mb-2">Password</label>
-              <input
-                type="password"
-                placeholder="At least 8 characters"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 h-[44px] bg-slate-50/50 border border-slate-200 rounded-lg text-[14px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="At least 8 characters"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full pl-4 pr-10 h-[44px] bg-slate-50/50 border border-slate-200 rounded-lg text-[14px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             <div className="mb-6">

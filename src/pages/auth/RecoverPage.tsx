@@ -59,7 +59,7 @@ const RecoverPage: React.FC = () => {
                   <Mail size={32} color="#111827" strokeWidth={1.5} />
                 </div>
 
-                <h1 className="text-[28px] font-bold text-slate-900 mb-2 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Forgot your password?</h1>
+                <h1 className="text-[28px] font-bold text-slate-900 mb-4 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Forgot your password?</h1>
                 <p className="text-[14px] text-slate-600 mb-8 text-center leading-relaxed">
                   No worries! Enter your email and we'll send you a secure link to reset it.
                 </p>
@@ -140,7 +140,7 @@ const RecoverPage: React.FC = () => {
                   <CheckCircle2 size={44} color="#16a34a" strokeWidth={1.5} />
                 </div>
 
-                <h1 className="text-[28px] font-bold text-slate-900 mb-2 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Check your inbox</h1>
+                <h1 className="text-[28px] font-bold text-slate-900 mb-4 text-center w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Check your inbox</h1>
                 <p className="text-[14px] text-slate-600 mb-2 text-center leading-relaxed">
                   We sent a password reset link to
                 </p>
