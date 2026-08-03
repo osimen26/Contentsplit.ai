@@ -500,7 +500,7 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
                 <div style={{
                   height: '100%',
                   width: `${Math.min((dailyUsed / dailyLimit) * 100, 100)}%`,
-                  backgroundColor: dailyUsed >= dailyLimit ? '#ef4444' : 'var(--sys-color-primary-40, #6366f1)',
+                  backgroundColor: dailyUsed >= dailyLimit ? '#ef4444' : 'var(--sys-color-primary-40, #111827)',
                   borderRadius: 2,
                   transition: 'width 0.3s',
                 }} />

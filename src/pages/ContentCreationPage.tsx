@@ -389,10 +389,10 @@ const ContentCreationPage: React.FC = () => {
           <div style={{ textAlign: 'center', width: '100%', padding: 0 }}>
             <div style={{
               width: 56, height: 56, borderRadius: '16px',
-              background: '#6b61e7',
+              background: '#111827',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 24px',
-              boxShadow: '0 8px 32px rgba(107, 97, 231, 0.3)',
+              boxShadow: '0 8px 32px rgba(17, 24, 39, 0.3)',
             }}>
               <Logo size={28} color="white" />
             </div>
@@ -446,8 +446,8 @@ const ContentCreationPage: React.FC = () => {
                 <div style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   width: 40, height: 40, borderRadius: 10,
-                  backgroundColor: 'rgba(107, 97, 231, 0.12)',
-                  color: '#6b61e7', flexShrink: 0
+                  backgroundColor: 'rgba(17, 24, 39, 0.12)',
+                  color: '#111827', flexShrink: 0
                 }}>
                   {s.icon}
                 </div>
@@ -471,9 +471,9 @@ const ContentCreationPage: React.FC = () => {
                 <div className="chat-avatar" style={{
                   width: 32, height: 32, borderRadius: 10, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: msg.role === 'user' ? '#6b61e7' : '#151C28',
-                  color: msg.role === 'user' ? '#ffffff' : '#6b61e7',
-                  boxShadow: msg.role === 'user' ? '0 4px 12px rgba(107, 97, 231, 0.3)' : 'none',
+                  background: msg.role === 'user' ? '#111827' : '#151C28',
+                  color: msg.role === 'user' ? '#ffffff' : '#111827',
+                  boxShadow: msg.role === 'user' ? '0 4px 12px rgba(17, 24, 39, 0.3)' : 'none',
                   border: msg.role === 'assistant' ? '1px solid #1E2838' : 'none',
                   marginTop: '4px',
                 }}>
@@ -547,20 +547,20 @@ const ContentCreationPage: React.FC = () => {
                                 letterSpacing: '0.01em',
                                 border: 'none',
                                 background: 'var(--sys-color-primary)',
-                                boxShadow: '0 4px 12px rgba(107, 97, 231, 0.3)',
+                                boxShadow: '0 4px 12px rgba(17, 24, 39, 0.3)',
                                 transition: 'all 0.2s ease',
                                 cursor: selectedPlatforms.length === 0 || generateMutation.isPending || isBatchGenerating ? 'not-allowed' : 'pointer',
                               }}
                               onMouseEnter={e => {
                                 if (!generateMutation.isPending && !isBatchGenerating && selectedPlatforms.length > 0) {
                                   e.currentTarget.style.background = 'var(--sys-color-primary-30)'
-                                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 97, 231, 0.4)'
+                                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(17, 24, 39, 0.4)'
                                   e.currentTarget.style.transform = 'translateY(-2px)'
                                 }
                               }}
                               onMouseLeave={e => {
                                 e.currentTarget.style.background = 'var(--sys-color-primary)'
-                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(107, 97, 231, 0.3)'
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(17, 24, 39, 0.3)'
                                 e.currentTarget.style.transform = 'translateY(0)'
                               }}
                             >
@@ -667,10 +667,8 @@ const ContentCreationPage: React.FC = () => {
       <UpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
-        onUpgrade={(tier) => {
+        onUpgrade={() => {
           setShowUpgradeModal(false)
-          // Redirect to payment
-          window.location.href = `/api/payments/initiate?plan=${tier}`
         }}
         dailyUsage={dailyUsage}
         dailyLimit={dailyLimit}

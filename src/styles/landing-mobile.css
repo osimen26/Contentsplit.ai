@@ -1,0 +1,66 @@
+/* ─── MOBILE RESPONSIVENESS FOR LANDING PAGE ─── */
+/* These overrides use !important to override inline styles */
+
+@media (max-width: 768px) {
+  /* Hero Section */
+  .hero-container {
+    padding-top: 180px !important;
+    min-height: auto !important;
+    padding-bottom: 64px !important;
+  }
+  .hero-pill {
+    margin-top: 60px !important;
+  }
+  .hero-mockup {
+    margin-top: 40px !important;
+  }
+
+  /* Social Proof Section */
+  .social-proof-container {
+    padding: 32px 16px !important;
+  }
+
+  /* See It Work Section */
+  .see-it-work-container {
+    padding: 64px 16px !important;
+  }
+  
+  .see-it-work-mockup {
+    padding: 8px !important; /* Slightly less padding around the mockup on mobile */
+  }
+
+  /* Testimonials Section */
+  .testimonials-container {
+    padding: 64px 16px !important;
+  }
+  .testimonials-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* How It Works & Features Sections */
+  .how-it-works-container,
+  .features-container {
+    padding: 64px 16px !important;
+  }
+
+  /* Pricing Section */
+  .pricing-container {
+    padding: 64px 16px !important;
+  }
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  .pricing-card {
+    padding: 24px 20px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens */
+  .hero-container {
+    padding-top: 80px !important;
+  }
+}

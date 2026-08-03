@@ -61,7 +61,7 @@ const imgStyle: React.CSSProperties = {
 
 const LandingFeatureHighlights: React.FC = () => {
   return (
-    <section id="features" style={{ background: '#FFFFFF', padding: '128px 24px', overflow: 'hidden' }}>
+    <section id="features" className="features-container" style={{ background: '#F8FAFC', padding: '128px 24px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         {/* Header */}

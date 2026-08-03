@@ -50,7 +50,7 @@ const FacebookIcon = ({ size = 18 }: { size?: number }) => (
 )
 
 const NewsletterIcon = ({ size = 18 }: { size?: number }) => (
-  <svg viewBox="0 0 24 24" width={size} height={size} fill="#6B61E7">
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="#111827">
     <path d="M21.75 4.5v13.5c0 1.24-.53 2.18-1.5 2.72-1 .54-1.92.6-2.99.6H6c-1.07 0-1.98-.06-2.99-.6-.97-.54-1.5-1.48-1.5-2.72V4.5c0-1.24.53-2.18 1.5-2.72 1-.54 1.92-.6 2.99-.6h11.25c1.07 0 1.98.06 2.99.6.97.54 1.5 1.48 1.5 2.72zm-12.75 3L4.5 9h15l-4.5-1.5v-3z"/>
   </svg>
 )

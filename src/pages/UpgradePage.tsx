@@ -300,7 +300,7 @@ const UpgradePage: React.FC = () => {
                 padding: '11px 0',
                 borderRadius: 8,
                 border: 'none',
-                backgroundColor: 'var(--sys-color-primary-40, #6366f1)',
+                backgroundColor: 'var(--sys-color-primary-40, #111827)',
                 color: 'white',
                 fontSize: '0.9rem',
                 fontWeight: 600,
@@ -311,12 +311,12 @@ const UpgradePage: React.FC = () => {
               }}
               onMouseEnter={e => {
                 if (currentTier !== 'pro' && !loading) {
-                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-30, #4f46e5)'
+                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-30, #111827)'
                 }
               }}
               onMouseLeave={e => {
                 if (currentTier !== 'pro' && !loading) {
-                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-40, #6366f1)'
+                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-40, #111827)'
                 }
               }}
             >
@@ -362,7 +362,7 @@ const UpgradePage: React.FC = () => {
                 padding: '11px 0',
                 borderRadius: 8,
                 border: 'none',
-                backgroundColor: 'var(--sys-color-primary-40, #6366f1)',
+                backgroundColor: 'var(--sys-color-primary-40, #111827)',
                 color: 'white',
                 fontSize: '0.9rem',
                 fontWeight: 600,
@@ -373,12 +373,12 @@ const UpgradePage: React.FC = () => {
               }}
               onMouseEnter={e => {
                 if (currentTier !== 'agency' && !loading) {
-                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-30, #4f46e5)'
+                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-30, #111827)'
                 }
               }}
               onMouseLeave={e => {
                 if (currentTier !== 'agency' && !loading) {
-                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-40, #6366f1)'
+                  e.currentTarget.style.backgroundColor = 'var(--sys-color-primary-40, #111827)'
                 }
               }}
             >

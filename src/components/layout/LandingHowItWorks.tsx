@@ -38,7 +38,7 @@ const LandingHowItWorks: React.FC = () => {
   const [activeStep, setActiveStep] = useState(3) // Default to step 3 as seen in screenshot
 
   return (
-    <section id="how-it-works" style={{ background: '#FFFFFF', padding: '128px 24px', overflow: 'hidden' }}>
+    <section id="how-it-works" className="how-it-works-container" style={{ background: '#FFFFFF', padding: '128px 24px', overflow: 'hidden' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         {/* Header */}

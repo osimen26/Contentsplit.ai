@@ -2,115 +2,18 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useRegister } from '@/services/query-hooks'
 import { useAuth } from '@/contexts/AuthContext'
-import GoogleAuth from '@/components/auth/GoogleAuth'
-import { Eye, EyeOff } from 'lucide-react'
-import { Logo } from '@components/application'
-
-interface AuthLayoutProps {
-  children: React.ReactNode
-  title: string
-  subtitle: string
-  linkText: string
-  linkUrl: string
-  linkLabel: string
-}
-
-const AuthLayout: React.FC<AuthLayoutProps> = ({
-  children,
-  title,
-  subtitle,
-  linkText,
-  linkUrl,
-  linkLabel,
-}) => (
-  <div className="auth-split-container">
-    <div className="auth-left">
-      <div className="auth-chat-preview">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: 10,
-            background: 'linear-gradient(135deg, var(--sys-color-primary), var(--sys-color-secondary))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <Logo size={22} color="white" />
-          </div>
-          <div>
-            <h1 className="auth-brand-title" style={{ marginBottom: 0 }}>ContentSplit</h1>
-            <p className="auth-brand-tagline">Transform content for every platform</p>
-          </div>
-        </div>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="auth-chat-label">Live Demo</div>
-          <div className="auth-chat-bubble user">
-            Turn my blog post into social media posts
-          </div>
-          
-          <div className="auth-chat-bubble ai">
-            <div style={{ fontWeight: 600, marginBottom: 8, color: 'var(--sys-color-neutral-10)' }}>Platforms ready:</div>
-            <div className="auth-chat-bubble platforms">
-              <span className="auth-platform-tag">Twitter</span>
-              <span className="auth-platform-tag">LinkedIn</span>
-              <span className="auth-platform-tag">Instagram</span>
-            </div>
-          </div>
-          
-          <div className="auth-chat-bubble user" style={{ animationDelay: '0.6s' }}>
-            Perfect! Generate them now
-          </div>
-          
-          <div className="auth-chat-bubble response" style={{ animationDelay: '1s' }}>
-            <p className="auth-chat-bubble response-text">
-              Your content is ready for all 3 platforms. Click any tab to copy!
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div className="auth-right">
-      <div className="auth-form-container">
-        <Link to="/" className="auth-brand-header" style={{ textDecoration: 'none' }}>
-          <div className="auth-brand-icon">
-            <Logo size={22} color="white" />
-          </div>
-          <span className="auth-brand-name">ContentSplit</span>
-        </Link>
-        <h1 className="auth-title">{title}</h1>
-        <p className="auth-subtitle">{subtitle}</p>
-        {children}
-        <p className="auth-link-text">
-          {linkText} <Link to={linkUrl} className="auth-link">{linkLabel}</Link>
-        </p>
-      </div>
-    </div>
-  </div>
-)
+import AuthLayout from '@/components/layout/AuthLayout'
 
 const RegisterPage: React.FC = () => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const { mutateAsync: registerUser, isPending } = useRegister()
   const { notifyLoggedIn } = useAuth()
-
-  const getPasswordStrength = () => {
-    if (!password) return 0
-    let score = 0
-    if (password.length >= 8) score += 25
-    if (/[A-Z]/.test(password)) score += 25
-    if (/[0-9]/.test(password)) score += 25
-    if (/[^A-Za-z0-9]/.test(password)) score += 25
-    return score
-  }
-
-  const strength = getPasswordStrength()
-  const strengthClass = strength === 0 ? '' : strength <= 25 ? 'password-strength-weak' : strength <= 50 ? 'password-strength-fair' : strength <= 75 ? 'password-strength-good' : 'password-strength-strong'
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -139,106 +42,131 @@ const RegisterPage: React.FC = () => {
     }
   }
 
+  const handleGoogleSignUp = () => {
+    console.log("Google sign up clicked");
+  }
+
   return (
-    <AuthLayout
-      title="Create Account"
-      subtitle="Join ContentSplit today"
-      linkText="Already have an account?"
-      linkUrl="/login"
-      linkLabel="Log in"
-    >
-      <form className="auth-form" onSubmit={handleRegister}>
-        {error && (
-          <div style={{
-            padding: '12px',
-            backgroundColor: '#fee2e2',
-            color: '#b91c1c',
-            borderRadius: '8px',
-            fontSize: '0.9rem',
-            textAlign: 'center',
-            fontWeight: 500
-          }}>
-            {error}
+    <div style={{ fontFamily: '"DM Sans", sans-serif' }}>
+      <AuthLayout>
+        <div className="w-full flex flex-col items-center">
+          <div className="w-full max-w-[400px]">
+            <Link to="/" className="flex justify-center items-center gap-2 mb-8 no-underline hover:opacity-90 transition-opacity w-full">
+              <img src="/logo.svg" alt="ContentSplit" className="w-[32px] h-[32px] rounded-[8px]" />
+              <span className="text-[1.4rem] font-bold text-slate-900" style={{ fontFamily: '"Syne", sans-serif' }}>ContentSplit</span>
+            </Link>
+            <h1 className="text-[28px] font-bold text-slate-900 mb-4 text-left w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Create Account 👋</h1>
+          <p className="text-[14px] text-slate-600 mb-8 text-left leading-relaxed">
+            Turn your long-form content into endless social posts.<br />
+            Sign up to start repurposing effortlessly.
+          </p>
+
+          <form onSubmit={handleRegister} className="w-full flex flex-col">
+            {error && (
+              <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm text-center mb-4 font-medium">
+                {error}
+              </div>
+            )}
+            
+            <div className="flex gap-4 mb-4">
+              <div className="flex-1">
+                <label className="block text-[14px] font-medium text-slate-900 mb-2">First Name</label>
+                <input
+                  type="text"
+                  placeholder="John"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  className="w-full px-4 h-[44px] bg-slate-50/50 border border-slate-200 rounded-lg text-[14px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-[14px] font-medium text-slate-900 mb-2">Last Name</label>
+                <input
+                  type="text"
+                  placeholder="Doe"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  className="w-full px-4 h-[44px] bg-slate-50/50 border border-slate-200 rounded-lg text-[14px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+                />
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-[14px] font-medium text-slate-900 mb-2">Email</label>
+              <input
+                type="email"
+                placeholder="Example@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-4 h-[44px] bg-slate-50/50 border border-slate-200 rounded-lg text-[14px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-[14px] font-medium text-slate-900 mb-2">Password</label>
+              <input
+                type="password"
+                placeholder="At least 8 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-4 h-[44px] bg-slate-50/50 border border-slate-200 rounded-lg text-[14px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  required
+                  className="w-4 h-4 rounded border-slate-300 text-[#111827] focus:ring-[#111827]"
+                />
+                <span className="text-sm text-slate-600">
+                  I agree to the <Link to="/terms" className="text-[#111827] font-medium hover:underline">Terms</Link> and <Link to="/privacy" className="text-[#111827] font-medium hover:underline">Privacy Policy</Link>
+                </span>
+              </label>
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={isPending}
+              className="w-full h-[44px] bg-[#111827] hover:bg-slate-800 text-white text-[15px] font-medium rounded-lg transition-colors flex justify-center items-center mb-6"
+            >
+              {isPending ? 'Creating Account...' : 'Sign up'}
+            </button>
+          </form>
+
+          <div className="flex items-center w-full mb-6">
+            <div className="flex-1 h-[1px] bg-slate-200"></div>
+            <span className="px-4 text-[14px] text-slate-500">Or</span>
+            <div className="flex-1 h-[1px] bg-slate-200"></div>
           </div>
-        )}
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <input
-            type="text"
-            className="auth-input"
-            placeholder="First Name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-          />
-          <input
-            type="text"
-            className="auth-input"
-            placeholder="Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-          />
-        </div>
 
-        <input
-          type="email"
-          className="auth-input"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-
-        <div className="auth-input-container">
-          <input
-            type={showPassword ? "text" : "password"}
-            className="auth-input auth-password-input"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button
-            type="button"
-            className="auth-password-toggle"
-            onClick={() => setShowPassword(!showPassword)}
-            tabIndex={-1}
-            aria-label={showPassword ? "Hide password" : "Show password"}
+          <button 
+            onClick={handleGoogleSignUp}
+            className="w-full h-[44px] bg-[#F8FAFC] hover:bg-slate-100 text-slate-700 text-[14px] font-medium rounded-lg transition-colors flex justify-center items-center gap-3 mb-8"
           >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Sign up with Google
           </button>
-        </div>
-        
-        {password.length > 0 && (
-          <div className="password-strength">
-            <div className={`password-strength-fill ${strengthClass}`}></div>
+
+          <p className="text-center text-[14px] text-slate-600">
+            Already have an account? <Link to="/login" className="text-blue-600 hover:text-blue-700 hover:underline font-medium">Log in</Link>
+          </p>
           </div>
-        )}
-
-        <label className="auth-terms">
-          <input
-            type="checkbox"
-            checked={termsAccepted}
-            onChange={(e) => setTermsAccepted(e.target.checked)}
-            required
-          />
-          <span>I agree to the <Link to="/terms" className="auth-link">Terms</Link> and <Link to="/privacy" className="auth-link">Privacy Policy</Link></span>
-        </label>
-
-        <button type="submit" className="auth-primary-btn" disabled={isPending}>
-          {isPending ? 'Creating Account...' : 'Create Account'}
-        </button>
-      </form>
-
-      <div className="auth-divider">
-        <span className="auth-divider-text">OR CONTINUE WITH</span>
-      </div>
-
-      <div className="auth-social-buttons">
-        <GoogleAuth buttonText="Google" />
-      </div>
-    </AuthLayout>
+        </div>
+      </AuthLayout>
+    </div>
   )
 }
 

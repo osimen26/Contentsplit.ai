@@ -4,9 +4,9 @@ import '@/styles/auth.css'
 
 const AuthLayout: React.FC = () => {
   return (
-    <div className="login-container">
+    <>
       <Outlet />
-    </div>
+    </>
   )
 }
 

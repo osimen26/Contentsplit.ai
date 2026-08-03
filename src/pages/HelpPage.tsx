@@ -10,7 +10,7 @@ const COLLECTIONS = [
     title: 'Getting Started',
     description: 'Learn how to use ContentSplit to repurpose your content.',
     icon: <BookOpen size={24} />,
-    color: '#6366f1',
+    color: '#111827',
     articleCount: 5,
     articles: [
       {
@@ -110,7 +110,7 @@ const COLLECTIONS = [
     title: 'Your Account',
     description: 'Manage your profile, password, and preferences.',
     icon: <Settings size={24} />,
-    color: '#8b5cf6',
+    color: '#111827',
     articleCount: 3,
     articles: [
       {
@@ -288,8 +288,8 @@ const HelpPage: React.FC = () => {
                 transition: 'border-color 0.2s, box-shadow 0.2s',
               }}
               onFocus={e => {
-                e.target.style.borderColor = 'var(--sys-color-primary-40, #6366f1)'
-                e.target.style.boxShadow = '0 0 0 3px rgba(107, 97, 231,0.1)'
+                e.target.style.borderColor = 'var(--sys-color-primary-40, #111827)'
+                e.target.style.boxShadow = '0 0 0 3px rgba(17, 24, 39,0.1)'
               }}
               onBlur={e => {
                 e.target.style.borderColor = 'rgba(0,0,0,0.12)'
@@ -426,7 +426,7 @@ const HelpPage: React.FC = () => {
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 8,
                     padding: '10px 20px',
-                    backgroundColor: 'var(--sys-color-primary-40, #6366f1)',
+                    backgroundColor: 'var(--sys-color-primary-40, #111827)',
                     color: 'white',
                     borderRadius: 8,
                     textDecoration: 'none',

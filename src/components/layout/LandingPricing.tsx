@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
+import { apiClient } from '@/services/api-client'
 
 const syne = (size: number, weight = 700, extra?: React.CSSProperties): React.CSSProperties => ({
   fontFamily: '"Syne", sans-serif', fontWeight: weight, fontSize: size, ...extra,
@@ -65,9 +68,52 @@ const plans = [
 
 const LandingPricing: React.FC = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+  const authContext = useAuth();
+  const user = authContext?.user;
+
+  const handlePlanClick = async (planName: string) => {
+    if (planName === 'Free') {
+      if (user) {
+        navigate('/dashboard');
+      } else {
+        navigate('/register');
+      }
+      return;
+    }
+
+    const tier = planName.toLowerCase();
+
+    if (!user) {
+      navigate('/register');
+      return;
+    }
+
+    if (user.tier === tier) {
+      navigate('/dashboard');
+      return;
+    }
+
+    try {
+      setLoadingPlan(planName);
+      const response = await apiClient.initiatePayment(tier);
+      if (response?.paymentLink) {
+        window.location.href = response.paymentLink;
+      } else {
+        alert('Failed to generate payment link. Please try again.');
+      }
+    } catch (error) {
+      console.error('Payment initiation error:', error);
+      alert('Failed to initialize payment. Please check your connection and try again.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   return (
-    <section id="pricing" style={{ background: '#FFFFFF', padding: '128px 24px' }}>
+    <section id="pricing" className="pricing-container" style={{ background: '#FFFFFF', padding: '128px 24px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         {/* Header */}
@@ -110,7 +156,7 @@ const LandingPricing: React.FC = () => {
         </div>
 
         {/* Pricing Grid */}
-        <div style={{ 
+        <div className="pricing-grid" style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
           gap: '24px',
@@ -126,7 +172,7 @@ const LandingPricing: React.FC = () => {
             }
 
             return (
-              <div key={i} style={{ 
+              <div key={i} className="pricing-card" style={{ 
                 background: '#FFFFFF', 
                 borderRadius: '8px', 
                 border: '1px solid #E2E8F0',
@@ -188,13 +234,15 @@ const LandingPricing: React.FC = () => {
                   background: plan.buttonVariant === 'primary' ? '#0F172A' : '#F1F5F9',
                   color: plan.buttonVariant === 'primary' ? '#FFFFFF' : '#0F172A',
                   ...dm(14, 600),
-                  cursor: 'pointer',
+                  cursor: loadingPlan === plan.name ? 'wait' : 'pointer',
                   transition: 'opacity 0.2s'
                 }}
+                onClick={() => handlePlanClick(plan.name)}
+                disabled={loadingPlan === plan.name}
                 onMouseOver={(e) => e.currentTarget.style.opacity = '0.9'}
                 onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
                 >
-                  {plan.buttonText}
+                  {loadingPlan === plan.name ? 'Processing...' : plan.buttonText}
                 </button>
 
               </div>

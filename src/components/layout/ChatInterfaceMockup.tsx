@@ -168,7 +168,7 @@ const StreamingCard: React.FC<{ text: string; platformId: string; showCursor: bo
       </div>
       <div style={{ padding: '16px', flex: 1, ...dm(13, 400, { color: '#1E293B', lineHeight: 1.75, whiteSpace: 'pre-wrap' }) }}>
         {text}
-        <span style={{ display: 'inline-block', width: '2px', height: '1em', background: '#6b61e7', marginLeft: '1px', verticalAlign: 'text-bottom', borderRadius: '1px', opacity: showCursor ? 1 : 0, transition: 'opacity 0.1s' }} />
+        <span style={{ display: 'inline-block', width: '2px', height: '1em', background: '#111827', marginLeft: '1px', verticalAlign: 'text-bottom', borderRadius: '1px', opacity: showCursor ? 1 : 0, transition: 'opacity 0.1s' }} />
       </div>
     </div>
   )
@@ -390,7 +390,7 @@ const ChatInterfaceMockup: React.FC = () => {
               <li key={i}>
                 <button style={{ width: '100%', background: 'transparent', border: 'none', padding: '8px 4px', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '8px' }}>
                   <span style={{ ...dm(14, 400, { color: '#1E293B' }) }}>{label}</span>
-                  {i === 1 && <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#6b61e7', flexShrink: 0 }} />}
+                  {i === 1 && <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#111827', flexShrink: 0 }} />}
                 </button>
               </li>
             ))}
@@ -433,10 +433,6 @@ const ChatInterfaceMockup: React.FC = () => {
             {!hasChatContent ? (
               /* Enhanced Empty State for Multi-Platform Selection */
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 20px', paddingBottom: '40px' }}>
-                
-                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(15, 23, 42, 0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-                  <Sparkles size={24} color="#0F172A" />
-                </div>
                 
                 <h2 style={{ ...syne(32, 600, { color: '#0F172A', letterSpacing: '-0.02em', margin: 0, marginBottom: '12px' }) }}>
                   Ready to repurpose
@@ -495,7 +491,7 @@ const ChatInterfaceMockup: React.FC = () => {
                     style={{
                       background: 'transparent', border: 'none', cursor: 'pointer',
                       display: 'flex', alignItems: 'center', gap: '6px',
-                      ...dm(14, 500, { color: '#6b61e7' })
+                      ...dm(14, 500, { color: '#111827' })
                     }}
                   >
                     <CheckCheck size={16} /> 
@@ -607,7 +603,7 @@ const ChatInterfaceMockup: React.FC = () => {
                 >
                   {inputText || <span style={{ color: '#94A3B8' }}>Paste your blog post or article here...</span>}
                   <span style={{
-                    display: 'inline-block', width: '2px', height: '1em', background: '#6b61e7',
+                    display: 'inline-block', width: '2px', height: '1em', background: '#111827',
                     marginLeft: '1px', verticalAlign: 'text-bottom', borderRadius: '1px',
                     opacity: showCursor ? 1 : 0, transition: 'opacity 0.1s',
                   }} />
@@ -621,7 +617,7 @@ const ChatInterfaceMockup: React.FC = () => {
                   style={{
                     width: '100%', minHeight: '48px', background: 'transparent',
                     border: 'none', resize: 'none', outline: 'none',
-                    color: '#1E293B', caretColor: '#6b61e7',
+                    color: '#1E293B', caretColor: '#111827',
                     ...dm(14, 400, { lineHeight: 1.6 }), padding: 0, cursor: 'text',
                   }}
                 />

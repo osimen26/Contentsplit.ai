@@ -21,13 +21,13 @@ export const LimitReachedBubble: React.FC<LimitReachedBubbleProps> = ({
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08))',
+      background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.08), rgba(168, 85, 247, 0.08))',
       borderRadius: '20px',
       padding: '24px',
-      border: '1px solid rgba(99, 102, 241, 0.2)',
+      border: '1px solid rgba(17, 24, 39, 0.2)',
       maxWidth: 520,
       width: '100%',
-      boxShadow: '0 4px 16px rgba(99, 102, 241, 0.08)',
+      boxShadow: '0 4px 16px rgba(17, 24, 39, 0.08)',
     }}>
       {/* Header */}
       <div style={{
@@ -40,7 +40,7 @@ export const LimitReachedBubble: React.FC<LimitReachedBubbleProps> = ({
           width: 40,
           height: 40,
           borderRadius: '12px',
-          background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+          background: 'linear-gradient(135deg, #111827, #111827)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -61,7 +61,7 @@ export const LimitReachedBubble: React.FC<LimitReachedBubbleProps> = ({
           <p style={{
             margin: '2px 0 0',
             fontSize: '0.85rem',
-            color: '#6366f1',
+            color: '#111827',
             fontWeight: 500,
           }}>
             {dailyUsage}/{dailyLimit} conversions used today
@@ -71,7 +71,7 @@ export const LimitReachedBubble: React.FC<LimitReachedBubbleProps> = ({
 
       {/* Progress Bar */}
       <div style={{
-        background: 'rgba(99, 102, 241, 0.1)',
+        background: 'rgba(17, 24, 39, 0.1)',
         borderRadius: '8px',
         height: '8px',
         marginBottom: '20px',
@@ -82,7 +82,7 @@ export const LimitReachedBubble: React.FC<LimitReachedBubbleProps> = ({
           height: '100%',
           background: progress >= 100 
             ? 'linear-gradient(90deg, #ef4444, #f97316)' 
-            : 'linear-gradient(90deg, #6366f1, #a855f7)',
+            : 'linear-gradient(90deg, #111827, #111827)',
           borderRadius: '8px',
           transition: 'width 0.5s ease, background 0.3s ease',
         }} />
@@ -118,7 +118,7 @@ export const LimitReachedBubble: React.FC<LimitReachedBubbleProps> = ({
       {/* Tips for Free Users */}
       {isFreeTier && (
         <div style={{
-          background: 'rgba(99, 102, 241, 0.05)',
+          background: 'rgba(17, 24, 39, 0.05)',
           borderRadius: '12px',
           padding: '14px 16px',
           marginBottom: '20px',
@@ -127,7 +127,7 @@ export const LimitReachedBubble: React.FC<LimitReachedBubbleProps> = ({
             margin: '0 0 10px',
             fontSize: '0.8rem',
             fontWeight: 600,
-            color: '#6366f1',
+            color: '#111827',
             textTransform: 'uppercase' as const,
             letterSpacing: '0.05em',
           }}>
@@ -155,7 +155,7 @@ export const LimitReachedBubble: React.FC<LimitReachedBubbleProps> = ({
           padding: '14px 24px',
           borderRadius: '12px',
           border: 'none',
-          background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+          background: 'linear-gradient(135deg, #111827, #111827)',
           color: 'white',
           fontSize: '0.95rem',
           fontWeight: 600,
@@ -164,16 +164,16 @@ export const LimitReachedBubble: React.FC<LimitReachedBubbleProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           gap: '8px',
-          boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+          boxShadow: '0 4px 12px rgba(17, 24, 39, 0.3)',
           transition: 'all 0.2s ease',
           minHeight: 48,
         }}
         onMouseEnter={e => {
-          e.currentTarget.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)'
+          e.currentTarget.style.boxShadow = '0 6px 20px rgba(17, 24, 39, 0.4)'
           e.currentTarget.style.transform = 'translateY(-2px)'
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)'
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(17, 24, 39, 0.3)'
           e.currentTarget.style.transform = 'translateY(0)'
         }}
       >

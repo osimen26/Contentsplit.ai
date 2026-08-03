@@ -101,3 +101,23 @@ img {
   max-width: 100%;
   height: auto;
 }
+
+/* SKIP LINK FOR ACCESSIBILITY */
+.cs-skip-link {
+  position: absolute;
+  top: -9999px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--sys-color-primary, #111827);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  text-decoration: none;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+
+.cs-skip-link:focus {
+  top: 0;
+}

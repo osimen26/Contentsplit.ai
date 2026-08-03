@@ -10,7 +10,7 @@ const dm = (size: number, weight = 400, extra?: React.CSSProperties): React.CSSP
 
 const LandingSeeItWork: React.FC = () => {
   return (
-    <section id="see-it-work" style={{ background: '#F8FAFC', padding: '128px 24px', overflow: 'hidden' }}>
+    <section id="see-it-work" className="see-it-work-container" style={{ background: '#F8FAFC', padding: '128px 24px', overflow: 'hidden' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
         
         {/* Header */}
@@ -27,7 +27,7 @@ const LandingSeeItWork: React.FC = () => {
         </p>
 
         {/* Interactive Mock / Image Showcase */}
-        <div style={{
+        <div className="see-it-work-mockup" style={{
           position: 'relative',
           width: 'fit-content',
           margin: '0 auto',

@@ -141,7 +141,7 @@ export const ProductPreview: React.FC = () => {
       }}>
         <div style={{
           width: 32, height: 32, borderRadius: 8,
-          background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+          background: 'linear-gradient(135deg, #111827, #111827)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <Logo size={18} color="white" />
@@ -155,8 +155,8 @@ export const ProductPreview: React.FC = () => {
             fontSize: 11, fontWeight: 600,
             padding: '4px 10px',
             borderRadius: 20,
-            background: 'rgba(99,102,241,0.1)',
-            color: '#6366f1',
+            background: 'rgba(17, 24, 39,0.1)',
+            color: '#111827',
           }}>Free</span>
         </div>
       </div>
@@ -187,13 +187,13 @@ export const ProductPreview: React.FC = () => {
           <div style={{ display: 'flex', gap: 12, flexDirection: 'row-reverse', animation: 'chatSlideUp 0.4s ease-out forwards' }}>
             <div style={{
               width: 32, height: 32, borderRadius: 12,
-              background: '#6366f1', display: 'flex',
+              background: '#111827', display: 'flex',
               alignItems: 'center', justifyContent: 'center',
               color: 'white', fontWeight: 700, fontSize: 12, flexShrink: 0,
             }}>U</div>
             <div style={{
-              background: 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1))',
-              border: '1px solid rgba(99,102,241,0.2)',
+              background: 'linear-gradient(135deg, rgba(17, 24, 39,0.1), rgba(139,92,246,0.1))',
+              border: '1px solid rgba(17, 24, 39,0.2)',
               borderRadius: '20px 20px 4px 20px',
               padding: '14px 18px',
               color: '#1e1b4b',
@@ -212,9 +212,9 @@ export const ProductPreview: React.FC = () => {
             <div style={{
               width: 32, height: 32, borderRadius: 12,
               background: 'rgba(255,255,255,0.8)',
-              border: '1px solid rgba(99,102,241,0.2)',
+              border: '1px solid rgba(17, 24, 39,0.2)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#6366f1', flexShrink: 0,
+              color: '#111827', flexShrink: 0,
             }}><Sparkles size={16} /></div>
             <div style={{
               background: 'rgba(255,255,255,0.8)',
@@ -236,12 +236,12 @@ export const ProductPreview: React.FC = () => {
                         display: 'flex', alignItems: 'center', gap: 6,
                         padding: '8px 14px', borderRadius: 10,
                         border: selectedPlatforms.includes(p.id)
-                          ? '2px solid #6366f1'
+                          ? '2px solid #111827'
                           : '1px solid rgba(0,0,0,0.08)',
                         background: selectedPlatforms.includes(p.id)
-                          ? 'rgba(99,102,241,0.08)'
+                          ? 'rgba(17, 24, 39,0.08)'
                           : 'rgba(255,255,255,0.6)',
-                        color: selectedPlatforms.includes(p.id) ? '#6366f1' : '#475569',
+                        color: selectedPlatforms.includes(p.id) ? '#111827' : '#475569',
                         fontSize: 13, fontWeight: 500, cursor: 'pointer',
                       }}
                     >
@@ -263,12 +263,12 @@ export const ProductPreview: React.FC = () => {
                       style={{
                         padding: '6px 14px', borderRadius: 8,
                         border: selectedTone === t
-                          ? '2px solid #6366f1'
+                          ? '2px solid #111827'
                           : '1px solid rgba(0,0,0,0.08)',
                         background: selectedTone === t
-                          ? 'rgba(99,102,241,0.08)'
+                          ? 'rgba(17, 24, 39,0.08)'
                           : 'rgba(255,255,255,0.6)',
-                        color: selectedTone === t ? '#6366f1' : '#475569',
+                        color: selectedTone === t ? '#111827' : '#475569',
                         fontSize: 13, fontWeight: 500, cursor: 'pointer',
                       }}
                     >
@@ -281,7 +281,7 @@ export const ProductPreview: React.FC = () => {
                 onClick={handleGenerate}
                 style={{
                   width: '100%', padding: '10px', borderRadius: 10,
-                  background: '#6366f1', color: 'white',
+                  background: '#111827', color: 'white',
                   border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14,
                 }}
               >
@@ -297,9 +297,9 @@ export const ProductPreview: React.FC = () => {
             <div style={{
               width: 32, height: 32, borderRadius: 12,
               background: 'rgba(255,255,255,0.8)',
-              border: '1px solid rgba(99,102,241,0.2)',
+              border: '1px solid rgba(17, 24, 39,0.2)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#6366f1', flexShrink: 0,
+              color: '#111827', flexShrink: 0,
             }}><Sparkles size={16} /></div>
             <div style={{ flex: 1 }}>
               {/* Tabs */}
@@ -314,7 +314,7 @@ export const ProductPreview: React.FC = () => {
                       flex: 1, padding: '8px 12px', borderRadius: 8,
                       background: '#ffffff',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                      color: '#6366f1', fontSize: 13, fontWeight: 600,
+                      color: '#111827', fontSize: 13, fontWeight: 600,
                       display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center',
                     }}>
                       {platform?.icon}
@@ -347,7 +347,7 @@ export const ProductPreview: React.FC = () => {
               <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                 <button style={{
                   padding: '8px 16px', borderRadius: 8,
-                  background: '#6366f1', color: 'white',
+                  background: '#111827', color: 'white',
                   border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13,
                 }}>Copy</button>
                 <button style={{
@@ -397,7 +397,7 @@ export const ProductPreview: React.FC = () => {
             onClick={handleSubmit}
             style={{
               width: 34, height: 34, borderRadius: '50%',
-              background: input.trim() ? '#6366f1' : '#cbd5e1',
+              background: input.trim() ? '#111827' : '#cbd5e1',
               border: 'none', cursor: input.trim() ? 'pointer' : 'not-allowed',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'white', flexShrink: 0,

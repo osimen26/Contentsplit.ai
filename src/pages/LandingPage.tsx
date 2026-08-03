@@ -17,6 +17,7 @@ import {
   LinkedInIcon as LiIcon,
 } from '@components/ui/SocialIcons'
 
+import '../styles/landing-mobile.css'
 
 // ─── Design tokens (ContentSplit BUILD_GUIDE v1.0) ───────────────────────────
 const T = {
@@ -24,7 +25,7 @@ const T = {
   surface:     '#F8FAFC',
   surface2:    '#F1F5F9',
   border:      '#E2E8F0',
-  accent:      '#6b61e7',
+  accent:      '#111827',
   accentWarm:  '#FF6B6B',
   textPrimary:   '#0F172A',
   textSecondary: '#475569',
@@ -147,8 +148,8 @@ const Footer: React.FC<FooterProps> = ({ onOpenLegal }) => {
         .cs-link-hover:hover { color: #FFFFFF !important; }
         .cs-social-hover:focus, .cs-link-hover:focus { outline: none; }
         .cs-social-hover:focus-visible, .cs-link-hover:focus-visible { 
-          background: rgba(107, 97, 231, 0.15);
-          box-shadow: 0 0 0 4px rgba(107, 97, 231, 0.15);
+          background: rgba(17, 24, 39, 0.15);
+          box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.15);
           border-radius: 4px;
           color: #FFFFFF !important;
         }

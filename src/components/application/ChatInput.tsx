@@ -140,7 +140,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               alignItems: 'center',
               gap: '6px',
               opacity: disabled ? 0.7 : 1,
-              boxShadow: '0 2px 8px rgba(107, 97, 231, 0.25)'
+              boxShadow: '0 2px 8px rgba(17, 24, 39, 0.25)'
             }}
           >
             <Sparkles size={14} /> Generate Batch ({batchItems.length})

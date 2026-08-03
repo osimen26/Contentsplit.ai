@@ -64,7 +64,7 @@ const testimonials = [
 
 const LandingTestimonials: React.FC = () => {
   return (
-    <section id="testimonials" style={{ background: '#FFFFFF', padding: '128px 24px' }}>
+    <section id="testimonials" className="testimonials-container" style={{ background: '#FFFFFF', padding: '128px 24px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         {/* Header */}
@@ -81,7 +81,7 @@ const LandingTestimonials: React.FC = () => {
         </div>
 
         {/* Testimonials Grid */}
-        <div style={{ 
+        <div className="testimonials-grid" style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
           gap: '24px',

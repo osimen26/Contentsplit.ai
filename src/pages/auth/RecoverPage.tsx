@@ -51,13 +51,13 @@ const RecoverPage: React.FC = () => {
                 width: 72,
                 height: 72,
                 borderRadius: 20,
-                background: 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.12))',
+                background: 'linear-gradient(135deg, rgba(17, 24, 39,0.12), rgba(139,92,246,0.12))',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 28px',
               }}>
-                <Mail size={32} color="#6366f1" strokeWidth={1.5} />
+                <Mail size={32} color="#111827" strokeWidth={1.5} />
               </div>
 
               <h1 className="auth-title">Forgot your password?</h1>
@@ -146,7 +146,7 @@ const RecoverPage: React.FC = () => {
               </p>
               <p style={{
                 fontWeight: 700,
-                color: '#4f46e5',
+                color: '#111827',
                 fontSize: '1rem',
                 marginBottom: 32,
                 wordBreak: 'break-all',
@@ -156,8 +156,8 @@ const RecoverPage: React.FC = () => {
 
               {/* Tip box */}
               <div style={{
-                background: 'rgba(99,102,241,0.06)',
-                border: '1px solid rgba(99,102,241,0.12)',
+                background: 'rgba(17, 24, 39,0.06)',
+                border: '1px solid rgba(17, 24, 39,0.12)',
                 borderRadius: 14,
                 padding: '16px 20px',
                 marginBottom: 28,
@@ -166,7 +166,7 @@ const RecoverPage: React.FC = () => {
                 gap: 12,
                 textAlign: 'left',
               }}>
-                <Inbox size={20} color="#6366f1" style={{ flexShrink: 0, marginTop: 2 }} />
+                <Inbox size={20} color="#111827" style={{ flexShrink: 0, marginTop: 2 }} />
                 <p style={{ fontSize: '0.875rem', color: '#475569', margin: 0, lineHeight: 1.5 }}>
                   The link expires in <strong>1 hour</strong>. If you don't see the email, check your spam or junk folder.
                 </p>

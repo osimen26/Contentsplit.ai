@@ -162,12 +162,12 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
             width: 64,
             height: 64,
             borderRadius: '20px',
-            background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+            background: 'linear-gradient(135deg, #111827, #111827)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 24px',
-            boxShadow: '0 8px 24px rgba(99, 102, 241, 0.3)',
+            boxShadow: '0 8px 24px rgba(17, 24, 39, 0.3)',
           }}>
             <Lock size={28} color="white" />
           </div>
@@ -198,7 +198,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
           {/* Progress Bar */}
           {!isUnlimited && (
             <div style={{
-              background: 'rgba(99, 102, 241, 0.1)',
+              background: 'rgba(17, 24, 39, 0.1)',
               borderRadius: '12px',
               height: '12px',
               marginBottom: '28px',
@@ -209,7 +209,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                 height: '100%',
                 background: progress >= 100
                   ? 'linear-gradient(90deg, #ef4444, #f97316)'
-                  : 'linear-gradient(90deg, #6366f1, #a855f7)',
+                  : 'linear-gradient(90deg, #111827, #111827)',
                 borderRadius: '12px',
                 transition: 'width 0.5s ease, background 0.3s ease',
               }} />
@@ -224,18 +224,18 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
               style={{
                 padding: '20px',
                 borderRadius: '16px',
-                border: '2px solid rgba(99, 102, 241, 0.2)',
+                border: '2px solid rgba(17, 24, 39, 0.2)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05))',
+                background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.05), rgba(168, 85, 247, 0.05))',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)'
+                e.currentTarget.style.borderColor = 'rgba(17, 24, 39, 0.4)'
                 e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(99, 102, 241, 0.15)'
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(17, 24, 39, 0.15)'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.2)'
+                e.currentTarget.style.borderColor = 'rgba(17, 24, 39, 0.2)'
                 e.currentTarget.style.transform = 'translateY(0)'
                 e.currentTarget.style.boxShadow = 'none'
               }}
@@ -245,11 +245,11 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                   <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>
                     Pro Plan
                   </h3>
-                  <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#6366f1', fontWeight: 600 }}>
+                  <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#111827', fontWeight: 600 }}>
                     $12 USD/month
                   </p>
                 </div>
-                <ArrowRight size={20} style={{ color: '#6366f1' }} />
+                <ArrowRight size={20} style={{ color: '#111827' }} />
               </div>
               <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.85rem', color: '#475569', lineHeight: 1.8 }}>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -276,7 +276,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                 border: '2px solid rgba(168, 85, 247, 0.3)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(99, 102, 241, 0.05))',
+                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(17, 24, 39, 0.05))',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.5)'
@@ -301,16 +301,16 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                       fontSize: '0.7rem',
                       fontWeight: 600,
                       backgroundColor: 'rgba(168, 85, 247, 0.1)',
-                      color: '#a855f7',
+                      color: '#111827',
                     }}>
                       POPULAR
                     </span>
                   </div>
-                  <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#a855f7', fontWeight: 600 }}>
+                  <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#111827', fontWeight: 600 }}>
                     $40 USD/month
                   </p>
                 </div>
-                <ArrowRight size={20} style={{ color: '#a855f7' }} />
+                <ArrowRight size={20} style={{ color: '#111827' }} />
               </div>
               <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.85rem', color: '#475569', lineHeight: 1.8 }}>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -332,7 +332,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
           {/* Tips for Free Users */}
           {isFreeTier && (
             <div style={{
-              background: 'rgba(99, 102, 241, 0.05)',
+              background: 'rgba(17, 24, 39, 0.05)',
               borderRadius: '12px',
               padding: '16px',
               marginBottom: '20px',
@@ -341,7 +341,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                 margin: '0 0 8px',
                 fontSize: '0.8rem',
                 fontWeight: 600,
-                color: '#6366f1',
+                color: '#111827',
                 textTransform: 'uppercase' as const,
                 letterSpacing: '0.05em',
               }}>

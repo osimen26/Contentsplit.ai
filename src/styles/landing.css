@@ -1,4 +1,24 @@
 /* ─── NEW REDESIGN STYLES WITH DESIGN TOKENS ─── */
+/* SKIP LINK FOR ACCESSIBILITY */
+.cs-skip-link {
+  position: absolute;
+  top: -9999px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--sys-color-primary, #111827);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  text-decoration: none;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+
+.cs-skip-link:focus {
+  top: 0;
+}
+
 .landing-page-redesign {
   font-family: var(--sys-font-body-text-regular-font-family, 'DM Sans', sans-serif);
   background: var(--sys-color-neutral-100);
@@ -145,7 +165,7 @@
   transform: translateX(-50%);
   width: 900px;
   height: 600px;
-  background: radial-gradient(ellipse at center, rgba(107, 97, 231, 0.18) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(17, 24, 39, 0.18) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -164,8 +184,8 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sys-spacing-s);
-  background: rgba(107, 97, 231, 0.12);
-  border: 1px solid rgba(107, 97, 231, 0.2);
+  background: rgba(17, 24, 39, 0.12);
+  border: 1px solid rgba(17, 24, 39, 0.2);
   border-radius: 999px;
   padding: 6px 16px;
   margin-bottom: var(--sys-spacing-lg);
@@ -1267,7 +1287,7 @@
 
 .landing-page-redesign .pricing-card.popular:hover {
   transform: translateY(-8px);
-  box-shadow: 0 24px 48px rgba(107, 97, 231, 0.2);
+  box-shadow: 0 24px 48px rgba(17, 24, 39, 0.2);
   border-color: var(--sys-color-primary);
 }
 
@@ -1377,12 +1397,12 @@
   background: var(--sys-color-primary-40);
   border: 1px solid var(--sys-color-primary-40);
   color: white;
-  box-shadow: 0 4px 12px rgba(107, 97, 231, 0.2);
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.2);
 }
 
 .landing-page-redesign .btn-plan-primary:hover {
   background: var(--sys-color-primary-30);
-  box-shadow: 0 6px 20px rgba(107, 97, 231, 0.4);
+  box-shadow: 0 6px 20px rgba(17, 24, 39, 0.4);
   transform: translateY(-1px);
 }
 
@@ -1677,7 +1697,7 @@
   background: linear-gradient(
     90deg,
     var(--sys-color-roles-primary-color-role-primary-role),
-    #8b5cf6
+    #111827
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -1808,9 +1828,9 @@
       var(--sys-color-roles-primary-color-role-primary-role) 0%,
       transparent 50%
     ),
-    radial-gradient(at 100% 0%, #8b5cf6 0%, transparent 50%),
-    radial-gradient(at 100% 100%, #4338ca 0%, transparent 50%),
-    radial-gradient(at 0% 100%, #6366f1 0%, transparent 50%);
+    radial-gradient(at 100% 0%, #111827 0%, transparent 50%),
+    radial-gradient(at 100% 100%, #1f2937 0%, transparent 50%),
+    radial-gradient(at 0% 100%, #111827 0%, transparent 50%);
   background-color: var(--sys-color-roles-primary-color-role-primary-role);
 }
 
@@ -1941,7 +1961,7 @@
 }
 
 .bento-card-purple {
-  background: linear-gradient(135deg, #6d5dfc 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, #6d5dfc 0%, #111827 100%);
   color: white;
 }
 
@@ -2090,9 +2110,9 @@
 
 .bento-platform-item:hover {
   transform: translateX(8px);
-  border-color: #6366f1;
+  border-color: #111827;
   background: #f5f3ff;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.1);
 }
 
 .status-dot {
@@ -2164,7 +2184,7 @@
   background: radial-gradient(
     circle at 50% 50%,
     var(--sys-color-roles-primary-color-role-primary-role) 0%,
-    #8b5cf6 50%,
+    #111827 50%,
     transparent 100%
   );
   opacity: 0.15;
@@ -2612,7 +2632,7 @@
 
   .testimonial-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(107, 97, 231, 0.12);
+    box-shadow: 0 12px 32px rgba(17, 24, 39, 0.12);
     border-color: var(--sys-color-primary-80);
   }
 
@@ -3082,7 +3102,7 @@
 }
 
 .cs-anime-badge-new {
-  background: #8B5CF6;
+  background: #111827;
   color: white;
   padding: 4px 10px;
   border-radius: 9999px;

@@ -33,7 +33,7 @@ const LandingSocialProof: React.FC = () => {
   })
   
   return (
-    <section style={{ 
+    <section className="social-proof-container" style={{ 
       background: '#FFFFFF', // Clean white background
       padding: '56px 24px',
       position: 'relative',

@@ -71,7 +71,7 @@ const LandingHero: React.FC = () => {
       {/* Hero Content Area */}
       <div style={{
         position: 'relative',
-        zIndex: 10,
+        zIndex: 30, /* Increased from 10 to 30 so the gradient mask doesn't wash out the text */
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

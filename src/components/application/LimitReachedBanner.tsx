@@ -73,8 +73,8 @@ export const LimitReachedBanner: React.FC<LimitReachedBannerProps> = ({
         background: 'rgba(255, 255, 255, 0.92)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        border: '1px solid rgba(99, 102, 241, 0.2)',
-        boxShadow: '0 2px 16px rgba(99, 102, 241, 0.10), 0 1px 4px rgba(0,0,0,0.06)',
+        border: '1px solid rgba(17, 24, 39, 0.2)',
+        boxShadow: '0 2px 16px rgba(17, 24, 39, 0.10), 0 1px 4px rgba(0,0,0,0.06)',
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? 'translateY(0)' : 'translateY(8px)',
         transition: 'opacity 0.25s ease, transform 0.25s ease',
@@ -89,7 +89,7 @@ export const LimitReachedBanner: React.FC<LimitReachedBannerProps> = ({
             width: 32,
             height: 32,
             borderRadius: '10px',
-            background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+            background: 'linear-gradient(135deg, #111827, #111827)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -166,7 +166,7 @@ export const LimitReachedBanner: React.FC<LimitReachedBannerProps> = ({
             padding: '7px 14px',
             borderRadius: '10px',
             border: 'none',
-            background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+            background: 'linear-gradient(135deg, #111827, #111827)',
             color: 'white',
             fontSize: '0.82rem',
             fontWeight: 600,
@@ -174,16 +174,16 @@ export const LimitReachedBanner: React.FC<LimitReachedBannerProps> = ({
             display: 'flex',
             alignItems: 'center',
             gap: '5px',
-            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.35)',
+            boxShadow: '0 2px 8px rgba(17, 24, 39, 0.35)',
             transition: 'all 0.15s ease',
             whiteSpace: 'nowrap',
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.boxShadow = '0 4px 16px rgba(99, 102, 241, 0.5)'
+            e.currentTarget.style.boxShadow = '0 4px 16px rgba(17, 24, 39, 0.5)'
             e.currentTarget.style.transform = 'translateY(-1px)'
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(99, 102, 241, 0.35)'
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(17, 24, 39, 0.35)'
             e.currentTarget.style.transform = 'translateY(0)'
           }}
         >

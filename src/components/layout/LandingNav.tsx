@@ -6,7 +6,7 @@ const T = {
   bg: '#FFFFFF',
   surface: '#F8FAFC',
   border: '#E2E8F0',
-  accent: '#6b61e7',
+  accent: '#111827',
   textPrimary: '#0F172A',
   textSecondary: '#475569',
   white: '#FFFFFF',

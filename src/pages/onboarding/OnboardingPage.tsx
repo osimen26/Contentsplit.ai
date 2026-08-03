@@ -62,7 +62,7 @@ const OnboardingPage: React.FC = () => {
         {/* Header */}
         <div className="onboarding-header">
           <div className="onboarding-icon-wrapper">
-            <Logo size={28} color="#6366f1" />
+            <Logo size={28} color="#111827" />
           </div>
           <h1 className="onboarding-title">
             {step === 1 ? 'What is your role?' : 'Choose your tone'}

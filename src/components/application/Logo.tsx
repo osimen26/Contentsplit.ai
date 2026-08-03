@@ -8,51 +8,21 @@ interface LogoProps {
 
 /**
  * ContentSplit Official Logo Mark
- * Replicates the "split hashtag" design from the provided branding.
+ * This is the new monochromatic logo mark based on public/logo.svg.
  */
 export const Logo: React.FC<LogoProps> = ({ size = 24, className = '', color = 'currentColor' }) => {
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 100 100"
+      viewBox="0 0 28 28"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* 
-        The logo is a hashtag (#) split by a diagonal line from bottom-left to top-right.
-        We draw the 8 separate segments of the bars.
-      */}
-      
-      {/* VERTICAL BARS */}
-      {/* Top Left Vertical */}
-      <rect x="35" y="10" width="12" height="35" rx="2" fill={color} />
-      {/* Bottom Left Vertical */}
-      <rect x="35" y="55" width="12" height="35" rx="2" fill={color} />
-      
-      {/* Top Right Vertical */}
-      <rect x="55" y="10" width="12" height="45" rx="2" fill={color} />
-      {/* Bottom Right Vertical */}
-      <rect x="55" y="65" width="12" height="25" rx="2" fill={color} />
-      
-      {/* HORIZONTAL BARS */}
-      {/* Top Left Horizontal */}
-      <rect x="10" y="35" width="25" height="12" rx="2" fill={color} />
-      {/* Top Right Horizontal */}
-      <rect x="45" y="35" width="45" height="12" rx="2" fill={color} />
-      
-      {/* Bottom Left Horizontal */}
-      <rect x="10" y="55" width="45" height="12" rx="2" fill={color} />
-      {/* Bottom Right Horizontal */}
-      <rect x="65" y="55" width="25" height="12" rx="2" fill={color} />
-      
-      {/* Diagonal Split Visual Hint (Subtle) */}
       <path 
-        d="M15 85 L85 15" 
-        stroke="transparent" 
-        strokeWidth="4" 
-        strokeLinecap="round" 
+        d="M14.3105 6.74947V7.98626C13.9084 8.04759 13.6086 8.22476 13.411 8.51777C13.2134 8.81078 13.1146 9.22986 13.1146 9.775V18.2178V18.6574C13.1146 18.8141 13.1452 18.981 13.2066 19.1582C13.2747 19.3286 13.3599 19.4751 13.4621 19.5977C13.5711 19.734 13.687 19.8328 13.8096 19.8941C13.9323 19.9487 14.0992 19.9861 14.3105 20.0066V21.2536C12.9885 21.2536 11.8403 20.9095 10.8659 20.2212C10.0073 19.6148 9.35994 18.8005 8.92383 17.7783C8.48772 16.7494 8.26966 15.533 8.26966 14.1293C8.26966 13.1003 8.40935 12.1429 8.68874 11.2571C8.97493 10.3644 9.3872 9.59101 9.92552 8.93684C10.4707 8.27586 11.1214 7.74435 11.8778 7.34231C12.641 6.94027 13.3735 6.73925 14.0754 6.73925L14.3105 6.74947ZM15.118 7.99648V6.7597C15.4519 6.81421 15.721 6.87213 15.9255 6.93346C16.1367 6.99479 16.5149 7.12426 17.06 7.32187C17.4076 7.44453 17.6392 7.50585 17.7551 7.50585C17.9527 7.50585 18.1026 7.41727 18.2048 7.2401L18.3377 6.99479C18.4195 6.83125 18.5728 6.74947 18.7977 6.74947C18.9816 6.74947 19.1213 6.80399 19.2167 6.91302C19.3189 7.02204 19.3701 7.18218 19.3701 7.39342V11.6455C19.3701 11.9181 19.3087 12.1157 19.1861 12.2383C19.0634 12.361 18.9237 12.4223 18.767 12.4223C18.6035 12.4223 18.4706 12.3712 18.3684 12.269C18.273 12.16 18.1946 11.9862 18.1333 11.7477C17.9902 11.2094 17.8505 10.7869 17.7142 10.4803C17.4212 9.83292 17.0873 9.30822 16.7125 8.90618C16.4604 8.63361 16.2082 8.42578 15.9561 8.28268C15.704 8.13276 15.4246 8.03737 15.118 7.99648ZM15.1486 21.2536V20.0066C15.6801 19.9657 16.2389 19.7647 16.8249 19.4035C17.1384 19.2059 17.4178 18.9436 17.6631 18.6165C17.9084 18.2826 18.0924 17.918 18.215 17.5228C18.2832 17.3047 18.3615 17.1514 18.4501 17.0628C18.5455 16.9674 18.6682 16.9197 18.8181 16.9197C18.9816 16.9197 19.1179 16.9811 19.227 17.1037C19.336 17.2264 19.3905 17.3797 19.3905 17.5637C19.3905 17.8703 19.2712 18.2417 19.0327 18.6778C18.8011 19.1139 18.5012 19.5159 18.1333 19.8839C17.6835 20.3337 17.2202 20.6676 16.7432 20.8856C16.273 21.1037 15.7415 21.2263 15.1486 21.2536Z" 
+        fill={color}
       />
     </svg>
   )
@@ -63,7 +33,7 @@ export const FullLogo: React.FC<{ size?: number; className?: string }> = ({ size
     <div className={`flex items-center gap-3 ${className}`} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
       <div style={{
         width: size, height: size, borderRadius: size * 0.25,
-        background: 'linear-gradient(135deg, var(--sys-color-primary-60), var(--sys-color-primary-30))',
+        backgroundColor: '#111',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 0
       }}>
@@ -72,9 +42,9 @@ export const FullLogo: React.FC<{ size?: number; className?: string }> = ({ size
       <span style={{ 
         fontWeight: 700, 
         fontSize: `${size * 0.55}px`, 
-        color: 'var(--sys-color-neutral-10)',
+        color: 'var(--sys-color-neutral-10, #0F172A)',
         letterSpacing: '-0.02em',
-        fontFamily: 'var(--sys-typography-title-large-font-family, var(--sys-font-title-large-regular-font-family, "Plus Jakarta Sans", sans-serif))'
+        fontFamily: 'var(--sys-typography-title-large-font-family, var(--sys-font-title-large-regular-font-family, "Syne", "Plus Jakarta Sans", sans-serif))'
       }}>
         ContentSplit
       </span>
