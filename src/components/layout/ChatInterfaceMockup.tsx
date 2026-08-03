@@ -348,12 +348,11 @@ const ChatInterfaceMockup: React.FC = () => {
   const hasChatContent = chatMessages.length > 0 || isStreaming
 
   return (
-    <div style={{ transform: 'scale(0.9)', transformOrigin: 'center center', width: '100%', display: 'flex', justifyContent: 'center' }}>
-      <div ref={containerRef} style={{
-        width: '1100px', maxWidth: '100%', height: '733px', margin: '0 auto',
-        background: '#FBFAF9', borderRadius: '10.47px',
-        border: '1px solid rgba(0,0,0,0.04)', display: 'flex', overflow: 'hidden', textAlign: 'left',
-      }}>
+    <div ref={containerRef} style={{
+      width: '1100px', maxWidth: '100%', height: '733px', margin: '0 auto',
+      background: '#FBFAF9', borderRadius: '10.47px',
+      border: '1px solid rgba(0,0,0,0.04)', display: 'flex', overflow: 'hidden', textAlign: 'left',
+    }}>
 
       {/* ── Sidebar ────────────────────────────────────────────────────────── */}
       <aside style={{
@@ -660,7 +659,6 @@ const ChatInterfaceMockup: React.FC = () => {
         .chat-action-btn:hover { background: #F1F5F9; }
         .chat-submit-btn:hover { background: #0F172A !important; }
       `}</style>
-    </div>
     </div>
   )
 }
