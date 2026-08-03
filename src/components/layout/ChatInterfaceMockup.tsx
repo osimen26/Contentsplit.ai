@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useGSAP } from '@gsap/react'
-import { PanelLeft, Plus, ArrowUp, RefreshCw, Copy, Sparkles, CheckCircle2, CheckCheck } from 'lucide-react'
+import { PanelLeft, Plus, ArrowUp, RefreshCw, Copy, CheckCircle2, CheckCheck } from 'lucide-react'
 import gsap from 'gsap'
 
 gsap.registerPlugin(useGSAP)
