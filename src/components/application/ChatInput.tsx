@@ -64,9 +64,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             <button
               onClick={() => onToggleBatchMode(!isBatchMode)}
               style={{
-                background: isBatchMode ? 'var(--sys-color-primary-95)' : 'transparent',
-                border: `1px solid ${isBatchMode ? 'var(--sys-color-primary-80)' : 'var(--sys-color-neutral-80)'}`,
-                color: isBatchMode ? 'var(--sys-color-primary)' : 'var(--sys-color-neutral-50)',
+                background: isBatchMode ? '#F8FAFC' : 'transparent',
+                border: `1px solid ${isBatchMode ? '#E2E8F0' : 'var(--sys-color-neutral-80)'}`,
+                color: isBatchMode ? '#0F172A' : 'var(--sys-color-neutral-50)',
                 padding: '4px 10px',
                 borderRadius: '20px',
                 fontSize: '0.75rem',
@@ -110,7 +110,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               color: 'var(--sys-color-neutral-20)',
               maxWidth: '200px'
             }}>
-              <FileIcon size={14} color="var(--sys-color-primary)" />
+              <FileIcon size={14} color="#475569" />
               <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flex: 1 }}>
                 {item.substring(0, 30)}...
               </span>
@@ -128,7 +128,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             disabled={disabled}
             style={{
               marginLeft: 'auto',
-              background: 'var(--sys-color-primary)',
+              background: '#111827',
               color: 'white',
               border: 'none',
               padding: '6px 16px',
