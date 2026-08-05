@@ -1,22 +1,16 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { useCurrentUser, useDeleteConversion } from '@/services/query-hooks'
-import { useConversions } from '@/services/query-hooks'
+import { useCurrentUser, useDeleteConversion, useConversions } from '@/services/query-hooks'
 import {
-  Plus,
   Settings,
   HelpCircle,
-  ChevronLeft,
-  ChevronRight,
-  Search,
   Menu,
   X as XIcon,
-  FileText,
   LogOut,
   Trash2,
+  PanelLeft,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { Logo } from '@components/application'
 import '@/styles/dashboard.css'
 
 export interface ClaudeLayoutProps {
@@ -25,6 +19,10 @@ export interface ClaudeLayoutProps {
 
 const SIDEBAR_W_EXPANDED = 260
 const SIDEBAR_W_COLLAPSED = 72
+
+const dm = (size: number, weight = 400, extra?: React.CSSProperties): React.CSSProperties => ({
+  fontFamily: '"DM Sans", sans-serif', fontWeight: weight, fontSize: size, ...extra,
+})
 
 // Sidebar content component - defined outside to avoid recreation
 const SidebarContentComponent: React.FC<{
@@ -44,8 +42,6 @@ const SidebarContentComponent: React.FC<{
 }> = ({
   collapsed,
   inDrawer,
-  search,
-  onSearchChange,
   onToggleCollapse,
   recentItems,
   location,
@@ -57,388 +53,212 @@ const SidebarContentComponent: React.FC<{
   isActive,
 }) => {
   const username = (currentUser?.email || 'user@example.com').split('@')[0]
-  const avatarLetter = (currentUser?.email || 'U')[0].toUpperCase()
-  const tier = currentUser?.tier === 'agency' ? 'Enterprise' : currentUser?.tier === 'pro' ? 'Pro' : 'Free'
   const deleteMutation = useDeleteConversion()
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, background: '#FBFAF9', padding: '20px 16px' }}>
+      
       {/* ── TOP: Brand + Toggle ── */}
-      <div style={{
-        display: 'flex', alignItems: 'center',
-        justifyContent: (!collapsed || inDrawer) ? 'space-between' : 'center',
-        padding: '16px 12px 8px',
-        flexShrink: 0,
-      }}>
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: (collapsed && !inDrawer) ? 'center' : 'space-between', marginBottom: '32px' }}>
         {(!collapsed || inDrawer) && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{
-              width: 28, height: 28, borderRadius: 8,
-              background: 'linear-gradient(135deg, #111827, #1f2937)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <Logo size={15} color="white" />
-            </div>
-            <span style={{ fontWeight: 700, fontSize: '1rem', color: '#F0F0F5' }}>
-              ContentSplit
-            </span>
-          </div>
+          <img src="/logo.svg" alt="ContentSplit" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
         )}
-        {!inDrawer && onToggleCollapse && (
-          <button
-            onClick={onToggleCollapse}
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: 28, height: 28, borderRadius: 6,
-              border: 'none', backgroundColor: 'transparent',
-              color: '#3D5068', cursor: 'pointer',
-              transition: 'background-color 0.15s',
-            }}
-          >
-            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-          </button>
-        )}
-        {inDrawer && (
-          <button onClick={onMobileClose} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4 }}>
-            <XIcon size={20} color="#8A9BB5" />
-          </button>
-        )}
-      </div>
+        
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {!inDrawer && onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              style={{
+                background: 'transparent', border: 'none', cursor: 'pointer', color: '#0F172A', display: 'flex', padding: '4px'
+              }}
+            >
+              <PanelLeft size={20} strokeWidth={2} />
+            </button>
+          )}
+          {inDrawer && (
+            <button onClick={onMobileClose} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4 }}>
+              <XIcon size={20} color="#0F172A" />
+            </button>
+          )}
+        </div>
+      </header>
 
       {/* ── NEW CONVERSION ── */}
-      <div style={{ padding: '8px 10px', flexShrink: 0 }}>
+      <div style={{ marginBottom: '32px' }}>
         <button
           onClick={onNavigate}
-          className="btn-gradient"
+          className="mockup-btn"
           style={{
-            width: '100%',
-            display: 'flex', alignItems: 'center',
-            justifyContent: (collapsed && !inDrawer) ? 'center' : 'flex-start',
-            gap: 8,
-            padding: (collapsed && !inDrawer) ? '10px' : '10px 14px',
-            borderRadius: 10,
-            fontSize: '0.95rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            minHeight: 44,
-            border: 'none',
-            background: '#111827',
-            color: 'white',
-            boxShadow: '0 2px 8px rgba(17, 24, 39, 0.3)',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = '#1f2937'
-            e.currentTarget.style.boxShadow = '0 4px 16px rgba(17, 24, 39, 0.4)'
-            e.currentTarget.style.transform = 'translateY(-1px)'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = '#111827'
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(17, 24, 39, 0.3)'
-            e.currentTarget.style.transform = 'translateY(0)'
+            width: '100%', background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.13)',
+            borderRadius: '8px', padding: (collapsed && !inDrawer) ? '10px' : '6px', display: 'flex', alignItems: 'center',
+            justifyContent: (collapsed && !inDrawer) ? 'center' : 'space-between', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+            transition: 'border-color 0.2s',
           }}
         >
-          <Plus size={18} strokeWidth={2.5} />
-          {(!collapsed || inDrawer) && 'New Conversion'}
+          {(!collapsed || inDrawer) ? (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <img src="/bubble-chat-add.svg" alt="" style={{ width: '16px', height: '16px' }} />
+                <span style={{ ...dm(13, 600, { color: '#0F172A' }) }}>New Chat</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ ...dm(9, 600, { color: '#94A3B8', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1px 5px', borderRadius: '4px' }) }}>Ctrl</span>
+                <span style={{ ...dm(9, 600, { color: '#94A3B8', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1px 5px', borderRadius: '4px' }) }}>K</span>
+              </div>
+            </>
+          ) : (
+            <img src="/bubble-chat-add.svg" alt="" style={{ width: '20px', height: '20px' }} />
+          )}
         </button>
       </div>
 
-      {/* ── SEARCH ── */}
-      {(!collapsed || inDrawer) && (
-        <div style={{ padding: '4px 10px 8px', flexShrink: 0 }}>
-          <div 
-            className="search-input-container"
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '6px 10px',
-              borderRadius: 8,
-              border: '1px solid #E2E8F0',
-              backgroundColor: '#151C28',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            <Search size={14} color="#3D5068" />
-            <input
-              type="text"
-              placeholder="Search conversions…"
-              value={search}
-              onChange={e => onSearchChange(e.target.value)}
-              style={{
-                border: 'none', background: 'transparent', outline: 'none',
-                fontSize: '0.85rem', color: '#F0F0F5',
-                width: '100%',
-              }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* ── RECENTS ── */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 6px' }}>
+      {/* ── RECENTS (Chats) ── */}
+      <nav style={{ flex: 1, overflowY: 'auto' }}>
         {(!collapsed || inDrawer) && (
-          <>
-            <div style={{
-              padding: '4px 8px 4px',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              color: '#8A9BB5',
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em',
-              marginBottom: 2,
-            }}>
-              Recents
-            </div>
-            {recentItems.length === 0 && (
-              <p style={{ padding: '8px 10px', fontSize: '0.85rem', color: '#3D5068' }}>
-                {search ? 'No results found.' : 'Your conversions will appear here.'}
-              </p>
-            )}
-            {recentItems.map(item => {
-              const active = location.pathname === `/dashboard/c/${item.id}`
-              const label = item.input_text.slice(0, 28) + (item.input_text.length > 28 ? '…' : '')
-              
-              return (
-                <div
-                  key={item.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '8px 10px',
-                    marginBottom: 2,
-                    borderRadius: 8,
-                    position: 'relative',
-                  }}
-                  className="recent-item-wrapper"
-                >
+          <h3 style={{ ...dm(13, 500, { color: '#94A3B8', marginBottom: '16px', paddingLeft: '4px', margin: '0 0 16px 0' }) }}>Chats</h3>
+        )}
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          {recentItems.length === 0 && (!collapsed || inDrawer) && (
+            <li style={{ padding: '8px 4px', ...dm(13, 400, { color: '#94A3B8' }) }}>
+              No chats yet.
+            </li>
+          )}
+          {recentItems.map(item => {
+            const active = location.pathname === `/dashboard/c/${item.id}`
+            const label = item.input_text.slice(0, 28) + (item.input_text.length > 28 ? '…' : '')
+            
+            return (
+              <li key={item.id}>
+                <div style={{ 
+                  width: '100%', 
+                  background: active ? 'rgba(0,0,0,0.03)' : 'transparent', 
+                  padding: '8px 8px', 
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '8px',
+                  transition: 'background 0.2s',
+                }}>
                   <Link
                     to={`/dashboard/c/${item.id}`}
                     onClick={onMobileClose}
-                    className="sidebar-link"
                     style={{
+                      flex: 1,
+                      textDecoration: 'none',
                       display: 'flex',
                       alignItems: 'center',
                       gap: 6,
-                      flex: 1,
-                      padding: 0,
-                      marginBottom: 0,
-                      borderRadius: 0,
-                      textDecoration: 'none',
-                      fontSize: '0.88rem',
-                      fontWeight: active ? 600 : 500,
-                      color: active ? '#111827' : '#8A9BB5',
-                      backgroundColor: 'transparent',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
+                      ...dm(13, active ? 500 : 400, { color: '#1E293B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' })
                     }}
-                    title={`${item.input_text}`}
+                    title={item.input_text}
                   >
-                    <span style={{ color: active ? '#111827' : '#3D5068', flexShrink: 0 }}>
-                      <FileText size={14} />
-                    </span>
-                    <span style={{
-                      flex: 1,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}>
-                      {label}
-                    </span>
+                    {!collapsed && label}
+                    {collapsed && <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: active ? '#111827' : '#94A3B8' }} />}
                   </Link>
-                  <button
-                    onClick={async (e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      if (confirm('Delete this conversion?')) {
-                        setDeletingId(item.id)
-                        await deleteMutation.mutateAsync(item.id)
-                        setDeletingId(null)
-                      }
-                    }}
-                    disabled={deletingId === item.id}
-                    style={{
-                      opacity: deletingId === item.id ? 0.5 : 0,
-                      transition: 'opacity 0.15s',
-                      background: 'transparent',
-                      border: 'none',
-                      cursor: deletingId === item.id ? 'wait' : 'pointer',
-                      padding: '2px 4px',
-                      borderRadius: 4,
-                      display: 'flex',
-                      alignItems: 'center',
-                      color: 'var(--sys-color-tertiary)',
-                    }}
-                    title="Delete"
-                  >
-                    {deletingId === item.id ? (
-                      <span style={{ fontSize: '0.75rem' }}>...</span>
-                    ) : (
-                      <Trash2 size={12} />
-                    )}
-                  </button>
+                  {(!collapsed || inDrawer) && (
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        if (confirm('Delete this conversion?')) {
+                          setDeletingId(item.id)
+                          await deleteMutation.mutateAsync(item.id)
+                          setDeletingId(null)
+                        }
+                      }}
+                      disabled={deletingId === item.id}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: deletingId === item.id ? 'wait' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        color: '#94A3B8',
+                        opacity: deletingId === item.id ? 0.5 : 1,
+                      }}
+                      title="Delete"
+                    >
+                      {deletingId === item.id ? (
+                        <span style={{ fontSize: '0.75rem' }}>...</span>
+                      ) : (
+                        <Trash2 size={12} />
+                      )}
+                    </button>
+                  )}
                 </div>
-              )
-            })}
-          </>
-        )}
-      </div>
+              </li>
+            )
+          })}
+        </ul>
+      </nav>
 
       {/* ── FOOTER: Settings + Profile ── */}
-      <div style={{
-        flexShrink: 0,
-        borderTop: '1px solid #E2E8F0',
-        padding: '8px 6px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-      }}>
-        <FooterLink
+      <div style={{ marginTop: 'auto', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <Link
           to="/dashboard/settings"
-          icon={<Settings size={16} />}
-          label="Settings"
-          active={isActive('/settings')}
-          collapsed={collapsed && !inDrawer}
           onClick={onMobileClose}
-        />
-        <FooterLink
+          style={{
+            display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 8px',
+            textDecoration: 'none', borderRadius: '8px',
+            ...dm(13, isActive('/settings') ? 500 : 400, { color: '#1E293B' }),
+            background: isActive('/settings') ? 'rgba(0,0,0,0.03)' : 'transparent',
+          }}
+        >
+          <Settings size={16} color="#64748B" />
+          {(!collapsed || inDrawer) && 'Settings'}
+        </Link>
+        <Link
           to="/help"
-          icon={<HelpCircle size={16} />}
-          label="Help & Support"
-          active={isActive('/help')}
-          collapsed={collapsed && !inDrawer}
           onClick={onMobileClose}
-        />
-        {/* Separator before destructive action — P9 destructive-nav-separation */}
-        <div style={{ height: '1px', background: '#E2E8F0', margin: '6px 8px' }} />
-        <FooterAction
-          icon={<LogOut size={16} />}
-          label="Log out"
-          collapsed={collapsed && !inDrawer}
-          isDanger={true}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 8px',
+            textDecoration: 'none', borderRadius: '8px',
+            ...dm(13, isActive('/help') ? 500 : 400, { color: '#1E293B' }),
+            background: isActive('/help') ? 'rgba(0,0,0,0.03)' : 'transparent',
+          }}
+        >
+          <HelpCircle size={16} color="#64748B" />
+          {(!collapsed || inDrawer) && 'Help & Support'}
+        </Link>
+        <button
           onClick={() => {
             onLogout()
             if (inDrawer) onMobileClose()
           }}
-        />
+          style={{
+            display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 8px',
+            background: 'transparent', border: 'none', cursor: 'pointer', borderRadius: '8px',
+            ...dm(13, 400, { color: '#F87171' }), width: '100%'
+          }}
+        >
+          <LogOut size={16} />
+          {(!collapsed || inDrawer) && 'Log out'}
+        </button>
 
-        {(!collapsed || inDrawer) && (
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '8px 8px 2px',
-            marginTop: 4,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden', flex: 1 }}>
-              <div style={{
-                width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
-                background: 'linear-gradient(135deg, #111827, #111827)',
-                color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontWeight: 700, fontSize: '12px',
-                boxShadow: '0 2px 8px rgba(17, 24, 39, 0.3)'
-              }}>
-                {avatarLetter}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, overflow: 'hidden' }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#F0F0F5', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1 }}>
-                  {username}
+        <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px' }}>
+          {(!collapsed || inDrawer) ? (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#0F172A', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, ...dm(14, 700) }}>
+                  {username.charAt(0).toUpperCase()}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#8A9BB5', fontWeight: 500, lineHeight: 1 }}>
-                  {tier}
-                </div>
+                <span style={{ ...dm(12, 600, { color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '64px' }) }}>{username}</span>
               </div>
+              {isFree && (
+                <Link to="/upgrade" style={{ background: 'rgba(0,0,0,0.03)', textDecoration: 'none', borderRadius: '8px', padding: '4px 8px', ...dm(12, 600, { color: '#0F172A' }), transition: 'background 0.2s' }}>
+                  Upgrade
+                </Link>
+              )}
+            </>
+          ) : (
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#0F172A', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', ...dm(14, 700), margin: '0 auto' }}>
+              {username.charAt(0).toUpperCase()}
             </div>
-
-            {isFree && (
-              <Link
-                to="/upgrade"
-                style={{
-                  flexShrink: 0,
-                  padding: '4px 10px',
-                  borderRadius: 20,
-                  border: '1px solid #E2E8F0',
-                  backgroundColor: 'rgba(17, 24, 39,0.08)',
-                  color: '#8A9BB5',
-                  fontSize: '0.78rem',
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                }}
-              >
-                Upgrade
-              </Link>
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
 }
-
-// Small footer link component
-const FooterLink: React.FC<{
-  to: string
-  icon: React.ReactNode
-  label: string
-  active: boolean
-  collapsed: boolean
-  onClick?: () => void
-}> = ({ to, icon, label, active, collapsed, onClick }) => (
-  <Link
-    to={to}
-    onClick={onClick}
-    className="sidebar-link"
-    style={{
-      display: 'flex', alignItems: 'center',
-      gap: 8,
-      padding: '7px 10px',
-      marginBottom: 1,
-      borderRadius: 7,
-      textDecoration: 'none',
-      fontSize: '0.88rem',
-      fontWeight: active ? 600 : 500,
-      color: active ? '#111827' : '#8A9BB5',
-      backgroundColor: active ? 'rgba(17, 24, 39, 0.12)' : 'transparent',
-      justifyContent: collapsed ? 'center' : 'flex-start',
-    }}
-    title={collapsed ? label : undefined}
-  >
-    {icon}
-    {!collapsed && label}
-  </Link>
-)
-
-// Action button for the footer (like logout)
-const FooterAction: React.FC<{
-  icon: React.ReactNode
-  label: string
-  collapsed: boolean
-  onClick: () => void
-  isDanger?: boolean
-}> = ({ icon, label, collapsed, onClick, isDanger }) => (
-  <button
-    onClick={onClick}
-    className="sidebar-link"
-    style={{
-      display: 'flex', alignItems: 'center',
-      gap: 8,
-      padding: '7px 10px',
-      marginBottom: 1,
-      borderRadius: 7,
-      border: 'none',
-      cursor: 'pointer',
-      fontSize: '0.88rem',
-      fontWeight: 500,
-      color: isDanger ? '#F87171' : '#8A9BB5',
-      backgroundColor: 'transparent',
-      justifyContent: collapsed ? 'center' : 'flex-start',
-      width: '100%',
-      fontFamily: 'inherit',
-    }}
-    title={collapsed ? label : undefined}
-  >
-    {icon}
-    {!collapsed && label}
-  </button>
-)
 
 const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false)
@@ -452,7 +272,6 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
   const { data: conversionsData } = useConversions(1, 30)
   const conversionsList = useMemo(() => conversionsData?.data || [], [conversionsData])
 
-  // Flat "Recents" list, filtered by search
   const recentItems = useMemo(() => {
     if (!conversionsList.length) return []
     const q = search.toLowerCase()
@@ -472,30 +291,25 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
   const handleMobileClose = useCallback(() => setMobileOpen(false), [])
 
   return (
-    <div className="dashboard-layout-root">
+    <div className="dashboard-layout-root" style={{ background: '#FFFFFF' }}>
       {/* ── MOBILE HEADER ── */}
       <header style={{
         display: 'none',
         position: 'fixed', top:0, left: 0, right: 0, zIndex: 200,
         height: 56,
-        backgroundColor: 'rgba(17,17,24,0.96)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid #E2E8F0',
+        backgroundColor: '#FFFFFF',
+        borderBottom: '1px solid rgba(0,0,0,0.05)',
         alignItems: 'center',
         padding: '0 16px',
         gap: 12,
-        boxShadow: '0 1px 8px rgba(0,0,0,0.3)',
       }} className="mobile-header">
         <button
           onClick={() => setMobileOpen(true)}
-          style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 6, display: 'flex', borderRadius: 8, transition: 'background-color 0.15s' }}
-          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'}
-          onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+          style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 6, display: 'flex' }}
         >
-          <Menu size={22} color="#F0F0F5" />
+          <Menu size={22} color="#0F172A" />
         </button>
-        <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#F0F0F5', letterSpacing: '-0.01em' }}>ContentSplit</span>
+        <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#0F172A', letterSpacing: '-0.01em' }}>ContentSplit</span>
       </header>
 
       {/* ── MOBILE DRAWER OVERLAY ── */}
@@ -504,9 +318,7 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           onClick={() => setMobileOpen(false)}
           style={{
             position: 'fixed', inset: 0, zIndex: 300,
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(4px)',
-            WebkitBackdropFilter: 'blur(4px)',
+            backgroundColor: 'rgba(0,0,0,0.3)',
             opacity: 1,
             transition: 'opacity 0.3s ease',
           }}
@@ -517,14 +329,11 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       <div style={{
         position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 400,
         width: 280,
-        backgroundColor: 'rgba(17,17,24,0.98)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        borderRight: '1px solid #E2E8F0',
+        backgroundColor: '#FBFAF9',
+        borderRight: '1px solid rgba(0,0,0,0.05)',
         transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
         transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         display: 'flex', flexDirection: 'column',
-        boxShadow: mobileOpen ? '4px 0 24px rgba(0,0,0,0.08)' : 'none',
       }} className="mobile-drawer">
         <SidebarContentComponent
           collapsed={collapsed}
@@ -615,11 +424,13 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           .mobile-header { height: 52px; }
         }
 
-        * { scrollbar-width: thin; scrollbar-color: #111827 transparent; }
+        * { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.1) transparent; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background-color: #111827; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background-color: #1f2937; }
+        ::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background-color: rgba(0,0,0,0.2); }
+
+        .mockup-btn:hover { border-color: rgba(0,0,0,0.2) !important; }
       `}</style>
     </div>
   )

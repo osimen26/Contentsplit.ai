@@ -4,6 +4,7 @@ import { useRegister } from '@/services/query-hooks'
 import { useAuth } from '@/contexts/AuthContext'
 import AuthLayout from '@/components/layout/AuthLayout'
 import { Eye, EyeOff } from 'lucide-react'
+import { useGoogleLogin } from '@react-oauth/google'
 
 const RegisterPage: React.FC = () => {
   const [firstName, setFirstName] = useState('')
@@ -14,8 +15,9 @@ const RegisterPage: React.FC = () => {
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const [isGooglePending, setIsGooglePending] = useState(false)
   const { mutateAsync: registerUser, isPending } = useRegister()
-  const { notifyLoggedIn } = useAuth()
+  const { notifyLoggedIn, loginWithGoogle } = useAuth()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,9 +46,28 @@ const RegisterPage: React.FC = () => {
     }
   }
 
-  const handleGoogleSignUp = () => {
-    console.log("Google sign up clicked");
+  const handleGoogleSuccess = async (tokenResponse: any) => {
+    if (!termsAccepted) {
+      setError('You must accept the Terms of Service to continue with Google.')
+      return
+    }
+    try {
+      setError('')
+      setIsGooglePending(true)
+      await loginWithGoogle(tokenResponse.access_token)
+      navigate('/dashboard')
+    } catch (err: unknown) {
+      console.error('Google sign-up error:', err)
+      setError('Failed to sign up with Google. Please try again.')
+    } finally {
+      setIsGooglePending(false)
+    }
   }
+
+  const handleGoogleSignUp = useGoogleLogin({
+    onSuccess: handleGoogleSuccess,
+    onError: () => setError('Google sign-up failed or was cancelled.')
+  })
 
   return (
     <div style={{ fontFamily: '"DM Sans", sans-serif' }}>
@@ -159,8 +180,18 @@ const RegisterPage: React.FC = () => {
           </div>
 
           <button 
-            onClick={handleGoogleSignUp}
-            className="w-full h-[44px] bg-[#F8FAFC] hover:bg-slate-100 text-slate-700 text-[14px] font-medium rounded-lg transition-colors flex justify-center items-center gap-3 mb-8"
+            type="button"
+            onClick={() => {
+              console.log("Triggering Google sign up...");
+              try {
+                handleGoogleSignUp();
+              } catch (e) {
+                console.error("Failed to trigger Google sign up:", e);
+                setError("Failed to open Google login. Please check pop-up blockers.");
+              }
+            }}
+            disabled={isGooglePending}
+            className="w-full h-[44px] bg-[#F8FAFC] hover:bg-slate-100 text-slate-700 text-[14px] font-medium rounded-lg transition-colors flex justify-center items-center gap-3 mb-8 disabled:opacity-50"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -168,7 +199,7 @@ const RegisterPage: React.FC = () => {
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
-            Sign up with Google
+            {isGooglePending ? 'Signing up...' : 'Sign up with Google'}
           </button>
 
           <p className="text-center text-[14px] text-slate-600">

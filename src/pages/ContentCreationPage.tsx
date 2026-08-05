@@ -6,7 +6,7 @@ import type { Output } from '@services/api-client'
 import '@/styles/dashboard.css'
 
 // --- Types & Constants ---
-type MessageType = 'text' | 'loading' | 'result' | 'error' | 'limit_reached'
+type MessageType = 'text' | 'loading' | 'result' | 'error' | 'limit_reached' | 'preferences'
 interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
@@ -49,7 +49,6 @@ const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isReg
 
   return (
     <div style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
       <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
@@ -68,11 +67,9 @@ const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isReg
           </div>
         )}
       </div>
-      {/* Body */}
       <div style={{ padding: '16px', flex: 1, ...dm(13, 400, { color: '#1E293B', lineHeight: 1.75, whiteSpace: 'pre-wrap' }) }}>
         {output.content}
       </div>
-      {/* Footer */}
       <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#FAFAFA' }}>
         <span style={{ ...dm(12, 400, { color: '#94A3B8' }) }}>{output.content.length} chars</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -126,12 +123,134 @@ const ResultGrid = ({ conversionId }: { conversionId: string }) => {
   )
 }
 
+const PreferencesBubble: React.FC<{
+  onGenerate: (platforms: string[], tone: string) => void
+  isGenerating: boolean
+}> = ({ onGenerate, isGenerating }) => {
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter'])
+  const [selectedTone, setSelectedTone] = useState<string>('Casual')
+
+  const togglePlatform = (id: string) => {
+    setSelectedPlatforms(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id])
+  }
+
+  return (
+    <div style={{ maxWidth: '700px', width: '100%', animation: 'fadeIn 0.3s ease-out', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', width: '100%' }}>
+        <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <img src="/logo.svg" alt="AI" style={{ width: '22px', height: '22px' }} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '16px', padding: '32px 20px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+            
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', maxWidth: '600px' }}>
+              {PLATFORMS.map(p => {
+                const isSelected = selectedPlatforms.includes(p.id)
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => togglePlatform(p.id)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '10px',
+                      padding: '12px 20px', borderRadius: '12px', cursor: 'pointer',
+                      background: '#FFFFFF',
+                      border: isSelected ? `1.5px solid ${p.bg}` : '1.5px solid #E2E8F0',
+                      boxShadow: isSelected ? `inset 0 0 0 0.5px ${p.bg}` : '0 2px 8px rgba(0,0,0,0.02)',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <div style={{ 
+                      width: '28px', height: '28px', borderRadius: '6px', 
+                      background: isSelected ? '#FFFFFF' : '#F1F5F9',
+                      boxShadow: isSelected ? `inset 0 0 0 1.5px ${p.bg}` : 'none',
+                      color: isSelected ? p.bg : '#64748B',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                      <PlatformIcon id={p.id} size={14} />
+                    </div>
+                    <span style={{ ...dm(14, 600, { color: isSelected ? '#0F172A' : '#475569' }) }}>
+                      {p.label}
+                    </span>
+                    {isSelected && <CheckCircle2 size={16} color={p.icon} style={{ marginLeft: '4px' }} />}
+                  </button>
+                )
+              })}
+            </div>
+
+            <div style={{ marginTop: '24px' }}>
+              <button 
+                onClick={() => {
+                  if (selectedPlatforms.length === PLATFORMS.length) {
+                    setSelectedPlatforms([])
+                  } else {
+                    setSelectedPlatforms(PLATFORMS.map(p => p.id))
+                  }
+                }}
+                style={{
+                  background: 'transparent', border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  ...dm(14, 500, { color: '#111827' })
+                }}
+              >
+                <CheckCheck size={16} /> 
+                {selectedPlatforms.length === PLATFORMS.length ? 'Deselect all' : 'Select all platforms'}
+              </button>
+            </div>
+
+            {selectedPlatforms.length > 0 && (
+              <div style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'fadeIn 0.3s ease-out', width: '100%' }}>
+                <h3 style={{ ...syne(20, 600, { color: '#0F172A', letterSpacing: '-0.01em', margin: 0, marginBottom: '16px' }) }}>
+                  What tone should we use?
+                </h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', maxWidth: '500px' }}>
+                  {TONES.map(t => (
+                    <button
+                      key={t}
+                      onClick={() => setSelectedTone(t)}
+                      style={{
+                        padding: '10px 16px', borderRadius: '10px', cursor: 'pointer',
+                        background: selectedTone === t ? '#F1F5F9' : '#FFFFFF',
+                        border: selectedTone === t ? '1.5px solid #0F172A' : '1.5px solid #E2E8F0',
+                        boxShadow: selectedTone === t ? 'none' : '0 2px 6px rgba(0,0,0,0.02)',
+                        transition: 'all 0.2s',
+                        ...dm(14, selectedTone === t ? 600 : 500, { color: selectedTone === t ? '#0F172A' : '#64748B' })
+                      }}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+                
+                <button
+                  onClick={() => onGenerate(selectedPlatforms, selectedTone)}
+                  disabled={isGenerating}
+                  style={{
+                    marginTop: '32px',
+                    padding: '14px 32px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: '#0F172A',
+                    color: '#FFFFFF',
+                    cursor: isGenerating ? 'not-allowed' : 'pointer',
+                    opacity: isGenerating ? 0.7 : 1,
+                    display: 'flex', alignItems: 'center', gap: '8px',
+                    ...dm(15, 600)
+                  }}
+                >
+                  {isGenerating ? <><RefreshCw size={18} className="spin" /> Generating...</> : 'Generate Content'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const ContentCreationPage: React.FC = () => {
   const [inputText, setInputText] = useState('')
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter'])
-  const [selectedTone, setSelectedTone] = useState<string>('Casual')
   
   const [currentConversionId, setCurrentConversionId] = useState<string | null>(null)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
@@ -159,28 +278,28 @@ const ContentCreationPage: React.FC = () => {
     }
   }, [messages, outputsLoading])
 
-  const togglePlatform = (id: string) => {
-    setSelectedPlatforms(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id])
-  }
-
   const handleNewChat = () => {
     setMessages([])
     setInputText('')
     setCurrentConversionId(null)
   }
 
-  const handleGenerate = async (textToProcess: string) => {
-    if (!textToProcess.trim() || selectedPlatforms.length === 0) return
+  const handleGenerate = async (selectedPlatforms: string[], selectedTone: string) => {
+    // Find the last user message text
+    const lastUserMessage = [...messages].reverse().find(m => m.role === 'user' && m.type === 'text')
+    const textToProcess = lastUserMessage?.text
+
+    if (!textToProcess || selectedPlatforms.length === 0) return
 
     if (dailyUsage >= dailyLimit) {
       setShowUpgradeModal(true)
       const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-      setMessages(prev => [...prev, { id: limitId, role: 'assistant', type: 'limit_reached' }])
+      setMessages(prev => [...prev.filter(m => m.type !== 'preferences'), { id: limitId, role: 'assistant', type: 'limit_reached' }])
       return
     }
 
     const loadingId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-    setMessages(prev => [...prev, { id: loadingId, role: 'assistant', type: 'loading' }])
+    setMessages(prev => [...prev.filter(m => m.type !== 'preferences'), { id: loadingId, role: 'assistant', type: 'loading' }])
     
     generateMutation.mutate(
       {
@@ -228,81 +347,32 @@ const ContentCreationPage: React.FC = () => {
     }
 
     const userId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-    setMessages(prev => [...prev, { id: userId, role: 'user', type: 'text', text: inputText }])
+    const prefId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
     
-    const textToProcess = inputText
+    setMessages(prev => [
+      ...prev, 
+      { id: userId, role: 'user', type: 'text', text: inputText },
+      { id: prefId, role: 'assistant', type: 'preferences' }
+    ])
+    
     setInputText('')
-    
-    if (selectedPlatforms.length === 0) {
-      const errorId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-      setMessages(prev => [...prev, { id: errorId, role: 'assistant', type: 'error', text: "Please select at least one platform." }])
-      return
-    }
-    
-    handleGenerate(textToProcess)
   }
   
   const handleGenerateBatch = async () => {
+    // Note: Batch mode is simplified for this demo to just show a preference bubble too. 
+    // Usually it would ask for preferences first as well.
     if (batchItems.length === 0) return
-    if (selectedPlatforms.length === 0) {
-      alert("Please select at least one platform before generating.")
-      return
-    }
     
     const userId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+    const prefId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
     
     setMessages(prev => [
       ...prev,
-      { id: userId, role: 'user', type: 'text', text: `BATCH QUEUE (${batchItems.length} items):\n\n${batchItems.map((item, i) => `${i+1}. ${item.substring(0, 50)}...`).join('\n')}` }
+      { id: userId, role: 'user', type: 'text', text: `BATCH QUEUE (${batchItems.length} items):\n\n${batchItems.map((item, i) => `${i+1}. ${item.substring(0, 50)}...`).join('\n')}` },
+      { id: prefId, role: 'assistant', type: 'preferences' }
     ])
     
-    setIsBatchGenerating(true)
-    const itemsToProcess = [...batchItems]
     setBatchItems([])
-    
-    for (let i = 0; i < itemsToProcess.length; i++) {
-      if (dailyUsage >= dailyLimit) {
-         setShowUpgradeModal(true)
-         const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-         setMessages(prev => [...prev, { id: limitId, role: 'assistant', type: 'limit_reached' }])
-         break
-      }
-      
-      const loadingId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-      setMessages(prev => [...prev, { id: loadingId, role: 'assistant', type: 'loading' }])
-      
-      try {
-        const data = await generateMutation.mutateAsync({
-          input_text: itemsToProcess[i],
-          tone_mode: selectedTone.toLowerCase() as any,
-          platforms: selectedPlatforms as any,
-        })
-        
-        const resultId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-        setMessages(prev => [
-          ...prev.filter(m => m.id !== loadingId),
-          { id: resultId, role: 'assistant', type: 'result', text: data.conversion.id }
-        ])
-      } catch (err: any) {
-        const errorMsg = err?.response?.data?.error || err?.message || 'Failed to generate content'
-        if (err?.response?.data?.limit_reached) {
-          setShowUpgradeModal(true)
-          const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-          setMessages(prev => [
-            ...prev.filter(m => m.id !== loadingId),
-            { id: limitId, role: 'assistant', type: 'limit_reached' }
-          ])
-          break
-        } else {
-          const errorId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-          setMessages(prev => [
-            ...prev.filter(m => m.id !== loadingId),
-            { id: errorId, role: 'assistant', type: 'error', text: `Item ${i+1} failed: ${errorMsg}` }
-          ])
-        }
-      }
-    }
-    setIsBatchGenerating(false)
     setIsBatchMode(false)
   }
 
@@ -312,93 +382,12 @@ const ContentCreationPage: React.FC = () => {
       {/* ── ZONE 1: Empty State / Welcome Screen ── */}
       {!hasMessages && (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', overflowY: 'auto' }}>
-          
           <h2 style={{ ...syne(32, 600, { color: '#0F172A', letterSpacing: '-0.02em', margin: 0, marginBottom: '12px' }) }}>
             Ready to repurpose
           </h2>
           <p style={{ ...dm(16, 400, { color: '#64748B', textAlign: 'center', margin: 0, marginBottom: '40px', maxWidth: '420px', lineHeight: 1.5 }) }}>
             Paste your long-form content below to effortlessly adapt it for any platform.
           </p>
-
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', maxWidth: '600px' }}>
-            {PLATFORMS.map(p => {
-              const isSelected = selectedPlatforms.includes(p.id)
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => togglePlatform(p.id)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '10px',
-                    padding: '12px 20px', borderRadius: '12px', cursor: 'pointer',
-                    background: '#FFFFFF',
-                    border: isSelected ? `1.5px solid ${p.bg}` : '1.5px solid #E2E8F0',
-                    boxShadow: isSelected ? `inset 0 0 0 0.5px ${p.bg}` : '0 2px 8px rgba(0,0,0,0.02)',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  <div style={{ 
-                    width: '28px', height: '28px', borderRadius: '6px', 
-                    background: isSelected ? '#FFFFFF' : '#F1F5F9',
-                    boxShadow: isSelected ? `inset 0 0 0 1.5px ${p.bg}` : 'none',
-                    color: isSelected ? p.bg : '#64748B',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                  }}>
-                    <PlatformIcon id={p.id} size={14} />
-                  </div>
-                  <span style={{ ...dm(14, 600, { color: isSelected ? '#0F172A' : '#475569' }) }}>
-                    {p.label}
-                  </span>
-                  {isSelected && <CheckCircle2 size={16} color={p.icon} style={{ marginLeft: '4px' }} />}
-                </button>
-              )
-            })}
-          </div>
-
-          <div style={{ marginTop: '24px' }}>
-            <button 
-              onClick={() => {
-                if (selectedPlatforms.length === PLATFORMS.length) {
-                  setSelectedPlatforms([])
-                } else {
-                  setSelectedPlatforms(PLATFORMS.map(p => p.id))
-                }
-              }}
-              style={{
-                background: 'transparent', border: 'none', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '6px',
-                ...dm(14, 500, { color: '#111827' })
-              }}
-            >
-              <CheckCheck size={16} /> 
-              {selectedPlatforms.length === PLATFORMS.length ? 'Deselect all' : 'Select all platforms'}
-            </button>
-          </div>
-
-          {selectedPlatforms.length > 0 && (
-            <div style={{ marginTop: '48px', display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'fadeIn 0.3s ease-out' }}>
-              <h3 style={{ ...syne(20, 600, { color: '#0F172A', letterSpacing: '-0.01em', margin: 0, marginBottom: '16px' }) }}>
-                What tone should we use?
-              </h3>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', maxWidth: '500px' }}>
-                {TONES.map(t => (
-                  <button
-                    key={t}
-                    onClick={() => setSelectedTone(t)}
-                    style={{
-                      padding: '10px 16px', borderRadius: '10px', cursor: 'pointer',
-                      background: selectedTone === t ? '#F1F5F9' : '#FFFFFF',
-                      border: selectedTone === t ? '1.5px solid #0F172A' : '1.5px solid #E2E8F0',
-                      boxShadow: selectedTone === t ? 'none' : '0 2px 6px rgba(0,0,0,0.02)',
-                      transition: 'all 0.2s',
-                      ...dm(14, selectedTone === t ? 600 : 500, { color: selectedTone === t ? '#0F172A' : '#64748B' })
-                    }}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       )}
 
@@ -418,6 +407,13 @@ const ContentCreationPage: React.FC = () => {
                     }}>
                       {msg.text}
                     </div>
+                  )}
+
+                  {msg.type === 'preferences' && (
+                    <PreferencesBubble 
+                      onGenerate={handleGenerate} 
+                      isGenerating={generateMutation.isPending} 
+                    />
                   )}
 
                   {msg.type === 'loading' && <ChatLoadingBubble />}
