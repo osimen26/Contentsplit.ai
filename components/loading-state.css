@@ -10,7 +10,7 @@
   --sys-progress-circular-size-md: 40px;
   --sys-progress-circular-size-lg: 56px;
   --sys-progress-circular-track-color: var(--sys-color-neutral-90);
-  --sys-progress-circular-indicator-color: var(--sys-color-roles-primary-color-role-primary-role);
+  --sys-progress-circular-indicator-color: #111827;
   --sys-progress-circular-track-width: 4px;
   --sys-progress-circular-indicator-width: 4px;
   --sys-progress-circular-animation-duration: 1.4s;
@@ -496,12 +496,12 @@
 
 /* Hide decorative loading animations from screen readers */
 .progress-circular[aria-hidden="true"] {
-  /* Already hidden */
+  pointer-events: none;
 }
 
 /* Ensure loading messages are announced */
 .loading-overlay[aria-live] {
-  /* Live region for announcements */
+  contain: layout;
 }
 
 /* Reduced motion support */
@@ -515,7 +515,7 @@
   
   .progress-circular-determinate,
   .progress-linear-determinate .progress-linear-indicator {
-    /* Keep determinate progress without animation */
+    transition: none;
   }
   
   .skeleton-pulse {

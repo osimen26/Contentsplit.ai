@@ -246,7 +246,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                     Pro Plan
                   </h3>
                   <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#111827', fontWeight: 600 }}>
-                    $12 USD/month
+                    ₦5,000/month
                   </p>
                 </div>
                 <ArrowRight size={20} style={{ color: '#111827' }} />
@@ -273,18 +273,18 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
               style={{
                 padding: '20px',
                 borderRadius: '16px',
-                border: '2px solid rgba(168, 85, 247, 0.3)',
+                border: '2px solid rgba(17, 24, 39, 0.3)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(17, 24, 39, 0.05))',
+                background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.05), rgba(17, 24, 39, 0.1))',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.5)'
+                e.currentTarget.style.borderColor = 'rgba(17, 24, 39, 0.5)'
                 e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(168, 85, 247, 0.15)'
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(17, 24, 39, 0.15)'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.3)'
+                e.currentTarget.style.borderColor = 'rgba(17, 24, 39, 0.3)'
                 e.currentTarget.style.transform = 'translateY(0)'
                 e.currentTarget.style.boxShadow = 'none'
               }}
@@ -300,14 +300,14 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                       borderRadius: '12px',
                       fontSize: '0.7rem',
                       fontWeight: 600,
-                      backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                      backgroundColor: 'rgba(17, 24, 39, 0.1)',
                       color: '#111827',
                     }}>
                       POPULAR
                     </span>
                   </div>
                   <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#111827', fontWeight: 600 }}>
-                    $40 USD/month
+                    ₦15,000/month
                   </p>
                 </div>
                 <ArrowRight size={20} style={{ color: '#111827' }} />
