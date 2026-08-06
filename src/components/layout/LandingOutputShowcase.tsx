@@ -205,9 +205,8 @@ const LandingOutputShowcase: React.FC = () => {
             />
 
             {/* The floating stat pill */}
-            <div style={{
+            <div className="cs-showcase-pill" style={{
               position: 'absolute',
-              bottom: '32px',
               background: '#FFFFFF',
               padding: '12px 20px',
               borderRadius: '999px',
@@ -290,6 +289,9 @@ const LandingOutputShowcase: React.FC = () => {
         .cs-showcase-img {
           max-width: 280px;
         }
+        .cs-showcase-pill {
+          bottom: 32px;
+        }
 
         /* ── CTA button ── */
         .cs-get-started-btn {
@@ -324,7 +326,7 @@ const LandingOutputShowcase: React.FC = () => {
             gap: 40px !important;
           }
           /* Show card FIRST on mobile so the visual lands before the text */
-          .cs-showcase-card { order: -1; height: 320px !important; }
+          .cs-showcase-card { order: -1; height: 360px !important; }
           .cs-showcase-text { order: 1; }
           .cs-get-started-btn { align-self: stretch !important; justify-content: center; }
         }
@@ -392,12 +394,13 @@ const LandingOutputShowcase: React.FC = () => {
             font-weight: 600;
           }
 
-          .cs-showcase-card { height: 260px !important; border-radius: 20px !important; }
+          .cs-showcase-card { height: 320px !important; border-radius: 20px !important; }
           .cs-showcase-img { max-width: 180px !important; }
+          .cs-showcase-pill { bottom: 20px; }
         }
 
         @media (max-width: 480px) {
-          .cs-showcase-card { height: 220px !important; }
+          .cs-showcase-card { height: 280px !important; }
         }
       `}</style>
     </section>
