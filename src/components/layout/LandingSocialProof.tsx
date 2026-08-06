@@ -50,18 +50,19 @@ const LandingSocialProof: React.FC = () => {
         <p style={{ ...dm(14, 500, { color: '#94A3B8', textAlign: 'center', margin: 0 }) }}>
           Trusted by 2,000+ creators, marketers, and content teams
         </p>
-        {/* Marquee Track Container */}
-        <div style={{ 
-          width: '100vw',
-          overflow: 'hidden',
-          position: 'relative',
-          display: 'flex',
-          marginLeft: 'calc(-50vw + 50%)', // Break out of the 1000px max-width to span full screen
-          marginRight: 'calc(-50vw + 50%)',
-        }}>
-          {/* Fading Gradients for the edges */}
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '150px', height: '100%', background: 'linear-gradient(to right, #FFFFFF, transparent)', zIndex: 2 }}></div>
-          <div style={{ position: 'absolute', top: 0, right: 0, width: '150px', height: '100%', background: 'linear-gradient(to left, #FFFFFF, transparent)', zIndex: 2 }}></div>
+      </div>
+
+      {/* Marquee Track Container */}
+      <div style={{ 
+        width: '100%',
+        overflow: 'hidden',
+        position: 'relative',
+        display: 'flex',
+        marginTop: '32px'
+      }}>
+        {/* Fading Gradients for the edges */}
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '150px', height: '100%', background: 'linear-gradient(to right, #FFFFFF, transparent)', zIndex: 2 }}></div>
+        <div style={{ position: 'absolute', top: 0, right: 0, width: '150px', height: '100%', background: 'linear-gradient(to left, #FFFFFF, transparent)', zIndex: 2 }}></div>
           
           <div 
             ref={trackRef}
@@ -89,7 +90,6 @@ const LandingSocialProof: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
     </section>
   )
 }
