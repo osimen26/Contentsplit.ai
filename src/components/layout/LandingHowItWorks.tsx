@@ -99,7 +99,7 @@ const LandingHowItWorks: React.FC = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     {/* Icon Box */}
                     {step.type === 'social' ? (
-                      <img src="/images/socialpill.png" alt="Platforms" style={{ height: '38px', width: 'auto' }} />
+                      <img src="/images/socialpill.png" alt="Platforms" loading="lazy" decoding="async" style={{ height: '38px', width: 'auto' }} />
                     ) : (
                       <div style={{ 
                         background: '#FBFBFB', 
@@ -151,12 +151,15 @@ const LandingHowItWorks: React.FC = () => {
             margin: '0 auto'
           }}>
             <img 
-              src="/images/HOW IT 1.png" 
-              alt="ContentSplit App Mockup" 
+              src={steps.find(s => s.id === activeStep)?.image} 
+              alt={steps.find(s => s.id === activeStep)?.title} 
+              loading="lazy"
+              decoding="async"
+              className="cs-how-it-works-img"
               style={{
                 width: '100%',
                 height: 'auto',
-                transition: 'opacity 0.3s ease',
+                display: 'block'
               }}
             />
           </div>

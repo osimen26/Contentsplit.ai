@@ -68,6 +68,8 @@ const LandingHero: React.FC = () => {
         src="/images/hero-back.svg"
         alt="Hero Background"
         className="hero-bg-img"
+        fetchPriority="high"
+        decoding="async"
       />
 
       {/* Gradient Mask for Background Fade */}
@@ -158,6 +160,8 @@ const LandingHero: React.FC = () => {
         <img 
           src="/images/chat-interface.png" 
           alt="ContentSplit Chat Interface" 
+          fetchPriority="high"
+          decoding="async"
           style={{
             width: '100%',
             height: 'auto',

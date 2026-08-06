@@ -109,6 +109,8 @@ const LandingOutputShowcase: React.FC = () => {
         <img 
           src={data.imgSrc} 
           alt={data.title} 
+          loading="lazy"
+          decoding="async"
           style={{
             width: '100%',
             height: 'auto',

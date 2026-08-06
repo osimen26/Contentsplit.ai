@@ -87,7 +87,7 @@ const LandingFeatureHighlights: React.FC = () => {
             </p>
           </div>
           <div className="cs-feature-img-wrapper" style={imageWrapperStyle}>
-            <img src="/images/feature1.png" alt="Tone Awareness Feature" style={imgStyle} />
+            <img loading="lazy" decoding="async" src="/images/feature1.png" alt="Tone Awareness Feature" style={imgStyle} />
           </div>
         </div>
 
@@ -95,7 +95,7 @@ const LandingFeatureHighlights: React.FC = () => {
         <div style={rowStyle} className="cs-feature-row">
           {/* Visual is on the left for this row on desktop */}
           <div className="cs-feature-img-wrapper" style={{ ...imageWrapperStyle, order: -1 }}>
-            <img src="/images/feature2.png" alt="Batch Mode Feature" style={imgStyle} />
+            <img loading="lazy" decoding="async" src="/images/feature2.png" alt="Batch Mode Feature" style={imgStyle} />
           </div>
           <div className="cs-feature-text-wrapper" style={{ paddingLeft: '20px' }}>
             <div style={eyebrowStyle}>BATCH MODE</div>
@@ -116,7 +116,7 @@ const LandingFeatureHighlights: React.FC = () => {
             </p>
           </div>
           <div className="cs-feature-img-wrapper" style={imageWrapperStyle}>
-            <img src="/images/feature3.png" alt="Edit Before Export Feature" style={imgStyle} />
+            <img loading="lazy" decoding="async" src="/images/feature3.png" alt="Edit Before Export Feature" style={imgStyle} />
           </div>
         </div>
 

@@ -80,6 +80,8 @@ const LandingSocialProof: React.FC = () => {
                 <img 
                   src={`/images/logos/${src}`} 
                   alt={`${src.split('.')[0]} logo`} 
+                  loading="lazy"
+                  decoding="async"
                   style={{ 
                     height: '24px', 
                     objectFit: 'contain',
