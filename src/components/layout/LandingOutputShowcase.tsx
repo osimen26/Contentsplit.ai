@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CheckCircle2, ArrowRight, ChevronDown } from 'lucide-react'
+import { CheckCircle2, ArrowRight } from 'lucide-react'
 
 // Using the same typography helpers
 const syne = (size: number, weight = 700, extra?: React.CSSProperties): React.CSSProperties => ({
@@ -73,8 +73,71 @@ const platforms = Object.keys(platformData) as PlatformKey[];
 
 const LandingOutputShowcase: React.FC = () => {
   const [activeTab, setActiveTab] = useState<PlatformKey>('LinkedIn')
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const activeData = platformData[activeTab]
+
+  const renderShowcaseCard = (data: typeof activeData) => (
+    <div className="cs-showcase-grid">
+      {/* Left Column: Text & Features */}
+      <div className="cs-showcase-text">
+        <div>
+          <h3 style={{ ...dm(32, 600, { color: '#0F172A', margin: '0 0 8px 0', fontSize: 'clamp(1.75rem, 6vw, 2rem)' }) }}>
+            {data.title}
+          </h3>
+          <p style={{ ...dm(16, 400, { color: '#64748B', margin: 0 }) }}>
+            {data.subtitle}
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {data.features.map((feature, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <CheckCircle2 size={20} color="#0F172A" strokeWidth={2} />
+              <span style={{ ...dm(15, 500, { color: '#0F172A' }) }}>
+                {feature}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <button className="cs-get-started-btn">
+          Get started <ArrowRight size={16} />
+        </button>
+      </div>
+
+      {/* Right Column: Visual Card */}
+      <div className="cs-showcase-card" style={{ background: data.bgGradient }}>
+        <img 
+          src={data.imgSrc} 
+          alt={data.title} 
+          style={{
+            width: '100%',
+            height: 'auto',
+            objectFit: 'contain',
+            filter: 'drop-shadow(0 24px 40px rgba(0,0,0,0.15))',
+            animation: 'subtleBounce 5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite',
+          }}
+          className="cs-showcase-img"
+        />
+
+        {/* The floating stat pill */}
+        <div className="cs-showcase-pill" style={{
+          position: 'absolute',
+          background: '#FFFFFF',
+          padding: '12px 20px',
+          borderRadius: '999px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+        }}>
+          <span style={{ color: '#3B82F6', fontWeight: 600 }}>↗</span>
+          <span style={{ ...dm(13, 500, { color: '#0F172A' }) }}>
+            {data.floatingText}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <section style={{ background: '#FFFFFF', padding: '128px 24px', overflow: 'hidden' }}>
@@ -113,118 +176,41 @@ const LandingOutputShowcase: React.FC = () => {
           </p>
         </div>
 
-        {/* ── TABS ── */}
-        <div className="cs-tabs-wrapper">
-          <div className="cs-tabs-strip">
-            {platforms.map(platform => {
-              const isActive = activeTab === platform
-              return (
-                <button
-                  key={platform}
-                  onClick={() => setActiveTab(platform)}
-                  className={`cs-tab-btn${isActive ? ' cs-tab-active' : ''}`}
-                >
-                  {platform}
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Mobile Dropdown */}
-          <div className="cs-mobile-dropdown">
-            <button 
-              className="cs-mobile-dropdown-trigger"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            >
-              <span>{activeTab}</span>
-              <ChevronDown size={20} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
-            </button>
-            
-            {isDropdownOpen && (
-              <div className="cs-mobile-dropdown-menu">
-                {platforms.map(platform => (
+        {/* ── DESKTOP VIEW (Tabs) ── */}
+        <div className="cs-desktop-showcase">
+          <div className="cs-tabs-wrapper">
+            <div className="cs-tabs-strip">
+              {platforms.map(platform => {
+                const isActive = activeTab === platform
+                return (
                   <button
                     key={platform}
-                    onClick={() => {
-                      setActiveTab(platform)
-                      setIsDropdownOpen(false)
-                    }}
-                    className={`cs-mobile-dropdown-item ${activeTab === platform ? 'active' : ''}`}
+                    onClick={() => setActiveTab(platform)}
+                    className={`cs-tab-btn${isActive ? ' cs-tab-active' : ''}`}
                   >
                     {platform}
                   </button>
-                ))}
-              </div>
-            )}
+                )
+              })}
+            </div>
           </div>
+          {renderShowcaseCard(activeData)}
         </div>
 
-        {/* Content Split Area */}
-        <div className="cs-showcase-grid">
-          
-          {/* Left Column: Text & Features */}
-          <div className="cs-showcase-text">
-            <div>
-              <h3 style={{ ...dm(32, 600, { color: '#0F172A', margin: '0 0 8px 0', fontSize: 'clamp(1.75rem, 6vw, 2rem)' }) }}>
-                {activeData.title}
-              </h3>
-              <p style={{ ...dm(16, 400, { color: '#64748B', margin: 0 }) }}>
-                {activeData.subtitle}
-              </p>
+        {/* ── MOBILE VIEW (Stacked) ── */}
+        <div className="cs-mobile-showcase">
+          {platforms.map(platform => (
+            <div key={platform}>
+              {renderShowcaseCard(platformData[platform])}
             </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {activeData.features.map((feature, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <CheckCircle2 size={20} color="#0F172A" strokeWidth={2} />
-                  <span style={{ ...dm(15, 500, { color: '#0F172A' }) }}>
-                    {feature}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <button className="cs-get-started-btn">
-              Get started <ArrowRight size={16} />
-            </button>
-          </div>
-
-          {/* Right Column: Visual Card */}
-          <div className="cs-showcase-card" style={{ background: activeData.bgGradient }}>
-            <img 
-              src={activeData.imgSrc} 
-              alt={activeData.title} 
-              style={{
-                width: '100%',
-                height: 'auto',
-                objectFit: 'contain',
-                filter: 'drop-shadow(0 24px 40px rgba(0,0,0,0.15))',
-                animation: 'subtleBounce 5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite',
-              }}
-              className="cs-showcase-img"
-            />
-
-            {/* The floating stat pill */}
-            <div className="cs-showcase-pill" style={{
-              position: 'absolute',
-              background: '#FFFFFF',
-              padding: '12px 20px',
-              borderRadius: '999px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-            }}>
-              <span style={{ color: '#3B82F6', fontWeight: 600 }}>↗</span>
-              <span style={{ ...dm(13, 500, { color: '#0F172A' }) }}>
-                {activeData.floatingText}
-              </span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
       <style>{`
+        .cs-desktop-showcase { display: block; width: 100%; }
+        .cs-mobile-showcase { display: none; }
+
         /* ── Tab strip ── */
         .cs-tabs-wrapper {
           width: 100%;
@@ -232,7 +218,6 @@ const LandingOutputShowcase: React.FC = () => {
           display: flex;
           justify-content: center;
         }
-        .cs-mobile-dropdown { display: none; }
         .cs-tabs-strip {
           display: flex;
           align-items: center;
@@ -331,67 +316,14 @@ const LandingOutputShowcase: React.FC = () => {
           .cs-get-started-btn { align-self: stretch !important; justify-content: center; }
         }
 
-        /* ── MOBILE: dropdown tab ── */
+        /* ── MOBILE: stacked vertical cards ── */
         @media (max-width: 768px) {
-          .cs-tabs-wrapper {
-            justify-content: center;
-            width: 100%;
-            margin-bottom: 40px;
-          }
-          .cs-tabs-strip { display: none; }
-          .cs-mobile-dropdown {
-            display: block;
-            position: relative;
-            width: 100%;
-            max-width: 320px;
-            z-index: 50;
-          }
-          .cs-mobile-dropdown-trigger {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            padding: 14px 20px;
-            border-radius: 12px;
-            font-family: "DM Sans", sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            color: #0F172A;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            cursor: pointer;
-          }
-          .cs-mobile-dropdown-menu {
-            position: absolute;
-            top: calc(100% + 8px);
-            left: 0;
-            width: 100%;
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          .cs-desktop-showcase { display: none; }
+          .cs-mobile-showcase { 
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-          }
-          .cs-mobile-dropdown-item {
-            padding: 14px 20px;
-            text-align: left;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid #F1F5F9;
-            font-family: "DM Sans", sans-serif;
-            font-size: 15px;
-            font-weight: 500;
-            color: #475569;
-            cursor: pointer;
-          }
-          .cs-mobile-dropdown-item:last-child { border-bottom: none; }
-          .cs-mobile-dropdown-item.active {
-            color: #0F172A;
-            background: #F8FAFC;
-            font-weight: 600;
+            gap: 80px;
+            width: 100%;
           }
 
           .cs-showcase-card { height: 320px !important; border-radius: 20px !important; }

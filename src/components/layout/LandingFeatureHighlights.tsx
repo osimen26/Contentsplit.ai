@@ -31,7 +31,7 @@ const eyebrowStyle: React.CSSProperties = {
 }
 
 const titleStyle: React.CSSProperties = {
-  ...syne(32, 600, { color: '#0F172A', marginBottom: '16px', letterSpacing: '-0.02em', lineHeight: 1.2 })
+  ...syne(32, 600, { color: '#0F172A', marginBottom: '16px', letterSpacing: '-0.02em', lineHeight: 1.2, fontSize: 'clamp(1.5rem, 3vw, 2rem)' })
 }
 
 const descStyle: React.CSSProperties = {
