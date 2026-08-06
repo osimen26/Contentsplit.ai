@@ -101,7 +101,7 @@ const LandingFeatureHighlights: React.FC = () => {
             <div style={eyebrowStyle}>BATCH MODE</div>
             <h3 style={titleStyle}>Run a whole content calendar in one session.</h3>
             <p style={descStyle}>
-              Upload multiple blog posts and queue them. ContentSplit processes each one and returns a full set of outputs per article — ready for scheduling.
+              Upload multiple blog posts and queue them. ContentSplit processes each one and returns a full set of outputs per article — ready to publish.
             </p>
           </div>
         </div>

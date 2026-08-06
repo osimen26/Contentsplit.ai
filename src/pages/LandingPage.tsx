@@ -81,7 +81,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenLegal }) => {
     },
     { 
       title: 'Product', 
-      links: ['Core Repurposing', 'AI Thread Builder', 'AI LinkedIn Post', 'Scheduling', 'Analytics'] 
+      links: ['Core Repurposing', 'AI Thread Builder', 'AI LinkedIn Post', 'Analytics'] 
     },
     { 
       title: 'Use Cases', 
