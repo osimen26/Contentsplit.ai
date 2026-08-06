@@ -72,7 +72,7 @@ const LandingFeatureHighlights: React.FC = () => {
             </svg>
             FEATURES
           </div>
-          <h2 style={{ ...syne(48, 700, { color: '#0F172A', letterSpacing: '-0.02em' }), fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
+          <h2 style={{ ...syne(48, 700, { color: '#0F172A', letterSpacing: '-0.02em', lineHeight: 1.15 }), fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
             The engine behind your content empire.
           </h2>
         </div>
