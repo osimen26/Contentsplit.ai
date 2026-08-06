@@ -57,7 +57,7 @@ const getFlutterwavePlans = () => ({
   free: { amount: 0, name: 'Free Tier' },
   pro: { amount: 8500, name: 'Pro Plan', planId: process.env.FLUTTERWAVE_PLAN_ID_PRO || '165591' },
   agency: { amount: 15000, name: 'Agency Plan', planId: process.env.FLUTTERWAVE_PLAN_ID_AGENCY },
-  pro_yearly: { amount: 91800, name: 'Pro Plan (Yearly)', planId: process.env.FLUTTERWAVE_PLAN_ID_PRO_YEARLY },
+  pro_yearly: { amount: 91800, name: 'Pro Plan (Yearly)', planId: process.env.FLUTTERWAVE_PLAN_ID_PRO_YEARLY || '165593' },
   agency_yearly: { amount: 162000, name: 'Agency Plan (Yearly)', planId: process.env.FLUTTERWAVE_PLAN_ID_AGENCY_YEARLY }
 })
 
@@ -1433,7 +1433,7 @@ app.post('/api/payments/initiate', requireAuth, async (req, res) => {
       },
       customizations: {
         title: `ContentSplit.ai - ${plan.name}`,
-        description: `Monthly subscription for ${plan.name}`
+        description: `${planId.includes('yearly') ? 'Yearly' : 'Monthly'} subscription for ${plan.name}`
       }
     }
 
