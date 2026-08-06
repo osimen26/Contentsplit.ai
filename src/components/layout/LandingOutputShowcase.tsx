@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CheckCircle2, ArrowRight } from 'lucide-react'
+import { CheckCircle2, ArrowRight, ChevronDown } from 'lucide-react'
 
 // Using the same typography helpers
 const syne = (size: number, weight = 700, extra?: React.CSSProperties): React.CSSProperties => ({
@@ -73,6 +73,7 @@ const platforms = Object.keys(platformData) as PlatformKey[];
 
 const LandingOutputShowcase: React.FC = () => {
   const [activeTab, setActiveTab] = useState<PlatformKey>('LinkedIn')
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const activeData = platformData[activeTab]
 
   return (
@@ -112,7 +113,7 @@ const LandingOutputShowcase: React.FC = () => {
           </p>
         </div>
 
-        {/* ── TABS — scrollable single row on mobile ── */}
+        {/* ── TABS ── */}
         <div className="cs-tabs-wrapper">
           <div className="cs-tabs-strip">
             {platforms.map(platform => {
@@ -127,6 +128,34 @@ const LandingOutputShowcase: React.FC = () => {
                 </button>
               )
             })}
+          </div>
+
+          {/* Mobile Dropdown */}
+          <div className="cs-mobile-dropdown">
+            <button 
+              className="cs-mobile-dropdown-trigger"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <span>{activeTab}</span>
+              <ChevronDown size={20} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+            </button>
+            
+            {isDropdownOpen && (
+              <div className="cs-mobile-dropdown-menu">
+                {platforms.map(platform => (
+                  <button
+                    key={platform}
+                    onClick={() => {
+                      setActiveTab(platform)
+                      setIsDropdownOpen(false)
+                    }}
+                    className={`cs-mobile-dropdown-item ${activeTab === platform ? 'active' : ''}`}
+                  >
+                    {platform}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -204,6 +233,7 @@ const LandingOutputShowcase: React.FC = () => {
           display: flex;
           justify-content: center;
         }
+        .cs-mobile-dropdown { display: none; }
         .cs-tabs-strip {
           display: flex;
           align-items: center;
@@ -299,29 +329,69 @@ const LandingOutputShowcase: React.FC = () => {
           .cs-get-started-btn { align-self: stretch !important; justify-content: center; }
         }
 
-        /* ── MOBILE: scrollable tab strip ── */
+        /* ── MOBILE: dropdown tab ── */
         @media (max-width: 768px) {
           .cs-tabs-wrapper {
-            /* Allow strip to overflow and scroll on narrow screens */
-            justify-content: flex-start;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            padding: 0 24px;
-            margin-left: -24px;
-            margin-right: -24px;
-            width: calc(100% + 48px);
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 40px;
           }
-          .cs-tabs-wrapper::-webkit-scrollbar { display: none; }
-          .cs-tabs-strip {
-            flex-shrink: 0;
-            border-radius: 999px;
-            padding: 5px;
+          .cs-tabs-strip { display: none; }
+          .cs-mobile-dropdown {
+            display: block;
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            z-index: 50;
           }
-          .cs-tab-btn {
-            padding: 9px 18px;
-            font-size: 13px;
+          .cs-mobile-dropdown-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-family: "DM Sans", sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #0F172A;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            cursor: pointer;
           }
+          .cs-mobile-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+          }
+          .cs-mobile-dropdown-item {
+            padding: 14px 20px;
+            text-align: left;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #F1F5F9;
+            font-family: "DM Sans", sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+          }
+          .cs-mobile-dropdown-item:last-child { border-bottom: none; }
+          .cs-mobile-dropdown-item.active {
+            color: #0F172A;
+            background: #F8FAFC;
+            font-weight: 600;
+          }
+
           .cs-showcase-card { height: 260px !important; border-radius: 20px !important; }
           .cs-showcase-img { max-width: 180px !important; }
         }
