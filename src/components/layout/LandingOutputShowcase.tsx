@@ -112,55 +112,29 @@ const LandingOutputShowcase: React.FC = () => {
           </p>
         </div>
 
-        {/* Tabs Container */}
-        <div style={{ 
-          background: '#F8FAFC', 
-          border: '1px solid #F1F5F9',
-          padding: '6px', 
-          borderRadius: '999px', 
-          display: 'flex', 
-          alignItems: 'center',
-          gap: '4px',
-          marginBottom: '64px',
-          flexWrap: 'wrap',
-          justifyContent: 'center'
-        }}>
-          {platforms.map(platform => {
-            const isActive = activeTab === platform
-            return (
-              <button
-                key={platform}
-                onClick={() => setActiveTab(platform)}
-                style={{
-                  ...dm(14, 600, { 
-                    color: isActive ? '#0F172A' : '#64748B' 
-                  }),
-                  background: isActive ? '#FFFFFF' : 'transparent',
-                  border: 'none',
-                  padding: '10px 24px',
-                  borderRadius: '999px',
-                  cursor: 'pointer',
-                  boxShadow: isActive ? '0 4px 12px rgba(0,0,0,0.05)' : 'none',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                {platform}
-              </button>
-            )
-          })}
+        {/* ── TABS — scrollable single row on mobile ── */}
+        <div className="cs-tabs-wrapper">
+          <div className="cs-tabs-strip">
+            {platforms.map(platform => {
+              const isActive = activeTab === platform
+              return (
+                <button
+                  key={platform}
+                  onClick={() => setActiveTab(platform)}
+                  className={`cs-tab-btn${isActive ? ' cs-tab-active' : ''}`}
+                >
+                  {platform}
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         {/* Content Split Area */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: '1fr 1fr', 
-          gap: '64px',
-          width: '100%',
-          alignItems: 'center'
-        }} className="cs-showcase-grid">
+        <div className="cs-showcase-grid">
           
           {/* Left Column: Text & Features */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div className="cs-showcase-text">
             <div>
               <h3 style={{ ...dm(32, 600, { color: '#0F172A', margin: '0 0 8px 0' }) }}>
                 {activeData.title}
@@ -181,39 +155,13 @@ const LandingOutputShowcase: React.FC = () => {
               ))}
             </div>
 
-            <button style={{
-              marginTop: '16px',
-              alignSelf: 'flex-start',
-              background: '#0F172A',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '12px 24px',
-              ...dm(14, 600),
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              cursor: 'pointer',
-              transition: 'transform 0.2s ease',
-            }} className="cs-get-started-btn">
+            <button className="cs-get-started-btn">
               Get started <ArrowRight size={16} />
             </button>
           </div>
 
           {/* Right Column: Visual Card */}
-          <div style={{ 
-            background: activeData.bgGradient, 
-            borderRadius: '32px',
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '480px',
-            width: '100%',
-            transition: 'background 0.5s ease'
-          }}>
-            {/* The 3D platform logo */}
+          <div className="cs-showcase-card" style={{ background: activeData.bgGradient }}>
             <img 
               src={activeData.imgSrc} 
               alt={activeData.title} 
@@ -249,13 +197,133 @@ const LandingOutputShowcase: React.FC = () => {
       </div>
 
       <style>{`
+        /* ── Tab strip ── */
+        .cs-tabs-wrapper {
+          width: 100%;
+          margin-bottom: 64px;
+          display: flex;
+          justify-content: center;
+        }
+        .cs-tabs-strip {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          background: #F8FAFC;
+          border: 1px solid #F1F5F9;
+          padding: 6px;
+          border-radius: 999px;
+        }
+        .cs-tab-btn {
+          font-family: "DM Sans", sans-serif;
+          font-size: 14px;
+          font-weight: 600;
+          color: #64748B;
+          background: transparent;
+          border: none;
+          padding: 10px 24px;
+          border-radius: 999px;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: all 0.2s ease;
+        }
+        .cs-tab-btn:hover { color: #0F172A; }
+        .cs-tab-active {
+          background: #FFFFFF !important;
+          color: #0F172A !important;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* ── Showcase grid ── */
+        .cs-showcase-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 64px;
+          width: 100%;
+          align-items: center;
+        }
+        .cs-showcase-text {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+        .cs-showcase-card {
+          border-radius: 32px;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 480px;
+          width: 100%;
+          transition: background 0.5s ease;
+        }
+
+        /* ── CTA button ── */
+        .cs-get-started-btn {
+          margin-top: 16px;
+          align-self: flex-start;
+          background: #0F172A;
+          color: #FFFFFF;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 24px;
+          font-family: "DM Sans", sans-serif;
+          font-size: 14px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+        }
         .cs-get-started-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+        /* ── Animation ── */
         @keyframes subtleBounce {
           0%, 100% { transform: translateY(0px) scale(1); }
           50% { transform: translateY(-12px) scale(1.02); }
         }
+
+        /* ── TABLET ── */
+        @media (max-width: 900px) {
+          .cs-showcase-grid {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+          /* Show card FIRST on mobile so the visual lands before the text */
+          .cs-showcase-card { order: -1; height: 320px !important; }
+          .cs-showcase-text { order: 1; }
+          .cs-get-started-btn { align-self: stretch !important; justify-content: center; }
+        }
+
+        /* ── MOBILE: scrollable tab strip ── */
         @media (max-width: 768px) {
-          .cs-showcase-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
+          .cs-tabs-wrapper {
+            /* Allow strip to overflow and scroll on narrow screens */
+            justify-content: flex-start;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0 24px;
+            margin-left: -24px;
+            margin-right: -24px;
+            width: calc(100% + 48px);
+          }
+          .cs-tabs-wrapper::-webkit-scrollbar { display: none; }
+          .cs-tabs-strip {
+            flex-shrink: 0;
+            border-radius: 999px;
+            padding: 5px;
+          }
+          .cs-tab-btn {
+            padding: 9px 18px;
+            font-size: 13px;
+          }
+          .cs-showcase-card { height: 260px !important; border-radius: 20px !important; }
+        }
+
+        @media (max-width: 480px) {
+          .cs-showcase-card { height: 220px !important; }
         }
       `}</style>
     </section>
