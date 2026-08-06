@@ -79,25 +79,25 @@ const LandingFeatureHighlights: React.FC = () => {
 
         {/* FEATURE 1: Tone Awareness */}
         <div style={rowStyle} className="cs-feature-row">
-          <div style={{ paddingRight: '20px' }}>
+          <div className="cs-feature-text-wrapper" style={{ paddingRight: '20px' }}>
             <div style={eyebrowStyle}>TONE AWARENESS</div>
             <h3 style={titleStyle}>It writes like you, not like a robot.</h3>
             <p style={descStyle}>
               ContentSplit preserves the voice, vocabulary, and energy of your original post. The LinkedIn version doesn't sound like the Twitter version — because they shouldn't.
             </p>
           </div>
-          <div style={imageWrapperStyle}>
+          <div className="cs-feature-img-wrapper" style={imageWrapperStyle}>
             <img src="/images/feature1.png" alt="Tone Awareness Feature" style={imgStyle} />
           </div>
         </div>
 
         {/* FEATURE 2: Batch Mode */}
         <div style={rowStyle} className="cs-feature-row">
-          {/* Visual is on the left for this row */}
-          <div style={{ ...imageWrapperStyle, order: -1 }}>
+          {/* Visual is on the left for this row on desktop */}
+          <div className="cs-feature-img-wrapper" style={{ ...imageWrapperStyle, order: -1 }}>
             <img src="/images/feature2.png" alt="Batch Mode Feature" style={imgStyle} />
           </div>
-          <div style={{ paddingLeft: '20px' }}>
+          <div className="cs-feature-text-wrapper" style={{ paddingLeft: '20px' }}>
             <div style={eyebrowStyle}>BATCH MODE</div>
             <h3 style={titleStyle}>Run a whole content calendar in one session.</h3>
             <p style={descStyle}>
@@ -108,14 +108,14 @@ const LandingFeatureHighlights: React.FC = () => {
 
         {/* FEATURE 3: Edit Before Export */}
         <div style={{ ...rowStyle, marginBottom: 0 }} className="cs-feature-row">
-          <div style={{ paddingRight: '20px' }}>
+          <div className="cs-feature-text-wrapper" style={{ paddingRight: '20px' }}>
             <div style={eyebrowStyle}>EDIT BEFORE EXPORT</div>
             <h3 style={titleStyle}>Every output is a starting point, not a final draft.</h3>
             <p style={descStyle}>
               The editor is inline. Click any generated text and edit it directly. No jumping between tabs or copy-pasting into Notion.
             </p>
           </div>
-          <div style={imageWrapperStyle}>
+          <div className="cs-feature-img-wrapper" style={imageWrapperStyle}>
             <img src="/images/feature3.png" alt="Edit Before Export Feature" style={imgStyle} />
           </div>
         </div>
@@ -132,9 +132,9 @@ const LandingFeatureHighlights: React.FC = () => {
           .cs-feature-row > div {
             padding: 0 !important;
           }
-          /* On mobile, we always want the image below the text (or above), but let's just reset orders so text is on top */
-          .cs-feature-row > div:nth-child(1) { order: 1 !important; }
-          .cs-feature-row > div:nth-child(2) { order: 2 !important; }
+          /* On mobile, stack images on top of the text */
+          .cs-feature-img-wrapper { order: -1 !important; }
+          .cs-feature-text-wrapper { order: 1 !important; }
         }
       `}</style>
     </section>
