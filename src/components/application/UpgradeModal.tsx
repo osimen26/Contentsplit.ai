@@ -24,6 +24,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
   const [loading, setLoading] = useState<string | null>(null)
 
   const handleUpgrade = async (tier: 'pro' | 'agency') => {
+    if (loading) return
     try {
       setLoading(tier)
       const { apiClient } = await import('@/services/api-client')

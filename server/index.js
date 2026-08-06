@@ -647,6 +647,43 @@ app.get('/api/auth/me', requireAuth, async (req, res) => {
   }
 })
 
+// Update password
+app.post('/api/auth/update-password', requireAuth, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body
+    
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current and new passwords are required' })
+    }
+    
+    if (newPassword.length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters' })
+    }
+
+    const userDb = getUserDb()
+    const user = await userDb.findById(req.userId)
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    // Check if current password is correct
+    if (!verifyPassword(currentPassword, user.password_hash)) {
+      return res.status(401).json({ error: 'Incorrect current password' })
+    }
+
+    // Update password
+    await userDb.update(req.userId, {
+      password_hash: hashPassword(newPassword)
+    })
+
+    res.json({ success: true, message: 'Password updated successfully' })
+  } catch (err) {
+    console.error('Update password error:', err)
+    res.status(500).json({ error: 'Failed to update password' })
+  }
+})
+
 // Logout
 app.post('/api/auth/logout', requireAuth, (req, res) => {
   // With stateless tokens, the client handles logout by clearing localStorage

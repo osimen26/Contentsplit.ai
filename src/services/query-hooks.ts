@@ -180,6 +180,13 @@ export const useUpdateProfile = () => {
   })
 }
 
+export const useUpdatePassword = () => {
+  return useMutation({
+    mutationFn: ({ currentPassword, newPassword }: { currentPassword: string; newPassword: string }) =>
+      apiClient.updatePassword(currentPassword, newPassword),
+  })
+}
+
 export const useUpdateSubscription = () => {
   const queryClient = useQueryClient()
 

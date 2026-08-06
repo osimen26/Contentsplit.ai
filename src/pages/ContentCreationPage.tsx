@@ -257,7 +257,7 @@ const ContentCreationPage: React.FC = () => {
   
   const [isBatchMode, setIsBatchMode] = useState(false)
   const [batchItems, setBatchItems] = useState<string[]>([])
-  const [isBatchGenerating, setIsBatchGenerating] = useState(false)
+  const [isBatchGenerating] = useState(false)
   
   const { data: user } = useCurrentUser()
   const { data: usageStats } = useUsageStats()

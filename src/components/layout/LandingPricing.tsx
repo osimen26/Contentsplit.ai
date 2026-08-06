@@ -84,16 +84,21 @@ const LandingPricing: React.FC = () => {
       return;
     }
 
-    const tier = planName.toLowerCase();
+    const baseTier = planName.toLowerCase();
+    const tier = (isAnnual && baseTier !== 'free') ? `${baseTier}_yearly` : baseTier;
 
     if (!user) {
       navigate('/register');
       return;
     }
 
-    if (user.tier === tier) {
-      navigate('/dashboard');
-      return;
+    if (user.tier === baseTier) {
+      // Allow switching to yearly if currently on monthly, otherwise redirect to dashboard
+      // (Simplified: we'll just let them attempt the payment for yearly, or they can cancel)
+      if (!isAnnual) {
+        navigate('/dashboard');
+        return;
+      }
     }
 
     try {

@@ -445,7 +445,7 @@ const HelpPage: React.FC = () => {
                     display: 'inline-flex', alignItems: 'center', gap: 8,
                     padding: '10px 20px',
                     backgroundColor: '#151C28',
-                    color: '#333',
+                    color: 'white',
                     borderRadius: 8,
                     textDecoration: 'none',
                     fontSize: '0.9rem',

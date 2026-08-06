@@ -189,6 +189,11 @@ class ApiClient {
     return response.data
   }
 
+  async updatePassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+    const response = await this.client.post('/auth/update-password', { currentPassword, newPassword })
+    return response.data
+  }
+
   async updateSubscription(tier: 'free' | 'pro' | 'agency'): Promise<User> {
     const response = await this.client.post('/users/subscription', { tier })
     return response.data

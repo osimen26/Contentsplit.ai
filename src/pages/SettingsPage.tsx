@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useCurrentUser, useUpdateProfile, useUsageStats } from '@/services/query-hooks'
+import { useCurrentUser, useUpdateProfile, useUpdatePassword, useUsageStats } from '@/services/query-hooks'
 
 import { Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -199,9 +199,13 @@ const AccountSection: React.FC = () => {
               onClick={handleSave}
               disabled={updateProfile.isPending}
               style={{ 
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 padding: '8px 16px', 
                 fontWeight: 500, 
                 fontSize: '0.9rem',
+                lineHeight: 1,
                 backgroundColor: 'var(--sys-color-primary-40)',
                 color: 'white',
                 border: 'none',
@@ -240,6 +244,7 @@ const PasswordSection: React.FC = () => {
   const [errors, setErrors] = useState<{current?: string; new?: string; confirm?: string}>({})
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const updatePasswordMutation = useUpdatePassword()
 
   const validate = async () => {
     const newErrors: {current?: string; new?: string; confirm?: string} = {}
@@ -252,14 +257,19 @@ const PasswordSection: React.FC = () => {
     
     if (Object.keys(newErrors).length === 0) {
       setLoading(true)
-      await new Promise(r => setTimeout(r, 1500))
-      setLoading(false)
-      setSuccess(true)
-      setTimeout(() => setSuccess(false), 2000)
-      setCurrentPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
-      setErrors({})
+      try {
+        await updatePasswordMutation.mutateAsync({ currentPassword, newPassword })
+        setSuccess(true)
+        setTimeout(() => setSuccess(false), 2000)
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
+        setErrors({})
+      } catch (err: any) {
+        setErrors({ current: err.response?.data?.error || 'Failed to update password' })
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
@@ -340,9 +350,13 @@ const PasswordSection: React.FC = () => {
               onClick={validate}
               disabled={loading}
               style={{ 
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 padding: '8px 16px', 
                 fontWeight: 500, 
                 fontSize: '0.9rem',
+                lineHeight: 1,
                 backgroundColor: success ? '#10b981' : 'var(--sys-color-primary-40)',
                 color: 'white',
                 border: 'none',
@@ -530,9 +544,13 @@ const DeleteSection: React.FC = () => {
                <button
                 onClick={() => setConfirm(true)}
                 style={{ 
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   padding: '8px 16px', 
                   fontWeight: 500, 
                   fontSize: '0.85rem', 
+                  lineHeight: 1,
                   backgroundColor: 'rgba(239,68,68,0.1)',
                   color: '#FF6B6B',
                   border: 'none',
@@ -551,9 +569,13 @@ const DeleteSection: React.FC = () => {
               <div style={{ display: 'flex', gap: 12 }}>
                 <button
                   style={{ 
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     padding: '8px 16px', 
                     fontWeight: 500, 
                     fontSize: '0.85rem', 
+                    lineHeight: 1,
                     backgroundColor: '#dc2626',
                     color: 'white',
                     border: 'none',
@@ -566,9 +588,13 @@ const DeleteSection: React.FC = () => {
                 <button
                   onClick={() => setConfirm(false)}
                   style={{ 
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     padding: '8px 16px', 
                     fontWeight: 500, 
                     fontSize: '0.85rem', 
+                    lineHeight: 1,
                     backgroundColor: 'transparent',
                     border: '1px solid #fca5a5',
                     color: '#FF6B6B',
@@ -641,6 +667,8 @@ const SettingsPage: React.FC = () => {
                 key={item.id}
                 onClick={() => setActive(item.id)}
                 style={{
+                  display: 'flex',
+                  alignItems: 'center',
                   textAlign: 'left',
                   padding: '8px 12px',
                   borderRadius: 6,
@@ -649,6 +677,7 @@ const SettingsPage: React.FC = () => {
                   color: isActive ? 'var(--sys-color-primary-30)' : '#555',
                   fontSize: '0.88rem',
                   fontWeight: isActive ? 500 : 400,
+                  lineHeight: 1,
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                 }}
