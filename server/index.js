@@ -1422,24 +1422,17 @@ ${content}`
   }
 })
 
-// Create payment link
+// Create payment link — uses Flutterwave REST API directly (v3/payments)
 app.post('/api/payments/initiate', requireAuth, async (req, res) => {
-  // Initialize Flutterwave if not already done
-  if (!flutterwave) {
-    await getFlutterwave()
-  }
-
-  if (!flutterwave) {
+  const flwSecretKey = process.env.FLUTTERWAVE_SECRET_KEY
+  if (!flwSecretKey || flwSecretKey.includes('xxxxx')) {
+    console.error('❌ FLUTTERWAVE_SECRET_KEY is not configured')
     return res.status(503).json({ error: 'Payment system not configured' })
   }
 
   // Initialize Supabase if not already done
   if (!supabase) {
     await initSupabase()
-  }
-
-  if (!supabase) {
-    return res.status(503).json({ error: 'Database not configured' })
   }
 
   try {
@@ -1453,33 +1446,59 @@ app.post('/api/payments/initiate', requireAuth, async (req, res) => {
     const userDb = getUserDb()
     const user = await userDb.findById(req.userId)
 
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
     const payload = {
       tx_ref: `CS_${Date.now()}_${req.userId}`,
       amount: plan.amount,
       currency: 'NGN',
-      redirect_url: `${process.env.APP_URL || 'http://localhost:3000'}/payment-callback`,
+      redirect_url: `${process.env.APP_URL || 'https://contentsplit-ai.vercel.app'}/payment-callback`,
       customer: {
         email: user.email,
-        name: user.display_name || user.email.split('@')[0]
+        name: user.display_name || user.email.split('@')[0],
+        phonenumber: ''
       },
       customizations: {
-        title: `ContentSplit.ai - ${plan.name}`,
-        description: `${planId.includes('yearly') ? 'Yearly' : 'Monthly'} subscription for ${plan.name}`
+        title: 'ContentSplit.ai',
+        description: `${planId.includes('yearly') ? 'Yearly' : 'Monthly'} subscription — ${plan.name}`,
+        logo: `${process.env.APP_URL || 'https://contentsplit-ai.vercel.app'}/logo.svg`
       }
     }
 
+    // Attach recurring payment plan ID if set
     if (plan.planId) {
       payload.payment_plan = plan.planId
     }
 
-    const response = await flutterwave.PaymentLink.create(payload)
+    // Call Flutterwave Standard Payment API directly (no SDK required)
+    const flwResponse = await fetch('https://api.flutterwave.com/v3/payments', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${flwSecretKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+
+    const flwData = await flwResponse.json()
+    console.log('Flutterwave response:', flwResponse.status, flwData?.status, flwData?.message)
+
+    if (!flwResponse.ok || flwData?.status !== 'success') {
+      console.error('Flutterwave API error:', flwData)
+      return res.status(502).json({
+        error: 'Failed to create payment link',
+        details: flwData?.message || 'Unknown error from Flutterwave'
+      })
+    }
 
     res.json({
-      paymentLink: response.data.link,
-      reference: response.data.tx_ref
+      paymentLink: flwData.data.link,
+      reference: payload.tx_ref
     })
   } catch (err) {
-    console.error('Payment error:', err)
+    console.error('Payment initiation error:', err)
     res.status(500).json({ error: 'Failed to create payment' })
   }
 })
