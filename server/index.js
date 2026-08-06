@@ -55,9 +55,9 @@ async function getFlutterwave() {
 // Flutterwave pricing (in Naira - 5000 NGN = ~$3/month)
 const getFlutterwavePlans = () => ({
   free: { amount: 0, name: 'Free Tier' },
-  pro: { amount: 5000, name: 'Pro Plan', planId: process.env.FLUTTERWAVE_PLAN_ID_PRO },
+  pro: { amount: 8500, name: 'Pro Plan', planId: process.env.FLUTTERWAVE_PLAN_ID_PRO || '165591' },
   agency: { amount: 15000, name: 'Agency Plan', planId: process.env.FLUTTERWAVE_PLAN_ID_AGENCY },
-  pro_yearly: { amount: 54000, name: 'Pro Plan (Yearly)', planId: process.env.FLUTTERWAVE_PLAN_ID_PRO_YEARLY },
+  pro_yearly: { amount: 91800, name: 'Pro Plan (Yearly)', planId: process.env.FLUTTERWAVE_PLAN_ID_PRO_YEARLY },
   agency_yearly: { amount: 162000, name: 'Agency Plan (Yearly)', planId: process.env.FLUTTERWAVE_PLAN_ID_AGENCY_YEARLY }
 })
 
@@ -718,33 +718,41 @@ app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
         pro: 100,      // 100 per day
         agency: 999999  // unlimited
       }
-      const limit = tierLimits[user?.tier || 'free']
+      const tier = user?.tier || 'free'
+      let limit = 5
+      let periodStart = new Date()
+      periodStart.setHours(0, 0, 0, 0)
+      
+      if (tier === 'pro') {
+        limit = 100
+        periodStart.setDate(1) // Start of month
+      } else if (tier === 'agency') {
+        limit = 999999
+      }
 
-      const startOfDay = new Date()
-      startOfDay.setHours(0, 0, 0, 0)
-
-      let conversionsToday = 0
+      let usageCount = 0
 
       if (supabase) {
         const { count } = await supabase
           .from('conversions')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', userId)
-          .gte('created_at', startOfDay.toISOString())
+          .gte('created_at', periodStart.toISOString())
 
-        conversionsToday = count || 0
+        usageCount = count || 0
       } else {
         const allConversions = Array.from(conversionsDb.values())
-        conversionsToday = allConversions.filter(c =>
-          c.user_id === userId && new Date(c.created_at) >= startOfDay
+        usageCount = allConversions.filter(c =>
+          c.user_id === userId && new Date(c.created_at) >= periodStart
         ).length
       }
 
-      if (conversionsToday >= limit) {
+      if (usageCount >= limit) {
+        const periodStr = tier === 'pro' ? 'month' : 'day'
         return res.status(429).json({
-          error: `Daily limit reached. You've used ${conversionsToday}/${limit} conversions today. Upgrade your plan for more.`,
+          error: `Limit reached. You've used ${usageCount}/${limit} conversions this ${periodStr}. Upgrade your plan for more.`,
           limit_reached: true,
-          daily_usage: conversionsToday,
+          daily_usage: usageCount,
           daily_limit: limit
         })
       }
@@ -1111,35 +1119,40 @@ app.get('/api/users/usage', requireAuth, async (req, res) => {
     const userDb = getUserDb()
     const user = await userDb.findById(req.userId)
 
-    const tierLimits = {
-      free: 1,        // 1 per day
-      pro: 100,      // 100 per day  
-      agency: 999999  // unlimited
+    const tier = user?.tier || 'free'
+    let limit = 5
+    let periodStart = new Date()
+    periodStart.setHours(0, 0, 0, 0)
+    
+    if (tier === 'pro') {
+      limit = 100
+      periodStart.setDate(1)
+    } else if (tier === 'agency') {
+      limit = 999999
     }
 
-    let conversionsToday = 0
-    const startOfDay = new Date()
-    startOfDay.setHours(0, 0, 0, 0)
+    let usageCount = 0
 
     if (supabase) {
       const { count } = await supabase
         .from('conversions')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', req.userId)
-        .gte('created_at', startOfDay.toISOString())
+        .gte('created_at', periodStart.toISOString())
 
-      conversionsToday = count || 0
+      usageCount = count || 0
     } else {
       const allConversions = Array.from(conversionsDb.values())
-      conversionsToday = allConversions.filter(c =>
-        c.user_id === req.userId && new Date(c.created_at) >= startOfDay
+      usageCount = allConversions.filter(c =>
+        c.user_id === req.userId && new Date(c.created_at) >= periodStart
       ).length
     }
 
     res.json({
-      daily_usage: conversionsToday,
-      daily_limit: tierLimits[user?.tier || 'free'] || 1,
-      conversions_today: conversionsToday
+      daily_usage: usageCount,
+      daily_limit: limit,
+      conversions_today: usageCount,
+      period: tier === 'pro' ? 'month' : 'day'
     })
   } catch (err) {
     console.error('Usage error:', err)
@@ -1283,8 +1296,8 @@ app.post('/api/auth/reset-password', async (req, res) => {
 app.get('/api/plans', (req, res) => {
   res.json({
     plans: [
-      { id: 'free', name: 'Free', price: 0, features: ['10 conversions/month', 'Basic tones'] },
-      { id: 'pro', name: 'Pro', price: 5000, currency: 'NGN', features: ['100 conversions/month', 'All tones', 'Priority support'] },
+      { id: 'free', name: 'Free', price: 0, features: ['5 conversions/day', 'Basic tones'] },
+      { id: 'pro', name: 'Pro', price: 8500, currency: 'NGN', features: ['100 conversions/month', 'All tones', 'Priority support'] },
       { id: 'agency', name: 'Agency', price: 15000, currency: 'NGN', features: ['Unlimited conversions', 'All tones', 'Team access', 'Priority support'] }
     ]
   })
@@ -1524,7 +1537,7 @@ app.post('/api/payments/webhook', async (req, res) => {
       // Determine tier based on amount
       let tier = 'free'
       if (amount >= 160000 || amount === 15000) tier = 'agency' // 15,000 monthly or 162,000 yearly
-      else if (amount >= 5000) tier = 'pro' // 5,000 monthly or 54,000 yearly
+      else if (amount >= 8500) tier = 'pro' // 8,500 monthly or 91,800 yearly
 
       // Update user tier
       const userDb = getUserDb()

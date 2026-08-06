@@ -34,7 +34,7 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: '₦5,000',
+    price: '₦8,500',
     period: 'per user / month',
     subtitle: 'For teams and serious creators',
     features: [
