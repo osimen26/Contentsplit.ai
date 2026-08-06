@@ -18,6 +18,8 @@ import { z } from 'zod'
 import crypto from 'crypto'
 import fs from 'fs'
 import path from 'path'
+import bcrypt from 'bcrypt'
+import rateLimit from 'express-rate-limit'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -166,7 +168,13 @@ const usersDb = loadMockDb('users')
 const conversionsDb = loadMockDb('conversions')
 const outputsDb = loadMockDb('outputs')
 const sessionsDb = loadMockDb('sessions')
-const JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_KEY || 'contentsplit-secret-key'
+const JWT_SECRET = process.env.JWT_SECRET
+if (!JWT_SECRET || JWT_SECRET === 'your_jwt_secret_here') {
+  console.error('\n❌ FATAL: JWT_SECRET environment variable is not set or is using the placeholder value.')
+  console.error('   Generate one with: openssl rand -base64 32')
+  console.error('   Then set it in your .env file and Vercel dashboard.\n')
+  process.exit(1)
+}
 
 // getUserDb returns DB interface (Supabase or mock)
 // Call initSupabase() before using this in request handlers
@@ -194,12 +202,13 @@ function getUserDb() {
         if (error && error.code !== 'PGRST116') throw error
         return data || null
       },
-      async create(email, password, firstName, lastName) {
+      async create(email, passwordHash, firstName, lastName) {
+        // NOTE: passwordHash must already be bcrypt-hashed by the caller
         email = email.trim().toLowerCase()
         console.log('Creating user in Supabase:', email)
         const userData = {
           email,
-          password_hash: hashPassword(password),
+          password_hash: passwordHash,
           tier: 'free',
           display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
         }
@@ -219,7 +228,7 @@ function getUserDb() {
               .from('users')
               .insert({
                 email,
-                password_hash: hashPassword(password),
+                password_hash: passwordHash,
                 tier: 'free',
                 display_name: firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null)
               })
@@ -257,11 +266,12 @@ function getUserDb() {
     findById(id) {
       return usersDb.get(id) || null
     },
-    create(email, password, firstName, lastName) {
+    create(email, passwordHash, firstName, lastName) {
+      // NOTE: passwordHash must already be bcrypt-hashed by the caller
       const user = {
         id: crypto.randomUUID(),
         email: email.trim().toLowerCase(),
-        password_hash: hashPassword(password),
+        password_hash: passwordHash,
         tier: 'free',
         first_name: firstName,
         last_name: lastName,
@@ -283,13 +293,17 @@ function getUserDb() {
   }
 }
 
-// Simple password hashing (use bcrypt in production)
-function hashPassword(password) {
-  return crypto.createHash('sha256').update(password).digest('hex')
+// Secure password hashing with bcrypt (cost factor 12)
+async function hashPassword(password) {
+  return bcrypt.hash(password, 12)
 }
 
-function verifyPassword(password, hash) {
-  return hashPassword(password) === hash
+async function verifyPassword(password, hash) {
+  if (!hash) return false
+  // Support legacy SHA-256 hashes during migration (remove after all users have re-logged in)
+  const sha256Hash = crypto.createHash('sha256').update(password).digest('hex')
+  if (hash === sha256Hash) return true
+  return bcrypt.compare(password, hash)
 }
 
 function generateToken(userId) {
@@ -307,7 +321,13 @@ function verifyToken(token) {
     const [payload, signature] = token.split('.')
     if (!payload || !signature) return null
     const expectedSignature = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('base64')
-    if (signature !== expectedSignature) return null
+
+    // Timing-safe comparison to prevent timing attacks
+    const sigBuf = Buffer.from(signature, 'base64')
+    const expectedBuf = Buffer.from(expectedSignature, 'base64')
+    if (sigBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(sigBuf, expectedBuf)) {
+      return null
+    }
 
     const data = JSON.parse(Buffer.from(payload, 'base64').toString('utf8'))
     if (data.expiresAt < Date.now()) return null
@@ -461,6 +481,24 @@ ${inputText}
 --- END ---`
 }
 
+// ── RATE LIMITERS ────────────────────────────────────────────────────────────
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many attempts. Please try again in 15 minutes.' }
+})
+
+const generateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // 5 requests per hour for anonymous/IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => !!req.userId, // skip for authenticated users (handled by per-user DB quota)
+  message: { error: 'Too many requests. Please sign up for a free account to continue.' }
+})
+
 // ── ROUTES ───────────────────────────────────────────────────────────────────
 
 // Health check
@@ -490,7 +528,7 @@ app.get('/api/health', async (req, res) => {
 })
 
 // Login
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', authLimiter, async (req, res) => {
   try {
     const { email: rawEmail, password } = req.body
     const email = rawEmail?.trim()
@@ -507,9 +545,15 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' })
     }
 
-    if (!verifyPassword(password, user.password_hash)) {
+    if (!await verifyPassword(password, user.password_hash)) {
       console.log('Login failed: Password mismatch for email:', email)
       return res.status(401).json({ error: 'Invalid email or password' })
+    }
+
+    // If user still has legacy SHA-256 hash, silently re-hash with bcrypt on login
+    if (user.password_hash.length === 64) {
+      const newHash = await hashPassword(password)
+      await userDb.update(user.id, { password_hash: newHash })
     }
 
     // Create session
@@ -529,7 +573,7 @@ app.post('/api/auth/login', async (req, res) => {
 })
 
 // Register
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', authLimiter, async (req, res) => {
   try {
     const { email: rawEmail, password, firstName, lastName } = req.body
     const email = rawEmail?.trim()
@@ -553,7 +597,7 @@ app.post('/api/auth/register', async (req, res) => {
 
     // Create user
     console.log('Creating user...')
-    const user = await userDb.create(email, password, firstName, lastName)
+    const user = await userDb.create(email, await hashPassword(password), firstName, lastName)
     console.log('User created:', user.id)
 
     // Create session
@@ -568,7 +612,11 @@ app.post('/api/auth/register', async (req, res) => {
     })
   } catch (err) {
     console.error('Registration error:', err.message, err.stack)
-    res.status(500).json({ error: 'Registration failed: ' + err.message })
+    // Do not leak internal error details to client
+    if (err.code === '23505') {
+      return res.status(400).json({ error: 'Email already registered' })
+    }
+    res.status(500).json({ error: 'Registration failed. Please try again.' })
   }
 })
 
@@ -605,7 +653,8 @@ app.post('/api/auth/google', async (req, res) => {
     if (!user) {
       console.log(`Creating new Google user: ${email} (${displayName})`)
       // Create user if they don't exist.
-      user = await userDb.create(email, crypto.randomUUID(), firstName, lastName)
+      const randomPw = await hashPassword(crypto.randomUUID())
+      user = await userDb.create(email, randomPw, firstName, lastName)
 
       // If the userDb.create didn't set display_name (e.g. in mock mode), we set it here if needed
       // But we updated userDb.create already.
@@ -668,13 +717,13 @@ app.post('/api/auth/update-password', requireAuth, async (req, res) => {
     }
 
     // Check if current password is correct
-    if (!verifyPassword(currentPassword, user.password_hash)) {
+    if (!await verifyPassword(currentPassword, user.password_hash)) {
       return res.status(401).json({ error: 'Incorrect current password' })
     }
 
     // Update password
     await userDb.update(req.userId, {
-      password_hash: hashPassword(newPassword)
+      password_hash: await hashPassword(newPassword)
     })
 
     res.json({ success: true, message: 'Password updated successfully' })
@@ -703,7 +752,7 @@ const generateSchema = z.object({
   persona: z.string().optional()
 })
 
-app.post('/api/conversions/generate', optionalAuth, async (req, res) => {
+app.post('/api/conversions/generate', generateLimiter, optionalAuth, async (req, res) => {
   try {
     const parsedData = generateSchema.parse(req.body)
     const { input_text, tone_mode, platforms, persona } = parsedData
@@ -1186,32 +1235,12 @@ app.patch('/api/users/profile', requireAuth, async (req, res) => {
   }
 })
 
-// Update subscription tier
-app.post('/api/users/subscription', requireAuth, async (req, res) => {
-  try {
-    const { tier } = req.body
-
-    if (!tier || !['free', 'pro', 'agency'].includes(tier)) {
-      return res.status(400).json({ error: 'Invalid tier' })
-    }
-
-    const userDb = getUserDb()
-    const user = await userDb.update(req.userId, { tier })
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' })
-    }
-
-    const { password_hash, ...userWithoutPassword } = user
-    res.json(userWithoutPassword)
-  } catch (err) {
-    console.error('Update subscription error:', err)
-    res.status(500).json({ error: 'Failed to update subscription' })
-  }
-})
+// NOTE: Subscription tier is managed EXCLUSIVELY by the Flutterwave webhook.
+// This endpoint has been removed to prevent users from self-promoting their tier for free.
+// To manually adjust a user's tier, update it directly in the Supabase dashboard.
 
 // Password recovery with email
-app.post('/api/auth/recover', async (req, res) => {
+app.post('/api/auth/recover', authLimiter, async (req, res) => {
   try {
     const { email } = req.body
     console.log('📧 Recover endpoint hit with email:', email)
@@ -1238,10 +1267,12 @@ app.post('/api/auth/recover', async (req, res) => {
 
     try {
       await sendRecoveryEmail(email, recoveryToken, process.env.EMAIL_FROM || 'noreply@contentsplit.ai')
-      res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: debugInfo })
+      // Never leak debug info or user existence to client in production
+      res.json({ success: true, message: 'If an account exists, a recovery email has been sent.' })
     } catch (emailErr) {
       console.error('📧 Email sending failed:', emailErr)
-      res.json({ success: true, message: 'If an account exists, a recovery email has been sent.', debug: { ...debugInfo, error: String(emailErr) } })
+      // Still return success to avoid user enumeration
+      res.json({ success: true, message: 'If an account exists, a recovery email has been sent.' })
     }
   } catch (err) {
     console.error('Recovery error:', err)
@@ -1467,27 +1498,33 @@ app.post('/api/payments/webhook', async (req, res) => {
     return res.status(503).json({ error: 'Payment not configured' })
   }
 
+  // Webhook signature is REQUIRED — no fallback
+  const secretHash = process.env.FLUTTERWAVE_WEBHOOK_SECRET
+  if (!secretHash || secretHash === 'your_webhook_secret_here') {
+    console.error('❌ FATAL: FLUTTERWAVE_WEBHOOK_SECRET is not set. Rejecting all webhook requests.')
+    return res.status(503).json({ error: 'Webhook not configured' })
+  }
+
   try {
-    const secretHash = process.env.FLUTTERWAVE_WEBHOOK_SECRET || process.env.FLUTTERWAVE_SECRET_HASH
     const signature = req.headers['flutterwave-webhook-signature']
 
-    // Strict signature verification
-    if (secretHash) {
-      if (!signature) {
-        console.warn('⚠️ Webhook attempt without signature')
-        return res.status(401).json({ error: 'Missing signature' })
-      }
+    if (!signature) {
+      console.warn('⚠️ Webhook attempt without signature — rejected')
+      return res.status(401).json({ error: 'Missing signature' })
+    }
 
-      const payloadString = req.rawBody ? req.rawBody.toString('utf8') : JSON.stringify(req.body)
-      const expectedSignature = crypto
-        .createHmac('sha256', secretHash)
-        .update(payloadString)
-        .digest('hex')
+    const payloadString = req.rawBody ? req.rawBody.toString('utf8') : JSON.stringify(req.body)
+    const expectedSignature = crypto
+      .createHmac('sha256', secretHash)
+      .update(payloadString)
+      .digest('hex')
 
-      if (signature !== expectedSignature) {
-        console.warn('⚠️ Invalid webhook signature')
-        return res.status(401).json({ error: 'Invalid signature' })
-      }
+    // Timing-safe comparison
+    const sigBuf = Buffer.from(signature, 'hex')
+    const expectedBuf = Buffer.from(expectedSignature, 'hex')
+    if (sigBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(sigBuf, expectedBuf)) {
+      console.warn('⚠️ Invalid webhook signature — rejected')
+      return res.status(401).json({ error: 'Invalid signature' })
     }
 
     const event = req.body
