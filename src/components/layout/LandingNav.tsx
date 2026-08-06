@@ -41,9 +41,15 @@ const LandingNav: React.FC = () => {
         width: '90%', maxWidth: '900px',
         boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
       }} className="cs-nav">
+        <style>{`
+          .cs-nav-logo-img { height: 32px; }
+          @media (max-width: 767px) {
+            .cs-nav-logo-img { height: 24px; }
+          }
+        `}</style>
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: '8px' }}>
-          <img src="/images/nav-content.svg" alt="ContentSplit Logo" style={{ height: '32px' }} />
+          <img src="/images/nav-content.svg" alt="ContentSplit Logo" className="cs-nav-logo-img" />
         </Link>
 
         {/* Desktop links */}
