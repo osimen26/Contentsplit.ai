@@ -45,17 +45,29 @@ const LandingHero: React.FC = () => {
       paddingTop: '160px',
       overflow: 'hidden',
     }}>
+      <style>{`
+        .hero-bg-img {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: top center;
+          z-index: -2;
+        }
+        @media (max-width: 767px) {
+          .hero-bg-img {
+            height: 150%;
+          }
+        }
+      `}</style>
+
       {/* Background Image */}
       <img
         src="/images/hero-back.svg"
         alt="Hero Background"
-        style={{
-          position: 'absolute',
-          top: 0, left: 0, width: '100%', height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'top center',
-          zIndex: -2,
-        }}
+        className="hero-bg-img"
       />
 
       {/* Gradient Mask for Background Fade */}
