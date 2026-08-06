@@ -927,20 +927,53 @@ app.get('/api/conversions', requireAuth, async (req, res) => {
     const page = parseInt(req.query.page || '1')
     const pageSize = parseInt(req.query.page_size || '20')
 
+    const userDb = getUserDb()
+    const user = await userDb.findById(req.userId)
+    const tier = user?.tier || 'free'
+
+    if (tier === 'free') {
+      return res.json({
+        data: [],
+        total: 0,
+        page,
+        page_size: pageSize,
+        has_more: false,
+        locked: true
+      })
+    }
+
+    let cutoffDate = null;
+    if (tier === 'pro') {
+      cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - 30); // 30 days history for Pro
+    }
+
     if (supabase) {
-      const { data: conversions, error } = await supabase
+      let query = supabase
         .from('conversions')
         .select('*')
         .eq('user_id', req.userId)
+        
+      if (cutoffDate) {
+        query = query.gte('created_at', cutoffDate.toISOString())
+      }
+      
+      const { data: conversions, error } = await query
         .order('created_at', { ascending: false })
         .range((page - 1) * pageSize, page * pageSize - 1)
 
       if (error) throw error
 
-      const { count } = await supabase
+      let countQuery = supabase
         .from('conversions')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', req.userId)
+
+      if (cutoffDate) {
+        countQuery = countQuery.gte('created_at', cutoffDate.toISOString())
+      }
+
+      const { count } = await countQuery
 
       res.json({
         data: conversions || [],
@@ -951,10 +984,17 @@ app.get('/api/conversions', requireAuth, async (req, res) => {
       })
     } else {
       // Mock response - sample data
-      const userConversions = Array.from(conversionsDb.values())
+      let userConversions = Array.from(conversionsDb.values())
         .filter(c => c.user_id === req.userId)
+
+      if (cutoffDate) {
+        userConversions = userConversions.filter(c => new Date(c.created_at) >= cutoffDate)
+      }
+
+      userConversions = userConversions
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
         .slice((page - 1) * pageSize, page * pageSize)
+
       res.json({
         data: userConversions,
         total: userConversions.length,

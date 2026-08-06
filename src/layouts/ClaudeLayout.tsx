@@ -119,12 +119,24 @@ const SidebarContentComponent: React.FC<{
         {(!collapsed || inDrawer) && (
           <h3 style={{ ...dm(13, 500, { color: '#94A3B8', marginBottom: '16px', paddingLeft: '4px', margin: '0 0 16px 0' }) }}>Chats</h3>
         )}
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          {recentItems.length === 0 && (!collapsed || inDrawer) && (
-            <li style={{ padding: '8px 4px', ...dm(13, 400, { color: '#94A3B8' }) }}>
-              No chats yet.
-            </li>
-          )}
+
+        {isFree ? (
+          (!collapsed || inDrawer) ? (
+            <div style={{ padding: '16px 12px', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0', textAlign: 'center', marginTop: '8px' }}>
+              <div style={{ marginBottom: '8px', fontSize: '1.25rem' }}>🔒</div>
+              <p style={{ ...dm(12, 500, { color: '#475569', margin: '0 0 8px 0' }) }}>History locked</p>
+              <Link to="/settings" onClick={onMobileClose} style={{ ...dm(11, 600, { color: '#2563EB', textDecoration: 'none' }) }}>Upgrade to Pro →</Link>
+            </div>
+          ) : (
+            <div style={{ padding: '8px', textAlign: 'center', fontSize: '1rem', opacity: 0.5 }}>🔒</div>
+          )
+        ) : (
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {recentItems.length === 0 && (!collapsed || inDrawer) && (
+              <li style={{ padding: '8px 4px', ...dm(13, 400, { color: '#94A3B8' }) }}>
+                No chats yet.
+              </li>
+            )}
           {recentItems.map(item => {
             const active = location.pathname === `/dashboard/c/${item.id}`
             const label = item.input_text.slice(0, 28) + (item.input_text.length > 28 ? '…' : '')
@@ -189,6 +201,7 @@ const SidebarContentComponent: React.FC<{
             )
           })}
         </ul>
+        )}
       </nav>
 
       {/* ── FOOTER: Settings + Profile ── */}
