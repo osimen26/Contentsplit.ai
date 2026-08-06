@@ -127,7 +127,7 @@ const LandingFeatureHighlights: React.FC = () => {
           .cs-feature-row {
             grid-template-columns: 1fr !important;
             gap: 40px !important;
-            text-align: center;
+            text-align: left;
           }
           .cs-feature-row > div {
             padding: 0 !important;

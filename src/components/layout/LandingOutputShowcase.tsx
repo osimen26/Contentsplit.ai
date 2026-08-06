@@ -80,7 +80,7 @@ const LandingOutputShowcase: React.FC = () => {
       {/* Left Column: Text & Features */}
       <div className="cs-showcase-text">
         <div>
-          <h3 style={{ ...dm(32, 600, { color: '#0F172A', margin: '0 0 8px 0', fontSize: 'clamp(1.75rem, 6vw, 2rem)' }) }}>
+          <h3 style={{ ...dm(32, 600, { color: '#0F172A', margin: '0 0 8px 0', fontSize: 'clamp(1.25rem, 5vw, 1.75rem)' }) }}>
             {data.title}
           </h3>
           <p style={{ ...dm(16, 400, { color: '#64748B', margin: 0 }) }}>

@@ -50,7 +50,7 @@ const LandingFAQ: React.FC = () => {
             fontSize: 'clamp(2rem, 4vw, 2.5rem)',
             maxWidth: '300px'
           }}>
-            Frequently<br />Asked<br />Questions
+            Frequently{' '}<br />Asked{' '}<br />Questions
           </h2>
         </div>
 
