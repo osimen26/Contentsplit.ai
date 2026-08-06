@@ -20,6 +20,7 @@ import fs from 'fs'
 import path from 'path'
 import bcrypt from 'bcrypt'
 import rateLimit from 'express-rate-limit'
+import helmet from 'helmet'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -34,6 +35,9 @@ try {
 
 const app = express()
 const PORT = process.env.PORT || 3001
+
+// Apply basic security headers
+app.use(helmet())
 
 // ── FLUTTERWAVE CONFIG ─────────────────────────────────────────────────────────
 let flutterwave = null
@@ -316,8 +320,11 @@ function generateToken(userId) {
   return `${payload}.${signature}`
 }
 
+const tokenDenylist = new Set()
+
 function verifyToken(token) {
   try {
+    if (tokenDenylist.has(token)) return null;
     const [payload, signature] = token.split('.')
     if (!payload || !signature) return null
     const expectedSignature = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('base64')
@@ -522,8 +529,10 @@ app.get('/api/health', async (req, res) => {
     status: 'ok',
     model: DEEPSEEK_MODEL,
     database: supabase ? 'connected' : 'mock',
-    table_status: tableStatus,
-    user_count: userCount
+    ...(process.env.NODE_ENV === 'development' && {
+      table_status: tableStatus,
+      user_count: userCount
+    })
   })
 })
 
@@ -582,8 +591,8 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' })
     }
 
-    if (password.length < 8) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters' })
+    if (password.length < 8 || !/(?=.*\d)/.test(password)) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters and include at least one number' })
     }
 
     const userDb = getUserDb()
@@ -705,8 +714,8 @@ app.post('/api/auth/update-password', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Current and new passwords are required' })
     }
     
-    if (newPassword.length < 8) {
-      return res.status(400).json({ error: 'New password must be at least 8 characters' })
+    if (newPassword.length < 8 || !/(?=.*\d)/.test(newPassword)) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters and include at least one number' })
     }
 
     const userDb = getUserDb()
@@ -735,7 +744,10 @@ app.post('/api/auth/update-password', requireAuth, async (req, res) => {
 
 // Logout
 app.post('/api/auth/logout', requireAuth, (req, res) => {
-  // With stateless tokens, the client handles logout by clearing localStorage
+  const token = req.headers.authorization?.split(' ')[1];
+  if (token) {
+    tokenDenylist.add(token);
+  }
   res.json({ success: true })
 })
 
@@ -755,7 +767,13 @@ const generateSchema = z.object({
 app.post('/api/conversions/generate', generateLimiter, optionalAuth, async (req, res) => {
   try {
     const parsedData = generateSchema.parse(req.body)
-    const { input_text, tone_mode, platforms, persona } = parsedData
+    let { input_text, tone_mode, platforms, persona } = parsedData
+    
+    // Prompt Injection Defense: strip special characters that could act as override commands
+    if (persona) {
+      persona = persona.replace(/[^a-zA-Z0-9\s.,-]/g, '').slice(0, 100);
+    }
+    
     const userId = req.userId || 'anonymous'
 
     // Check daily limit before generating (skip for anonymous users)
