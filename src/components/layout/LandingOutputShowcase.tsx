@@ -136,7 +136,7 @@ const LandingOutputShowcase: React.FC = () => {
           {/* Left Column: Text & Features */}
           <div className="cs-showcase-text">
             <div>
-              <h3 style={{ ...dm(32, 600, { color: '#0F172A', margin: '0 0 8px 0' }) }}>
+              <h3 style={{ ...dm(32, 600, { color: '#0F172A', margin: '0 0 8px 0', fontSize: 'clamp(1.75rem, 6vw, 2rem)' }) }}>
                 {activeData.title}
               </h3>
               <p style={{ ...dm(16, 400, { color: '#64748B', margin: 0 }) }}>
@@ -167,12 +167,12 @@ const LandingOutputShowcase: React.FC = () => {
               alt={activeData.title} 
               style={{
                 width: '100%',
-                maxWidth: '280px',
                 height: 'auto',
                 objectFit: 'contain',
                 filter: 'drop-shadow(0 24px 40px rgba(0,0,0,0.15))',
                 animation: 'subtleBounce 5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite',
               }}
+              className="cs-showcase-img"
             />
 
             {/* The floating stat pill */}
@@ -257,6 +257,9 @@ const LandingOutputShowcase: React.FC = () => {
           width: 100%;
           transition: background 0.5s ease;
         }
+        .cs-showcase-img {
+          max-width: 280px;
+        }
 
         /* ── CTA button ── */
         .cs-get-started-btn {
@@ -320,6 +323,7 @@ const LandingOutputShowcase: React.FC = () => {
             font-size: 13px;
           }
           .cs-showcase-card { height: 260px !important; border-radius: 20px !important; }
+          .cs-showcase-img { max-width: 180px !important; }
         }
 
         @media (max-width: 480px) {
