@@ -69,6 +69,25 @@ export interface PaginatedResponse<T> {
   has_more: boolean
 }
 
+export interface SocialAccount {
+  id: string
+  platform: 'twitter' | 'linkedin' | 'instagram' | 'facebook' | 'threads'
+  platform_username: string
+  connected_at: string
+}
+
+export interface SocialPost {
+  id: string
+  platform: 'twitter' | 'linkedin' | 'instagram' | 'facebook' | 'threads'
+  content: string
+  status: 'published' | 'failed'
+  published_at: string
+  platform_post_id?: string
+  platform_post_url?: string
+  error_message?: string
+}
+
+
 class ApiClient {
   private client: AxiosInstance
 
@@ -199,6 +218,11 @@ class ApiClient {
     return response.data
   }
 
+  async deleteAccount(): Promise<{ success: boolean; message: string }> {
+    const response = await this.client.delete('/users/me')
+    return response.data
+  }
+
   // Usage Stats
   async getUsageStats(): Promise<{
     daily_usage: number
@@ -230,6 +254,121 @@ class ApiClient {
     const response: AxiosResponse<T> = await this.client.request(config)
     return response.data
   }
+
+  // ── Social Publishing ────────────────────────────────────────────────────────
+
+  async getTwitterAuthUrl(): Promise<{ url: string }> {
+    const response = await this.client.get('/social/twitter/auth-url')
+    return response.data
+  }
+
+  async getSocialAccounts(): Promise<SocialAccount[]> {
+    const response = await this.client.get('/social/accounts')
+    return response.data
+  }
+
+  async disconnectTwitter(): Promise<{ success: boolean }> {
+    const response = await this.client.delete('/social/twitter/disconnect')
+    return response.data
+  }
+
+  async publishToTwitter(outputId: string, content: string): Promise<{ success: boolean; post: SocialPost | null; tweet_url: string | null; tweet_id: string | null }> {
+    const response = await this.client.post('/social/twitter/publish', { output_id: outputId, content })
+    return response.data
+  }
+
+  async getSocialPosts(page = 1, pageSize = 20): Promise<PaginatedResponse<SocialPost>> {
+    const response = await this.client.get('/social/posts', { params: { page, page_size: pageSize } })
+    return response.data
+  }
+
+  // ── LinkedIn ─────────────────────────────────────────────────────────────────
+
+  async getLinkedInAuthUrl(): Promise<{ url: string }> {
+    const response = await this.client.get('/social/linkedin/auth-url')
+    return response.data
+  }
+
+  async disconnectLinkedIn(): Promise<{ success: boolean }> {
+    const response = await this.client.delete('/social/linkedin/disconnect')
+    return response.data
+  }
+
+  async publishToLinkedIn(
+    outputId: string,
+    content: string,
+    url?: string
+  ): Promise<{ success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null }> {
+    const response = await this.client.post('/social/linkedin/publish', {
+      output_id: outputId,
+      content,
+      url: url || undefined,
+    })
+    return response.data
+  }
+
+  // ── Instagram ────────────────────────────────────────────────────────────────
+
+  async getInstagramAuthUrl(): Promise<{ url: string }> {
+    const response = await this.client.get('/social/instagram/auth-url')
+    return response.data
+  }
+
+  async disconnectInstagram(): Promise<{ success: boolean }> {
+    const response = await this.client.delete('/social/instagram/disconnect')
+    return response.data
+  }
+
+  async publishToInstagram(
+    outputId: string,
+    content: string,
+    mediaUrl: string
+  ): Promise<{ success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null }> {
+    const response = await this.client.post('/social/instagram/publish', {
+      output_id: outputId,
+      content,
+      media_url: mediaUrl,
+    })
+    return response.data
+  }
+
+  // ── Media Upload ─────────────────────────────────────────────────────────────
+
+  async uploadMedia(file: File): Promise<{ url: string }> {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await this.client.post('/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    return response.data
+  }
+  // ── Newsletter ───────────────────────────────────────────────────────────────
+
+  async getSubscribers(): Promise<{ id: string; email: string; name: string | null; created_at: string }[]> {
+    const response = await this.client.get('/newsletter/subscribers')
+    return response.data
+  }
+
+  async addSubscriber(email: string, name?: string): Promise<{ success: boolean }> {
+    const response = await this.client.post('/newsletter/subscribers', { email, name })
+    return response.data
+  }
+
+  async deleteSubscriber(id: string): Promise<{ success: boolean }> {
+    const response = await this.client.delete(`/newsletter/subscribers/${id}`)
+    return response.data
+  }
+
+  async publishToNewsletter(outputId: string, content: string): Promise<{ success: boolean; post: SocialPost | null; message: string }> {
+    const response = await this.client.post('/social/newsletter/publish', {
+      output_id: outputId,
+      content,
+    })
+    return response.data
+  }
 }
 
 export const apiClient = new ApiClient()
+

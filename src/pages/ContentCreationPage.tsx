@@ -1,9 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import { ChatInput, ChatLoadingBubble, LimitReachedBubble, LimitReachedBanner, UpgradeModal } from '@components/application'
 import { useGenerateContent, useRegenerateContent, useOutputs, useCurrentUser, useUsageStats } from '@services/query-hooks'
-import { RefreshCw, Copy, CheckCircle2, CheckCheck } from 'lucide-react'
+import { RefreshCw, Copy, CheckCircle2, CheckCheck, Send } from 'lucide-react'
 import type { Output } from '@services/api-client'
 import '@/styles/dashboard.css'
+
+const PublishPanel = lazy(() => import('@/components/social/PublishPanel'))
+
 
 // --- Types & Constants ---
 type MessageType = 'text' | 'loading' | 'result' | 'error' | 'limit_reached' | 'preferences'
@@ -40,8 +43,9 @@ const PlatformIcon: React.FC<{ id: string; size?: number }> = ({ id, size = 15 }
   return null
 }
 
-const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isRegenerating: boolean }> = ({ output, onRegenerate, isRegenerating }) => {
+const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isRegenerating: boolean, isPremium: boolean }> = ({ output, onRegenerate, isRegenerating, isPremium }) => {
   const platform = PLATFORMS.find(p => p.id === output.platform)
+  const [showPublishPanel, setShowPublishPanel] = useState(false)
   
   const handleCopy = () => {
     navigator.clipboard.writeText(output.content)
@@ -86,15 +90,40 @@ const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isReg
           >
             <Copy size={11} /> Copy
           </button>
+          {/* Publish button — Twitter, LinkedIn, Instagram, Email, Pro/Agency users only */}
+          {(output.platform === 'twitter' || output.platform === 'linkedin' || output.platform === 'instagram' || output.platform === 'email') && isPremium && (
+            <button
+              onClick={() => setShowPublishPanel(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#0F172A', border: 'none', borderRadius: '6px', padding: '5px 10px', cursor: 'pointer', ...dm(12, 600, { color: '#FFFFFF' }) }}
+              title={output.platform === 'email' ? 'Send Newsletter' : `Publish directly to ${output.platform}`}
+            >
+              <Send size={11} /> Publish
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Publish Panel modal */}
+      {showPublishPanel && (
+        <Suspense fallback={null}>
+          <PublishPanel
+            outputId={output.id}
+            initialContent={output.content}
+            platform={output.platform as 'twitter' | 'linkedin' | 'instagram' | 'email'}
+            onClose={() => setShowPublishPanel(false)}
+          />
+        </Suspense>
+      )}
     </div>
   )
 }
 
+
 const ResultGrid = ({ conversionId }: { conversionId: string }) => {
   const { data: outputs, isLoading } = useOutputs(conversionId)
   const regenerateMutation = useRegenerateContent()
+  const { data: user } = useCurrentUser()
+  const isPremium = user?.tier === 'pro' || user?.tier === 'agency'
 
   const getOutputsArray = (data: unknown): Output[] => {
     if (Array.isArray(data)) return data as Output[]
@@ -115,6 +144,7 @@ const ResultGrid = ({ conversionId }: { conversionId: string }) => {
         <AIResponseCard 
           key={out.platform} 
           output={out} 
+          isPremium={isPremium}
           onRegenerate={() => regenerateMutation.mutate({ conversion_id: conversionId, platform: out.platform as any })}
           isRegenerating={regenerateMutation.isPending && regenerateMutation.variables?.platform === out.platform}
         />

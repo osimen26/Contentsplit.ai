@@ -21,8 +21,15 @@ import path from 'path'
 import bcrypt from 'bcrypt'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
+import multer from 'multer'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+
+// Set up multer for memory storage
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+})
 
 // Load server-only .env (not VITE_* prefixed — never exposed to browser)
 // For local dev, loads from .env file. For Vercel, env vars come from dashboard
@@ -169,8 +176,11 @@ function saveMockDb(name, map) {
 }
 
 const usersDb = loadMockDb('users')
-const conversionsDb = loadMockDb('conversions')
-const outputsDb = loadMockDb('outputs')
+const conversionsDb = new Map()
+const outputsDb = new Map()
+const socialAccountsDb = new Map()
+const socialPostsDb = new Map()
+const emailSubscribersDb = new Map()
 const sessionsDb = loadMockDb('sessions')
 const JWT_SECRET = process.env.JWT_SECRET
 if (!JWT_SECRET || JWT_SECRET === 'your_jwt_secret_here') {
@@ -258,6 +268,14 @@ function getUserDb() {
           .single()
         if (error) throw error
         return data
+      },
+      async delete(id) {
+        const { error } = await supabase
+          .from('users')
+          .delete()
+          .eq('id', id)
+        if (error) throw error
+        return true
       }
     }
   }
@@ -749,6 +767,48 @@ app.post('/api/auth/logout', requireAuth, (req, res) => {
     tokenDenylist.add(token);
   }
   res.json({ success: true })
+})
+
+// ── MEDIA UPLOADS ────────────────────────────────────────────────────────────
+
+app.post('/api/upload', requireAuth, upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file provided' })
+    }
+
+    if (!supabase) {
+      return res.status(500).json({ error: 'Supabase storage is not configured' })
+    }
+
+    const file = req.file
+    const fileExt = file.originalname.split('.').pop()
+    const fileName = `${req.userId}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`
+    const filePath = `social/${fileName}`
+
+    const { data, error } = await supabase.storage
+      .from('media_uploads')
+      .upload(filePath, file.buffer, {
+        contentType: file.mimetype,
+        cacheControl: '3600',
+        upsert: false
+      })
+
+    if (error) {
+      console.error('Supabase upload error:', error)
+      return res.status(500).json({ error: 'Failed to upload file to storage', details: error.message })
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('media_uploads')
+      .getPublicUrl(filePath)
+
+    res.json({ url: urlData.publicUrl })
+  } catch (err) {
+    console.error('Upload error:', err)
+    res.status(500).json({ error: 'Upload failed' })
+  }
 })
 
 // ── CONTENT GENERATION ─────────────────────────────────────────────────────
@@ -1293,6 +1353,18 @@ app.patch('/api/users/profile', requireAuth, async (req, res) => {
   }
 })
 
+// Delete account
+app.delete('/api/users/me', requireAuth, async (req, res) => {
+  try {
+    const userDb = getUserDb()
+    await userDb.delete(req.userId)
+    res.json({ success: true, message: 'Account deleted' })
+  } catch (err) {
+    console.error('Delete account error:', err)
+    res.status(500).json({ error: 'Failed to delete account' })
+  }
+})
+
 // NOTE: Subscription tier is managed EXCLUSIVELY by the Flutterwave webhook.
 // This endpoint has been removed to prevent users from self-promoting their tier for free.
 // To manually adjust a user's tier, update it directly in the Supabase dashboard.
@@ -1683,6 +1755,1029 @@ app.post('/api/payments/webhook', async (req, res) => {
   } catch (err) {
     console.error('Webhook error:', err.message, err.stack)
     res.status(500).json({ error: 'Webhook failed' })
+  }
+})
+
+// ── SOCIAL PUBLISHING ────────────────────────────────────────────────────────
+
+// Token encryption helpers (AES-256-GCM)
+const SOCIAL_TOKEN_KEY = process.env.SOCIAL_TOKEN_ENCRYPTION_KEY
+  ? Buffer.from(process.env.SOCIAL_TOKEN_ENCRYPTION_KEY, 'base64')
+  : null
+
+function encryptToken(plaintext) {
+  if (!SOCIAL_TOKEN_KEY) return plaintext // fallback: store plain in dev
+  const iv = crypto.randomBytes(12)
+  const cipher = crypto.createCipheriv('aes-256-gcm', SOCIAL_TOKEN_KEY, iv)
+  const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()])
+  const tag = cipher.getAuthTag()
+  return iv.toString('hex') + ':' + tag.toString('hex') + ':' + encrypted.toString('hex')
+}
+
+function decryptToken(ciphertext) {
+  if (!SOCIAL_TOKEN_KEY || !ciphertext.includes(':')) return ciphertext // plain fallback
+  try {
+    const [ivHex, tagHex, dataHex] = ciphertext.split(':')
+    const decipher = crypto.createDecipheriv('aes-256-gcm', SOCIAL_TOKEN_KEY, Buffer.from(ivHex, 'hex'))
+    decipher.setAuthTag(Buffer.from(tagHex, 'hex'))
+    return decipher.update(Buffer.from(dataHex, 'hex')) + decipher.final('utf8')
+  } catch (e) {
+    console.error('Token decryption failed:', e.message)
+    return null
+  }
+}
+
+// ── FIX 1: Stateless PKCE state (works across Vercel serverless instances) ────
+// Instead of an in-memory Map (which breaks across cold-started serverless functions),
+// we encode {userId, codeVerifier, expiresAt} into an AES-256-GCM encrypted state param.
+// No server-side storage required — the state IS the encrypted token.
+function createOAuthState(userId, codeVerifier) {
+  const payload = JSON.stringify({ userId, codeVerifier, expiresAt: Date.now() + 10 * 60 * 1000 })
+  return encryptToken(payload) // reuses the same AES-256-GCM helper
+}
+
+function verifyOAuthState(state) {
+  try {
+    const payload = decryptToken(state)
+    if (!payload) return null
+    const data = JSON.parse(payload)
+    if (!data.userId || !data.codeVerifier || !data.expiresAt) return null
+    if (data.expiresAt < Date.now()) return null // expired
+    return data
+  } catch {
+    return null
+  }
+}
+
+// ── FIX 3: Rate limiter for social publishing (20 posts/hr per IP) ────────────
+const socialPublishLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.userId || req.ip, // per-user, not just IP
+  message: { error: 'Too many publish requests. You can post up to 20 times per hour.' }
+})
+
+// GET /api/social/twitter/auth-url — Generate OAuth 2.0 PKCE auth URL
+app.get('/api/social/twitter/auth-url', requireAuth, async (req, res) => {
+  try {
+    const userDb = getUserDb()
+    const user = await userDb.findById(req.userId)
+    if (!user || user.tier === 'free') {
+      return res.status(403).json({ error: 'Social publishing requires a Pro or Agency plan.' })
+    }
+
+    const clientId = process.env.TWITTER_CLIENT_ID
+    if (!clientId) return res.status(500).json({ error: 'Twitter OAuth not configured on server.' })
+
+    // Generate PKCE code verifier + challenge
+    const codeVerifier = crypto.randomBytes(32).toString('base64url')
+    const codeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64url')
+
+    // FIX 1: Stateless encrypted state — no in-memory Map needed
+    const state = createOAuthState(req.userId, codeVerifier)
+    if (!state || state === codeVerifier) {
+      // Encryption not configured — block OAuth in production for safety
+      if (process.env.NODE_ENV === 'production') {
+        return res.status(500).json({ error: 'SOCIAL_TOKEN_ENCRYPTION_KEY must be set in production.' })
+      }
+    }
+
+    const scopes = ['tweet.write', 'users.read', 'offline.access'].join(' ')
+    const callbackUrl = process.env.TWITTER_CALLBACK_URL || 'http://localhost:3001/api/social/twitter/callback'
+
+    const authUrl = new URL('https://twitter.com/i/oauth2/authorize')
+    authUrl.searchParams.set('response_type', 'code')
+    authUrl.searchParams.set('client_id', clientId)
+    authUrl.searchParams.set('redirect_uri', callbackUrl)
+    authUrl.searchParams.set('scope', scopes)
+    authUrl.searchParams.set('state', encodeURIComponent(state)) // URL-safe
+    authUrl.searchParams.set('code_challenge', codeChallenge)
+    authUrl.searchParams.set('code_challenge_method', 'S256')
+
+    res.json({ url: authUrl.toString() })
+  } catch (err) {
+    console.error('Twitter auth-url error:', err)
+    res.status(500).json({ error: 'Failed to generate auth URL' })
+  }
+})
+
+// GET /api/social/twitter/callback — OAuth callback, exchange code for tokens
+app.get('/api/social/twitter/callback', async (req, res) => {
+  try {
+    const { code, state: rawState, error: oauthError } = req.query
+    const APP_URL = process.env.APP_URL || 'http://localhost:5173'
+
+    if (oauthError) {
+      console.warn('Twitter OAuth error:', oauthError)
+      return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=oauth_denied`)
+    }
+
+    // FIX 1: Verify encrypted stateless state — no Map lookup needed
+    const state = decodeURIComponent(rawState || '')
+    const stateData = verifyOAuthState(state)
+    if (!stateData) {
+      console.warn('Twitter OAuth: invalid or expired state param')
+      return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=invalid_state`)
+    }
+
+    const { userId, codeVerifier } = stateData
+    const callbackUrl = process.env.TWITTER_CALLBACK_URL || 'http://localhost:3001/api/social/twitter/callback'
+
+    // Exchange code for access token
+    const tokenRes = await fetch('https://api.twitter.com/2/oauth2/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${Buffer.from(`${process.env.TWITTER_CLIENT_ID}:${process.env.TWITTER_CLIENT_SECRET}`).toString('base64')}`
+      },
+      body: new URLSearchParams({
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: callbackUrl,
+        code_verifier: codeVerifier,
+      }).toString()
+    })
+
+    if (!tokenRes.ok) {
+      const errText = await tokenRes.text()
+      console.error('Twitter token exchange failed:', errText)
+      return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=token_exchange_failed`)
+    }
+
+    const tokenData = await tokenRes.json()
+    const { access_token, refresh_token, expires_in } = tokenData
+
+    // Fetch X user profile
+    const userRes = await fetch('https://api.twitter.com/2/users/me', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    })
+    const userData = await userRes.json()
+    const xUser = userData.data
+
+    // Save to Supabase (or mock)
+    const db = await initSupabase()
+    if (db) {
+      const expiresAt = expires_in ? new Date(Date.now() + expires_in * 1000).toISOString() : null
+      const { error: upsertError } = await db.from('social_accounts').upsert({
+        user_id: userId,
+        platform: 'twitter',
+        platform_user_id: xUser.id,
+        platform_username: xUser.username,
+        access_token: encryptToken(access_token),
+        refresh_token: refresh_token ? encryptToken(refresh_token) : null,
+        token_expires_at: expiresAt,
+        connected_at: new Date().toISOString()
+      }, { onConflict: 'user_id,platform' })
+
+      if (upsertError) {
+        console.error('Failed to save social account:', upsertError.message)
+        return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=db_error`)
+      }
+    }
+
+    console.log(`✅ Twitter connected for user ${userId}: @${xUser.username}`)
+    res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&connected=twitter`)
+  } catch (err) {
+    console.error('Twitter callback error:', err)
+    const APP_URL = process.env.APP_URL || 'http://localhost:5173'
+    res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=server_error`)
+  }
+})
+
+// GET /api/social/accounts — List all connected social accounts for current user
+app.get('/api/social/accounts', requireAuth, async (req, res) => {
+  try {
+    const db = await initSupabase()
+    if (!db) return res.json([])
+
+    const { data, error } = await db
+      .from('social_accounts')
+      .select('id, platform, platform_username, connected_at')
+      .eq('user_id', req.userId)
+
+    if (error) throw error
+    res.json(data || [])
+  } catch (err) {
+    console.error('Get social accounts error:', err)
+    res.status(500).json({ error: 'Failed to fetch connected accounts' })
+  }
+})
+
+// DELETE /api/social/twitter/disconnect — Revoke and remove Twitter connection
+app.delete('/api/social/twitter/disconnect', requireAuth, async (req, res) => {
+  try {
+    const db = await initSupabase()
+    if (!db) return res.json({ success: true })
+
+    // Fetch the account to get the token for revocation
+    const { data: account } = await db
+      .from('social_accounts')
+      .select('access_token')
+      .eq('user_id', req.userId)
+      .eq('platform', 'twitter')
+      .single()
+
+    // Attempt to revoke the token on X's side (best-effort)
+    if (account?.access_token) {
+      try {
+        const plainToken = decryptToken(account.access_token)
+        await fetch('https://api.twitter.com/2/oauth2/revoke', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${Buffer.from(`${process.env.TWITTER_CLIENT_ID}:${process.env.TWITTER_CLIENT_SECRET}`).toString('base64')}`
+          },
+          body: new URLSearchParams({ token: plainToken, token_type_hint: 'access_token' }).toString()
+        })
+      } catch (revokeErr) {
+        console.warn('Token revocation failed (non-fatal):', revokeErr.message)
+      }
+    }
+
+    // Delete from DB
+    const { error } = await db
+      .from('social_accounts')
+      .delete()
+      .eq('user_id', req.userId)
+      .eq('platform', 'twitter')
+
+    if (error) throw error
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Twitter disconnect error:', err)
+    res.status(500).json({ error: 'Failed to disconnect account' })
+  }
+})
+
+// POST /api/social/twitter/publish — Post content to X immediately (Pro/Agency only)
+// FIX 3: Rate limited to 20 posts/hr per user
+app.post('/api/social/twitter/publish', requireAuth, socialPublishLimiter, async (req, res) => {
+  try {
+    const userDb = getUserDb()
+    const user = await userDb.findById(req.userId)
+    if (!user || user.tier === 'free') {
+      return res.status(403).json({ error: 'Social publishing requires a Pro or Agency plan.' })
+    }
+
+    const { content: rawContent, output_id: rawOutputId } = req.body
+
+    // FIX 6: Sanitise content — strip control characters and trim
+    if (!rawContent || typeof rawContent !== 'string') {
+      return res.status(400).json({ error: 'Content is required' })
+    }
+    // eslint-disable-next-line no-control-regex
+    const content = rawContent.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim()
+    if (!content) {
+      return res.status(400).json({ error: 'Content cannot be empty' })
+    }
+    if (content.length > 280) {
+      return res.status(400).json({ error: `Content exceeds 280 characters (${content.length})` })
+    }
+
+    const db = await initSupabase()
+    if (!db) return res.status(503).json({ error: 'Database not available' })
+
+    // FIX 4: IDOR protection — validate output_id belongs to this user before using it
+    let output_id = null
+    if (rawOutputId && typeof rawOutputId === 'string') {
+      const { data: outputCheck } = await db
+        .from('outputs')
+        .select('id, conversion_id')
+        .eq('id', rawOutputId)
+        .single()
+      if (outputCheck) {
+        // Also verify the parent conversion belongs to this user
+        const { data: convCheck } = await db
+          .from('conversions')
+          .select('user_id')
+          .eq('id', outputCheck.conversion_id)
+          .single()
+        if (convCheck?.user_id === req.userId) {
+          output_id = rawOutputId
+        } else {
+          console.warn(`IDOR attempt: user ${req.userId} tried to reference output ${rawOutputId} owned by ${convCheck?.user_id}`)
+        }
+      }
+    }
+
+    // Get connected Twitter account
+    const { data: account, error: accErr } = await db
+      .from('social_accounts')
+      .select('access_token, platform_username, token_expires_at')
+      .eq('user_id', req.userId)
+      .eq('platform', 'twitter')
+      .single()
+
+    if (accErr || !account) {
+      return res.status(400).json({ error: 'No Twitter account connected. Please connect your account first.' })
+    }
+
+    // FIX 5: Check token expiry before attempting to post
+    if (account.token_expires_at && new Date(account.token_expires_at) <= new Date()) {
+      return res.status(401).json({
+        error: 'Your X session has expired. Please reconnect your account in Settings → Integrations.',
+        code: 'TOKEN_EXPIRED'
+      })
+    }
+
+    const accessToken = decryptToken(account.access_token)
+    if (!accessToken) {
+      return res.status(500).json({ error: 'Failed to decrypt access token. Please reconnect your Twitter account.' })
+    }
+
+    // Post tweet via X API v2
+    const tweetRes = await fetch('https://api.twitter.com/2/tweets', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({ text: content })
+    })
+
+    const tweetData = await tweetRes.json()
+
+    if (!tweetRes.ok) {
+      const errMsg = tweetData?.detail || tweetData?.errors?.[0]?.message || 'Failed to post tweet'
+      console.error('Twitter post failed:', tweetData)
+
+      // Log failed post
+      await db.from('social_posts').insert({
+        user_id: req.userId,
+        output_id: output_id || null,
+        platform: 'twitter',
+        content,
+        status: 'failed',
+        error_message: errMsg,
+        published_at: new Date().toISOString()
+      }).then(({ error }) => { if (error) console.warn('Failed to log failed post:', error.message) })
+
+      return res.status(tweetRes.status).json({ error: errMsg })
+    }
+
+    const tweetId = tweetData.data?.id
+    const tweetUrl = tweetId
+      ? `https://x.com/${account.platform_username}/status/${tweetId}`
+      : null
+
+    // Log successful post
+    const { data: post, error: postErr } = await db.from('social_posts').insert({
+      user_id: req.userId,
+      output_id: output_id || null,
+      platform: 'twitter',
+      content,
+      status: 'published',
+      published_at: new Date().toISOString(),
+      platform_post_id: tweetId,
+      platform_post_url: tweetUrl
+    }).select().single()
+
+    if (postErr) console.warn('Failed to log post:', postErr.message)
+
+    console.log(`✅ Tweet posted for user ${req.userId}: ${tweetUrl}`)
+    res.json({ success: true, post: post || null, tweet_url: tweetUrl, tweet_id: tweetId })
+  } catch (err) {
+    console.error('Twitter publish error:', err)
+    res.status(500).json({ error: 'Failed to publish tweet' })
+  }
+})
+
+// GET /api/social/posts — Paginated published post history
+app.get('/api/social/posts', requireAuth, async (req, res) => {
+  try {
+    const page = parseInt(req.query.page || '1', 10)
+    const pageSize = Math.min(parseInt(req.query.page_size || '20', 10), 50)
+    const offset = (page - 1) * pageSize
+
+    const db = await initSupabase()
+    if (!db) return res.json({ data: [], total: 0, page, page_size: pageSize, has_more: false })
+
+    const { data, count, error } = await db
+      .from('social_posts')
+      .select('id, platform, content, status, published_at, platform_post_id, platform_post_url, error_message', { count: 'exact' })
+      .eq('user_id', req.userId)
+      .order('published_at', { ascending: false })
+      .range(offset, offset + pageSize - 1)
+
+    if (error) throw error
+
+    res.json({
+      data: data || [],
+      total: count || 0,
+      page,
+      page_size: pageSize,
+      has_more: (count || 0) > offset + pageSize
+    })
+  } catch (err) {
+    console.error('Get social posts error:', err)
+    res.status(500).json({ error: 'Failed to fetch post history' })
+  }
+})
+
+// ── LINKEDIN PUBLISHING ──────────────────────────────────────────────────────
+
+// GET /api/social/linkedin/auth-url — Generate OAuth 2.0 PKCE auth URL
+app.get('/api/social/linkedin/auth-url', requireAuth, async (req, res) => {
+  try {
+    const userDb = getUserDb()
+    const user = await userDb.findById(req.userId)
+    if (!user || user.tier === 'free') {
+      return res.status(403).json({ error: 'Social publishing requires a Pro or Agency plan.' })
+    }
+
+    const clientId = process.env.LINKEDIN_CLIENT_ID
+    if (!clientId) return res.status(500).json({ error: 'LinkedIn OAuth not configured on server.' })
+
+    // PKCE code verifier + challenge
+    const codeVerifier = crypto.randomBytes(32).toString('base64url')
+    const codeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64url')
+
+    // Stateless encrypted state (same helper as Twitter)
+    const state = createOAuthState(req.userId, codeVerifier)
+    if (!state || state === codeVerifier) {
+      if (process.env.NODE_ENV === 'production') {
+        return res.status(500).json({ error: 'SOCIAL_TOKEN_ENCRYPTION_KEY must be set in production.' })
+      }
+    }
+
+    const callbackUrl = process.env.LINKEDIN_CALLBACK_URL || 'http://localhost:3001/api/social/linkedin/callback'
+
+    const authUrl = new URL('https://www.linkedin.com/oauth/v2/authorization')
+    authUrl.searchParams.set('response_type', 'code')
+    authUrl.searchParams.set('client_id', clientId)
+    authUrl.searchParams.set('redirect_uri', callbackUrl)
+    authUrl.searchParams.set('scope', 'openid profile w_member_social')
+    authUrl.searchParams.set('state', encodeURIComponent(state))
+    authUrl.searchParams.set('code_challenge', codeChallenge)
+    authUrl.searchParams.set('code_challenge_method', 'S256')
+
+    res.json({ url: authUrl.toString() })
+  } catch (err) {
+    console.error('LinkedIn auth-url error:', err)
+    res.status(500).json({ error: 'Failed to generate LinkedIn auth URL' })
+  }
+})
+
+// GET /api/social/linkedin/callback — Exchange code for token, save account
+app.get('/api/social/linkedin/callback', async (req, res) => {
+  try {
+    const { code, state: rawState, error: oauthError } = req.query
+    const APP_URL = process.env.APP_URL || 'http://localhost:5173'
+
+    if (oauthError) {
+      console.warn('LinkedIn OAuth error:', oauthError)
+      return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=oauth_denied`)
+    }
+
+    // Verify stateless encrypted state
+    const state = decodeURIComponent(rawState || '')
+    const stateData = verifyOAuthState(state)
+    if (!stateData) {
+      console.warn('LinkedIn OAuth: invalid or expired state param')
+      return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=invalid_state`)
+    }
+
+    const { userId, codeVerifier } = stateData
+    const callbackUrl = process.env.LINKEDIN_CALLBACK_URL || 'http://localhost:3001/api/social/linkedin/callback'
+
+    // Exchange code for access token
+    const tokenRes = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: callbackUrl,
+        client_id: process.env.LINKEDIN_CLIENT_ID,
+        client_secret: process.env.LINKEDIN_CLIENT_SECRET,
+        code_verifier: codeVerifier,
+      }).toString()
+    })
+
+    if (!tokenRes.ok) {
+      const errText = await tokenRes.text()
+      console.error('LinkedIn token exchange failed:', errText)
+      return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=token_exchange_failed`)
+    }
+
+    const tokenData = await tokenRes.json()
+    const { access_token, expires_in } = tokenData
+
+    // Fetch LinkedIn profile (OpenID userinfo endpoint)
+    const profileRes = await fetch('https://api.linkedin.com/v2/userinfo', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    })
+    const profile = await profileRes.json()
+    // LinkedIn userinfo returns sub (person URN ID), name, email
+    const linkedInUserId = profile.sub   // e.g. "abc123"
+    const displayName = profile.name || profile.given_name || 'LinkedIn User'
+
+    const db = await initSupabase()
+    if (db) {
+      const expiresAt = expires_in ? new Date(Date.now() + expires_in * 1000).toISOString() : null
+      const { error: upsertError } = await db.from('social_accounts').upsert({
+        user_id: userId,
+        platform: 'linkedin',
+        platform_user_id: linkedInUserId,
+        platform_username: displayName,
+        access_token: encryptToken(access_token),
+        refresh_token: null, // LinkedIn v2 doesn't issue refresh tokens on free tier
+        token_expires_at: expiresAt,
+        connected_at: new Date().toISOString()
+      }, { onConflict: 'user_id,platform' })
+
+      if (upsertError) {
+        console.error('Failed to save LinkedIn account:', upsertError.message)
+        return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=db_error`)
+      }
+    }
+
+    console.log(`✅ LinkedIn connected for user ${userId}: ${displayName}`)
+    res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&connected=linkedin`)
+  } catch (err) {
+    console.error('LinkedIn callback error:', err)
+    const APP_URL = process.env.APP_URL || 'http://localhost:5173'
+    res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=server_error`)
+  }
+})
+
+// DELETE /api/social/linkedin/disconnect — Remove LinkedIn connection
+app.delete('/api/social/linkedin/disconnect', requireAuth, async (req, res) => {
+  try {
+    const db = await initSupabase()
+    if (!db) return res.json({ success: true })
+
+    // LinkedIn doesn't have a token revocation endpoint on v2 free tier — just delete locally
+    const { error } = await db
+      .from('social_accounts')
+      .delete()
+      .eq('user_id', req.userId)
+      .eq('platform', 'linkedin')
+
+    if (error) throw error
+    res.json({ success: true })
+  } catch (err) {
+    console.error('LinkedIn disconnect error:', err)
+    res.status(500).json({ error: 'Failed to disconnect LinkedIn account' })
+  }
+})
+
+// POST /api/social/linkedin/publish — Post to LinkedIn (Pro/Agency only)
+app.post('/api/social/linkedin/publish', requireAuth, socialPublishLimiter, async (req, res) => {
+  try {
+    const userDb = getUserDb()
+    const user = await userDb.findById(req.userId)
+    if (!user || user.tier === 'free') {
+      return res.status(403).json({ error: 'Social publishing requires a Pro or Agency plan.' })
+    }
+
+    const { content: rawContent, url: rawUrl, output_id: rawOutputId } = req.body
+
+    // Sanitise content — strip control characters and trim
+    if (!rawContent || typeof rawContent !== 'string') {
+      return res.status(400).json({ error: 'Content is required' })
+    }
+    // eslint-disable-next-line no-control-regex
+    const content = rawContent.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim()
+    if (!content) return res.status(400).json({ error: 'Content cannot be empty' })
+    if (content.length > 3000) {
+      return res.status(400).json({ error: `Content exceeds 3000 characters (${content.length})` })
+    }
+
+    // Validate optional URL
+    const articleUrl = rawUrl && typeof rawUrl === 'string' ? rawUrl.trim() : null
+    if (articleUrl) {
+      try { new URL(articleUrl) } catch {
+        return res.status(400).json({ error: 'Invalid URL provided' })
+      }
+    }
+
+    const db = await initSupabase()
+    if (!db) return res.status(503).json({ error: 'Database not available' })
+
+    // IDOR check on output_id
+    let output_id = null
+    if (rawOutputId && typeof rawOutputId === 'string') {
+      const { data: outputCheck } = await db.from('outputs').select('id, conversion_id').eq('id', rawOutputId).single()
+      if (outputCheck) {
+        const { data: convCheck } = await db.from('conversions').select('user_id').eq('id', outputCheck.conversion_id).single()
+        if (convCheck?.user_id === req.userId) {
+          output_id = rawOutputId
+        } else {
+          console.warn(`IDOR attempt: user ${req.userId} tried to reference output ${rawOutputId}`)
+        }
+      }
+    }
+
+    // Get connected LinkedIn account (includes platform_user_id for the URN)
+    const { data: account, error: accErr } = await db
+      .from('social_accounts')
+      .select('access_token, platform_user_id, token_expires_at')
+      .eq('user_id', req.userId)
+      .eq('platform', 'linkedin')
+      .single()
+
+    if (accErr || !account) {
+      return res.status(400).json({ error: 'No LinkedIn account connected. Please connect your account first.' })
+    }
+
+    // Check token expiry
+    if (account.token_expires_at && new Date(account.token_expires_at) <= new Date()) {
+      return res.status(401).json({
+        error: 'Your LinkedIn session has expired. Please reconnect your account in Settings → Integrations.',
+        code: 'TOKEN_EXPIRED'
+      })
+    }
+
+    const accessToken = decryptToken(account.access_token)
+    if (!accessToken) {
+      return res.status(500).json({ error: 'Failed to decrypt access token. Please reconnect your LinkedIn account.' })
+    }
+
+    const authorUrn = `urn:li:person:${account.platform_user_id}`
+
+    // Build UGC Post payload
+    let specificContent
+    if (articleUrl) {
+      // Article share with URL
+      specificContent = {
+        'com.linkedin.ugc.ShareContent': {
+          shareCommentary: { text: content },
+          shareMediaCategory: 'ARTICLE',
+          media: [{
+            status: 'READY',
+            originalUrl: articleUrl,
+          }]
+        }
+      }
+    } else {
+      // Text-only post
+      specificContent = {
+        'com.linkedin.ugc.ShareContent': {
+          shareCommentary: { text: content },
+          shareMediaCategory: 'NONE'
+        }
+      }
+    }
+
+    const ugcPayload = {
+      author: authorUrn,
+      lifecycleState: 'PUBLISHED',
+      specificContent,
+      visibility: {
+        'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC'
+      }
+    }
+
+    const postRes = await fetch('https://api.linkedin.com/v2/ugcPosts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+        'X-Restli-Protocol-Version': '2.0.0'
+      },
+      body: JSON.stringify(ugcPayload)
+    })
+
+    const postData = await postRes.json()
+
+    if (!postRes.ok) {
+      const errMsg = postData?.message || postData?.serviceErrorCode?.toString() || 'Failed to post to LinkedIn'
+      console.error('LinkedIn post failed:', postData)
+
+      await db.from('social_posts').insert({
+        user_id: req.userId,
+        output_id,
+        platform: 'linkedin',
+        content,
+        status: 'failed',
+        error_message: errMsg,
+        published_at: new Date().toISOString()
+      }).then(({ error }) => { if (error) console.warn('Failed to log failed LinkedIn post:', error.message) })
+
+      return res.status(postRes.status).json({ error: errMsg })
+    }
+
+    // LinkedIn returns the post ID in the `id` field (e.g. "urn:li:ugcPost:123456789")
+    const postId = postData.id
+    const postUrl = postId
+      ? `https://www.linkedin.com/feed/update/${encodeURIComponent(postId)}`
+      : null
+
+    const { data: post, error: postErr } = await db.from('social_posts').insert({
+      user_id: req.userId,
+      output_id,
+      platform: 'linkedin',
+      content,
+      status: 'published',
+      published_at: new Date().toISOString(),
+      platform_post_id: postId,
+      platform_post_url: postUrl
+    }).select().single()
+
+    if (postErr) console.warn('Failed to log LinkedIn post:', postErr.message)
+
+    console.log(`✅ LinkedIn post published for user ${req.userId}: ${postUrl}`)
+    res.json({ success: true, post: post || null, post_url: postUrl, post_id: postId })
+  } catch (err) {
+    console.error('LinkedIn publish error:', err)
+    res.status(500).json({ error: 'Failed to publish to LinkedIn' })
+  }
+})
+
+// ── Instagram ──────────────────────────────────────────────────────────────────
+
+// To store state temporarily for the callback (same pattern as Twitter/LinkedIn if they needed it)
+// For Instagram, we pass state, but how do we get the userId?
+// We can use a temporary memory store mapping state -> userId.
+const igStateToUserId = new Map()
+
+app.get('/api/social/instagram/auth-url', requireAuth, (req, res) => {
+  const { INSTAGRAM_APP_ID, INSTAGRAM_CALLBACK_URL } = process.env
+  if (!INSTAGRAM_APP_ID || !INSTAGRAM_CALLBACK_URL) {
+    return res.status(500).json({ error: 'Instagram credentials not configured' })
+  }
+  const scopes = 'instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement'
+  const state = crypto.randomBytes(16).toString('hex')
+  igStateToUserId.set(state, req.userId)
+
+  const url = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${INSTAGRAM_APP_ID}&redirect_uri=${encodeURIComponent(INSTAGRAM_CALLBACK_URL)}&state=${state}&scope=${scopes}&response_type=code`
+  res.json({ url })
+})
+
+app.get('/api/social/instagram/callback', async (req, res) => {
+  const { code, state, error: authError, error_description } = req.query
+  if (authError) return res.redirect(`http://localhost:5173/settings?error=instagram_auth_failed`)
+  if (!code) return res.status(400).send('No authorization code provided')
+  
+  const userId = igStateToUserId.get(state)
+  if (!userId) return res.redirect(`http://localhost:5173/settings?error=invalid_state`)
+  
+  igStateToUserId.delete(state)
+
+  const { INSTAGRAM_APP_ID, INSTAGRAM_APP_SECRET, INSTAGRAM_CALLBACK_URL } = process.env
+  
+  try {
+    // 1. Get short-lived token
+    const tokenRes = await fetch(`https://graph.facebook.com/v19.0/oauth/access_token?client_id=${INSTAGRAM_APP_ID}&redirect_uri=${encodeURIComponent(INSTAGRAM_CALLBACK_URL)}&client_secret=${INSTAGRAM_APP_SECRET}&code=${code}`)
+    const tokenData = await tokenRes.json()
+    if (!tokenData.access_token) throw new Error(tokenData.error?.message || 'Failed to get access token')
+
+    // 2. Exchange for long-lived token (60 days)
+    const longTokenRes = await fetch(`https://graph.facebook.com/v19.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${INSTAGRAM_APP_ID}&client_secret=${INSTAGRAM_APP_SECRET}&fb_exchange_token=${tokenData.access_token}`)
+    const longTokenData = await longTokenRes.json()
+    const accessToken = longTokenData.access_token || tokenData.access_token
+
+    // 3. Fetch user's Facebook Pages
+    const pagesRes = await fetch(`https://graph.facebook.com/v19.0/me/accounts?access_token=${accessToken}`)
+    const pagesData = await pagesRes.json()
+    if (!pagesData.data || pagesData.data.length === 0) {
+      return res.redirect(`http://localhost:5173/settings?error=no_facebook_pages`)
+    }
+
+    // 4. Find a page with a connected Instagram Business Account
+    let igUserId = null
+    let igUsername = null
+    
+    for (const page of pagesData.data) {
+      const pageToken = page.access_token
+      const igRes = await fetch(`https://graph.facebook.com/v19.0/${page.id}?fields=instagram_business_account&access_token=${pageToken}`)
+      const igData = await igRes.json()
+      if (igData.instagram_business_account) {
+        igUserId = igData.instagram_business_account.id
+        // Get IG Username
+        const profileRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}?fields=username&access_token=${pageToken}`)
+        const profileData = await profileRes.json()
+        igUsername = profileData.username || 'Instagram User'
+        break
+      }
+    }
+
+    if (!igUserId) {
+      return res.redirect(`http://localhost:5173/settings?error=no_linked_instagram`)
+    }
+
+    const encryptedToken = encryptToken(accessToken)
+    const db = getUserDb().supabase || supabase
+
+    // Upsert social account
+    const { error: upsertErr } = await db.from('social_accounts').upsert({
+      user_id: userId,
+      platform: 'instagram',
+      platform_user_id: igUserId,
+      platform_username: igUsername,
+      access_token: encryptedToken,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id, platform' })
+
+    if (upsertErr) throw upsertErr
+
+    res.redirect(`http://localhost:5173/settings?connected=instagram`)
+  } catch (err) {
+    console.error('Instagram callback error:', err)
+    res.redirect(`http://localhost:5173/settings?error=instagram_callback_failed`)
+  }
+})
+
+app.delete('/api/social/instagram/disconnect', requireAuth, async (req, res) => {
+  try {
+    const db = getUserDb().supabase || supabase
+    if (!db) return res.status(500).json({ error: 'Database not available' })
+    const { error } = await db.from('social_accounts').delete().eq('user_id', req.userId).eq('platform', 'instagram')
+    if (error) throw error
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Instagram disconnect error:', err)
+    res.status(500).json({ error: 'Failed to disconnect Instagram' })
+  }
+})
+
+app.post('/api/social/instagram/publish', requireAuth, socialPublishLimiter, async (req, res) => {
+  try {
+    const { output_id, content, media_url } = req.body
+    if (!output_id || !content) return res.status(400).json({ error: 'Missing output_id or content' })
+    if (!media_url) return res.status(400).json({ error: 'Instagram requires a media_url (image or video) to publish' })
+
+    const db = getUserDb().supabase || supabase
+    if (!db) return res.status(500).json({ error: 'Database not available' })
+
+    const { data: output, error: outErr } = await db.from('outputs').select('id').eq('id', output_id).eq('user_id', req.userId).single()
+    if (outErr || !output) return res.status(404).json({ error: 'Output not found' })
+
+    const { data: account, error: accErr } = await db.from('social_accounts').select('access_token, platform_user_id').eq('user_id', req.userId).eq('platform', 'instagram').single()
+    if (accErr || !account) return res.status(400).json({ error: 'No Instagram account connected.' })
+
+    const accessToken = decryptToken(account.access_token)
+    if (!accessToken) return res.status(500).json({ error: 'Failed to decrypt access token.' })
+
+    const igUserId = account.platform_user_id
+    const isVideo = media_url.match(/\.(mp4|mov)$/i)
+    
+    const containerParams = new URLSearchParams({ caption: content, access_token: accessToken })
+    if (isVideo) {
+      containerParams.append('media_type', 'VIDEO')
+      containerParams.append('video_url', media_url)
+    } else {
+      containerParams.append('image_url', media_url)
+    }
+
+    const containerRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media`, { method: 'POST', body: containerParams })
+    const containerData = await containerRes.json()
+
+    if (!containerRes.ok || !containerData.id) {
+      return res.status(containerRes.status).json({ error: containerData?.error?.message || 'Failed to create Instagram media container' })
+    }
+
+    const publishParams = new URLSearchParams({ creation_id: containerData.id, access_token: accessToken })
+    const publishRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media_publish`, { method: 'POST', body: publishParams })
+    const publishData = await publishRes.json()
+
+    if (!publishRes.ok) {
+      return res.status(publishRes.status).json({ error: publishData?.error?.message || 'Failed to publish to Instagram' })
+    }
+
+    const postId = publishData.id
+    const postUrl = `https://www.instagram.com/`
+
+    const { data: post, error: postErr } = await db.from('social_posts').insert({
+      user_id: req.userId, output_id, platform: 'instagram', content, status: 'published',
+      published_at: new Date().toISOString(), platform_post_id: postId, platform_post_url: postUrl
+    }).select().single()
+
+    res.json({ success: true, post: post || null, post_url: postUrl, post_id: postId })
+  } catch (err) {
+    console.error('Instagram publish error:', err)
+    res.status(500).json({ error: 'Failed to publish to Instagram' })
+  }
+})
+
+// ── Newsletter ───────────────────────────────────────────────────────────────
+
+app.get('/api/newsletter/subscribers', requireAuth, async (req, res) => {
+  try {
+    const db = getUserDb().supabase || supabase
+    if (db) {
+      const { data, error } = await db.from('email_subscribers').select('*').eq('user_id', req.userId).order('created_at', { ascending: false })
+      if (error && error.code !== '42P01') throw error // Ignore relation doesn't exist error on first boot
+      res.json(data || [])
+    } else {
+      const subs = Array.from(emailSubscribersDb.values()).filter(s => s.user_id === req.userId).sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      res.json(subs)
+    }
+  } catch (err) {
+    console.error('Fetch subscribers error:', err)
+    res.status(500).json({ error: 'Failed to fetch subscribers' })
+  }
+})
+
+app.post('/api/newsletter/subscribers', requireAuth, async (req, res) => {
+  try {
+    const { email, name } = req.body
+    if (!email) return res.status(400).json({ error: 'Email is required' })
+
+    const db = getUserDb().supabase || supabase
+    const newSub = {
+      id: crypto.randomUUID(),
+      user_id: req.userId,
+      email: email.trim().toLowerCase(),
+      name: name?.trim() || null,
+      created_at: new Date().toISOString()
+    }
+
+    if (db) {
+      const { error } = await db.from('email_subscribers').insert({
+        user_id: req.userId,
+        email: newSub.email,
+        name: newSub.name
+      })
+      if (error) {
+        if (error.code === '23505') return res.status(400).json({ error: 'Subscriber already exists' })
+        throw error
+      }
+    } else {
+      const existing = Array.from(emailSubscribersDb.values()).find(s => s.user_id === req.userId && s.email === newSub.email)
+      if (existing) return res.status(400).json({ error: 'Subscriber already exists' })
+      emailSubscribersDb.set(newSub.id, newSub)
+    }
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Add subscriber error:', err)
+    res.status(500).json({ error: 'Failed to add subscriber' })
+  }
+})
+
+app.delete('/api/newsletter/subscribers/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params
+    const db = getUserDb().supabase || supabase
+    if (db) {
+      const { error } = await db.from('email_subscribers').delete().eq('id', id).eq('user_id', req.userId)
+      if (error) throw error
+    } else {
+      const sub = emailSubscribersDb.get(id)
+      if (sub && sub.user_id === req.userId) emailSubscribersDb.delete(id)
+    }
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Delete subscriber error:', err)
+    res.status(500).json({ error: 'Failed to delete subscriber' })
+  }
+})
+
+app.post('/api/social/newsletter/publish', requireAuth, socialPublishLimiter, async (req, res) => {
+  try {
+    const { output_id, content } = req.body
+    if (!output_id || !content) return res.status(400).json({ error: 'Missing output_id or content' })
+
+    const db = getUserDb().supabase || supabase
+    let subscribers = []
+    
+    if (db) {
+      const { data, error } = await db.from('email_subscribers').select('email, name').eq('user_id', req.userId)
+      if (error && error.code !== '42P01') throw error
+      subscribers = data || []
+    } else {
+      subscribers = Array.from(emailSubscribersDb.values()).filter(s => s.user_id === req.userId)
+    }
+
+    if (subscribers.length === 0) {
+      return res.status(400).json({ error: 'You have no subscribers to send to.' })
+    }
+
+    const user = await getUserDb().findById(req.userId)
+    const senderName = user.display_name || user.first_name || 'ContentSplit User'
+    
+    // We send emails sequentially here. For a real large-scale MVP, this should be done in the background.
+    let successCount = 0
+    let failCount = 0
+    
+    for (const sub of subscribers) {
+      try {
+        const greeting = sub.name ? `Hi ${sub.name},` : 'Hi there,'
+        const emailContent = `${greeting}\n\n${content}\n\n---\nSent by ${senderName} via ContentSplit.ai`
+        await sendEmail(sub.email, `New update from ${senderName}`, emailContent)
+        successCount++
+      } catch (err) {
+        console.error('Failed to send email to', sub.email, err)
+        failCount++
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      post: {
+        id: crypto.randomUUID(),
+        platform: 'email',
+        status: 'published',
+        published_at: new Date().toISOString()
+      },
+      message: `Sent to ${successCount} subscribers (${failCount} failed)`
+    })
+  } catch (err) {
+    console.error('Newsletter publish error:', err)
+    res.status(500).json({ error: 'Failed to send newsletter' })
   }
 })
 

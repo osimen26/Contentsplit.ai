@@ -1,16 +1,21 @@
 import React, { useState } from 'react'
-import { useCurrentUser, useUpdateProfile, useUpdatePassword, useUsageStats } from '@/services/query-hooks'
-
+import { useCurrentUser, useUpdateProfile, useUpdatePassword, useUsageStats, useDeleteAccount } from '@/services/query-hooks'
+import TwitterConnectButton from '@/components/social/TwitterConnectButton'
+import LinkedInConnectButton from '@/components/social/LinkedInConnectButton'
+import InstagramConnectButton from '@/components/social/InstagramConnectButton'
+import NewsletterAudiencePanel from '@/components/social/NewsletterAudiencePanel'
+import PostsHistoryPanel from '@/components/social/PostsHistoryPanel'
 import { Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-type SettingsSection = 'account' | 'password' | 'appearance' | 'subscription' | 'delete'
+type SettingsSection = 'account' | 'password' | 'appearance' | 'subscription' | 'integrations' | 'delete'
 
 const NAV_ITEMS: { id: SettingsSection; label: string }[] = [
   { id: 'account', label: 'General' },
   { id: 'password', label: 'Password' },
   { id: 'appearance', label: 'Preferences' },
   { id: 'subscription', label: 'Billing' },
+  { id: 'integrations', label: 'Integrations' },
   { id: 'delete', label: 'Danger Zone' },
 ]
 
@@ -527,8 +532,140 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
   )
 }
 
+const IntegrationsSection: React.FC = () => {
+  const { data: user } = useCurrentUser()
+  const isPremium = user?.tier === 'pro' || user?.tier === 'agency'
+  const navigate = useNavigate()
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <section>
+        <SectionHeader title="Social Publishing" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {!isPremium && (
+            <div style={{
+              padding: '14px 18px',
+              backgroundColor: 'rgba(0,0,0,0.03)',
+              border: '1px solid rgba(0,0,0,0.07)',
+              borderRadius: 10,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 16,
+            }}>
+              <div>
+                <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#111' }}>Pro feature</p>
+                <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: '#666' }}>
+                  Upgrade to Pro or Agency to publish directly to X and more platforms.
+                </p>
+              </div>
+              <button
+                onClick={() => navigate('/upgrade')}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: 'var(--sys-color-primary-40)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                Upgrade
+              </button>
+            </div>
+          )}
+
+          {/* X (Twitter) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '16px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ color: '#0F172A' }}>
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.264 5.633L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+              </svg>
+              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#111' }}>X (Twitter)</p>
+            </div>
+            <p style={{ margin: '0 0 10px', fontSize: '0.82rem', color: '#666' }}>
+              Connect your X account to publish generated tweets directly from ContentSplit.
+            </p>
+            <div style={{ opacity: isPremium ? 1 : 0.45, pointerEvents: isPremium ? 'auto' : 'none' }}>
+              <TwitterConnectButton />
+            </div>
+          </div>
+
+          {/* LinkedIn */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '16px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ color: '#0A66C2' }}>
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#111' }}>LinkedIn</p>
+            </div>
+            <p style={{ margin: '0 0 10px', fontSize: '0.82rem', color: '#666' }}>
+              Connect your LinkedIn account to publish generated posts directly from ContentSplit.
+            </p>
+            <div style={{ opacity: isPremium ? 1 : 0.45, pointerEvents: isPremium ? 'auto' : 'none' }}>
+              <LinkedInConnectButton />
+            </div>
+          </div>
+
+          {/* Instagram */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '16px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#E1306C' }}>
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+              </svg>
+              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#111' }}>Instagram</p>
+            </div>
+            <p style={{ margin: '0 0 10px', fontSize: '0.82rem', color: '#666' }}>
+              Connect your Instagram Professional account to publish images and videos.
+            </p>
+            <div style={{ opacity: isPremium ? 1 : 0.45, pointerEvents: isPremium ? 'auto' : 'none' }}>
+              <InstagramConnectButton />
+            </div>
+          </div>
+
+          {/* Newsletter */}
+          <NewsletterAudiencePanel />
+
+          {/* Coming soon platforms */}
+          {(['Facebook', 'Threads'] as const).map(name => (
+            <div key={name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(0,0,0,0.04)', opacity: 0.5 }}>
+              <div>
+                <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: 500, color: '#333' }}>{name}</p>
+                <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: '#999' }}>Coming soon</p>
+              </div>
+              <span style={{ fontSize: '0.75rem', color: '#94A3B8', backgroundColor: 'rgba(0,0,0,0.05)', padding: '3px 10px', borderRadius: 20, fontWeight: 500 }}>Soon</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Post History */}
+      <section>
+        <SectionHeader title="Post History" />
+        <PostsHistoryPanel />
+      </section>
+    </div>
+  )
+}
+
 const DeleteSection: React.FC = () => {
   const [confirm, setConfirm] = useState(false)
+  const navigate = useNavigate()
+  const deleteAccount = useDeleteAccount()
+
+  const handleDelete = async () => {
+    try {
+      await deleteAccount.mutateAsync()
+      navigate('/login')
+    } catch (error) {
+      console.error('Failed to delete account:', error)
+    }
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
@@ -568,6 +705,8 @@ const DeleteSection: React.FC = () => {
               </p>
               <div style={{ display: 'flex', gap: 12 }}>
                 <button
+                  onClick={handleDelete}
+                  disabled={deleteAccount.isPending}
                   style={{ 
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -580,10 +719,11 @@ const DeleteSection: React.FC = () => {
                     color: 'white',
                     border: 'none',
                     borderRadius: 6,
-                    cursor: 'pointer'
+                    cursor: deleteAccount.isPending ? 'not-allowed' : 'pointer',
+                    opacity: deleteAccount.isPending ? 0.7 : 1
                   }}
                 >
-                  Yes, delete my account
+                  {deleteAccount.isPending ? 'Deleting...' : 'Yes, delete my account'}
                 </button>
                 <button
                   onClick={() => setConfirm(false)}
@@ -705,6 +845,7 @@ const SettingsPage: React.FC = () => {
           {active === 'password' && <PasswordSection />}
           {active === 'appearance' && <AppearanceSection />}
           {active === 'subscription' && <SubscriptionSection usageStats={usageStats} />}
+          {active === 'integrations' && <IntegrationsSection />}
           {active === 'delete' && <DeleteSection />}
         </main>
       </div>

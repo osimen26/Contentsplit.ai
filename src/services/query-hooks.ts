@@ -198,6 +198,19 @@ export const useUpdateSubscription = () => {
   })
 }
 
+export const useDeleteAccount = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: () => apiClient.deleteAccount(),
+    onSuccess: () => {
+      localStorage.removeItem('auth_token')
+      queryClient.setQueryData(queryKeys.user, null)
+      queryClient.clear()
+    },
+  })
+}
+
 // Usage stats hook
 export const useUsageStats = () => {
   return useQuery({
@@ -241,3 +254,5 @@ export const useInfiniteConversions = (pageSize = 20) => {
     hasMore: data?.has_more ?? false,
   }
 }
+
+// ── Newsletter Hooks ─────────────────────────────────────────────────────────
