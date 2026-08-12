@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { ExternalLink, X, Send, AlertCircle, CheckCircle2, Loader2, Link, Image as ImageIcon, Instagram, Mail } from 'lucide-react'
+import { ExternalLink, X, Send, AlertCircle, CheckCircle2, Loader2, Link, Image as ImageIcon, Mail } from 'lucide-react'
 import { useSocialAccounts, useConnectTwitter, useConnectLinkedIn, useConnectInstagram, usePublishToTwitter, usePublishToLinkedIn, usePublishToInstagram, useUploadMedia, usePublishToNewsletter } from '@/services/social-hooks'
 import { useSubscribers } from '@/services/query-hooks'
 
@@ -18,10 +18,18 @@ const LinkedInIcon: React.FC<{ size?: number; color?: string }> = ({ size = 14, 
   </svg>
 )
 
+const InstagramIcon: React.FC<{ size?: number; color?: string }> = ({ size = 14, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+  </svg>
+)
+
 const PLATFORM_CONFIG = {
   twitter: { label: 'X (Twitter)', Icon: XIcon, badgeColor: '#0F172A', urlField: false },
   linkedin: { label: 'LinkedIn',   Icon: LinkedInIcon, badgeColor: '#0A66C2', urlField: true  },
-  instagram: { label: 'Instagram', Icon: Instagram, badgeColor: '#E1306C', urlField: false },
+  instagram: { label: 'Instagram', Icon: InstagramIcon, badgeColor: '#E1306C', urlField: false },
   email: { label: 'Newsletter', Icon: Mail, badgeColor: '#10B981', urlField: false },
 } as const
 

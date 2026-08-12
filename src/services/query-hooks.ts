@@ -256,3 +256,30 @@ export const useInfiniteConversions = (pageSize = 20) => {
 }
 
 // ── Newsletter Hooks ─────────────────────────────────────────────────────────
+
+export const useSubscribers = () => {
+  return useQuery({
+    queryKey: ['newsletter_subscribers'],
+    queryFn: () => apiClient.getSubscribers(),
+  })
+}
+
+export const useAddSubscriber = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ email, name }: { email: string; name?: string }) => apiClient.addSubscriber(email, name),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['newsletter_subscribers'] })
+    },
+  })
+}
+
+export const useDeleteSubscriber = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => apiClient.deleteSubscriber(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['newsletter_subscribers'] })
+    },
+  })
+}

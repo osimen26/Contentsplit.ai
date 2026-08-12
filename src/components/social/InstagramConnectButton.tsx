@@ -2,11 +2,18 @@ import React, { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useSocialAccounts, useConnectInstagram, useDisconnectInstagram } from '@/services/social-hooks'
 import { SocialAccount } from '@/services/api-client'
-import { Instagram } from 'lucide-react'
 
 interface InstagramConnectButtonProps {
   onStatusChange?: (account: SocialAccount | null) => void
 }
+
+const InstagramIcon: React.FC<{ size?: number; color?: string }> = ({ size = 14, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+  </svg>
+)
 
 const InstagramConnectButton: React.FC<InstagramConnectButtonProps> = ({ onStatusChange }) => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -51,7 +58,7 @@ const InstagramConnectButton: React.FC<InstagramConnectButtonProps> = ({ onStatu
         <div style={connectedRowStyle}>
           <div style={accountInfoStyle}>
             <div style={dotStyle} />
-            <Instagram size={15} color="#E1306C" />
+            <InstagramIcon size={15} color="#E1306C" />
             <span style={usernameStyle}>@{instagramAccount.platform_username || 'Connected Account'}</span>
             <span style={connectedBadgeStyle}>Connected</span>
           </div>
@@ -78,7 +85,7 @@ const InstagramConnectButton: React.FC<InstagramConnectButtonProps> = ({ onStatu
         onMouseEnter={e => { e.currentTarget.style.opacity = '0.88' }}
         onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
       >
-        <Instagram size={15} color="#fff" />
+        <InstagramIcon size={15} color="#fff" />
         {connectMutation.isPending ? 'Redirecting to Instagram…' : 'Connect Instagram Account'}
       </button>
       <p style={hintStyle}>Connect your Instagram Professional account (must be linked to a Facebook Page).</p>
