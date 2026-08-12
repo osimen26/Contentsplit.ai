@@ -270,6 +270,24 @@ function getUserDb() {
         return data
       },
       async delete(id) {
+        // Delete related data first to prevent foreign key constraint violations
+        const tables = [
+          'email_subscribers',
+          'social_posts',
+          'social_accounts',
+          'media_uploads',
+          'outputs',
+          'conversions'
+        ]
+        
+        for (const table of tables) {
+          try {
+            await supabase.from(table).delete().eq('user_id', id)
+          } catch (err) {
+            console.warn(`Could not delete from ${table} for user ${id}:`, err.message)
+          }
+        }
+
         const { error } = await supabase
           .from('users')
           .delete()
