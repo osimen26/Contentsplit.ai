@@ -238,7 +238,9 @@ const LandingPage: React.FC = () => {
                   <p>If you connect third-party platforms (such as X, LinkedIn, or Facebook) to Contentsplit, we may access certain information from those accounts as permitted by their respective APIs and your privacy settings on those platforms.</p>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>4. Data Security</h3>
                   <p>We implement industry-standard security measures to protect your personal information. However, no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>5. Contact Us</h3>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>5. Data Deletion</h3>
+                  <p>You can request the deletion of your account and all associated data at any time. To do this, log in to your account, navigate to the Settings page, and click the "Delete Account" button. Alternatively, you can email us at privacy@contentsplit.ai with the subject "Data Deletion Request". Upon deletion, all your social media access tokens and generated content are permanently removed from our servers.</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>6. Contact Us</h3>
                   <p>If you have any questions about this Privacy Policy, please contact us at privacy@contentsplit.ai.</p>
                 </div>
               ) : (
