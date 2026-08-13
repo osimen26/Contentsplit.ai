@@ -27,7 +27,7 @@ const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = (
     onClick={() => onChange(!checked)}
     style={{
       width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
-      backgroundColor: checked ? '#4F46E5' : 'var(--sys-color-neutral-80)',
+      backgroundColor: checked ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-80)',
       position: 'relative', transition: 'background-color 0.2s', flexShrink: 0,
       padding: 0,
     }}
@@ -211,7 +211,7 @@ const AccountSection: React.FC = () => {
                 fontWeight: 500, 
                 fontSize: '0.9rem',
                 lineHeight: 1,
-                backgroundColor: '#4F46E5',
+                backgroundColor: 'var(--sys-color-primary-40)',
                 color: 'white',
                 border: 'none',
                 borderRadius: 6,
@@ -362,7 +362,7 @@ const PasswordSection: React.FC = () => {
                 fontWeight: 500, 
                 fontSize: '0.9rem',
                 lineHeight: 1,
-                backgroundColor: success ? '#10b981' : '#4F46E5',
+                backgroundColor: success ? '#10b981' : 'var(--sys-color-primary-40)',
                 color: 'white',
                 border: 'none',
                 borderRadius: 6,
@@ -478,7 +478,7 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
                 onClick={() => navigate('/upgrade')}
                 style={{
                   padding: '10px 20px',
-                  backgroundColor: '#4F46E5',
+                  backgroundColor: 'var(--sys-color-primary-40)',
                   color: 'white',
                   border: 'none',
                   borderRadius: 8,
@@ -563,7 +563,7 @@ const IntegrationsSection: React.FC = () => {
                 onClick={() => navigate('/upgrade')}
                 style={{
                   padding: '8px 16px',
-                  backgroundColor: '#4F46E5',
+                  backgroundColor: 'var(--sys-color-primary-40)',
                   color: 'white',
                   border: 'none',
                   borderRadius: 8,
@@ -813,8 +813,8 @@ const SettingsPage: React.FC = () => {
                   padding: '8px 12px',
                   borderRadius: 10,
                   border: isActive ? '1.5px solid #111' : '1.5px solid transparent',
-                  backgroundColor: isActive ? '#F3F0FF' : 'transparent',
-                  color: isActive ? '#4F46E5' : '#555',
+                  backgroundColor: isActive ? 'var(--sys-color-primary-95)' : 'transparent',
+                  color: isActive ? 'var(--sys-color-primary-30)' : '#555',
                   fontSize: '0.88rem',
                   fontWeight: isActive ? 600 : 400,
                   lineHeight: 1,

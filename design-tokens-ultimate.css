@@ -572,7 +572,7 @@
   --sys-font-label-small-bold-paragraph-indent: 0px;
   --sys-font-label-small-bold-paragraph-spacing: 0px;
   --sys-font-label-small-bold-text-case: none;
-  --sys-color-primary: #6b61e7ff;
+  --sys-color-primary: #4f46e5ff;
   --sys-color-secondary: #0da2e7ff;
   --sys-color-neutral: #858993ff;
   --sys-color-neutral-variant: #737e96ff;
@@ -585,8 +585,8 @@
   --sys-color-primary-10: #09062dff;
   --sys-color-primary-20: #120d59ff;
   --sys-color-primary-30: #1c1386ff;
-  --sys-color-primary-40: #4338caff;
-  --sys-color-primary-50: #4f46e5ff;
+  --sys-color-primary-40: #4f46e5ff;
+  --sys-color-primary-50: #4338caff;
   --sys-color-primary-60: #574ce5ff;
   --sys-color-primary-70: #8279ecff;
   --sys-color-primary-80: #aba6f2ff;
