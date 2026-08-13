@@ -69,7 +69,11 @@ const dm = (size: number, weight = 400, extra?: React.CSSProperties): React.CSSP
 // ─────────────────────────────────────────────────────────────────────────────
 // FOOTER
 // ─────────────────────────────────────────────────────────────────────────────
-const Footer: React.FC = () => {
+interface FooterProps {
+  onOpenLegal: (type: 'privacy' | 'terms') => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ onOpenLegal }) => {
   const cols = [
     { 
       title: 'General', 
@@ -132,8 +136,8 @@ const Footer: React.FC = () => {
         <div className="cs-footer-bottom" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: '24px' }}>
           
           <div style={{ display: 'flex', gap: '24px', ...dm(14, 400, { color: '#A1A1AA' }) }}>
-            <Link to="/privacy" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#A1A1AA', textDecoration: 'none', transition: 'color 0.2s', padding: 0, font: 'inherit' }} className="cs-link-hover">Privacy</Link>
-            <Link to="/terms" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#A1A1AA', textDecoration: 'none', transition: 'color 0.2s', padding: 0, font: 'inherit' }} className="cs-link-hover">Terms</Link>
+            <button onClick={() => onOpenLegal('privacy')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#A1A1AA', textDecoration: 'none', transition: 'color 0.2s', padding: 0, font: 'inherit' }} className="cs-link-hover">Privacy</button>
+            <button onClick={() => onOpenLegal('terms')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#A1A1AA', textDecoration: 'none', transition: 'color 0.2s', padding: 0, font: 'inherit' }} className="cs-link-hover">Terms</button>
             <span>© {new Date().getFullYear()} Contentsplit, Inc.</span>
           </div>
 
@@ -168,6 +172,8 @@ const Footer: React.FC = () => {
 // ROOT PAGE
 // ─────────────────────────────────────────────────────────────────────────────
 const LandingPage: React.FC = () => {
+  const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | null>(null);
+
   return (
     <div style={{ background: T.bg, minHeight:'100vh', fontFamily:'"DM Sans", sans-serif', color: T.textPrimary, overflowX:'hidden' }}>
       <a href="#main-content" className="cs-skip-link">Skip to main content</a>
@@ -183,7 +189,64 @@ const LandingPage: React.FC = () => {
         <LandingPricing />
         <LandingFAQ />
       </main>
-      <Footer />
+      <Footer onOpenLegal={setLegalModal} />
+
+      {legalModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(4px)',
+          zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '24px'
+        }} onClick={() => setLegalModal(null)}>
+          <div style={{
+            background: '#FFFFFF', borderRadius: '16px', width: '100%', maxWidth: '700px',
+            maxHeight: '90vh', overflowY: 'auto', padding: '40px',
+            position: 'relative',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
+          }} onClick={e => e.stopPropagation()}>
+            <button 
+              onClick={() => setLegalModal(null)}
+              style={{ position: 'absolute', top: '24px', right: '24px', background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            >
+              <X size={16} color="#64748B" />
+            </button>
+            <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: '2rem', fontWeight: 700, marginBottom: '24px', color: '#0F172A' }}>
+              {legalModal === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
+            </h2>
+            <div style={{ ...dm(15, 400, { color: '#475569', lineHeight: 1.7 }) }}>
+              {legalModal === 'privacy' ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <p>Last updated: {new Date().toLocaleDateString()}</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>1. Information We Collect</h3>
+                  <p>At Contentsplit, we collect information you provide directly to us when you create an account, connect social media profiles, or use our content repurposing features. This may include your name, email address, payment information, and the content you submit for processing.</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>2. How We Use Your Information</h3>
+                  <p>We use the information we collect to operate and improve our services, process your content repurposing requests using AI models, and communicate with you about your account. Your submitted content is processed strictly for the purpose of generating the requested outputs and is not used to train our AI models without your explicit consent.</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>3. Third-Party Integrations</h3>
+                  <p>If you connect third-party platforms (such as X, LinkedIn, or Facebook) to Contentsplit, we may access certain information from those accounts as permitted by their respective APIs and your privacy settings on those platforms.</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>4. Data Security</h3>
+                  <p>We implement industry-standard security measures to protect your personal information. However, no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>5. Contact Us</h3>
+                  <p>If you have any questions about this Privacy Policy, please contact us at privacy@contentsplit.ai.</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <p>Last updated: {new Date().toLocaleDateString()}</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>1. Acceptance of Terms</h3>
+                  <p>By accessing and using Contentsplit, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>2. Use of Service</h3>
+                  <p>Contentsplit provides AI-powered content repurposing tools. You agree to use these services only for lawful purposes. You retain all ownership rights to the original content you submit to Contentsplit.</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>3. User Accounts</h3>
+                  <p>You are responsible for maintaining the confidentiality of your account credentials. You must immediately notify us of any unauthorized use of your account.</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>4. AI Generation and Liability</h3>
+                  <p>While our AI models strive to produce high-quality content, we do not guarantee the accuracy, completeness, or suitability of generated content. You are responsible for reviewing and verifying all generated content before publishing it on any platform.</p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#0F172A', marginTop: '12px' }}>5. Modifications to Service</h3>
+                  <p>We reserve the right to modify or discontinue, temporarily or permanently, the service with or without notice. We shall not be liable to you or any third party for any modification, suspension, or discontinuance of the service.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
