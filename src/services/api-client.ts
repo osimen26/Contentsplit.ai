@@ -43,7 +43,7 @@ export interface Output {
 export interface ContentGenerationRequest {
   input_text: string
   tone_mode: 'professional' | 'casual' | 'punchy'
-  platforms: ('twitter' | 'linkedin' | 'instagram' | 'email')[]
+  platforms: ('twitter' | 'linkedin' | 'instagram' | 'facebook' | 'threads' | 'email')[]
 }
 
 export interface ContentGenerationResponse {
@@ -331,6 +331,53 @@ class ApiClient {
     })
     return response.data
   }
+
+  // ── Facebook ─────────────────────────────────────────────────────────────────
+
+  async getFacebookAuthUrl(): Promise<{ url: string }> {
+    const response = await this.client.get('/social/facebook/auth-url')
+    return response.data
+  }
+
+  async disconnectFacebook(): Promise<{ success: boolean }> {
+    const response = await this.client.delete('/social/facebook/disconnect')
+    return response.data
+  }
+
+  async publishToFacebook(
+    outputId: string,
+    content: string
+  ): Promise<{ success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null }> {
+    const response = await this.client.post('/social/facebook/publish', {
+      output_id: outputId,
+      content,
+    })
+    return response.data
+  }
+
+  // ── Threads ──────────────────────────────────────────────────────────────────
+
+  async getThreadsAuthUrl(): Promise<{ url: string }> {
+    const response = await this.client.get('/social/threads/auth-url')
+    return response.data
+  }
+
+  async disconnectThreads(): Promise<{ success: boolean }> {
+    const response = await this.client.delete('/social/threads/disconnect')
+    return response.data
+  }
+
+  async publishToThreads(
+    outputId: string,
+    content: string
+  ): Promise<{ success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null }> {
+    const response = await this.client.post('/social/threads/publish', {
+      output_id: outputId,
+      content,
+    })
+    return response.data
+  }
+
 
   // ── Media Upload ─────────────────────────────────────────────────────────────
 

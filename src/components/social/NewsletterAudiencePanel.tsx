@@ -80,7 +80,7 @@ const NewsletterAudiencePanel: React.FC = () => {
             alignItems: 'center',
             gap: 6,
             padding: '8px 16px',
-            backgroundColor: '#10B981',
+            backgroundColor: '#0F172A',
             color: 'white',
             border: 'none',
             borderRadius: 6,

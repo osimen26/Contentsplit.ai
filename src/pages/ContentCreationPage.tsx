@@ -23,6 +23,7 @@ const PLATFORMS = [
   { id: 'linkedin',   label: 'LinkedIn',   bg: '#0077B5', icon: '#0077B5', src: '/images/platforms/LinkedIn-big.png' },
   { id: 'email',      label: 'Newsletter', bg: '#FF6B35', icon: '#FF6B35', src: '/images/platforms/emailbg.png' },
   { id: 'facebook',   label: 'Facebook',   bg: '#1877F2', icon: '#1877F2', src: '/images/platforms/Facebookbig.png' },
+  { id: 'threads',    label: 'Threads',    bg: '#000000', icon: '#000000', src: '/images/platforms/threadsbg.png' },
 ]
 
 const TONES = ['Professional', 'Casual', 'Punchy', 'Friendly']
@@ -43,7 +44,7 @@ const PlatformIcon: React.FC<{ id: string; size?: number }> = ({ id, size = 15 }
   return null
 }
 
-const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isRegenerating: boolean, isPremium: boolean }> = ({ output, onRegenerate, isRegenerating, isPremium }) => {
+const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isRegenerating: boolean }> = ({ output, onRegenerate, isRegenerating }) => {
   const platform = PLATFORMS.find(p => p.id === output.platform)
   const [showPublishPanel, setShowPublishPanel] = useState(false)
   
@@ -84,22 +85,22 @@ const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isReg
           >
             <RefreshCw size={11} className={isRegenerating ? 'spin' : ''} /> {isRegenerating ? 'Regenerating...' : 'Regenerate'}
           </button>
-          <button 
-            onClick={handleCopy}
-            style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#0F172A', border: 'none', borderRadius: '6px', padding: '5px 10px', cursor: 'pointer', ...dm(12, 600, { color: '#FFFFFF' }) }}
-          >
-            <Copy size={11} /> Copy
-          </button>
-          {/* Publish button — Twitter, LinkedIn, Instagram, Email, Pro/Agency users only */}
-          {(output.platform === 'twitter' || output.platform === 'linkedin' || output.platform === 'instagram' || output.platform === 'email') && isPremium && (
-            <button
-              onClick={() => setShowPublishPanel(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#0F172A', border: 'none', borderRadius: '6px', padding: '5px 10px', cursor: 'pointer', ...dm(12, 600, { color: '#FFFFFF' }) }}
-              title={output.platform === 'email' ? 'Send Newsletter' : `Publish directly to ${output.platform}`}
+          <button
+              onClick={handleCopy}
+              style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'transparent', border: '1px solid #E2E8F0', borderRadius: '6px', padding: '5px 10px', cursor: 'pointer', ...dm(12, 500, { color: '#64748B' }) }}
             >
-              <Send size={11} /> Publish
+              <Copy size={11} /> Copy
             </button>
-          )}
+            {/* Publish button */}
+            {(['twitter', 'linkedin', 'instagram', 'email', 'facebook', 'threads'].includes(output.platform)) && (
+              <button
+                onClick={() => setShowPublishPanel(true)}
+                style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#0F172A', border: 'none', borderRadius: '6px', padding: '5px 10px', cursor: 'pointer', ...dm(12, 600, { color: '#FFFFFF' }) }}
+                title={output.platform === 'email' ? 'Send Newsletter' : `Publish directly to ${output.platform}`}
+              >
+                <Send size={11} /> Publish
+              </button>
+            )}
         </div>
       </div>
 
@@ -122,8 +123,6 @@ const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isReg
 const ResultGrid = ({ conversionId }: { conversionId: string }) => {
   const { data: outputs, isLoading } = useOutputs(conversionId)
   const regenerateMutation = useRegenerateContent()
-  const { data: user } = useCurrentUser()
-  const isPremium = user?.tier === 'pro' || user?.tier === 'agency'
 
   const getOutputsArray = (data: unknown): Output[] => {
     if (Array.isArray(data)) return data as Output[]
@@ -144,7 +143,6 @@ const ResultGrid = ({ conversionId }: { conversionId: string }) => {
         <AIResponseCard 
           key={out.platform} 
           output={out} 
-          isPremium={isPremium}
           onRegenerate={() => regenerateMutation.mutate({ conversion_id: conversionId, platform: out.platform as any })}
           isRegenerating={regenerateMutation.isPending && regenerateMutation.variables?.platform === out.platform}
         />

@@ -134,3 +134,62 @@ export function usePublishToNewsletter() {
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['social', 'posts'] }) },
   })
 }
+
+// ── Facebook hooks ────────────────────────────────────────────────────────────
+
+export function useConnectFacebook() {
+  return useMutation<{ url: string }, Error>({
+    mutationFn: () => apiClient.getFacebookAuthUrl(),
+    onSuccess: ({ url }) => { window.location.href = url },
+  })
+}
+
+export function useDisconnectFacebook() {
+  const queryClient = useQueryClient()
+  return useMutation<{ success: boolean }, Error>({
+    mutationFn: () => apiClient.disconnectFacebook(),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: socialKeys.accounts }) },
+  })
+}
+
+export function usePublishToFacebook() {
+  const queryClient = useQueryClient()
+  return useMutation<
+    { success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null },
+    Error,
+    { outputId: string; content: string }
+  >({
+    mutationFn: ({ outputId, content }) => apiClient.publishToFacebook(outputId, content),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['social', 'posts'] }) },
+  })
+}
+
+// ── Threads hooks ─────────────────────────────────────────────────────────────
+
+export function useConnectThreads() {
+  return useMutation<{ url: string }, Error>({
+    mutationFn: () => apiClient.getThreadsAuthUrl(),
+    onSuccess: ({ url }) => { window.location.href = url },
+  })
+}
+
+export function useDisconnectThreads() {
+  const queryClient = useQueryClient()
+  return useMutation<{ success: boolean }, Error>({
+    mutationFn: () => apiClient.disconnectThreads(),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: socialKeys.accounts }) },
+  })
+}
+
+export function usePublishToThreads() {
+  const queryClient = useQueryClient()
+  return useMutation<
+    { success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null },
+    Error,
+    { outputId: string; content: string }
+  >({
+    mutationFn: ({ outputId, content }) => apiClient.publishToThreads(outputId, content),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['social', 'posts'] }) },
+  })
+}
+

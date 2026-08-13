@@ -2799,6 +2799,284 @@ app.post('/api/social/newsletter/publish', requireAuth, socialPublishLimiter, as
   }
 })
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Facebook
+// ─────────────────────────────────────────────────────────────────────────────
+const fbStateToUserId = new Map()
+
+app.get('/api/social/facebook/auth-url', requireAuth, (req, res) => {
+  const { FACEBOOK_APP_ID, FACEBOOK_CALLBACK_URL } = process.env
+  if (!FACEBOOK_APP_ID || !FACEBOOK_CALLBACK_URL) {
+    return res.status(500).json({ error: 'Facebook credentials not configured' })
+  }
+  const scopes = 'pages_manage_posts,pages_show_list,pages_read_engagement'
+  const state = crypto.randomBytes(16).toString('hex')
+  fbStateToUserId.set(state, req.userId)
+
+  const url = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${FACEBOOK_APP_ID}&redirect_uri=${encodeURIComponent(FACEBOOK_CALLBACK_URL)}&state=${state}&scope=${scopes}&response_type=code`
+  res.json({ url })
+})
+
+app.get('/api/social/facebook/callback', async (req, res) => {
+  const { code, state, error: authError } = req.query
+  if (authError) return res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&error=facebook_auth_failed`)
+  if (!code) return res.status(400).send('No authorization code provided')
+  
+  const userId = fbStateToUserId.get(state)
+  fbStateToUserId.delete(state)
+  if (!userId) return res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&error=invalid_state`)
+
+  const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, FACEBOOK_CALLBACK_URL } = process.env
+  
+  try {
+    const tokenRes = await fetch(`https://graph.facebook.com/v19.0/oauth/access_token?client_id=${FACEBOOK_APP_ID}&redirect_uri=${encodeURIComponent(FACEBOOK_CALLBACK_URL)}&client_secret=${FACEBOOK_APP_SECRET}&code=${code}`)
+    const tokenData = await tokenRes.json()
+    if (!tokenData.access_token) throw new Error(tokenData.error?.message || 'Failed to get access token')
+
+    const longTokenRes = await fetch(`https://graph.facebook.com/v19.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${FACEBOOK_APP_ID}&client_secret=${FACEBOOK_APP_SECRET}&fb_exchange_token=${tokenData.access_token}`)
+    const longTokenData = await longTokenRes.json()
+    const accessToken = longTokenData.access_token || tokenData.access_token
+
+    // Fetch user pages
+    const pagesRes = await fetch(`https://graph.facebook.com/v19.0/me/accounts?access_token=${accessToken}`)
+    const pagesData = await pagesRes.json()
+    
+    if (!pagesData.data || pagesData.data.length === 0) {
+      return res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&error=no_facebook_pages`)
+    }
+
+    // Auto-select the first page for MVP
+    const page = pagesData.data[0]
+    const pageToken = page.access_token
+    const pageId = page.id
+    const pageName = page.name
+
+    const db = await initSupabase()
+    const encryptedToken = encryptToken(pageToken)
+    
+    const { error: upsertErr } = await db.from('social_accounts').upsert({
+      user_id: userId,
+      platform: 'facebook',
+      platform_user_id: pageId,
+      platform_username: pageName,
+      access_token: encryptedToken,
+      connected_at: new Date().toISOString()
+    })
+    
+    if (upsertErr) throw upsertErr
+
+    res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&connected=facebook`)
+  } catch (err) {
+    console.error('Facebook callback error:', err)
+    res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&error=facebook_callback_failed`)
+  }
+})
+
+app.delete('/api/social/facebook/disconnect', requireAuth, async (req, res) => {
+  try {
+    const db = await initSupabase()
+    const { error } = await db.from('social_accounts').delete().eq('user_id', req.userId).eq('platform', 'facebook')
+    if (error) throw error
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Facebook disconnect error:', err)
+    res.status(500).json({ error: 'Failed to disconnect Facebook' })
+  }
+})
+
+app.post('/api/social/facebook/publish', requireAuth, socialPublishLimiter, async (req, res) => {
+  try {
+    const { output_id, content } = req.body
+    if (!content) return res.status(400).json({ error: 'Missing content' })
+
+    const db = await initSupabase()
+    
+    const { data: account, error: accErr } = await db.from('social_accounts').select('access_token, platform_user_id').eq('user_id', req.userId).eq('platform', 'facebook').single()
+    if (accErr || !account) return res.status(400).json({ error: 'No Facebook account connected.' })
+
+    const pageToken = decryptToken(account.access_token)
+    const pageId = account.platform_user_id
+
+    const publishRes = await fetch(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: content,
+        access_token: pageToken
+      })
+    })
+
+    const publishData = await publishRes.json()
+
+    if (!publishRes.ok) {
+      return res.status(publishRes.status).json({ error: publishData?.error?.message || 'Failed to publish to Facebook' })
+    }
+
+    const postId = publishData.id
+    const postUrl = `https://facebook.com/${postId}`
+
+    const { data: post } = await db.from('social_posts').insert({
+      user_id: req.userId, output_id, platform: 'facebook', content, status: 'published',
+      published_at: new Date().toISOString(), platform_post_id: postId, platform_post_url: postUrl
+    }).select().single()
+    
+    res.json({ success: true, post: post || null, post_url: postUrl, post_id: postId })
+  } catch (err) {
+    console.error('Facebook publish error:', err)
+    res.status(500).json({ error: 'Failed to publish to Facebook' })
+  }
+})
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Threads
+// ─────────────────────────────────────────────────────────────────────────────
+const threadsStateToUserId = new Map()
+
+app.get('/api/social/threads/auth-url', requireAuth, (req, res) => {
+  const { FACEBOOK_APP_ID, THREADS_CALLBACK_URL } = process.env
+  if (!FACEBOOK_APP_ID || !THREADS_CALLBACK_URL) {
+    return res.status(500).json({ error: 'Meta credentials not configured' })
+  }
+  const scopes = 'threads_basic,threads_content_publish'
+  const state = crypto.randomBytes(16).toString('hex')
+  threadsStateToUserId.set(state, req.userId)
+
+  const url = `https://threads.net/oauth/authorize?client_id=${FACEBOOK_APP_ID}&redirect_uri=${encodeURIComponent(THREADS_CALLBACK_URL)}&state=${state}&scope=${scopes}&response_type=code`
+  res.json({ url })
+})
+
+app.get('/api/social/threads/callback', async (req, res) => {
+  const { code, state, error: authError } = req.query
+  if (authError) return res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&error=threads_auth_failed`)
+  if (!code) return res.status(400).send('No authorization code provided')
+  
+  const userId = threadsStateToUserId.get(state)
+  threadsStateToUserId.delete(state)
+  if (!userId) return res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&error=invalid_state`)
+
+  const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, THREADS_CALLBACK_URL } = process.env
+  
+  try {
+    const tokenRes = await fetch(`https://graph.threads.net/oauth/access_token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: FACEBOOK_APP_ID,
+        client_secret: FACEBOOK_APP_SECRET,
+        grant_type: 'authorization_code',
+        redirect_uri: THREADS_CALLBACK_URL,
+        code
+      }).toString()
+    })
+    
+    const tokenData = await tokenRes.json()
+    if (!tokenData.access_token) throw new Error(tokenData.error_message || 'Failed to get access token')
+    
+    const threadsUserId = tokenData.user_id
+    
+    const longTokenRes = await fetch(`https://graph.threads.net/access_token?grant_type=th_exchange_token&client_secret=${FACEBOOK_APP_SECRET}&access_token=${tokenData.access_token}`)
+    const longTokenData = await longTokenRes.json()
+    const accessToken = longTokenData.access_token || tokenData.access_token
+
+    // Fetch user profile
+    const profileRes = await fetch(`https://graph.threads.net/v1.0/me?fields=id,username&access_token=${accessToken}`)
+    const profileData = await profileRes.json()
+    const threadsUsername = profileData.username || 'Threads User'
+
+    const db = await initSupabase()
+    const encryptedToken = encryptToken(accessToken)
+    
+    const { error: upsertErr } = await db.from('social_accounts').upsert({
+      user_id: userId,
+      platform: 'threads',
+      platform_user_id: threadsUserId.toString(),
+      platform_username: threadsUsername,
+      access_token: encryptedToken,
+      connected_at: new Date().toISOString()
+    })
+    
+    if (upsertErr) throw upsertErr
+
+    res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&connected=threads`)
+  } catch (err) {
+    console.error('Threads callback error:', err)
+    res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&error=threads_callback_failed`)
+  }
+})
+
+app.delete('/api/social/threads/disconnect', requireAuth, async (req, res) => {
+  try {
+    const db = await initSupabase()
+    const { error } = await db.from('social_accounts').delete().eq('user_id', req.userId).eq('platform', 'threads')
+    if (error) throw error
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Threads disconnect error:', err)
+    res.status(500).json({ error: 'Failed to disconnect Threads' })
+  }
+})
+
+app.post('/api/social/threads/publish', requireAuth, socialPublishLimiter, async (req, res) => {
+  try {
+    const { output_id, content } = req.body
+    if (!content) return res.status(400).json({ error: 'Missing content' })
+
+    const db = await initSupabase()
+    
+    const { data: account, error: accErr } = await db.from('social_accounts').select('access_token, platform_user_id').eq('user_id', req.userId).eq('platform', 'threads').single()
+    if (accErr || !account) return res.status(400).json({ error: 'No Threads account connected.' })
+
+    const accessToken = decryptToken(account.access_token)
+    const threadsUserId = account.platform_user_id
+
+    // Create container
+    const containerRes = await fetch(`https://graph.threads.net/v1.0/${threadsUserId}/threads`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        media_type: 'TEXT',
+        text: content,
+        access_token: accessToken
+      })
+    })
+
+    const containerData = await containerRes.json()
+
+    if (!containerRes.ok || !containerData.id) {
+      return res.status(containerRes.status).json({ error: containerData?.error?.message || 'Failed to create Threads container' })
+    }
+
+    // Publish container
+    const publishRes = await fetch(`https://graph.threads.net/v1.0/${threadsUserId}/threads_publish`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        creation_id: containerData.id,
+        access_token: accessToken
+      })
+    })
+
+    const publishData = await publishRes.json()
+
+    if (!publishRes.ok) {
+      return res.status(publishRes.status).json({ error: publishData?.error?.message || 'Failed to publish to Threads' })
+    }
+
+    const postId = publishData.id
+    const postUrl = `https://threads.net/` // Threads doesn't easily expose the permalink yet
+
+    const { data: post } = await db.from('social_posts').insert({
+      user_id: req.userId, output_id, platform: 'threads', content, status: 'published',
+      published_at: new Date().toISOString(), platform_post_id: postId, platform_post_url: postUrl
+    }).select().single()
+    
+    res.json({ success: true, post: post || null, post_url: postUrl, post_id: postId })
+  } catch (err) {
+    console.error('Threads publish error:', err)
+    res.status(500).json({ error: 'Failed to publish to Threads' })
+  }
+})
+
 // ── START ─────────────────────────────────────────────────────────────
 // Only start a TCP server for local development.
 // On Vercel, the app is wrapped by serverless-http in api/index.js.

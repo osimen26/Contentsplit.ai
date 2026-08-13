@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { ExternalLink, X, Send, AlertCircle, CheckCircle2, Loader2, Link, Image as ImageIcon, Mail } from 'lucide-react'
-import { useSocialAccounts, useConnectTwitter, useConnectLinkedIn, useConnectInstagram, usePublishToTwitter, usePublishToLinkedIn, usePublishToInstagram, useUploadMedia, usePublishToNewsletter } from '@/services/social-hooks'
+import { useSocialAccounts, useConnectTwitter, useConnectLinkedIn, useConnectInstagram, usePublishToTwitter, usePublishToLinkedIn, usePublishToInstagram, useUploadMedia, usePublishToNewsletter, useConnectFacebook, useConnectThreads, usePublishToFacebook, usePublishToThreads } from '@/services/social-hooks'
 import { useSubscribers } from '@/services/query-hooks'
 
-const CHAR_LIMITS = { twitter: 280, linkedin: 3000, instagram: 2200, email: 100000 } as const
+const CHAR_LIMITS = { twitter: 280, linkedin: 3000, facebook: 63206, threads: 500, instagram: 2200, email: 100000 } as const
 type Platform = keyof typeof CHAR_LIMITS
 
 const XIcon: React.FC<{ size?: number; color?: string }> = ({ size = 14, color = 'currentColor' }) => (
@@ -26,9 +26,23 @@ const InstagramIcon: React.FC<{ size?: number; color?: string }> = ({ size = 14,
   </svg>
 )
 
+const FacebookIcon: React.FC<{ size?: number; color?: string }> = ({ size = 14, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden="true">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+)
+
+const ThreadsIcon: React.FC<{ size?: number; color?: string }> = ({ size = 14, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden="true">
+    <path d="M12.002 0c6.627 0 12 5.373 12 12s-5.373 12-12 12c-6.627 0-12-5.373-12-12S5.375 0 12.002 0zm-1.847 16.903c1.782 0 3.195-1.077 3.655-2.617h-.058c-.522.688-1.503 1.137-2.662 1.137-2.316 0-4.004-1.781-4.004-4.225 0-2.43 1.638-4.24 3.99-4.24 1.258 0 2.193.53 2.72 1.253h.057V7.126h3.407v9.645h-3.407v-1.12c-.522.75-1.476 1.252-2.735 1.252zm.478-8.497c-1.03 0-1.784.81-1.784 1.896 0 1.074.755 1.884 1.784 1.884.972 0 1.77-.796 1.77-1.884 0-1.074-.798-1.896-1.77-1.896z" />
+  </svg>
+)
+
 const PLATFORM_CONFIG = {
   twitter: { label: 'X (Twitter)', Icon: XIcon, badgeColor: '#0F172A', urlField: false },
   linkedin: { label: 'LinkedIn',   Icon: LinkedInIcon, badgeColor: '#0A66C2', urlField: true  },
+  facebook: { label: 'Facebook', Icon: FacebookIcon, badgeColor: '#1877F2', urlField: false },
+  threads: { label: 'Threads', Icon: ThreadsIcon, badgeColor: '#000000', urlField: false },
   instagram: { label: 'Instagram', Icon: InstagramIcon, badgeColor: '#E1306C', urlField: false },
   email: { label: 'Newsletter', Icon: Mail, badgeColor: '#10B981', urlField: false },
 } as const
@@ -58,15 +72,19 @@ const PublishPanel: React.FC<PublishPanelProps> = ({ outputId, initialContent, p
   const connectTwitter = useConnectTwitter()
   const connectLinkedIn = useConnectLinkedIn()
   const connectInstagram = useConnectInstagram()
+  const connectFacebook = useConnectFacebook()
+  const connectThreads = useConnectThreads()
   const publishTwitter = usePublishToTwitter()
   const publishLinkedIn = usePublishToLinkedIn()
   const publishInstagram = usePublishToInstagram()
+  const publishFacebook = usePublishToFacebook()
+  const publishThreads = usePublishToThreads()
   const publishNewsletter = usePublishToNewsletter()
   const uploadMedia = useUploadMedia()
   const { data: subscribers } = useSubscribers()
 
   const account = platform === 'email' ? { platform_username: `${subscribers?.length || 0} Subscribers` } : accounts?.find(a => a.platform === platform) ?? null
-  const connectMutation = platform === 'twitter' ? connectTwitter : platform === 'linkedin' ? connectLinkedIn : connectInstagram
+  const connectMutation = platform === 'twitter' ? connectTwitter : platform === 'linkedin' ? connectLinkedIn : platform === 'instagram' ? connectInstagram : platform === 'facebook' ? connectFacebook : connectThreads
   const charsLeft = MAX_CHARS - content.length
   const isOverLimit = charsLeft < 0
   
@@ -105,6 +123,18 @@ const PublishPanel: React.FC<PublishPanelProps> = ({ outputId, initialContent, p
     } else if (platform === 'instagram') {
       publishInstagram.mutate(
         { outputId, content, mediaUrl: mediaUrl! },
+        { onSuccess: (d) => onSuccess(d.post_url), onError }
+      )
+    } else if (platform === 'facebook') {
+      const finalContent = mediaUrl ? `${content}\n\n${mediaUrl}` : content
+      publishFacebook.mutate(
+        { outputId, content: finalContent },
+        { onSuccess: (d) => onSuccess(d.post_url), onError }
+      )
+    } else if (platform === 'threads') {
+      const finalContent = mediaUrl ? `${content}\n\n${mediaUrl}` : content
+      publishThreads.mutate(
+        { outputId, content: finalContent },
         { onSuccess: (d) => onSuccess(d.post_url), onError }
       )
     } else if (platform === 'email') {
@@ -571,6 +601,16 @@ const postBtnStyle: React.CSSProperties = {
   fontWeight: 600,
   fontFamily: '"DM Sans", sans-serif',
   transition: 'opacity 0.15s',
+}
+
+const urlInputStyle: React.CSSProperties = {
+  flex: 1,
+  border: 'none',
+  outline: 'none',
+  fontSize: '0.85rem',
+  fontFamily: '"DM Sans", sans-serif',
+  color: '#0F172A',
+  backgroundColor: 'transparent',
 }
 
 export default PublishPanel

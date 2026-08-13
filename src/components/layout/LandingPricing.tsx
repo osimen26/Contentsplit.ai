@@ -25,7 +25,7 @@ const plans = [
     subtitle: 'For creators just getting started',
     features: [
       '5 repurposes per day',
-      'Twitter, LinkedIn, Instagram, Youtube, Email, Threads',
+      'X, LinkedIn, Instagram, Facebook, Threads, YouTube, Email',
       'Copy-to-clipboard export',
       'Basic editor'
     ],
@@ -39,7 +39,7 @@ const plans = [
     subtitle: 'For teams and serious creators',
     features: [
       '100 repurposes per month',
-      'All 6 output formats',
+      'All 7 output formats',
       'Batch mode (up to 10 posts)',
       'Inline editor + version history',
       'Priority AI generation',

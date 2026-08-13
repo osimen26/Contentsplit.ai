@@ -35,6 +35,7 @@ export function validatePlatform(platform: string): boolean {
     'linkedin',
     'facebook',
     'instagram',
+    'threads',
     'tiktok',
     'youtube',
     'email',

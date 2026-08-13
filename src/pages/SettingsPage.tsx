@@ -3,6 +3,8 @@ import { useCurrentUser, useUpdateProfile, useUpdatePassword, useUsageStats, use
 import TwitterConnectButton from '@/components/social/TwitterConnectButton'
 import LinkedInConnectButton from '@/components/social/LinkedInConnectButton'
 import InstagramConnectButton from '@/components/social/InstagramConnectButton'
+import FacebookConnectButton from '@/components/social/FacebookConnectButton'
+import ThreadsConnectButton from '@/components/social/ThreadsConnectButton'
 import NewsletterAudiencePanel from '@/components/social/NewsletterAudiencePanel'
 import PostsHistoryPanel from '@/components/social/PostsHistoryPanel'
 import { Eye, EyeOff } from 'lucide-react'
@@ -256,10 +258,11 @@ const PasswordSection: React.FC = () => {
     if (!currentPassword) newErrors.current = "password is required"
     if (!newPassword) newErrors.new = "password is required"
     else if (newPassword.length < 8) newErrors.new = "Password must be at least 8 characters"
+    else if (!/(?=.*\d)/.test(newPassword)) newErrors.new = "Password must include at least one number"
     if (!confirmPassword) newErrors.confirm = "Please confirm your password"
     else if (newPassword !== confirmPassword) newErrors.confirm = "Passwords do not match"
     setErrors(newErrors)
-    
+  
     if (Object.keys(newErrors).length === 0) {
       setLoading(true)
       try {
@@ -354,21 +357,19 @@ const PasswordSection: React.FC = () => {
             <button
               onClick={validate}
               disabled={loading}
-              style={{ 
+              style={{
+                backgroundColor: '#0F172A',
+                color: 'white',
+                border: 'none',
+                borderRadius: 6,
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: '8px 16px', 
                 fontWeight: 500, 
                 fontSize: '0.9rem',
-                lineHeight: 1,
-                backgroundColor: success ? '#10b981' : 'var(--sys-color-primary-40)',
-                color: 'white',
-                border: 'none',
-                borderRadius: 6,
-                cursor: 'pointer',
-                transition: 'background-color 0.2s',
-                minWidth: 140
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1
               }}
             >
               {loading ? 'Updating...' : success ? 'Updated!' : 'Update password'}
@@ -423,9 +424,9 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
   const planTagline = isAgency ? 'Higher limits, team access' : isPro ? 'Create content at scale' : 'Start repurposing content'
 
   const features = isFree
-    ? ['1 conversion per day', 'All supported platforms', 'Basic tone options', 'Copy to clipboard']
+    ? ['1 conversion per day', 'X, LinkedIn, Instagram, Facebook, Threads, YouTube, Email', 'Basic tone options', 'Copy to clipboard']
     : isPro
-    ? ['Unlimited daily conversions', 'All supported platforms', 'Advanced tone matching', 'Priority AI processing', 'Early access to new platforms', 'Content history (30 days)']
+    ? ['Unlimited daily conversions', 'All platforms + Auto-posting', 'Advanced tone matching', 'Priority AI processing', 'Early access to new platforms', 'Content history (30 days)']
     : ['Everything in Pro', 'Up to 5 team members', 'Unlimited content history', 'Custom tone presets', 'Priority support']
 
   const dailyUsed = usageStats?.daily_usage || 0
@@ -478,18 +479,14 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
                 onClick={() => navigate('/upgrade')}
                 style={{
                   padding: '10px 20px',
-                  backgroundColor: 'var(--sys-color-primary-40)',
+                  backgroundColor: '#0F172A',
                   color: 'white',
                   border: 'none',
                   borderRadius: 8,
                   fontSize: '0.9rem',
                   fontWeight: 600,
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                  transition: 'opacity 0.15s',
+                  cursor: 'pointer'
                 }}
-                onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
               >
                 Upgrade plan
               </button>
@@ -519,7 +516,7 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
                 <div style={{
                   height: '100%',
                   width: `${Math.min((dailyUsed / dailyLimit) * 100, 100)}%`,
-                  backgroundColor: dailyUsed >= dailyLimit ? '#ef4444' : 'var(--sys-color-primary-40, #111827)',
+                  backgroundColor: dailyUsed >= dailyLimit ? '#ef4444' : '#0F172A',
                   borderRadius: 2,
                   transition: 'width 0.3s',
                 }} />
@@ -533,50 +530,12 @@ const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
 }
 
 const IntegrationsSection: React.FC = () => {
-  const { data: user } = useCurrentUser()
-  const isPremium = user?.tier === 'pro' || user?.tier === 'agency'
-  const navigate = useNavigate()
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
       <section>
         <SectionHeader title="Social Publishing" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {!isPremium && (
-            <div style={{
-              padding: '14px 18px',
-              backgroundColor: 'rgba(0,0,0,0.03)',
-              border: '1px solid rgba(0,0,0,0.07)',
-              borderRadius: 10,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 16,
-            }}>
-              <div>
-                <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#111' }}>Pro feature</p>
-                <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: '#666' }}>
-                  Upgrade to Pro or Agency to publish directly to X and more platforms.
-                </p>
-              </div>
-              <button
-                onClick={() => navigate('/upgrade')}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: 'var(--sys-color-primary-40)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 8,
-                  fontSize: '0.875rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                }}
-              >
-                Upgrade
-              </button>
-            </div>
-          )}
 
           {/* X (Twitter) */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '16px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
@@ -589,7 +548,7 @@ const IntegrationsSection: React.FC = () => {
             <p style={{ margin: '0 0 10px', fontSize: '0.82rem', color: '#666' }}>
               Connect your X account to publish generated tweets directly from ContentSplit.
             </p>
-            <div style={{ opacity: isPremium ? 1 : 0.45, pointerEvents: isPremium ? 'auto' : 'none' }}>
+            <div>
               <TwitterConnectButton />
             </div>
           </div>
@@ -605,7 +564,7 @@ const IntegrationsSection: React.FC = () => {
             <p style={{ margin: '0 0 10px', fontSize: '0.82rem', color: '#666' }}>
               Connect your LinkedIn account to publish generated posts directly from ContentSplit.
             </p>
-            <div style={{ opacity: isPremium ? 1 : 0.45, pointerEvents: isPremium ? 'auto' : 'none' }}>
+            <div>
               <LinkedInConnectButton />
             </div>
           </div>
@@ -623,7 +582,7 @@ const IntegrationsSection: React.FC = () => {
             <p style={{ margin: '0 0 10px', fontSize: '0.82rem', color: '#666' }}>
               Connect your Instagram Professional account to publish images and videos.
             </p>
-            <div style={{ opacity: isPremium ? 1 : 0.45, pointerEvents: isPremium ? 'auto' : 'none' }}>
+            <div>
               <InstagramConnectButton />
             </div>
           </div>
@@ -631,16 +590,37 @@ const IntegrationsSection: React.FC = () => {
           {/* Newsletter */}
           <NewsletterAudiencePanel />
 
-          {/* Coming soon platforms */}
-          {(['Facebook', 'Threads'] as const).map(name => (
-            <div key={name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(0,0,0,0.04)', opacity: 0.5 }}>
-              <div>
-                <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: 500, color: '#333' }}>{name}</p>
-                <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: '#999' }}>Coming soon</p>
-              </div>
-              <span style={{ fontSize: '0.75rem', color: '#94A3B8', backgroundColor: 'rgba(0,0,0,0.05)', padding: '3px 10px', borderRadius: 20, fontWeight: 500 }}>Soon</span>
+          {/* Facebook */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '16px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ color: '#1877F2' }}>
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              </svg>
+              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#111' }}>Facebook</p>
             </div>
-          ))}
+            <p style={{ margin: '0 0 10px', fontSize: '0.82rem', color: '#666' }}>
+              Connect your Facebook Page to publish content directly.
+            </p>
+            <div>
+              <FacebookConnectButton />
+            </div>
+          </div>
+
+          {/* Threads */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '16px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ color: '#000000' }}>
+                <path d="M12.002 0c6.627 0 12 5.373 12 12s-5.373 12-12 12c-6.627 0-12-5.373-12-12S5.375 0 12.002 0zm-1.847 16.903c1.782 0 3.195-1.077 3.655-2.617h-.058c-.522.688-1.503 1.137-2.662 1.137-2.316 0-4.004-1.781-4.004-4.225 0-2.43 1.638-4.24 3.99-4.24 1.258 0 2.193.53 2.72 1.253h.057V7.126h3.407v9.645h-3.407v-1.12c-.522.75-1.476 1.252-2.735 1.252zm.478-8.497c-1.03 0-1.784.81-1.784 1.896 0 1.074.755 1.884 1.784 1.884.972 0 1.77-.796 1.77-1.884 0-1.074-.798-1.896-1.77-1.896z" />
+              </svg>
+              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#111' }}>Threads</p>
+            </div>
+            <p style={{ margin: '0 0 10px', fontSize: '0.82rem', color: '#666' }}>
+              Connect your Threads account to publish posts directly.
+            </p>
+            <div>
+              <ThreadsConnectButton />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -812,9 +792,9 @@ const SettingsPage: React.FC = () => {
                   textAlign: 'left',
                   padding: '8px 12px',
                   borderRadius: 10,
-                  border: isActive ? '1.5px solid #111' : '1.5px solid transparent',
-                  backgroundColor: isActive ? 'var(--sys-color-primary-95)' : 'transparent',
-                  color: isActive ? 'var(--sys-color-primary-30)' : '#555',
+                  border: isActive ? '1.5px solid #0F172A' : '1.5px solid transparent',
+                  backgroundColor: isActive ? '#F8FAFC' : 'transparent',
+                  color: isActive ? '#0F172A' : '#64748B',
                   fontSize: '0.88rem',
                   fontWeight: isActive ? 600 : 400,
                   lineHeight: 1,
