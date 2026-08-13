@@ -9,7 +9,7 @@ import LandingFeatureHighlights from '../components/layout/LandingFeatureHighlig
 import LandingTestimonials from '../components/layout/LandingTestimonials'
 import LandingPricing from '../components/layout/LandingPricing'
 import LandingFAQ from '../components/layout/LandingFAQ'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { X } from 'lucide-react'
 
 import {
@@ -172,7 +172,20 @@ const Footer: React.FC<FooterProps> = ({ onOpenLegal }) => {
 // ROOT PAGE
 // ─────────────────────────────────────────────────────────────────────────────
 const LandingPage: React.FC = () => {
-  const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | null>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const legalModal = location.pathname === '/privacy' ? 'privacy' 
+                   : location.pathname === '/terms' ? 'terms' 
+                   : null;
+
+  const handleOpenLegal = (type: 'privacy' | 'terms') => {
+    navigate(`/${type}`);
+  }
+
+  const handleCloseLegal = () => {
+    navigate('/');
+  }
 
   return (
     <div style={{ background: T.bg, minHeight:'100vh', fontFamily:'"DM Sans", sans-serif', color: T.textPrimary, overflowX:'hidden' }}>
@@ -189,7 +202,7 @@ const LandingPage: React.FC = () => {
         <LandingPricing />
         <LandingFAQ />
       </main>
-      <Footer onOpenLegal={setLegalModal} />
+      <Footer onOpenLegal={handleOpenLegal} />
 
       {legalModal && (
         <div style={{
@@ -197,7 +210,7 @@ const LandingPage: React.FC = () => {
           backgroundColor: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(4px)',
           zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: '24px'
-        }} onClick={() => setLegalModal(null)}>
+        }} onClick={handleCloseLegal}>
           <div style={{
             background: '#FFFFFF', borderRadius: '16px', width: '100%', maxWidth: '700px',
             maxHeight: '90vh', overflowY: 'auto', padding: '40px',
@@ -205,7 +218,7 @@ const LandingPage: React.FC = () => {
             boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
           }} onClick={e => e.stopPropagation()}>
             <button 
-              onClick={() => setLegalModal(null)}
+              onClick={handleCloseLegal}
               style={{ position: 'absolute', top: '24px', right: '24px', background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
             >
               <X size={16} color="#64748B" />

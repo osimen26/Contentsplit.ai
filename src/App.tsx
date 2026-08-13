@@ -26,8 +26,6 @@ const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage'))
 const AuthLayout = lazy(() => import('@/layouts/AuthLayout'))
 const OnboardingPage = lazy(() => import('./pages/onboarding/OnboardingPage'))
 const LandingPage = lazy(() => import('./pages/LandingPage'))
-const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
-const TermsPage = lazy(() => import('./pages/TermsPage'))
 const HelpPage = lazy(() => import('./pages/HelpPage'))
 const UpgradePage = lazy(() => import('./pages/UpgradePage'))
 import { ProtectedRoute } from '@components/auth/ProtectedRoute'
@@ -57,8 +55,8 @@ function App() {
                 <Routes>
                   {/* Public Landing Page */}
                   <Route path="/" element={<LandingPage />} />
-                  <Route path="/privacy" element={<PrivacyPage />} />
-                  <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/privacy" element={<LandingPage />} />
+                  <Route path="/terms" element={<LandingPage />} />
 
                   {/* Protected Routes */}
                   <Route element={<ProtectedRoute />}>
