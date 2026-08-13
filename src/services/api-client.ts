@@ -384,11 +384,7 @@ class ApiClient {
   async uploadMedia(file: File): Promise<{ url: string }> {
     const formData = new FormData()
     formData.append('file', file)
-    const response = await this.client.post('/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+    const response = await this.client.post('/upload', formData)
     return response.data
   }
   // ── Newsletter ───────────────────────────────────────────────────────────────

@@ -23,7 +23,7 @@ const PLATFORMS = [
   { id: 'linkedin',   label: 'LinkedIn',   bg: '#0077B5', icon: '#0077B5', src: '/images/platforms/LinkedIn-big.png' },
   { id: 'email',      label: 'Newsletter', bg: '#FF6B35', icon: '#FF6B35', src: '/images/platforms/emailbg.png' },
   { id: 'facebook',   label: 'Facebook',   bg: '#1877F2', icon: '#1877F2', src: '/images/platforms/Facebookbig.png' },
-  { id: 'threads',    label: 'Threads',    bg: '#000000', icon: '#000000', src: '/images/platforms/threadsbg.png' },
+  { id: 'threads',    label: 'Threads',    bg: '#000000', icon: '#000000', src: '/images/platforms/threadsbig.png' },
 ]
 
 const TONES = ['Professional', 'Casual', 'Punchy', 'Friendly']
@@ -171,7 +171,7 @@ const PreferencesBubble: React.FC<{
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '16px', padding: '32px 20px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
             
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', maxWidth: '600px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', width: '100%', maxWidth: '600px' }}>
               {PLATFORMS.map(p => {
                 const isSelected = selectedPlatforms.includes(p.id)
                 return (
@@ -179,12 +179,12 @@ const PreferencesBubble: React.FC<{
                     key={p.id}
                     onClick={() => togglePlatform(p.id)}
                     style={{
-                      display: 'flex', alignItems: 'center', gap: '10px',
-                      padding: '12px 20px', borderRadius: '12px', cursor: 'pointer',
-                      background: '#FFFFFF',
-                      border: isSelected ? `1.5px solid ${p.bg}` : '1.5px solid #E2E8F0',
-                      boxShadow: isSelected ? `inset 0 0 0 0.5px ${p.bg}` : '0 2px 8px rgba(0,0,0,0.02)',
-                      transition: 'all 0.2s',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                        padding: '12px 10px', borderRadius: '12px', cursor: 'pointer',
+                        background: '#FFFFFF',
+                        border: isSelected ? `2px solid ${p.bg}` : '1.5px solid #E2E8F0',
+                        boxShadow: isSelected && p.id === 'twitter' ? `0 0 0 2px #FFFFFF, 0 0 0 4px ${p.bg}` : 'none',
+                        transition: 'all 0.2s',
                     }}
                   >
                     <div style={{ 

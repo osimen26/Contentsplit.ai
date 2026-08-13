@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ExternalLink, Twitter, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useSocialPosts } from '@/services/social-hooks'
 import { SocialPost } from '@/services/api-client'
 
