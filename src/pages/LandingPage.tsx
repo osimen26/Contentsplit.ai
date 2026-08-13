@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import LandingNav from '../components/layout/LandingNav'
 import LandingHero from '../components/layout/LandingHero'
 import LandingSocialProof from '../components/layout/LandingSocialProof'
