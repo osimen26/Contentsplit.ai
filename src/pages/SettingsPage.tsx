@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useCurrentUser, useUpdateProfile, useUpdatePassword, useUsageStats, useDeleteAccount } from '@/services/query-hooks'
+import { useCurrentUser, useUpdateProfile, useUpdatePassword, useDeleteAccount } from '@/services/query-hooks'
 import TwitterConnectButton from '@/components/social/TwitterConnectButton'
 import LinkedInConnectButton from '@/components/social/LinkedInConnectButton'
 import InstagramConnectButton from '@/components/social/InstagramConnectButton'
@@ -10,13 +10,12 @@ import PostsHistoryPanel from '@/components/social/PostsHistoryPanel'
 import { Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-type SettingsSection = 'account' | 'password' | 'appearance' | 'subscription' | 'integrations' | 'delete'
+type SettingsSection = 'account' | 'password' | 'appearance' | 'integrations' | 'delete'
 
 const NAV_ITEMS: { id: SettingsSection; label: string }[] = [
   { id: 'account', label: 'General' },
   { id: 'password', label: 'Password' },
   { id: 'appearance', label: 'Preferences' },
-  { id: 'subscription', label: 'Billing' },
   { id: 'integrations', label: 'Integrations' },
   { id: 'delete', label: 'Danger Zone' },
 ]
@@ -411,123 +410,6 @@ const AppearanceSection: React.FC = () => {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const SubscriptionSection: React.FC<{ usageStats: any }> = ({ usageStats }) => {
-  const { data: user } = useCurrentUser()
-  const navigate = useNavigate()
-
-  const isFree = !user?.tier || user.tier === 'free'
-  const isPro = user?.tier === 'pro'
-  const isAgency = user?.tier === 'agency'
-
-  const planName = isAgency ? 'Agency Plan' : isPro ? 'Pro Plan' : 'Free plan'
-  const planTagline = isAgency ? 'Higher limits, team access' : isPro ? 'Create content at scale' : 'Start repurposing content'
-
-  const features = isFree
-    ? ['1 conversion per day', 'X, LinkedIn, Instagram, Facebook, Threads, YouTube, Email', 'Basic tone options', 'Copy to clipboard']
-    : isPro
-    ? ['Unlimited daily conversions', 'All platforms + Auto-posting', 'Advanced tone matching', 'Priority AI processing', 'Early access to new platforms', 'Content history (30 days)']
-    : ['Everything in Pro', 'Up to 5 team members', 'Unlimited content history', 'Custom tone presets', 'Priority support']
-
-  const dailyUsed = usageStats?.daily_usage || 0
-  const dailyLimit = usageStats?.daily_limit || 5
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
-      <section>
-        <SectionHeader title="Billing & Subscription" />
-        <div style={{ paddingTop: 8 }}>
-
-          {/* Current Plan Row */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 24,
-            padding: '20px 0',
-            borderBottom: '1px solid rgba(0,0,0,0.05)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              {/* Plan Icon */}
-              <div style={{
-                width: 44, height: 44,
-                borderRadius: 10,
-                border: '1px solid rgba(0,0,0,0.1)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#555',
-                flexShrink: 0,
-              }}>
-                <svg width="22" height="22" viewBox="0 0 36 36" fill="none">
-                  {isPro || isAgency ? (
-                    <path d="M18 4l2.5 8h8.5l-7 5 2.5 8-7-5-7 5 2.5-8-7-5h8.5z" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
-                  ) : (
-                    <>
-                      <circle cx="18" cy="10" r="4" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                      <path d="M10 26c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                    </>
-                  )}
-                </svg>
-              </div>
-              <div>
-                <p style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#111' }}>{planName}</p>
-                <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#888' }}>{planTagline}</p>
-              </div>
-            </div>
-
-            {isFree && (
-              <button
-                onClick={() => navigate('/upgrade')}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#0F172A',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 8,
-                  fontSize: '0.9rem',
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-              >
-                Upgrade plan
-              </button>
-            )}
-          </div>
-
-          {/* Features List */}
-          <div style={{ padding: '16px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-            {features.map(f => (
-              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                <span style={{ fontSize: '0.875rem', color: '#555' }}>{f}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Usage */}
-          {isFree && (
-            <div style={{ padding: '20px 0' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                <span style={{ fontSize: '0.85rem', color: '#555', fontWeight: 500 }}>Daily conversions</span>
-                <span style={{ fontSize: '0.85rem', color: '#888' }}>{dailyUsed} / {dailyLimit}</span>
-              </div>
-              <div style={{ height: 4, backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-                <div style={{
-                  height: '100%',
-                  width: `${Math.min((dailyUsed / dailyLimit) * 100, 100)}%`,
-                  backgroundColor: dailyUsed >= dailyLimit ? '#ef4444' : '#0F172A',
-                  borderRadius: 2,
-                  transition: 'width 0.3s',
-                }} />
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-    </div>
-  )
-}
 
 const IntegrationsSection: React.FC = () => {
 
@@ -735,7 +617,6 @@ const DeleteSection: React.FC = () => {
 
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<SettingsSection>('account')
-  const { data: usageStats } = useUsageStats()
 
 
   return (
@@ -824,7 +705,6 @@ const SettingsPage: React.FC = () => {
           {active === 'account' && <AccountSection />}
           {active === 'password' && <PasswordSection />}
           {active === 'appearance' && <AppearanceSection />}
-          {active === 'subscription' && <SubscriptionSection usageStats={usageStats} />}
           {active === 'integrations' && <IntegrationsSection />}
           {active === 'delete' && <DeleteSection />}
         </main>

@@ -37,7 +37,6 @@ const SidebarContentComponent: React.FC<{
   onMobileClose: () => void
   onLogout: () => void
   currentUser: { email?: string; tier?: string } | undefined
-  isFree: boolean
   isActive: (path: string) => boolean
 }> = ({
   collapsed,
@@ -49,7 +48,6 @@ const SidebarContentComponent: React.FC<{
   onMobileClose,
   onLogout,
   currentUser,
-  isFree,
   isActive,
 }) => {
   const username = (currentUser?.email || 'user@example.com').split('@')[0]
@@ -120,23 +118,12 @@ const SidebarContentComponent: React.FC<{
           <h3 style={{ ...dm(13, 500, { color: '#94A3B8', marginBottom: '16px', paddingLeft: '4px', margin: '0 0 16px 0' }) }}>Chats</h3>
         )}
 
-        {isFree ? (
-          (!collapsed || inDrawer) ? (
-            <div style={{ padding: '16px 12px', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0', textAlign: 'center', marginTop: '8px' }}>
-              <div style={{ marginBottom: '8px', fontSize: '1.25rem' }}>🔒</div>
-              <p style={{ ...dm(12, 500, { color: '#475569', margin: '0 0 8px 0' }) }}>History locked</p>
-              <Link to="/settings" onClick={onMobileClose} style={{ ...dm(11, 600, { color: '#2563EB', textDecoration: 'none' }) }}>Upgrade to Pro →</Link>
-            </div>
-          ) : (
-            <div style={{ padding: '8px', textAlign: 'center', fontSize: '1rem', opacity: 0.5 }}>🔒</div>
-          )
-        ) : (
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {recentItems.length === 0 && (!collapsed || inDrawer) && (
-              <li style={{ padding: '8px 4px', ...dm(13, 400, { color: '#94A3B8' }) }}>
-                No chats yet.
-              </li>
-            )}
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          {recentItems.length === 0 && (!collapsed || inDrawer) && (
+            <li style={{ padding: '8px 4px', ...dm(13, 400, { color: '#94A3B8' }) }}>
+              No chats yet.
+            </li>
+          )}
           {recentItems.map(item => {
             const active = location.pathname === `/dashboard/c/${item.id}`
             const label = item.input_text.slice(0, 28) + (item.input_text.length > 28 ? '…' : '')
@@ -201,7 +188,6 @@ const SidebarContentComponent: React.FC<{
             )
           })}
         </ul>
-        )}
       </nav>
 
       {/* ── FOOTER: Settings + Profile ── */}
@@ -256,11 +242,6 @@ const SidebarContentComponent: React.FC<{
                 </div>
                 <span style={{ ...dm(12, 600, { color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '64px' }) }}>{username}</span>
               </div>
-              {isFree && (
-                <Link to="/upgrade" style={{ background: 'rgba(0,0,0,0.03)', textDecoration: 'none', borderRadius: '8px', padding: '4px 8px', ...dm(12, 600, { color: '#0F172A' }), transition: 'background 0.2s' }}>
-                  Upgrade
-                </Link>
-              )}
             </>
           ) : (
             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#0F172A', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', ...dm(14, 700), margin: '0 auto' }}>
@@ -293,7 +274,6 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
       .filter(c => !q || c.input_text.toLowerCase().includes(q))
   }, [conversionsList, search])
 
-  const isFree = !currentUser?.tier || currentUser?.tier === 'free'
   const isActive = useCallback((path: string) => location.pathname === path || location.pathname.startsWith(path + '/'), [location])
 
   const handleNavigate = useCallback(() => {
@@ -360,7 +340,6 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
           onMobileClose={handleMobileClose}
           onLogout={logout}
           currentUser={currentUser}
-          isFree={isFree}
           isActive={isActive}
         />
       </div>
@@ -394,7 +373,6 @@ const ClaudeLayout: React.FC<ClaudeLayoutProps> = ({ children }) => {
             onMobileClose={handleMobileClose}
             onLogout={logout}
             currentUser={currentUser}
-            isFree={isFree}
             isActive={isActive}
           />
         </aside>

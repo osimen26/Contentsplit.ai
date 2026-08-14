@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react'
-import { ChatInput, ChatLoadingBubble, LimitReachedBubble, LimitReachedBanner, UpgradeModal } from '@components/application'
-import { useGenerateContent, useRegenerateContent, useOutputs, useCurrentUser, useUsageStats } from '@services/query-hooks'
+import { ChatInput, ChatLoadingBubble } from '@components/application'
+import { useGenerateContent, useRegenerateContent, useOutputs, useCurrentUser } from '@services/query-hooks'
 import { RefreshCw, Copy, CheckCircle2, CheckCheck, Send } from 'lucide-react'
 import type { Output } from '@services/api-client'
 import '@/styles/dashboard.css'
@@ -281,18 +281,10 @@ const ContentCreationPage: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   
   const [currentConversionId, setCurrentConversionId] = useState<string | null>(null)
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   
   const [isBatchMode, setIsBatchMode] = useState(false)
   const [batchItems, setBatchItems] = useState<string[]>([])
   const [isBatchGenerating] = useState(false)
-  
-  const { data: user } = useCurrentUser()
-  const { data: usageStats } = useUsageStats()
-  const isFreeTier = user?.tier === 'free' || !user?.tier
-  const dailyUsage = usageStats?.daily_usage || 0
-  const dailyLimit = usageStats?.daily_limit || 1
-  const limitReached = isFreeTier && dailyUsage >= dailyLimit
   
   const generateMutation = useGenerateContent()
   const { isLoading: outputsLoading } = useOutputs(currentConversionId || '')
@@ -319,13 +311,6 @@ const ContentCreationPage: React.FC = () => {
 
     if (!textToProcess || selectedPlatforms.length === 0) return
 
-    if (dailyUsage >= dailyLimit) {
-      setShowUpgradeModal(true)
-      const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-      setMessages(prev => [...prev.filter(m => m.type !== 'preferences'), { id: limitId, role: 'assistant', type: 'limit_reached' }])
-      return
-    }
-
     const loadingId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
     setMessages(prev => [...prev.filter(m => m.type !== 'preferences'), { id: loadingId, role: 'assistant', type: 'loading' }])
     
@@ -346,20 +331,11 @@ const ContentCreationPage: React.FC = () => {
         },
         onError: (err: any) => {
           const errorMsg = err?.response?.data?.error || err?.message || 'Failed to generate content'
-          if (err?.response?.data?.limit_reached) {
-            setShowUpgradeModal(true)
-            const limitId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-            setMessages(prev => [
-              ...prev.filter(m => m.type !== 'loading'),
-              { id: limitId, role: 'assistant', type: 'limit_reached' }
-            ])
-          } else {
-            const errorId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-            setMessages(prev => [
-              ...prev.filter(m => m.type !== 'loading'),
-              { id: errorId, role: 'assistant', type: 'error', text: errorMsg }
-            ])
-          }
+          const errorId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+          setMessages(prev => [
+            ...prev.filter(m => m.type !== 'loading'),
+            { id: errorId, role: 'assistant', type: 'error', text: errorMsg }
+          ])
         },
       }
     )
@@ -457,17 +433,6 @@ const ContentCreationPage: React.FC = () => {
                     </div>
                   )}
 
-                  {msg.type === 'limit_reached' && (
-                    <div style={{ maxWidth: '600px', width: '100%' }}>
-                      <LimitReachedBubble
-                        dailyUsage={dailyUsage}
-                        dailyLimit={dailyLimit}
-                        onUpgrade={() => setShowUpgradeModal(true)}
-                        isFreeTier={isFreeTier}
-                      />
-                    </div>
-                  )}
-
                   {msg.type === 'result' && (
                     <ResultGrid conversionId={msg.text || currentConversionId || ''} />
                   )}
@@ -483,12 +448,6 @@ const ContentCreationPage: React.FC = () => {
       {/* ── Input Area ── */}
       <div style={{ padding: '0 24px 24px', flexShrink: 0 }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', position: 'relative' }}>
-          {limitReached && (
-            <LimitReachedBanner
-              dailyUsage={dailyUsage} dailyLimit={dailyLimit} isFreeTier={isFreeTier}
-              onUpgrade={() => setShowUpgradeModal(true)} onNewChat={handleNewChat}
-            />
-          )}
           <ChatInput
             value={inputText}
             onChange={setInputText}
@@ -506,15 +465,6 @@ const ContentCreationPage: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <UpgradeModal
-        isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-        onUpgrade={() => setShowUpgradeModal(false)}
-        dailyUsage={dailyUsage}
-        dailyLimit={dailyLimit}
-        isFreeTier={isFreeTier}
-      />
     </div>
   )
 }
