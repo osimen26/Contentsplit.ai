@@ -161,7 +161,7 @@ const connectBtnStyle: React.CSSProperties = {
   padding: '10px 18px',
   borderRadius: 8,
   border: 'none',
-  backgroundColor: '#0F172A',
+  backgroundColor: 'rgba(29,155,240,0.95)',
   color: '#fff',
   fontSize: '0.875rem',
   fontWeight: 600,

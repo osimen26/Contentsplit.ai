@@ -240,7 +240,12 @@ const PublishPanel: React.FC<PublishPanelProps> = ({ outputId, initialContent, p
               </span>
               {platform !== 'email' && (
                 <button
-                  onClick={() => connectMutation.mutate()}
+                  onClick={() => connectMutation.mutate(undefined, {
+                    onError: (err: any) => {
+                      setPanelState('error')
+                      setErrorMsg(err?.response?.data?.error || err?.message || 'Failed to start OAuth. Please try again.')
+                    }
+                  })}
                   disabled={connectMutation.isPending}
                   style={inlineConnectBtnStyle}
                 >
@@ -512,12 +517,13 @@ const inlineConnectBtnStyle: React.CSSProperties = {
   background: 'none',
   border: 'none',
   cursor: 'pointer',
-  color: 'var(--sys-color-primary-40, #0F172A)',
+  color: '#4F46E5',
   fontSize: '0.82rem',
   fontWeight: 600,
   fontFamily: '"DM Sans", sans-serif',
   padding: 0,
   textDecoration: 'underline',
+  textUnderlineOffset: '2px',
 }
 
 const errorBoxStyle: React.CSSProperties = {
