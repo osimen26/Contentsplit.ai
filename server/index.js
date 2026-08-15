@@ -854,54 +854,7 @@ app.post('/api/conversions/generate', generateLimiter, optionalAuth, async (req,
     
     const userId = req.userId || 'anonymous'
 
-    // Check daily limit before generating (skip for anonymous users)
-    if (userId !== 'anonymous') {
-      const userDb = getUserDb()
-      const user = await userDb.findById(userId)
-      const tierLimits = {
-        free: 1,        // 1 per day
-        pro: 100,      // 100 per day
-        agency: 999999  // unlimited
-      }
-      const tier = user?.tier || 'free'
-      let limit = 5
-      let periodStart = new Date()
-      periodStart.setHours(0, 0, 0, 0)
-      
-      if (tier === 'pro') {
-        limit = 100
-        periodStart.setDate(1) // Start of month
-      } else if (tier === 'agency') {
-        limit = 999999
-      }
-
-      let usageCount = 0
-
-      if (supabase) {
-        const { count } = await supabase
-          .from('conversions')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .gte('created_at', periodStart.toISOString())
-
-        usageCount = count || 0
-      } else {
-        const allConversions = Array.from(conversionsDb.values())
-        usageCount = allConversions.filter(c =>
-          c.user_id === userId && new Date(c.created_at) >= periodStart
-        ).length
-      }
-
-      if (usageCount >= limit) {
-        const periodStr = tier === 'pro' ? 'month' : 'day'
-        return res.status(429).json({
-          error: `Limit reached. You've used ${usageCount}/${limit} conversions this ${periodStr}. Upgrade your plan for more.`,
-          limit_reached: true,
-          daily_usage: usageCount,
-          daily_limit: limit
-        })
-      }
-    }
+    // No generation limits enforced anymore
 
     console.log(`⚡ Generating for platforms: ${platforms.join(', ')} | tone: ${tone_mode} | persona: ${persona || 'none'}`)
 
@@ -1023,26 +976,7 @@ app.get('/api/conversions', requireAuth, async (req, res) => {
     const page = parseInt(req.query.page || '1')
     const pageSize = parseInt(req.query.page_size || '20')
 
-    const userDb = getUserDb()
-    const user = await userDb.findById(req.userId)
-    const tier = user?.tier || 'free'
-
-    if (tier === 'free') {
-      return res.json({
-        data: [],
-        total: 0,
-        page,
-        page_size: pageSize,
-        has_more: false,
-        locked: true
-      })
-    }
-
     let cutoffDate = null;
-    if (tier === 'pro') {
-      cutoffDate = new Date();
-      cutoffDate.setDate(cutoffDate.getDate() - 30); // 30 days history for Pro
-    }
 
     if (supabase) {
       let query = supabase
@@ -1301,43 +1235,11 @@ app.post('/api/conversions/regenerate', optionalAuth, async (req, res) => {
 // Usage stats
 app.get('/api/users/usage', requireAuth, async (req, res) => {
   try {
-    const userDb = getUserDb()
-    const user = await userDb.findById(req.userId)
-
-    const tier = user?.tier || 'free'
-    let limit = 5
-    let periodStart = new Date()
-    periodStart.setHours(0, 0, 0, 0)
-    
-    if (tier === 'pro') {
-      limit = 100
-      periodStart.setDate(1)
-    } else if (tier === 'agency') {
-      limit = 999999
-    }
-
-    let usageCount = 0
-
-    if (supabase) {
-      const { count } = await supabase
-        .from('conversions')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', req.userId)
-        .gte('created_at', periodStart.toISOString())
-
-      usageCount = count || 0
-    } else {
-      const allConversions = Array.from(conversionsDb.values())
-      usageCount = allConversions.filter(c =>
-        c.user_id === req.userId && new Date(c.created_at) >= periodStart
-      ).length
-    }
-
     res.json({
-      daily_usage: usageCount,
-      daily_limit: limit,
-      conversions_today: usageCount,
-      period: tier === 'pro' ? 'month' : 'day'
+      daily_usage: 0,
+      daily_limit: 999999,
+      conversions_today: 0,
+      period: 'day'
     })
   } catch (err) {
     console.error('Usage error:', err)
@@ -1842,8 +1744,8 @@ app.get('/api/social/twitter/auth-url', requireAuth, async (req, res) => {
   try {
     const userDb = getUserDb()
     const user = await userDb.findById(req.userId)
-    if (!user || user.tier === 'free') {
-      return res.status(403).json({ error: 'Social publishing requires a Pro or Agency plan.' })
+    if (!user) {
+      return res.status(401).json({ error: 'User not found.' })
     }
 
     const clientId = process.env.TWITTER_CLIENT_ID
@@ -2035,8 +1937,8 @@ app.post('/api/social/twitter/publish', requireAuth, socialPublishLimiter, async
   try {
     const userDb = getUserDb()
     const user = await userDb.findById(req.userId)
-    if (!user || user.tier === 'free') {
-      return res.status(403).json({ error: 'Social publishing requires a Pro or Agency plan.' })
+    if (!user) {
+      return res.status(401).json({ error: 'User not found.' })
     }
 
     const { content: rawContent, output_id: rawOutputId } = req.body
@@ -2201,8 +2103,8 @@ app.get('/api/social/linkedin/auth-url', requireAuth, async (req, res) => {
   try {
     const userDb = getUserDb()
     const user = await userDb.findById(req.userId)
-    if (!user || user.tier === 'free') {
-      return res.status(403).json({ error: 'Social publishing requires a Pro or Agency plan.' })
+    if (!user) {
+      return res.status(401).json({ error: 'User not found.' })
     }
 
     const clientId = process.env.LINKEDIN_CLIENT_ID
@@ -2347,8 +2249,8 @@ app.post('/api/social/linkedin/publish', requireAuth, socialPublishLimiter, asyn
   try {
     const userDb = getUserDb()
     const user = await userDb.findById(req.userId)
-    if (!user || user.tier === 'free') {
-      return res.status(403).json({ error: 'Social publishing requires a Pro or Agency plan.' })
+    if (!user) {
+      return res.status(401).json({ error: 'User not found.' })
     }
 
     const { content: rawContent, url: rawUrl, output_id: rawOutputId } = req.body
