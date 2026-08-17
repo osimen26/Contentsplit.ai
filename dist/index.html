@@ -7,14 +7,21 @@
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="shortcut icon" href="/logo.svg" />
     <!-- Google Fonts -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <!-- Material Icons (non-blocking) -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript><link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet" /></noscript>
     <!-- SEO Meta Tags -->
     <meta
       name="description"
@@ -40,12 +47,13 @@
       name="twitter:description"
       content="Transform your content across platforms with intelligent AI adaptation."
     />
-    <script type="module" crossorigin src="/assets/index-0yCuwEGl.js"></script>
+    <script type="module" crossorigin src="/assets/index-_Mjp4JJ0.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-hePW80VL.js">
-    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-CkEUZM6i.js">
-    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-client-Dp0p08BP.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-B-4Mr8TC.css">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-gsap-CJDQx9GJ.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-react-BliOGJ_C.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-query-DkEhAOdi.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-client-DOk23sBg.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CEo5al2V.css">
   </head>
   <body>
     <div id="root"></div>

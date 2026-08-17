@@ -164,7 +164,7 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
   const currentIcon = activePlatform?.icon || getPlatformIcon(activeTab)
 
   return (
-    <Card variant="elevated" className={`generated-content claude-style ${className}`} data-testid="generated-content-card">
+    <Card className={`generated-content claude-style ${className}`} data-testid="generated-content-card">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sys-spacing-md)', flexWrap: 'wrap', gap: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sys-spacing-sm)' }}>
           <span style={{ color: 'var(--sys-color-neutral-60)', flexShrink: 0 }}>{currentIcon}</span>
@@ -246,16 +246,16 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
           ))}
         </div>
       ) : (
-        <div style={{
-          backgroundColor: 'var(--sys-color-neutral-98)',
-          border: '1px solid var(--sys-color-neutral-90)',
-          borderRadius: 'var(--sys-radius-md)',
-          padding: 'var(--sys-spacing-md)',
-          minHeight: '80px',
-          maxHeight: '400px',
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch',
-        }}>
+        <div
+          onClick={() => !isEditing && setIsEditing(true)}
+          style={{
+            backgroundColor: 'var(--sys-color-neutral-98)',
+            border: '1px solid var(--sys-color-neutral-90)',
+            borderRadius: 'var(--sys-radius-md)',
+            padding: 'var(--sys-spacing-md)',
+            cursor: isEditing ? 'default' : 'text',
+          }}
+        >
           {isEditing ? (
             <textarea
               ref={textareaRef}
@@ -275,6 +275,9 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
                 backgroundColor: 'transparent',
                 color: 'var(--sys-color-neutral-30)',
                 minHeight: '80px',
+                maxHeight: '400px',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
               }}
             />
           ) : (
@@ -287,8 +290,11 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
                 color: 'var(--sys-color-neutral-30)',
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
+                minHeight: '80px',
+                maxHeight: '400px',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
               }}
-              onClick={() => setIsEditing(true)}
             >
               {displayText}
               {isStreaming && (

@@ -33,7 +33,7 @@
 @import '../../components/platform-selector.css';
 @import '../../components/tone-selector.css';
 @import '../../components/generated-content.css';
-@import '../../components/regeneration-controls.css';
+/* @import '../../components/regeneration-controls.css';  -- 0 TSX references, dead code */
 @import '../../components/conversion-history.css';
 @import '../../components/tier-usage-panel.css';
 @import '../../components/settings-profile.css';
@@ -42,11 +42,10 @@
 @import '../../components/loading-state.css';
 @import '../../components/empty-states.css';
 @import '../../components/form-field-system.css';
-@import '../../components/notification-system.css';
-@import '../../components/responsive-utilities.css';
+/* @import '../../components/notification-system.css';    -- 0 TSX references, dead code */
+/* @import '../../components/responsive-utilities.css';   -- 0 TSX references, dead code */
 
-/* AI Integration */
-@import '../../components/ai-integration.css';
+/* @import '../../components/ai-integration.css';         -- 0 TSX references, dead code */
 
 /* Global base styles */
 * {

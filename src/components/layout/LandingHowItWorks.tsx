@@ -15,20 +15,23 @@ const steps = [
     title: 'Paste your content',     
     desc: 'Drop in your blog post URL or paste the full text. ContentSplit reads it and understands the key ideas, tone, and structure.',
     type: 'icon',
-    imgSrc: '/images/paste.svg'
+    imgSrc: '/images/paste.svg',
+    image: '/images/how-it-work.png'
   },
   { 
     id: 2, 
     title: 'Choose your platforms',  
     desc: "Pick which formats you need — one or all six. ContentSplit generates each one separately, tailored to that platform's content style.",
-    type: 'social'
+    type: 'social',
+    image: '/images/how-it-work.png'
   },
   { 
     id: 3, 
     title: 'Copy and publish',       
     desc: 'Each output is editable before you copy. Tweak the tone, swap out phrases, and publish directly from the editor.',
     type: 'icon',
-    imgSrc: '/images/copy+publish.svg'
+    imgSrc: '/images/copy+publish.svg',
+    image: '/images/how-it-work.png'
   },
 ]
 

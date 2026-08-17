@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import './styles/global.css'
 
 // Layouts
@@ -8,6 +7,10 @@ import ClaudeLayout from '@/layouts/ClaudeLayout'
 
 // Pages (lazy loaded)
 import { lazy, Suspense } from 'react'
+
+const ReactQueryDevtools = lazy(() =>
+  import('@tanstack/react-query-devtools').then(m => ({ default: m.ReactQueryDevtools }))
+)
 import { LoadingOverlay } from '@components/ui/LoadingState'
 
 // Error Boundary
@@ -85,7 +88,11 @@ function App() {
           </ThemeProvider>
         </AuthProvider>
       </Router>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {import.meta.env.DEV && (
+        <Suspense fallback={null}>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </Suspense>
+      )}
     </QueryClientProvider>
   )
 }

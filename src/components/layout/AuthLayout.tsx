@@ -1,5 +1,5 @@
 import React from 'react'
-import loginArt from '../../../Image/asset/Login Art.png'
+import loginArt from '../../../Image/asset/Login Art.webp'
 import ChatInterfaceMockup from './ChatInterfaceMockup'
 
 interface AuthLayoutProps {

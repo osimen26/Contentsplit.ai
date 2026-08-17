@@ -2,6 +2,7 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { visualizer } from 'rollup-plugin-visualizer'
 import path from 'path'
 
 export default defineConfig({
@@ -30,8 +31,36 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
-    cssMinify: false,
+    sourcemap: false,
+    cssMinify: 'lightningcss',
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/') || id.includes('node_modules/react-router')) {
+            return 'vendor-react'
+          }
+          if (id.includes('node_modules/@supabase')) {
+            return 'vendor-supabase'
+          }
+          if (id.includes('node_modules/@tanstack/react-query') && !id.includes('devtools')) {
+            return 'vendor-query'
+          }
+          if (id.includes('node_modules/framer-motion')) {
+            return 'vendor-motion'
+          }
+          if (id.includes('node_modules/gsap') || id.includes('node_modules/@gsap')) {
+            return 'vendor-gsap'
+          }
+        },
+      },
+      plugins: [
+        visualizer({
+          filename: 'dist/bundle-analysis.html',
+          gzipSize: true,
+          brotliSize: true,
+        }),
+      ],
+    },
   },
   test: {
     environment: 'jsdom',
