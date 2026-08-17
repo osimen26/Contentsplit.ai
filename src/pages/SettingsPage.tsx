@@ -9,6 +9,7 @@ import NewsletterAudiencePanel from '@/components/social/NewsletterAudiencePanel
 import PostsHistoryPanel from '@/components/social/PostsHistoryPanel'
 import { Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 
 type SettingsSection = 'account' | 'password' | 'appearance' | 'integrations' | 'delete'
 
@@ -618,14 +619,20 @@ const DeleteSection: React.FC = () => {
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<SettingsSection>('account')
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.has('connected')) {
+      queryClient.invalidateQueries({ queryKey: ['social', 'accounts'] })
+    }
+
     const returnUrl = localStorage.getItem('social_return_url')
     if (returnUrl && returnUrl !== '/dashboard/settings') {
       localStorage.removeItem('social_return_url')
-      navigate(returnUrl)
+      navigate(returnUrl, { replace: true })
     }
-  }, [navigate])
+  }, [navigate, queryClient])
 
   return (
     <div style={{
