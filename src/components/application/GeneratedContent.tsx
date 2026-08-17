@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Card, Skeleton, Toast } from '@components/ui'
-import { Copy, Check, RefreshCw } from 'lucide-react'
+import { Copy, Check, RefreshCw, Pencil } from 'lucide-react'
 
 interface Platform {
   id: string
@@ -190,6 +190,43 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
               <RefreshCw size={14} /> Regenerate
             </button>
           )}
+          {!isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              disabled={isStreaming}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '4px',
+                padding: '8px 12px',
+                borderRadius: 'var(--sys-radius-md)',
+                border: '1px solid var(--sys-color-neutral-90)',
+                backgroundColor: 'white',
+                color: 'var(--sys-color-neutral-30)',
+                fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
+                transition: 'all 0.2s',
+                minHeight: 36,
+              }}
+            >
+              <Pencil size={14} /> Edit
+            </button>
+          )}
+          {isEditing && (
+            <button
+              onClick={() => setIsEditing(false)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '4px',
+                padding: '8px 12px',
+                borderRadius: 'var(--sys-radius-md)',
+                border: '1px solid var(--sys-color-primary)',
+                backgroundColor: 'var(--sys-color-primary-95)',
+                color: 'var(--sys-color-primary)',
+                fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
+                transition: 'all 0.2s',
+                minHeight: 36,
+              }}
+            >
+              <Check size={14} /> Done
+            </button>
+          )}
           <button
             onClick={() => handleCopy(activeTab, isEditing ? editedContent : streamedText)}
             disabled={isStreaming}
@@ -247,13 +284,11 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({
         </div>
       ) : (
         <div
-          onClick={() => !isEditing && setIsEditing(true)}
           style={{
             backgroundColor: 'var(--sys-color-neutral-98)',
             border: '1px solid var(--sys-color-neutral-90)',
             borderRadius: 'var(--sys-radius-md)',
             padding: 'var(--sys-spacing-md)',
-            cursor: isEditing ? 'default' : 'text',
           }}
         >
           {isEditing ? (

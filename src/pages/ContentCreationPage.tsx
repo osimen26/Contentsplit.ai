@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import { ChatInput, ChatLoadingBubble } from '@components/application'
-import { useGenerateContent, useRegenerateContent, useOutputs, useCurrentUser } from '@services/query-hooks'
+import { useGenerateContent, useRegenerateContent, useOutputs } from '@services/query-hooks'
 import { RefreshCw, Copy, CheckCircle2, CheckCheck, Send } from 'lucide-react'
 import type { Output } from '@services/api-client'
 import '@/styles/dashboard.css'
@@ -298,11 +298,6 @@ const ContentCreationPage: React.FC = () => {
     }
   }, [messages, outputsLoading])
 
-  const handleNewChat = () => {
-    setMessages([])
-    setInputText('')
-    setCurrentConversionId(null)
-  }
 
   const handleGenerate = async (selectedPlatforms: string[], selectedTone: string) => {
     // Find the last user message text
