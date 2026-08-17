@@ -152,6 +152,7 @@ const PublishPanel: React.FC<PublishPanelProps> = ({ outputId, initialContent, p
       const res = await uploadMedia.mutateAsync(file)
       setMediaUrl(res.url)
     } catch (err) {
+      setPanelState('error')
       setErrorMsg('Failed to upload media. Please try again.')
     }
   }
