@@ -11,6 +11,7 @@ import {
   PanelLeft,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { Modal } from '@/components/ui/Modal'
 import '@/styles/dashboard.css'
 
 export interface ClaudeLayoutProps {
@@ -53,6 +54,7 @@ const SidebarContentComponent: React.FC<{
   const username = (currentUser?.email || 'user@example.com').split('@')[0]
   const deleteMutation = useDeleteConversion()
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, background: '#FBFAF9', padding: '20px 16px' }}>
@@ -155,14 +157,10 @@ const SidebarContentComponent: React.FC<{
                   </Link>
                   {(!collapsed || inDrawer) && (
                     <button
-                      onClick={async (e) => {
+                      onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        if (confirm('Delete this conversion?')) {
-                          setDeletingId(item.id)
-                          await deleteMutation.mutateAsync(item.id)
-                          setDeletingId(null)
-                        }
+                        setConfirmDeleteId(item.id)
                       }}
                       disabled={deletingId === item.id}
                       style={{
@@ -250,6 +248,34 @@ const SidebarContentComponent: React.FC<{
           )}
         </div>
       </div>
+
+      <Modal
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        title="Delete Conversion"
+        subtitle="Are you sure you want to delete this chat? This action cannot be undone."
+        size="sm"
+        actions={[
+          {
+            label: 'Cancel',
+            variant: 'ghost',
+            onClick: () => setConfirmDeleteId(null)
+          },
+          {
+            label: deletingId ? 'Deleting...' : 'Delete',
+            variant: 'primary',
+            disabled: !!deletingId,
+            onClick: async () => {
+              if (confirmDeleteId) {
+                setDeletingId(confirmDeleteId)
+                await deleteMutation.mutateAsync(confirmDeleteId)
+                setDeletingId(null)
+                setConfirmDeleteId(null)
+              }
+            }
+          }
+        ]}
+      />
     </div>
   )
 }
