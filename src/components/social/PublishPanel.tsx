@@ -517,7 +517,7 @@ const inlineConnectBtnStyle: React.CSSProperties = {
   background: 'none',
   border: 'none',
   cursor: 'pointer',
-  color: '#4F46E5',
+  color: '#0F172A',
   fontSize: '0.82rem',
   fontWeight: 600,
   fontFamily: '"DM Sans", sans-serif',

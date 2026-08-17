@@ -795,8 +795,11 @@ app.post('/api/upload', requireAuth, upload.single('file'), async (req, res) => 
       return res.status(400).json({ error: 'No file provided' })
     }
 
-    if (!supabase) {
-      return res.status(500).json({ error: 'Supabase storage is not configured' })
+    const db = await initSupabase()
+    if (!db) {
+      // Fallback for local testing without Supabase Storage
+      console.warn('⚠️ Supabase not configured. Mocking media upload.')
+      return res.json({ url: `https://via.placeholder.com/800x600.png?text=Mock+Upload+${req.userId}` })
     }
 
     const file = req.file
@@ -804,7 +807,7 @@ app.post('/api/upload', requireAuth, upload.single('file'), async (req, res) => 
     const fileName = `${req.userId}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`
     const filePath = `social/${fileName}`
 
-    const { data, error } = await supabase.storage
+    const { data, error } = await db.storage
       .from('media_uploads')
       .upload(filePath, file.buffer, {
         contentType: file.mimetype,
@@ -818,7 +821,7 @@ app.post('/api/upload', requireAuth, upload.single('file'), async (req, res) => 
     }
 
     // Get public URL
-    const { data: urlData } = supabase.storage
+    const { data: urlData } = db.storage
       .from('media_uploads')
       .getPublicUrl(filePath)
 
