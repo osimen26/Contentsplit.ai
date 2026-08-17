@@ -6,7 +6,7 @@ import { Skeleton } from '@components/ui'
 import { ArrowLeft } from 'lucide-react'
 
 const platformOptions = [
-  { id: 'twitter', name: 'Twitter/X', characterLimit: 280 },
+  { id: 'twitter', name: 'Twitter/X', characterLimit: 10000 },
   { id: 'linkedin', name: 'LinkedIn', characterLimit: 3000 },
   { id: 'instagram', name: 'Instagram', characterLimit: 2200 },
   { id: 'email', name: 'Email', characterLimit: 5000 },

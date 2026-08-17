@@ -26,6 +26,10 @@ const TwitterConnectButton: React.FC<TwitterConnectButtonProps> = ({ onStatusCha
     const connected = searchParams.get('connected')
     const error = searchParams.get('error')
 
+    if (error) {
+      alert(`Twitter Connection Error: ${error}\n\nPlease verify your TWITTER_CLIENT_SECRET in server/.env is up to date, as changing the App Type to Web App in the Twitter Developer Portal resets the secret!`)
+    }
+
     if (connected === 'twitter' || error) {
       // Refresh accounts list after redirect back from X
       refetch()

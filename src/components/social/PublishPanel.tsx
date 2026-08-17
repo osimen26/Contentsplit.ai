@@ -3,7 +3,7 @@ import { ExternalLink, X, Send, AlertCircle, CheckCircle2, Loader2, Link, Image 
 import { useSocialAccounts, useConnectTwitter, useConnectLinkedIn, useConnectInstagram, usePublishToTwitter, usePublishToLinkedIn, usePublishToInstagram, useUploadMedia, usePublishToNewsletter, useConnectFacebook, useConnectThreads, usePublishToFacebook, usePublishToThreads } from '@/services/social-hooks'
 import { useSubscribers } from '@/services/query-hooks'
 
-const CHAR_LIMITS = { twitter: 280, linkedin: 3000, facebook: 63206, threads: 500, instagram: 2200, email: 100000 } as const
+const CHAR_LIMITS = { twitter: 10000, linkedin: 3000, facebook: 63206, threads: 500, instagram: 2200, email: 100000 } as const
 type Platform = keyof typeof CHAR_LIMITS
 
 const XIcon: React.FC<{ size?: number; color?: string }> = ({ size = 14, color = 'currentColor' }) => (
