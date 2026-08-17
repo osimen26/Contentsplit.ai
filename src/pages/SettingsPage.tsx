@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useCurrentUser, useUpdateProfile, useUpdatePassword, useDeleteAccount } from '@/services/query-hooks'
 import TwitterConnectButton from '@/components/social/TwitterConnectButton'
 import LinkedInConnectButton from '@/components/social/LinkedInConnectButton'
@@ -617,7 +617,15 @@ const DeleteSection: React.FC = () => {
 
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<SettingsSection>('account')
+  const navigate = useNavigate()
 
+  useEffect(() => {
+    const returnUrl = localStorage.getItem('social_return_url')
+    if (returnUrl && returnUrl !== '/dashboard/settings') {
+      localStorage.removeItem('social_return_url')
+      navigate(returnUrl)
+    }
+  }, [navigate])
 
   return (
     <div style={{

@@ -202,10 +202,21 @@ const PublishPanel: React.FC<PublishPanelProps> = ({ outputId, initialContent, p
           <div style={mediaUploadWrapStyle}>
             <input type="file" accept="image/*,video/*" ref={fileInputRef} onChange={handleFileUpload} style={{ display: 'none' }} />
             {mediaUrl ? (
-              <div style={mediaPreviewStyle}>
-                <ImageIcon size={14} color="#10b981" />
-                <span style={mediaPreviewTextStyle}>Media attached</span>
-                <button onClick={() => setMediaUrl(null)} style={mediaClearBtnStyle} aria-label="Remove media"><X size={12} /></button>
+              <div style={{ position: 'relative', display: 'inline-block', marginTop: 4 }}>
+                {mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                  <video src={mediaUrl} style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)' }} />
+                ) : (
+                  <img src={mediaUrl} alt="Attached media" style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)' }} />
+                )}
+                <button 
+                  onClick={() => setMediaUrl(null)} 
+                  style={{
+                    position: 'absolute', top: -6, right: -6, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} 
+                  aria-label="Remove media"
+                >
+                  <X size={12} />
+                </button>
               </div>
             ) : (
               <button 
@@ -445,33 +456,7 @@ const mediaUploadBtnStyle: React.CSSProperties = {
   fontFamily: '"DM Sans", sans-serif',
 }
 
-const mediaPreviewStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 6,
-  padding: '6px 12px',
-  borderRadius: 6,
-  backgroundColor: 'rgba(16,185,129,0.1)',
-  border: '1px solid rgba(16,185,129,0.2)',
-}
 
-const mediaPreviewTextStyle: React.CSSProperties = {
-  fontSize: '0.8rem',
-  color: '#065f46',
-  fontWeight: 500,
-  fontFamily: '"DM Sans", sans-serif',
-}
-
-const mediaClearBtnStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  padding: 2,
-  cursor: 'pointer',
-  color: '#065f46',
-  display: 'flex',
-  alignItems: 'center',
-  marginLeft: 4,
-}
 
 const accountRowStyle: React.CSSProperties = {
   padding: '8px 20px 12px',

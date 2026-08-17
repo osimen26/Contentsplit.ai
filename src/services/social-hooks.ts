@@ -20,7 +20,10 @@ export function useSocialAccounts() {
 export function useConnectTwitter() {
   return useMutation<{ url: string }, Error>({
     mutationFn: () => apiClient.getTwitterAuthUrl(),
-    onSuccess: ({ url }) => { window.location.href = url },
+    onSuccess: ({ url }) => { 
+      localStorage.setItem('social_return_url', window.location.pathname)
+      window.location.href = url 
+    },
   })
 }
 
@@ -60,7 +63,10 @@ export function useSocialPosts(page = 1) {
 export function useConnectLinkedIn() {
   return useMutation<{ url: string }, Error>({
     mutationFn: () => apiClient.getLinkedInAuthUrl(),
-    onSuccess: ({ url }) => { window.location.href = url },
+    onSuccess: ({ url }) => { 
+      localStorage.setItem('social_return_url', window.location.pathname)
+      window.location.href = url 
+    },
   })
 }
 
@@ -89,7 +95,10 @@ export function usePublishToLinkedIn() {
 export function useConnectInstagram() {
   return useMutation<{ url: string }, Error>({
     mutationFn: () => apiClient.getInstagramAuthUrl(),
-    onSuccess: ({ url }) => { window.location.href = url },
+    onSuccess: ({ url }) => { 
+      localStorage.setItem('social_return_url', window.location.pathname)
+      window.location.href = url 
+    },
   })
 }
 
@@ -140,7 +149,10 @@ export function usePublishToNewsletter() {
 export function useConnectFacebook() {
   return useMutation<{ url: string }, Error>({
     mutationFn: () => apiClient.getFacebookAuthUrl(),
-    onSuccess: ({ url }) => { window.location.href = url },
+    onSuccess: ({ url }) => { 
+      localStorage.setItem('social_return_url', window.location.pathname)
+      window.location.href = url 
+    },
   })
 }
 
@@ -169,7 +181,10 @@ export function usePublishToFacebook() {
 export function useConnectThreads() {
   return useMutation<{ url: string }, Error>({
     mutationFn: () => apiClient.getThreadsAuthUrl(),
-    onSuccess: ({ url }) => { window.location.href = url },
+    onSuccess: ({ url }) => { 
+      localStorage.setItem('social_return_url', window.location.pathname)
+      window.location.href = url 
+    },
   })
 }
 
