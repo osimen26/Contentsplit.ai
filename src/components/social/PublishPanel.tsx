@@ -153,7 +153,7 @@ const PublishPanel: React.FC<PublishPanelProps> = ({ outputId, initialContent, p
       setMediaUrl(res.url)
     } catch (err) {
       setPanelState('error')
-      setErrorMsg('Failed to upload media. Please try again.')
+      setErrorMsg(err?.response?.data?.details || err?.response?.data?.error || err?.message || 'Failed to upload media. Please try again.')
     }
   }
 

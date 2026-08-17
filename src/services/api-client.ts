@@ -385,7 +385,7 @@ class ApiClient {
     const formData = new FormData()
     formData.append('file', file)
     const response = await this.client.post('/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { 'Content-Type': undefined }
     })
     return response.data
   }
