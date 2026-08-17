@@ -28,7 +28,7 @@ const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = (
     onClick={() => onChange(!checked)}
     style={{
       width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
-      backgroundColor: checked ? 'var(--sys-color-primary-40)' : 'var(--sys-color-neutral-80)',
+      backgroundColor: checked ? '#0F172A' : 'var(--sys-color-neutral-80)',
       position: 'relative', transition: 'background-color 0.2s', flexShrink: 0,
       padding: 0,
     }}
@@ -212,7 +212,7 @@ const AccountSection: React.FC = () => {
                 fontWeight: 500, 
                 fontSize: '0.9rem',
                 lineHeight: 1,
-                backgroundColor: 'var(--sys-color-primary-40)',
+                backgroundColor: '#0F172A',
                 color: 'white',
                 border: 'none',
                 borderRadius: 6,

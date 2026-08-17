@@ -102,7 +102,8 @@ const ConversionDetailPage: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: 'var(--sys-spacing-xl)', maxWidth: 900, width: '100%', margin: '0 auto' }}>
+    <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+      <div style={{ padding: 'var(--sys-spacing-xl)', maxWidth: 900, width: '100%', margin: '0 auto' }}>
       <button
         onClick={() => navigate('/dashboard')}
         style={{
@@ -146,6 +147,7 @@ const ConversionDetailPage: React.FC = () => {
           content={content}
         />
       )}
+    </div>
     </div>
   )
 }

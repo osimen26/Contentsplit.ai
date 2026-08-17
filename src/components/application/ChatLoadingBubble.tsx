@@ -67,7 +67,7 @@ const ProgressAnimation: React.FC = () => {
           height: '100%',
           width: `${progress}%`,
           borderRadius: '9999px',
-          background: 'var(--sys-color-primary-40)',
+          background: '#0F172A',
           transition: 'width 0.18s ease-out',
           boxShadow: 'none',
         }} />
