@@ -1880,7 +1880,8 @@ app.get('/api/social/twitter/callback', async (req, res) => {
   } catch (err) {
     console.error('Twitter callback error:', err)
     const APP_URL = process.env.APP_URL || 'http://localhost:5173'
-    res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=server_error`)
+    const errorMsg = err.message ? encodeURIComponent(err.message) : 'server_error'
+    res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=${errorMsg}`)
   }
 })
 
