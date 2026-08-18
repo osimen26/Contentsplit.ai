@@ -1684,9 +1684,19 @@ app.post('/api/payments/webhook', async (req, res) => {
 // ── SOCIAL PUBLISHING ────────────────────────────────────────────────────────
 
 // Token encryption helpers (AES-256-GCM)
-const SOCIAL_TOKEN_KEY = process.env.SOCIAL_TOKEN_ENCRYPTION_KEY
-  ? Buffer.from(process.env.SOCIAL_TOKEN_ENCRYPTION_KEY, 'base64')
-  : null
+let SOCIAL_TOKEN_KEY = null
+try {
+  if (process.env.SOCIAL_TOKEN_ENCRYPTION_KEY && process.env.SOCIAL_TOKEN_ENCRYPTION_KEY.length > 10) {
+    const buf = Buffer.from(process.env.SOCIAL_TOKEN_ENCRYPTION_KEY, 'base64')
+    if (buf.length === 32) {
+      SOCIAL_TOKEN_KEY = buf
+    } else {
+      console.warn('SOCIAL_TOKEN_ENCRYPTION_KEY must decode to exactly 32 bytes. Encryption disabled.')
+    }
+  }
+} catch (e) {
+  console.warn('Failed to parse SOCIAL_TOKEN_ENCRYPTION_KEY. Encryption disabled.')
+}
 
 function encryptToken(plaintext) {
   if (!SOCIAL_TOKEN_KEY) return plaintext // fallback: store plain in dev
@@ -1760,11 +1770,10 @@ app.get('/api/social/twitter/auth-url', requireAuth, async (req, res) => {
 
     // FIX 1: Stateless encrypted state — no in-memory Map needed
     const state = createOAuthState(req.userId, codeVerifier)
-    if (!state || state === codeVerifier) {
+    // If state is not encrypted (e.g. key missing), it will start with '{"userId":'
+    if (state.startsWith('{') && process.env.NODE_ENV === 'production') {
       // Encryption not configured — block OAuth in production for safety
-      if (process.env.NODE_ENV === 'production') {
-        return res.status(500).json({ error: 'SOCIAL_TOKEN_ENCRYPTION_KEY must be set in production.' })
-      }
+      return res.status(500).json({ error: 'SOCIAL_TOKEN_ENCRYPTION_KEY (32-byte base64) must be set in production for security.' })
     }
 
     const scopes = ['tweet.write', 'users.read', 'offline.access'].join(' ')
@@ -1837,6 +1846,12 @@ app.get('/api/social/twitter/callback', async (req, res) => {
       headers: { Authorization: `Bearer ${access_token}` }
     })
     const userData = await userRes.json()
+    
+    if (!userRes.ok || !userData.data) {
+      console.error('Failed to fetch Twitter user profile:', userData)
+      return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=profile_fetch_failed`)
+    }
+    
     const xUser = userData.data
 
     // Save to Supabase (or mock)
