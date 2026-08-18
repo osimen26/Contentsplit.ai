@@ -64,7 +64,7 @@ const PublishPanel: React.FC<PublishPanelProps> = ({ outputId, initialContent, p
   const [panelState, setPanelState] = useState<PanelState>('idle')
   const [postUrl, setPostUrl] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [mediaUrl, setMediaUrl] = useState<string | null>(null)
+  const [mediaUrls, setMediaUrls] = useState<string[]>([])
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -89,7 +89,7 @@ const PublishPanel: React.FC<PublishPanelProps> = ({ outputId, initialContent, p
   const isOverLimit = charsLeft < 0
   
   // Instagram MUST have media
-  const hasRequiredMedia = platform === 'instagram' ? !!mediaUrl : true
+  const hasRequiredMedia = platform === 'instagram' ? mediaUrls.length > 0 : true
   // Newsletter MUST have subscribers
   const hasSubscribers = platform === 'email' ? (subscribers && subscribers.length > 0) : true
   
@@ -112,46 +112,48 @@ const PublishPanel: React.FC<PublishPanelProps> = ({ outputId, initialContent, p
     }
 
     if (platform === 'twitter') {
-      const finalContent = mediaUrl ? `${content}\n\n${mediaUrl}` : content
-      publishTwitter.mutate({ outputId, content: finalContent }, { onSuccess: (d) => onSuccess(d.tweet_url), onError })
+      publishTwitter.mutate({ outputId, content, mediaUrls }, { onSuccess: (d) => onSuccess(d.tweet_url), onError })
     } else if (platform === 'linkedin') {
-      const finalContent = mediaUrl ? `${content}\n\n${mediaUrl}` : content
       publishLinkedIn.mutate(
-        { outputId, content: finalContent, url: articleUrl.trim() || undefined },
+        { outputId, content, url: articleUrl.trim() || undefined, mediaUrls },
         { onSuccess: (d) => onSuccess(d.post_url), onError }
       )
     } else if (platform === 'instagram') {
       publishInstagram.mutate(
-        { outputId, content, mediaUrl: mediaUrl! },
+        { outputId, content, mediaUrls },
         { onSuccess: (d) => onSuccess(d.post_url), onError }
       )
     } else if (platform === 'facebook') {
-      const finalContent = mediaUrl ? `${content}\n\n${mediaUrl}` : content
       publishFacebook.mutate(
-        { outputId, content: finalContent },
+        { outputId, content, mediaUrls },
         { onSuccess: (d) => onSuccess(d.post_url), onError }
       )
     } else if (platform === 'threads') {
-      const finalContent = mediaUrl ? `${content}\n\n${mediaUrl}` : content
       publishThreads.mutate(
-        { outputId, content: finalContent },
+        { outputId, content, mediaUrls },
         { onSuccess: (d) => onSuccess(d.post_url), onError }
       )
     } else if (platform === 'email') {
+      const appendedMedia = mediaUrls.length ? `\n\n` + mediaUrls.join('\n\n') : ''
       publishNewsletter.mutate(
-        { outputId, content: mediaUrl ? `${content}\n\n${mediaUrl}` : content },
+        { outputId, content: `${content}${appendedMedia}` },
         { onSuccess: () => onSuccess(null), onError }
       )
     }
   }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = Array.from(e.target.files || [])
+    if (!files.length) return
     try {
-      const res = await uploadMedia.mutateAsync(file)
-      setMediaUrl(res.url)
-    } catch (err) {
+      const filesToUpload = files.slice(0, 4 - mediaUrls.length)
+      if (filesToUpload.length === 0) return
+
+      const uploadPromises = filesToUpload.map(f => uploadMedia.mutateAsync(f))
+      const results = await Promise.all(uploadPromises)
+      
+      setMediaUrls(prev => [...prev, ...results.map(r => r.url)])
+    } catch (err: any) {
       setPanelState('error')
       setErrorMsg(err?.response?.data?.details || err?.response?.data?.error || err?.message || 'Failed to upload media. Please try again.')
     }
@@ -201,23 +203,37 @@ const PublishPanel: React.FC<PublishPanelProps> = ({ outputId, initialContent, p
 
           {/* Media Upload */}
           <div style={mediaUploadWrapStyle}>
-            <input type="file" accept="image/*,video/*" ref={fileInputRef} onChange={handleFileUpload} style={{ display: 'none' }} />
-            {mediaUrl ? (
-              <div style={{ position: 'relative', display: 'inline-block', marginTop: 4 }}>
-                {mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                  <video src={mediaUrl} style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)' }} />
-                ) : (
-                  <img src={mediaUrl} alt="Attached media" style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)' }} />
+            <input type="file" multiple accept="image/*,video/*" ref={fileInputRef} onChange={handleFileUpload} style={{ display: 'none' }} />
+            {mediaUrls.length > 0 ? (
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
+                {mediaUrls.map((url, i) => (
+                  <div key={i} style={{ position: 'relative', display: 'inline-block' }}>
+                    {url.match(/\.(mp4|mov|webm)$/i) ? (
+                      <video src={url} style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)' }} />
+                    ) : (
+                      <img src={url} alt={`Attached media ${i+1}`} style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)' }} />
+                    )}
+                    <button 
+                      onClick={() => setMediaUrls(prev => prev.filter((_, idx) => idx !== i))} 
+                      style={{
+                        position: 'absolute', top: -6, right: -6, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                      }} 
+                      aria-label="Remove media"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+                {mediaUrls.length < 4 && (
+                  <button 
+                    onClick={() => fileInputRef.current?.click()} 
+                    style={{ ...mediaUploadBtnStyle, height: 80, width: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+                    disabled={uploadMedia.isPending || panelState === 'publishing' || panelState === 'success'}
+                  >
+                    {uploadMedia.isPending ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <ImageIcon size={14} />}
+                    <span style={{ fontSize: '0.7rem', marginTop: 4 }}>Add</span>
+                  </button>
                 )}
-                <button 
-                  onClick={() => setMediaUrl(null)} 
-                  style={{
-                    position: 'absolute', top: -6, right: -6, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                  }} 
-                  aria-label="Remove media"
-                >
-                  <X size={12} />
-                </button>
               </div>
             ) : (
               <button 

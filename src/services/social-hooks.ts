@@ -42,9 +42,9 @@ export function usePublishToTwitter() {
   return useMutation<
     { success: boolean; post: SocialPost | null; tweet_url: string | null; tweet_id: string | null },
     Error,
-    { outputId: string; content: string }
+    { outputId: string; content: string; mediaUrls?: string[] }
   >({
-    mutationFn: ({ outputId, content }) => apiClient.publishToTwitter(outputId, content),
+    mutationFn: ({ outputId, content, mediaUrls }) => apiClient.publishToTwitter(outputId, content, mediaUrls),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['social', 'posts'] }) },
   })
 }
@@ -83,9 +83,9 @@ export function usePublishToLinkedIn() {
   return useMutation<
     { success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null },
     Error,
-    { outputId: string; content: string; url?: string }
+    { outputId: string; content: string; url?: string; mediaUrls?: string[] }
   >({
-    mutationFn: ({ outputId, content, url }) => apiClient.publishToLinkedIn(outputId, content, url),
+    mutationFn: ({ outputId, content, url, mediaUrls }) => apiClient.publishToLinkedIn(outputId, content, url, mediaUrls),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['social', 'posts'] }) },
   })
 }
@@ -115,9 +115,9 @@ export function usePublishToInstagram() {
   return useMutation<
     { success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null },
     Error,
-    { outputId: string; content: string; mediaUrl: string }
+    { outputId: string; content: string; mediaUrls: string[] }
   >({
-    mutationFn: ({ outputId, content, mediaUrl }) => apiClient.publishToInstagram(outputId, content, mediaUrl),
+    mutationFn: ({ outputId, content, mediaUrls }) => apiClient.publishToInstagram(outputId, content, mediaUrls),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['social', 'posts'] }) },
   })
 }
@@ -169,9 +169,9 @@ export function usePublishToFacebook() {
   return useMutation<
     { success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null },
     Error,
-    { outputId: string; content: string }
+    { outputId: string; content: string; mediaUrls?: string[] }
   >({
-    mutationFn: ({ outputId, content }) => apiClient.publishToFacebook(outputId, content),
+    mutationFn: ({ outputId, content, mediaUrls }) => apiClient.publishToFacebook(outputId, content, mediaUrls),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['social', 'posts'] }) },
   })
 }
@@ -201,9 +201,9 @@ export function usePublishToThreads() {
   return useMutation<
     { success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null },
     Error,
-    { outputId: string; content: string }
+    { outputId: string; content: string; mediaUrls?: string[] }
   >({
-    mutationFn: ({ outputId, content }) => apiClient.publishToThreads(outputId, content),
+    mutationFn: ({ outputId, content, mediaUrls }) => apiClient.publishToThreads(outputId, content, mediaUrls),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['social', 'posts'] }) },
   })
 }

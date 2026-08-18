@@ -1959,7 +1959,7 @@ app.post('/api/social/twitter/publish', requireAuth, socialPublishLimiter, async
       return res.status(401).json({ error: 'User not found.' })
     }
 
-    const { content: rawContent, output_id: rawOutputId } = req.body
+    const { content: rawContent, output_id: rawOutputId, mediaUrls } = req.body
 
     // FIX 6: Sanitise content — strip control characters and trim
     if (!rawContent || typeof rawContent !== 'string') {
@@ -2025,14 +2025,50 @@ app.post('/api/social/twitter/publish', requireAuth, socialPublishLimiter, async
       return res.status(500).json({ error: 'Failed to decrypt access token. Please reconnect your Twitter account.' })
     }
 
+    // Upload media to Twitter native API (v1.1)
+    let mediaIds = []
+    if (mediaUrls && Array.isArray(mediaUrls) && mediaUrls.length > 0) {
+      for (const url of mediaUrls.slice(0, 4)) { // Twitter limits to 4 photos
+        try {
+          const imgRes = await fetch(url)
+          if (!imgRes.ok) throw new Error(`Failed to fetch media from ${url}`)
+          const arrayBuffer = await imgRes.arrayBuffer()
+          const base64Data = Buffer.from(arrayBuffer).toString('base64')
+
+          const uploadRes = await fetch('https://upload.twitter.com/1.1/media/upload.json', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Authorization: `Bearer ${accessToken}`
+            },
+            body: new URLSearchParams({ media_data: base64Data }).toString()
+          })
+
+          const uploadData = await uploadRes.json()
+          if (uploadData.media_id_string) {
+            mediaIds.push(uploadData.media_id_string)
+          } else {
+            console.error('Twitter media upload failed:', uploadData)
+          }
+        } catch (err) {
+          console.error('Error in Twitter media upload loop:', err)
+        }
+      }
+    }
+
     // Post tweet via X API v2
+    const requestBody = { text: content }
+    if (mediaIds.length > 0) {
+      requestBody.media = { media_ids: mediaIds }
+    }
+
     const tweetRes = await fetch('https://api.twitter.com/2/tweets', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`
       },
-      body: JSON.stringify({ text: content })
+      body: JSON.stringify(requestBody)
     })
 
     const tweetData = await tweetRes.json()
@@ -2271,7 +2307,7 @@ app.post('/api/social/linkedin/publish', requireAuth, socialPublishLimiter, asyn
       return res.status(401).json({ error: 'User not found.' })
     }
 
-    const { content: rawContent, url: rawUrl, output_id: rawOutputId } = req.body
+    const { content: rawContent, url: rawUrl, output_id: rawOutputId, mediaUrls } = req.body
 
     // Sanitise content — strip control characters and trim
     if (!rawContent || typeof rawContent !== 'string') {
@@ -2336,9 +2372,73 @@ app.post('/api/social/linkedin/publish', requireAuth, socialPublishLimiter, asyn
 
     const authorUrn = `urn:li:person:${account.platform_user_id}`
 
+    // Upload media to LinkedIn natively if provided
+    let uploadedAssets = []
+    if (mediaUrls && Array.isArray(mediaUrls) && mediaUrls.length > 0) {
+      for (const url of mediaUrls.slice(0, 9)) { // LinkedIn supports up to 9 images in a carousel
+        try {
+          // 1. Register Upload
+          const registerRes = await fetch('https://api.linkedin.com/v2/assets?action=registerUpload', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+              'X-Restli-Protocol-Version': '2.0.0'
+            },
+            body: JSON.stringify({
+              registerUploadRequest: {
+                recipes: ['urn:li:digitalmediaRecipe:feedshare-image'],
+                owner: authorUrn,
+                serviceRelationships: [{
+                  relationshipType: 'OWNER',
+                  identifier: 'urn:li:userGeneratedContent'
+                }]
+              }
+            })
+          })
+          const registerData = await registerRes.json()
+          const uploadUrl = registerData?.value?.uploadMechanism?.['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest']?.uploadUrl
+          const assetUrn = registerData?.value?.asset
+          
+          if (uploadUrl && assetUrn) {
+            // 2. Upload binary
+            const imgRes = await fetch(url)
+            if (!imgRes.ok) throw new Error(`Failed to fetch media from ${url}`)
+            const arrayBuffer = await imgRes.arrayBuffer()
+            
+            const uploadToLiRes = await fetch(uploadUrl, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${accessToken}`, // LinkedIn requires token even for upload URL
+                'Content-Type': imgRes.headers.get('content-type') || 'application/octet-stream'
+              },
+              body: Buffer.from(arrayBuffer)
+            })
+            
+            if (uploadToLiRes.ok || uploadToLiRes.status === 201) {
+              uploadedAssets.push({ status: 'READY', media: assetUrn })
+            } else {
+              console.error('LinkedIn binary upload failed', await uploadToLiRes.text())
+            }
+          }
+        } catch (err) {
+          console.error('Error in LinkedIn media upload loop:', err)
+        }
+      }
+    }
+
     // Build UGC Post payload
     let specificContent
-    if (articleUrl) {
+    if (uploadedAssets.length > 0) {
+      // Native Image(s)
+      specificContent = {
+        'com.linkedin.ugc.ShareContent': {
+          shareCommentary: { text: content },
+          shareMediaCategory: 'IMAGE',
+          media: uploadedAssets
+        }
+      }
+    } else if (articleUrl) {
       // Article share with URL
       specificContent = {
         'com.linkedin.ugc.ShareContent': {
@@ -2716,9 +2816,11 @@ app.delete('/api/social/instagram/disconnect', requireAuth, async (req, res) => 
 
 app.post('/api/social/instagram/publish', requireAuth, socialPublishLimiter, async (req, res) => {
   try {
-    const { output_id, content, media_url } = req.body
+    const { output_id, content, mediaUrls } = req.body
     if (!output_id || !content) return res.status(400).json({ error: 'Missing output_id or content' })
-    if (!media_url) return res.status(400).json({ error: 'Instagram requires a media_url (image or video) to publish' })
+    if (!mediaUrls || !Array.isArray(mediaUrls) || mediaUrls.length === 0) {
+      return res.status(400).json({ error: 'Instagram requires at least one media url (image or video) to publish' })
+    }
 
     const db = getUserDb().supabase || supabase
     if (!db) return res.status(500).json({ error: 'Database not available' })
@@ -2733,24 +2835,72 @@ app.post('/api/social/instagram/publish', requireAuth, socialPublishLimiter, asy
     if (!accessToken) return res.status(500).json({ error: 'Failed to decrypt access token.' })
 
     const igUserId = account.platform_user_id
-    const isVideo = media_url.match(/\.(mp4|mov)$/i)
     
-    const containerParams = new URLSearchParams({ caption: content, access_token: accessToken })
-    if (isVideo) {
-      containerParams.append('media_type', 'VIDEO')
-      containerParams.append('video_url', media_url)
+    let creationId = null
+
+    if (mediaUrls.length === 1) {
+      const media_url = mediaUrls[0]
+      const isVideo = media_url.match(/\.(mp4|mov|webm)$/i)
+      
+      const containerParams = new URLSearchParams({ caption: content, access_token: accessToken })
+      if (isVideo) {
+        containerParams.append('media_type', 'VIDEO')
+        containerParams.append('video_url', media_url)
+      } else {
+        containerParams.append('image_url', media_url)
+      }
+
+      const containerRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media`, { method: 'POST', body: containerParams })
+      const containerData = await containerRes.json()
+
+      if (!containerRes.ok || !containerData.id) {
+        return res.status(containerRes.status).json({ error: containerData?.error?.message || 'Failed to create Instagram media container' })
+      }
+      creationId = containerData.id
     } else {
-      containerParams.append('image_url', media_url)
+      // Carousel flow
+      let childrenIds = []
+      for (const url of mediaUrls.slice(0, 10)) {
+        const isVideo = url.match(/\.(mp4|mov|webm)$/i)
+        const itemParams = new URLSearchParams({ is_carousel_item: 'true', access_token: accessToken })
+        if (isVideo) {
+          itemParams.append('media_type', 'VIDEO')
+          itemParams.append('video_url', url)
+        } else {
+          itemParams.append('image_url', url)
+        }
+        
+        const itemRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media`, { method: 'POST', body: itemParams })
+        const itemData = await itemRes.json()
+        if (itemData.id) {
+          childrenIds.push(itemData.id)
+        } else {
+          console.error('Failed to create Instagram carousel item:', itemData)
+        }
+      }
+      
+      if (childrenIds.length === 0) {
+        return res.status(500).json({ error: 'Failed to create any carousel items for Instagram.' })
+      }
+      
+      const carouselParams = new URLSearchParams({
+        media_type: 'CAROUSEL',
+        caption: content,
+        children: childrenIds.join(','),
+        access_token: accessToken
+      })
+      
+      const carouselRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media`, { method: 'POST', body: carouselParams })
+      const carouselData = await carouselRes.json()
+      
+      if (!carouselRes.ok || !carouselData.id) {
+        return res.status(carouselRes.status).json({ error: carouselData?.error?.message || 'Failed to create Instagram carousel container' })
+      }
+      
+      creationId = carouselData.id
     }
 
-    const containerRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media`, { method: 'POST', body: containerParams })
-    const containerData = await containerRes.json()
-
-    if (!containerRes.ok || !containerData.id) {
-      return res.status(containerRes.status).json({ error: containerData?.error?.message || 'Failed to create Instagram media container' })
-    }
-
-    const publishParams = new URLSearchParams({ creation_id: containerData.id, access_token: accessToken })
+    const publishParams = new URLSearchParams({ creation_id: creationId, access_token: accessToken })
     const publishRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media_publish`, { method: 'POST', body: publishParams })
     const publishData = await publishRes.json()
 
@@ -2861,7 +3011,7 @@ app.delete('/api/social/facebook/disconnect', requireAuth, async (req, res) => {
 
 app.post('/api/social/facebook/publish', requireAuth, socialPublishLimiter, async (req, res) => {
   try {
-    const { output_id, content } = req.body
+    const { output_id, content, mediaUrls } = req.body
     if (!content) return res.status(400).json({ error: 'Missing content' })
 
     const db = await initSupabase()
@@ -2872,13 +3022,43 @@ app.post('/api/social/facebook/publish', requireAuth, socialPublishLimiter, asyn
     const pageToken = decryptToken(account.access_token)
     const pageId = account.platform_user_id
 
+    let attachedMedia = []
+    if (mediaUrls && Array.isArray(mediaUrls) && mediaUrls.length > 0) {
+      for (const url of mediaUrls.slice(0, 10)) { // Facebook allows up to 10 attached media items
+        try {
+          const photoRes = await fetch(`https://graph.facebook.com/v19.0/${pageId}/photos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              url: url,
+              published: false,
+              access_token: pageToken
+            })
+          })
+          const photoData = await photoRes.json()
+          if (photoData.id) {
+            attachedMedia.push({ media_fbid: photoData.id })
+          } else {
+            console.error('Facebook photo upload failed:', photoData)
+          }
+        } catch (err) {
+          console.error('Error uploading photo to Facebook:', err)
+        }
+      }
+    }
+
+    const payload = {
+      message: content,
+      access_token: pageToken
+    }
+    if (attachedMedia.length > 0) {
+      payload.attached_media = attachedMedia
+    }
+
     const publishRes = await fetch(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: content,
-        access_token: pageToken
-      })
+      body: JSON.stringify(payload)
     })
 
     const publishData = await publishRes.json()

@@ -272,8 +272,8 @@ class ApiClient {
     return response.data
   }
 
-  async publishToTwitter(outputId: string, content: string): Promise<{ success: boolean; post: SocialPost | null; tweet_url: string | null; tweet_id: string | null }> {
-    const response = await this.client.post('/social/twitter/publish', { output_id: outputId, content })
+  async publishToTwitter(outputId: string, content: string, mediaUrls?: string[]): Promise<{ success: boolean; post: SocialPost | null; tweet_url: string | null; tweet_id: string | null }> {
+    const response = await this.client.post('/social/twitter/publish', { output_id: outputId, content, mediaUrls })
     return response.data
   }
 
@@ -297,12 +297,14 @@ class ApiClient {
   async publishToLinkedIn(
     outputId: string,
     content: string,
-    url?: string
+    url?: string,
+    mediaUrls?: string[]
   ): Promise<{ success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null }> {
     const response = await this.client.post('/social/linkedin/publish', {
       output_id: outputId,
       content,
       url: url || undefined,
+      mediaUrls
     })
     return response.data
   }
@@ -322,12 +324,12 @@ class ApiClient {
   async publishToInstagram(
     outputId: string,
     content: string,
-    mediaUrl: string
+    mediaUrls: string[]
   ): Promise<{ success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null }> {
     const response = await this.client.post('/social/instagram/publish', {
       output_id: outputId,
       content,
-      media_url: mediaUrl,
+      mediaUrls,
     })
     return response.data
   }
@@ -346,11 +348,13 @@ class ApiClient {
 
   async publishToFacebook(
     outputId: string,
-    content: string
+    content: string,
+    mediaUrls?: string[]
   ): Promise<{ success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null }> {
     const response = await this.client.post('/social/facebook/publish', {
       output_id: outputId,
       content,
+      mediaUrls,
     })
     return response.data
   }
@@ -369,11 +373,13 @@ class ApiClient {
 
   async publishToThreads(
     outputId: string,
-    content: string
+    content: string,
+    mediaUrls?: string[]
   ): Promise<{ success: boolean; post: SocialPost | null; post_url: string | null; post_id: string | null }> {
     const response = await this.client.post('/social/threads/publish', {
       output_id: outputId,
       content,
+      mediaUrls,
     })
     return response.data
   }
