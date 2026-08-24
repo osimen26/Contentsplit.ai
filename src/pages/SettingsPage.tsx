@@ -11,13 +11,14 @@ import { Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 
-type SettingsSection = 'account' | 'password' | 'appearance' | 'integrations' | 'delete'
+type SettingsSection = 'account' | 'password' | 'appearance' | 'integrations' | 'billing' | 'delete'
 
 const NAV_ITEMS: { id: SettingsSection; label: string }[] = [
   { id: 'account', label: 'General' },
   { id: 'password', label: 'Password' },
   { id: 'appearance', label: 'Preferences' },
   { id: 'integrations', label: 'Integrations' },
+  { id: 'billing', label: 'Billing' },
   { id: 'delete', label: 'Danger Zone' },
 ]
 
@@ -616,6 +617,69 @@ const DeleteSection: React.FC = () => {
   )
 }
 
+const PLAN_INFO: Record<string, { name: string; price: string; conversions: string; tones: string; history: string }> = {
+  free:   { name: 'Free',   price: '$0',     conversions: '10 / month',  tones: 'Professional only', history: 'Last 3 conversions' },
+  pro:    { name: 'Pro',    price: '$12/mo', conversions: '100 / month', tones: 'All 3 tones',       history: 'Last 50 conversions' },
+  agency: { name: 'Agency', price: '$35/mo', conversions: 'Unlimited',   tones: 'All 3 tones',       history: 'Unlimited' },
+}
+
+const BillingSection: React.FC = () => {
+  const { data: user } = useCurrentUser()
+  const navigate = useNavigate()
+  const tier = (user?.tier || 'free') as string
+  const plan = PLAN_INFO[tier] || PLAN_INFO.free
+
+  const badgeStyle: React.CSSProperties = {
+    padding: '4px 10px', borderRadius: 20, fontSize: '0.76rem', fontWeight: 700,
+    background: tier === 'agency' ? '#F0FDF4' : tier === 'pro' ? '#EFF6FF' : '#F1F5F9',
+    color: tier === 'agency' ? '#16A34A' : tier === 'pro' ? '#1D4ED8' : '#64748B',
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <section>
+        <SectionHeader title="Current Plan" />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* Plan summary row */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+            <div>
+              <p style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#111' }}>{plan.name}</p>
+              <p style={{ margin: '3px 0 0', fontSize: '0.85rem', color: '#64748B' }}>{plan.price}</p>
+            </div>
+            <span style={badgeStyle}>{tier.toUpperCase()}</span>
+          </div>
+
+          <FieldRow label="Monthly conversions"><span style={{ fontSize: '0.9rem', color: '#333' }}>{plan.conversions}</span></FieldRow>
+          <FieldRow label="Tone modes"><span style={{ fontSize: '0.9rem', color: '#333' }}>{plan.tones}</span></FieldRow>
+          <FieldRow label="Conversion history" noBorder><span style={{ fontSize: '0.9rem', color: '#333' }}>{plan.history}</span></FieldRow>
+
+          {tier !== 'agency' && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 20, borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+              <button
+                onClick={() => navigate('/dashboard/upgrade')}
+                style={{ display: 'inline-flex', alignItems: 'center', padding: '9px 18px', fontWeight: 600, fontSize: '0.875rem', backgroundColor: '#0F172A', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}
+              >
+                {tier === 'free' ? 'Upgrade to Pro →' : 'Upgrade to Agency →'}
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {tier !== 'free' && (
+        <section>
+          <SectionHeader title="Subscription" />
+          <p style={{ fontSize: '0.875rem', color: '#64748B', lineHeight: 1.7, margin: 0 }}>
+            Your subscription is managed through Flutterwave. To cancel or modify your plan,
+            contact us at{' '}
+            <a href="mailto:support@contentsplit.ai" style={{ color: '#0F172A', fontWeight: 500 }}>support@contentsplit.ai</a>.
+          </p>
+        </section>
+      )}
+    </div>
+  )
+}
+
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<SettingsSection>('account')
   const navigate = useNavigate()
@@ -721,6 +785,7 @@ const SettingsPage: React.FC = () => {
           {active === 'password' && <PasswordSection />}
           {active === 'appearance' && <AppearanceSection />}
           {active === 'integrations' && <IntegrationsSection />}
+          {active === 'billing' && <BillingSection />}
           {active === 'delete' && <DeleteSection />}
         </main>
       </div>

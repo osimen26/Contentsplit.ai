@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import { ChatInput, ChatLoadingBubble } from '@components/application'
 import { useGenerateContent, useRegenerateContent, useOutputs } from '@services/query-hooks'
-import { RefreshCw, Copy, CheckCircle2, CheckCheck, Send } from 'lucide-react'
+import { RefreshCw, Copy, CheckCircle2, CheckCheck, Send, Pencil } from 'lucide-react'
 import type { Output } from '@services/api-client'
 import '@/styles/dashboard.css'
 
@@ -15,6 +15,7 @@ interface ChatMessage {
   role: 'user' | 'assistant'
   type: MessageType
   text?: string
+  batchItems?: string[] // used by preferences messages triggered from batch mode
 }
 
 const PLATFORMS = [
@@ -47,21 +48,25 @@ const PlatformIcon: React.FC<{ id: string; size?: number }> = ({ id, size = 15 }
 const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isRegenerating: boolean }> = ({ output, onRegenerate, isRegenerating }) => {
   const platform = PLATFORMS.find(p => p.id === output.platform)
   const [showPublishPanel, setShowPublishPanel] = useState(false)
-  
-  const handleCopy = () => {
-    navigator.clipboard.writeText(output.content)
-  }
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedContent, setEditedContent] = useState(output.content)
+
+  const handleCopy = () => navigator.clipboard.writeText(editedContent)
+  const actionBtn = (extra?: React.CSSProperties): React.CSSProperties => ({
+    display: 'flex', alignItems: 'center', gap: '5px', background: 'transparent',
+    border: '1px solid #E2E8F0', borderRadius: '6px', padding: '5px 10px',
+    cursor: 'pointer', ...dm(12, 500, { color: '#64748B' }), ...extra,
+  })
 
   return (
     <div style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      {/* Header */}
       <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
             <img src="/logo.svg" alt="C" style={{ width: '22px', height: '22px' }} />
           </div>
-          <div>
-            <div style={{ ...dm(13, 600, { color: '#0F172A' }) }}>Contentsplit</div>
-          </div>
+          <div style={{ ...dm(13, 600, { color: '#0F172A' }) }}>Contentsplit</div>
         </div>
         {platform && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -72,44 +77,63 @@ const AIResponseCard: React.FC<{ output: Output, onRegenerate: () => void, isReg
           </div>
         )}
       </div>
-      <div style={{ padding: '16px', flex: 1, ...dm(13, 400, { color: '#1E293B', lineHeight: 1.75, whiteSpace: 'pre-wrap' }) }}>
-        {output.content}
-      </div>
+
+      {/* Content — editable when in edit mode */}
+      {isEditing ? (
+        <textarea
+          value={editedContent}
+          onChange={e => setEditedContent(e.target.value)}
+          style={{ padding: '16px', flex: 1, minHeight: 140, resize: 'vertical', border: 'none', borderBottom: '1px solid #E2E8F0', outline: 'none', ...dm(13, 400, { color: '#1E293B', lineHeight: 1.75, fontFamily: '"DM Sans", sans-serif' }) }}
+        />
+      ) : (
+        <div style={{ padding: '16px', flex: 1, ...dm(13, 400, { color: '#1E293B', lineHeight: 1.75, whiteSpace: 'pre-wrap' }) }}>
+          {editedContent}
+        </div>
+      )}
+
+      {/* Footer */}
       <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#FAFAFA' }}>
-        <span style={{ ...dm(12, 400, { color: '#94A3B8' }) }}>{output.content.length} chars</span>
+        <span style={{ ...dm(12, 400, { color: '#94A3B8' }) }}>{editedContent.length} chars</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button 
-            onClick={onRegenerate}
-            disabled={isRegenerating}
-            style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'transparent', border: '1px solid #E2E8F0', borderRadius: '6px', padding: '5px 10px', cursor: isRegenerating ? 'not-allowed' : 'pointer', ...dm(12, 500, { color: '#64748B' }), opacity: isRegenerating ? 0.5 : 1 }}
-          >
-            <RefreshCw size={11} className={isRegenerating ? 'spin' : ''} /> {isRegenerating ? 'Regenerating...' : 'Regenerate'}
-          </button>
-          <button
-              onClick={handleCopy}
-              style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'transparent', border: '1px solid #E2E8F0', borderRadius: '6px', padding: '5px 10px', cursor: 'pointer', ...dm(12, 500, { color: '#64748B' }) }}
-            >
-              <Copy size={11} /> Copy
-            </button>
-            {/* Publish button */}
-            {(['twitter', 'linkedin', 'instagram', 'email', 'facebook', 'threads'].includes(output.platform)) && (
-              <button
-                onClick={() => setShowPublishPanel(true)}
-                style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#0F172A', border: 'none', borderRadius: '6px', padding: '5px 10px', cursor: 'pointer', ...dm(12, 600, { color: '#FFFFFF' }) }}
-                title={output.platform === 'email' ? 'Send Newsletter' : `Publish directly to ${output.platform}`}
-              >
-                <Send size={11} /> Publish
+          {isEditing ? (
+            <>
+              <button onClick={() => { setEditedContent(output.content); setIsEditing(false) }} style={actionBtn()}>
+                Cancel
               </button>
-            )}
+              <button onClick={() => setIsEditing(false)} style={actionBtn({ background: '#0F172A', border: 'none', color: '#FFFFFF' })}>
+                Save
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => setIsEditing(true)} style={actionBtn()} title="Edit content">
+                <Pencil size={11} /> Edit
+              </button>
+              <button onClick={onRegenerate} disabled={isRegenerating} style={actionBtn({ opacity: isRegenerating ? 0.5 : 1, cursor: isRegenerating ? 'not-allowed' : 'pointer' })}>
+                <RefreshCw size={11} className={isRegenerating ? 'spin' : ''} /> {isRegenerating ? 'Regenerating...' : 'Regenerate'}
+              </button>
+              <button onClick={handleCopy} style={actionBtn()}>
+                <Copy size={11} /> Copy
+              </button>
+              {(['twitter', 'linkedin', 'instagram', 'email', 'facebook', 'threads'].includes(output.platform)) && (
+                <button
+                  onClick={() => setShowPublishPanel(true)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#0F172A', border: 'none', borderRadius: '6px', padding: '5px 10px', cursor: 'pointer', ...dm(12, 600, { color: '#FFFFFF' }) }}
+                  title={output.platform === 'email' ? 'Send Newsletter' : `Publish to ${platform?.label}`}
+                >
+                  <Send size={11} /> Publish
+                </button>
+              )}
+            </>
+          )}
         </div>
       </div>
 
-      {/* Publish Panel modal */}
       {showPublishPanel && (
         <Suspense fallback={null}>
           <PublishPanel
             outputId={output.id}
-            initialContent={output.content}
+            initialContent={editedContent}
             platform={output.platform as 'twitter' | 'linkedin' | 'instagram' | 'email'}
             onClose={() => setShowPublishPanel(false)}
           />
@@ -284,7 +308,7 @@ const ContentCreationPage: React.FC = () => {
   
   const [isBatchMode, setIsBatchMode] = useState(false)
   const [batchItems, setBatchItems] = useState<string[]>([])
-  const [isBatchGenerating] = useState(false)
+  const [isBatchGenerating, setIsBatchGenerating] = useState(false)
   
   const generateMutation = useGenerateContent()
   const { isLoading: outputsLoading } = useOutputs(currentConversionId || '')
@@ -357,22 +381,52 @@ const ContentCreationPage: React.FC = () => {
     setInputText('')
   }
   
-  const handleGenerateBatch = async () => {
-    // Note: Batch mode is simplified for this demo to just show a preference bubble too. 
-    // Usually it would ask for preferences first as well.
+  const handleGenerateBatch = () => {
     if (batchItems.length === 0) return
-    
-    const userId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-    const prefId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
-    
+    const capturedItems = [...batchItems]
+    const uid = () => typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
     setMessages(prev => [
       ...prev,
-      { id: userId, role: 'user', type: 'text', text: `BATCH QUEUE (${batchItems.length} items):\n\n${batchItems.map((item, i) => `${i+1}. ${item.substring(0, 50)}...`).join('\n')}` },
-      { id: prefId, role: 'assistant', type: 'preferences' }
+      { id: uid(), role: 'user' as const, type: 'text' as const, text: `BATCH QUEUE (${capturedItems.length} items):\n\n${capturedItems.map((item, i) => `${i + 1}. ${item.substring(0, 60)}${item.length > 60 ? '\u2026' : ''}`).join('\n')}` },
+      { id: uid(), role: 'assistant' as const, type: 'preferences' as const, batchItems: capturedItems },
     ])
-    
     setBatchItems([])
     setIsBatchMode(false)
+  }
+
+  const handleGenerateBatchItems = async (items: string[], selectedPlatforms: string[], selectedTone: string) => {
+    setIsBatchGenerating(true)
+    setMessages(prev => prev.filter(m => m.type !== 'preferences'))
+    const uid = () => typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)
+
+    for (let i = 0; i < items.length; i++) {
+      const text = items[i]
+      const loadingId = uid()
+      setMessages(prev => [
+        ...prev,
+        { id: uid(), role: 'user' as const, type: 'text' as const, text: `[${i + 1}/${items.length}] ${text.substring(0, 80)}${text.length > 80 ? '\u2026' : ''}` },
+        { id: loadingId, role: 'assistant' as const, type: 'loading' as const },
+      ])
+      try {
+        const data = await generateMutation.mutateAsync({
+          input_text: text,
+          tone_mode: selectedTone.toLowerCase() as any,
+          platforms: selectedPlatforms as any,
+        })
+        setCurrentConversionId(data.conversion.id)
+        setMessages(prev => [
+          ...prev.filter(m => m.id !== loadingId),
+          { id: uid(), role: 'assistant' as const, type: 'result' as const, text: data.conversion.id },
+        ])
+      } catch (err: any) {
+        const errorMsg = err?.response?.data?.error || err?.message || 'Generation failed'
+        setMessages(prev => [
+          ...prev.filter(m => m.id !== loadingId),
+          { id: uid(), role: 'assistant' as const, type: 'error' as const, text: errorMsg },
+        ])
+      }
+    }
+    setIsBatchGenerating(false)
   }
 
   return (
@@ -409,9 +463,15 @@ const ContentCreationPage: React.FC = () => {
                   )}
 
                   {msg.type === 'preferences' && (
-                    <PreferencesBubble 
-                      onGenerate={handleGenerate} 
-                      isGenerating={generateMutation.isPending} 
+                    <PreferencesBubble
+                      onGenerate={(platforms, tone) => {
+                        if (msg.batchItems && msg.batchItems.length > 0) {
+                          handleGenerateBatchItems(msg.batchItems, platforms, tone)
+                        } else {
+                          handleGenerate(platforms, tone)
+                        }
+                      }}
+                      isGenerating={generateMutation.isPending || isBatchGenerating}
                     />
                   )}
 

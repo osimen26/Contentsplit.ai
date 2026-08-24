@@ -30,6 +30,10 @@ const AuthLayout = lazy(() => import('@/layouts/AuthLayout'))
 const OnboardingPage = lazy(() => import('./pages/onboarding/OnboardingPage'))
 const LandingPage = lazy(() => import('./pages/LandingPage'))
 const HelpPage = lazy(() => import('./pages/HelpPage'))
+const UpgradePage = lazy(() => import('./pages/UpgradePage'))
+const PaymentCallbackPage = lazy(() => import('./pages/PaymentCallbackPage'))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
+const TermsPage = lazy(() => import('./pages/TermsPage'))
 
 import { ProtectedRoute } from '@components/auth/ProtectedRoute'
 
@@ -58,8 +62,12 @@ function App() {
                 <Routes>
                   {/* Public Landing Page */}
                   <Route path="/" element={<LandingPage />} />
-                  <Route path="/privacy" element={<LandingPage />} />
-                  <Route path="/terms" element={<LandingPage />} />
+                  <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
+
+                  {/* Payment Callback — public so Flutterwave can redirect here */}
+                  <Route path="/payment-callback" element={<PaymentCallbackPage />} />
+                  <Route path="/payment-callback/:reference" element={<PaymentCallbackPage />} />
 
                   {/* Protected Routes */}
                   <Route element={<ProtectedRoute />}>
@@ -71,6 +79,7 @@ function App() {
                       <Route path="create" element={<ContentCreationPage />} />
                       <Route path="c/:id" element={<ConversionDetailPage />} />
                       <Route path="settings" element={<SettingsPage />} />
+                      <Route path="upgrade" element={<UpgradePage />} />
                     </Route>
                     <Route path="/onboarding" element={<OnboardingPage />} />
                   </Route>
