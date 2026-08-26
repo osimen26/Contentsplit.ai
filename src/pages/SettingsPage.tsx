@@ -682,13 +682,52 @@ const BillingSection: React.FC = () => {
 
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<SettingsSection>('account')
+  const [oauthError, setOauthError] = useState<string | null>(null)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search)
+
+    // Handle successful OAuth connection
     if (searchParams.has('connected')) {
       queryClient.invalidateQueries({ queryKey: ['social', 'accounts'] })
+      setActive('integrations')
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname + '?tab=integrations')
+    }
+
+    // Handle OAuth errors
+    const error = searchParams.get('error')
+    if (error) {
+      if (error === 'no_account') {
+        // User doesn't have a ContentSplit account — send them to sign up
+        navigate('/register?reason=no_account', { replace: true })
+        return
+      }
+      // Show error banner on the integrations tab
+      setActive('integrations')
+      const errorMessages: Record<string, string> = {
+        profile_fetch_failed: 'Could not fetch your social profile. Please try again.',
+        token_exchange_failed: 'Authentication failed. Please try connecting again.',
+        oauth_denied: 'You cancelled the connection. No changes were made.',
+        invalid_state: 'The authentication session expired. Please try again.',
+        db_error: 'Failed to save your connection. Please try again.',
+        instagram_auth_failed: 'Instagram authentication failed. Please try again.',
+        no_facebook_pages: 'No Facebook Pages found on your account.',
+        no_linked_instagram: 'No Instagram Business account linked to your Facebook Page.',
+        facebook_auth_failed: 'Facebook authentication failed. Please try again.',
+        threads_auth_failed: 'Threads authentication failed. Please try again.',
+      }
+      setOauthError(errorMessages[error] || `Connection failed (${error}). Please try again.`)
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname + '?tab=integrations')
+    }
+
+    // Handle tab param
+    const tab = searchParams.get('tab') as SettingsSection | null
+    if (tab && NAV_ITEMS.some(n => n.id === tab)) {
+      setActive(tab)
     }
 
     const returnUrl = localStorage.getItem('social_return_url')
@@ -781,6 +820,33 @@ const SettingsPage: React.FC = () => {
           overflowY: 'auto',
           paddingRight: 16
         }}>
+          {/* OAuth error banner */}
+          {oauthError && active === 'integrations' && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 10,
+              padding: '12px 16px',
+              marginBottom: 24,
+              backgroundColor: 'rgba(239, 68, 68, 0.06)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              borderRadius: 8,
+            }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}>
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: '#dc2626', flex: 1, lineHeight: 1.5 }}>{oauthError}</p>
+              <button
+                onClick={() => setOauthError(null)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#dc2626', display: 'flex', flexShrink: 0 }}
+                aria-label="Dismiss error"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          )}
           {active === 'account' && <AccountSection />}
           {active === 'password' && <PasswordSection />}
           {active === 'appearance' && <AppearanceSection />}

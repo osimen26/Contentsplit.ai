@@ -1776,7 +1776,7 @@ app.get('/api/social/twitter/auth-url', requireAuth, async (req, res) => {
       return res.status(500).json({ error: 'SOCIAL_TOKEN_ENCRYPTION_KEY (32-byte base64) must be set in production for security.' })
     }
 
-    const scopes = ['tweet.write', 'users.read', 'offline.access'].join(' ')
+    const scopes = ['tweet.read', 'tweet.write', 'users.read', 'offline.access'].join(' ')
     const callbackUrl = process.env.TWITTER_CALLBACK_URL || 'http://localhost:3001/api/social/twitter/callback'
 
     const authUrl = new URL('https://twitter.com/i/oauth2/authorize')
@@ -1815,6 +1815,15 @@ app.get('/api/social/twitter/callback', async (req, res) => {
     }
 
     const { userId, codeVerifier } = stateData
+
+    // Verify the user actually exists in our database
+    const userDb = getUserDb()
+    const existingUser = await userDb.findById(userId)
+    if (!existingUser) {
+      console.warn(`Twitter OAuth: userId ${userId} from state not found in DB — redirecting to register`)
+      return res.redirect(`${APP_URL}/register?reason=no_account`)
+    }
+
     const callbackUrl = process.env.TWITTER_CALLBACK_URL || 'http://localhost:3001/api/social/twitter/callback'
 
     // Exchange code for access token
@@ -2215,6 +2224,15 @@ app.get('/api/social/linkedin/callback', async (req, res) => {
     }
 
     const { userId, codeVerifier } = stateData
+
+    // Verify the user actually exists in our database
+    const userDb = getUserDb()
+    const existingUser = await userDb.findById(userId)
+    if (!existingUser) {
+      console.warn(`LinkedIn OAuth: userId ${userId} from state not found in DB — redirecting to register`)
+      return res.redirect(`${APP_URL}/register?reason=no_account`)
+    }
+
     const callbackUrl = process.env.LINKEDIN_CALLBACK_URL || 'http://localhost:3001/api/social/linkedin/callback'
 
     // Exchange code for access token
@@ -2547,14 +2565,23 @@ app.get('/api/social/instagram/auth-url', requireAuth, (req, res) => {
 })
 
 app.get('/api/social/instagram/callback', async (req, res) => {
-  const { code, state, error: authError, error_description } = req.query
-  if (authError) return res.redirect(`http://localhost:5173/settings?error=instagram_auth_failed`)
+  const APP_URL = process.env.APP_URL || 'http://localhost:5173'
+  const { code, state, error: authError } = req.query
+  if (authError) return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=instagram_auth_failed`)
   if (!code) return res.status(400).send('No authorization code provided')
   
   const userId = igStateToUserId.get(state)
-  if (!userId) return res.redirect(`http://localhost:5173/settings?error=invalid_state`)
+  if (!userId) return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=invalid_state`)
   
   igStateToUserId.delete(state)
+
+  // Verify the user actually exists in our database
+  const userDbInst = getUserDb()
+  const existingUser = await userDbInst.findById(userId)
+  if (!existingUser) {
+    console.warn(`Instagram OAuth: userId ${userId} from state not found in DB — redirecting to register`)
+    return res.redirect(`${APP_URL}/register?reason=no_account`)
+  }
 
   const { INSTAGRAM_APP_ID, INSTAGRAM_APP_SECRET, INSTAGRAM_CALLBACK_URL } = process.env
   
@@ -2595,7 +2622,7 @@ app.get('/api/social/instagram/callback', async (req, res) => {
     }
 
     if (!igUserId) {
-      return res.redirect(`http://localhost:5173/settings?error=no_linked_instagram`)
+      return res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=no_linked_instagram`)
     }
 
     const encryptedToken = encryptToken(accessToken)
@@ -2613,10 +2640,10 @@ app.get('/api/social/instagram/callback', async (req, res) => {
 
     if (upsertErr) throw upsertErr
 
-    res.redirect(`http://localhost:5173/settings?connected=instagram`)
+    res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&connected=instagram`)
   } catch (err) {
     console.error('Instagram callback error:', err)
-    res.redirect(`http://localhost:5173/settings?error=instagram_callback_failed`)
+    res.redirect(`${APP_URL}/dashboard/settings?tab=integrations&error=instagram_callback_failed`)
   }
 })
 
@@ -2953,6 +2980,14 @@ app.get('/api/social/facebook/callback', async (req, res) => {
   fbStateToUserId.delete(state)
   if (!userId) return res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&error=invalid_state`)
 
+  // Verify the user actually exists in our database
+  const fbUserDb = getUserDb()
+  const fbExistingUser = await fbUserDb.findById(userId)
+  if (!fbExistingUser) {
+    console.warn(`Facebook OAuth: userId ${userId} from state not found in DB — redirecting to register`)
+    return res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/register?reason=no_account`)
+  }
+
   const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, FACEBOOK_CALLBACK_URL } = process.env
   
   try {
@@ -3110,6 +3145,14 @@ app.get('/api/social/threads/callback', async (req, res) => {
   const userId = threadsStateToUserId.get(state)
   threadsStateToUserId.delete(state)
   if (!userId) return res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/dashboard/settings?tab=integrations&error=invalid_state`)
+
+  // Verify the user actually exists in our database
+  const thUserDb = getUserDb()
+  const thExistingUser = await thUserDb.findById(userId)
+  if (!thExistingUser) {
+    console.warn(`Threads OAuth: userId ${userId} from state not found in DB — redirecting to register`)
+    return res.redirect(`${process.env.APP_URL || 'http://localhost:5173'}/register?reason=no_account`)
+  }
 
   const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, THREADS_CALLBACK_URL } = process.env
   

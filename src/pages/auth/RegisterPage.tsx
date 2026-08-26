@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useRegister } from '@/services/query-hooks'
 import { useAuth } from '@/contexts/AuthContext'
 import AuthLayout from '@/components/layout/AuthLayout'
@@ -15,9 +15,11 @@ const RegisterPage: React.FC = () => {
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const [isGooglePending, setIsGooglePending] = useState(false)
   const { mutateAsync: registerUser, isPending } = useRegister()
   const { notifyLoggedIn, loginWithGoogle } = useAuth()
+  const noAccountReason = new URLSearchParams(location.search).get('reason') === 'no_account'
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -79,10 +81,21 @@ const RegisterPage: React.FC = () => {
               <span className="text-[1.4rem] font-bold text-slate-900" style={{ fontFamily: '"Syne", sans-serif' }}>ContentSplit</span>
             </Link>
             <h1 className="text-[28px] font-bold text-slate-900 mb-4 text-left w-full" style={{ fontFamily: '"Syne", sans-serif' }}>Create Account 👋</h1>
-          <p className="text-[14px] text-slate-600 mb-8 text-left leading-relaxed">
+          <p className="text-[14px] text-slate-600 mb-6 text-left leading-relaxed">
             Turn your long-form content into endless social posts.<br />
             Sign up to start repurposing effortlessly.
           </p>
+
+          {noAccountReason && (
+            <div className="w-full mb-6 p-3 rounded-lg flex items-start gap-3" style={{ backgroundColor: 'rgba(59,130,246,0.07)', border: '1px solid rgba(59,130,246,0.2)' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}>
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <p className="text-[13px] text-blue-700 m-0 leading-relaxed">
+                You need a ContentSplit account to connect social profiles. Create one below — it's free!
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleRegister} className="w-full flex flex-col">
             {error && (
